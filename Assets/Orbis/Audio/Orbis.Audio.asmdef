@@ -1,0 +1,14 @@
+{
+    "name": "Orbis.Audio",
+    "rootNamespace": "Orbis.Audio",
+    "references": ["Orbis.Core", "Orbis.Platform"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

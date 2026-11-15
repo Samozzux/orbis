@@ -1,0 +1,14 @@
+{
+    "name": "Orbis.Net",
+    "rootNamespace": "Orbis.Net",
+    "references": ["Orbis.Core", "Orbis.Platform"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

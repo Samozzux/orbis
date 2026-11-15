@@ -1,0 +1,14 @@
+{
+    "name": "Orbis.Gameplay",
+    "rootNamespace": "Orbis.Gameplay",
+    "references": ["Orbis.Core", "Orbis.World", "Orbis.Sim"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
