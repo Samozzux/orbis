@@ -103,7 +103,7 @@ Tocco su un edificio/oggetto/cittadino/veicolo → evidenziazione + pannello con
 - Scelta dei singoli brani e dell'ordine per ogni playlist.
 
 ## 11. Modalità foto e time-lapse
-Camera libera, profondità di campo, ora del giorno e meteo regolabili, filtri, nascondi interfaccia; salva nella galleria del dispositivo (iOS) o scarica (web). Time-lapse della crescita costruito dagli snapshot giornalieri.
+Camera libera, profondità di campo, ora del giorno e meteo regolabili, filtri, nascondi interfaccia; salva nella galleria del dispositivo (iOS e Android) o scarica (web). Time-lapse della crescita costruito dagli snapshot giornalieri.
 
 ## 12. Visita degli amici
 Lista amici; "Visita" scarica un'istantanea della loro città (sola lettura): puoi girare, entrare negli edifici, guardare le loro squadre, lasciare un "mi piace"/commento, copiare un progetto di edificio condiviso.

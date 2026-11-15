@@ -3,7 +3,7 @@
 ## 1. Panoramica
 
 ```
-┌──────────────────────────── Dispositivo (iOS o browser) ────────────────────────────┐
+┌─────────────────────── Dispositivo (iOS, Android o browser) ───────────────────────┐
 │                                                                                      │
 │  Presentazione (Unity)                                                               │
 │   ├─ Rendering mondo (tile, edifici procedurali, landmark, veicoli, persone)         │
@@ -19,9 +19,9 @@
 │                    ▲                                                                 │
 │  Orbis.Sim.Jobs (Burst/Jobs/Entities): agenti, traffico, pathfinding su larga scala  │
 │                    ▲                                                                 │
-│  Orbis.Platform (interfacce) → Ios (Swift) | Web (.jslib) | Editor (finti)           │
+│  Orbis.Platform (interfacce) → Ios (Swift) | Android (Kotlin) | Web (.jslib) | Editor│
 │                    ▲                                                                 │
-│  Archiviazione locale: SQLite (iOS) / IndexedDB (Web) + cache tile e asset           │
+│  Archiviazione locale: SQLite (iOS/Android) / IndexedDB (Web) + cache tile e asset   │
 └──────────────┬───────────────────────────────────────┬───────────────────────────────┘
                │ HTTPS (API JSON)                       │ HTTPS (file statici)
                ▼                                        ▼
@@ -44,7 +44,7 @@
 | `Sports/` → `Orbis.Sports.View` | visualizzazione 3D delle partite, telecamere TV, telecronaca | Core, World |
 | `Audio/` → `Orbis.Audio` | musica, ambiente, radio | Core, Platform |
 | `Net/` → `Orbis.Net` | client API, sincronizzazione, download manager | Core, Platform |
-| `Platform/` → `Orbis.Platform` | interfacce + implementazioni Ios/Web/Editor | Core |
+| `Platform/` → `Orbis.Platform` | interfacce + implementazioni Ios/Android/Web/Editor | Core |
 | `Rendering/` → `Orbis.Rendering` | profili stile (Realistico/Classico/Pixel), post-processing, qualità | — |
 | `Editor/` → `Orbis.EditorTools` | generatori di scene/prefab, build script, import dati | tutto (solo Editor) |
 | `Tests/` | test EditMode/PlayMode | — |
@@ -83,7 +83,7 @@ Il passaggio tra livelli è trasparente: quando la camera si avvicina, i cittadi
 Budget indicativi: L0 fino a 2.000 agenti su iPhone 15 Pro / desktop, 500 su browser deboli; L1 fino a 100.000.
 
 ## 7. Archiviazione locale
-- **iOS**: SQLite (libreria `sqlite-net` o equivalente con la `libsqlite3` di sistema) in `Application.persistentDataPath`.
+- **iOS / Android**: SQLite (libreria `sqlite-net` o equivalente; su iOS la `libsqlite3` di sistema, su Android la libreria nativa inclusa) in `Application.persistentDataPath`.
 - **Web**: stesso livello di astrazione su **IndexedDB** (Unity mappa `persistentDataPath` su IndexedDB; per dati grandi usare un `.jslib` dedicato con IndexedDB diretto).
 - Interfaccia unica `ISaveStore` in Core; implementazioni per piattaforma.
 - Contenuto di un salvataggio: impostazioni del mondo, stato città (edifici modificati rispetto ai dati reali, proprietà, economia), cittadini, aziende, sport (stagioni, risultati, rose), giornale/diario, journal comandi, snapshot.
@@ -97,25 +97,28 @@ Budget indicativi: L0 fino a 2.000 agenti su iPhone 15 Pro / desktop, 500 su bro
 ## 9. IA sul dispositivo
 - Interfaccia `ILocalLanguageModel` in Platform: `IsAvailable`, `GenerateAsync(prompt, schema, options)`, generazione guidata con schema JSON per output strutturati (decisioni del sindaco, articoli, dialoghi).
 - **iOS**: framework **Foundation Models** (iOS 26, Apple Intelligence; iPhone 15 Pro supportato) tramite plugin Swift con funzioni `@_cdecl` e callback verso C#.
+- **Android**: IA di sistema sui dispositivi compatibili (es. Gemini Nano tramite le API GenAI di ML Kit), tramite plugin Kotlin; verificare in M7 API e dispositivi supportati.
 - **Web**: se il browser espone un modello locale (es. API di IA integrate nel browser), usarlo tramite `.jslib`; altrimenti `IsAvailable = false`.
+- **L'intelligenza degli NPC non dipende dal modello linguistico**: routine, decisioni (IA a utilità), memoria, relazioni, sindaco a regole e reazioni sono sempre calcolati dal Core, identici su tutti i dispositivi. Il modello linguistico serve solo a *trasformare in testo libero* ciò che la simulazione ha deciso (dialoghi liberi, articoli, discorsi, DJ).
 - Ripiego sempre presente: dialoghi standard a menu + testi generati da **modelli testuali** (template con variabili e varianti casuali) per notizie, social, DJ e sindaco (sindaco a regole).
 - Le richieste all'IA girano in coda a bassa priorità, mai sul percorso critico del frame; risultati salvati in cache (un articolo generato non si rigenera).
 
 ## 10. Servizi di piattaforma e ripieghi
 
-| Servizio (`Orbis.Platform`) | iOS | Web | Ripiego |
-|---|---|---|---|
-| `ILocalLanguageModel` | Foundation Models | modello locale del browser, se presente | template + regole |
-| `IBiometricAuth` | Face ID + Keychain (`SecAccessControl .biometryCurrentSet`) | **Passkey** WebAuthn (Face ID/Touch ID/Windows Hello) | sessione lunga con token di rinnovo |
-| `ISecureStore` | Keychain | IndexedDB (token di rinnovo cifrato con chiave non esportabile WebCrypto) | — |
-| `ISpeech` (voce DJ) | AVSpeechSynthesizer (voce italiana) | Web Speech API `speechSynthesis` | solo testo a schermo |
-| `IUserMusic` ("La mia musica") | MediaPlayer `MPMusicPlayerController.applicationQueuePlayer` | file audio scelti dall'utente (input file), salvati in IndexedDB | solo libreria inclusa |
-| `ISaveStore` | SQLite | IndexedDB | — |
-| `IHaptics` | UIImpactFeedbackGenerator | Vibration API se presente | niente |
-| `INotifications` (locali) | UNUserNotificationCenter | Notification API (con permesso) | niente |
-| `IDeviceProfile` | modello, RAM, stato termico | WebGPU/WebGL, memoria stimata, prestazioni misurate | profilo medio |
+| Servizio (`Orbis.Platform`) | iOS | Android | Web | Ripiego |
+|---|---|---|---|---|
+| `ILocalLanguageModel` | Foundation Models | IA di sistema (es. Gemini Nano via ML Kit GenAI) sui dispositivi compatibili | modello locale del browser, se presente | template + regole |
+| `IBiometricAuth` | Face ID + Keychain (`SecAccessControl .biometryCurrentSet`) | BiometricPrompt + Android Keystore | **Passkey** WebAuthn (Face ID/Touch ID/Windows Hello) | sessione lunga con token di rinnovo |
+| `ISecureStore` | Keychain | Android Keystore (EncryptedSharedPreferences) | IndexedDB (token cifrato con chiave non esportabile WebCrypto) | — |
+| `ISpeech` (voce DJ) | AVSpeechSynthesizer (voce italiana) | TextToSpeech (italiano) | Web Speech API `speechSynthesis` | solo testo a schermo |
+| `IUserMusic` ("La mia musica") | MediaPlayer `MPMusicPlayerController.applicationQueuePlayer` | file audio del dispositivo (selettore di file / MediaStore) | file audio scelti dall'utente, salvati in IndexedDB | solo libreria inclusa |
+| `ISaveStore` | SQLite | SQLite | IndexedDB | — |
+| `IHaptics` | UIImpactFeedbackGenerator | Vibrator / HapticFeedback | Vibration API se presente | niente |
+| `INotifications` (locali) | UNUserNotificationCenter | NotificationManager (permesso POST_NOTIFICATIONS) | Notification API (con permesso) | niente |
+| `IDeviceProfile` | modello, RAM, stato termico | modello, RAM, GPU, stato termico | WebGPU/WebGL, memoria stimata, prestazioni misurate | profilo medio |
 
-Chiavi Info.plist necessarie: `NSFaceIDUsageDescription`, `NSAppleMusicUsageDescription`, `NSPhotoLibraryAddUsageDescription` (salvare foto della modalità foto), `NSLocationWhenInUseUsageDescription` **non** serve (non usiamo il GPS).
+Chiavi Info.plist necessarie: `NSFaceIDUsageDescription`, `NSAppleMusicUsageDescription`, `NSPhotoLibraryAddUsageDescription` (salvare foto della modalità foto). Il GPS non serve.
+Permessi Android: `INTERNET`, `USE_BIOMETRIC`, `POST_NOTIFICATIONS`, `VIBRATE`, `READ_MEDIA_AUDIO` (solo per "La mia musica", richiesto al momento dell'uso). Niente posizione.
 
 ## 11. Rendering e stili grafici
 - URP con tre **profili di stile** commutabili a runtime (dettagli in `docs/08-asset-e-grafica.md`):
@@ -134,7 +137,7 @@ Chiavi Info.plist necessarie: `NSFaceIDUsageDescription`, `NSAppleMusicUsageDesc
 
 ## 13. Hosting dei dati pesanti
 - **Build web**: GitHub Pages (`https://samozzux.github.io/orbis/`), compressione Brotli/gzip con *decompression fallback* di Unity (GitHub Pages non permette header personalizzati).
-- **Tile del mondo e asset pack**: pubblicati come **GitHub Releases** (file fino a 2 GB, nessun costo). L'app iOS li scarica direttamente.
+- **Tile del mondo e asset pack**: pubblicati come **GitHub Releases** (file fino a 2 GB, nessun costo). Le app iOS e Android li scaricano direttamente.
 - **Attenzione CORS per il web**: i browser devono poter scaricare i file da un'altra origine. In **M0 verificare** se i download delle GitHub Releases rispondono con header CORS utilizzabili da `samozzux.github.io`. Se non li hanno, la versione web usa un hosting statico gratuito con CORS (proposta: **Cloudflare R2** piano gratuito, 10 GB, traffico in uscita gratuito; richiede un account Cloudflare di Samuele) alimentato dallo stesso workflow. Annotare la decisione in `docs/STATO.md` e chiedere conferma a Samuele prima di creare account.
 - Il **manifest** (`manifest.json`: elenco pack, versioni, hash, dimensioni, URL) è pubblicato insieme ai pack; l'app conosce solo l'URL del manifest.
 

@@ -10,7 +10,7 @@ Orbis è un **simulatore di vita e di città completo e realistico** ambientato 
 4. **Immersione**: ogni casa ha interni diversi, ogni cittadino ha la sua vita (frigo pieno o vuoto, reddito, famiglia, animali, abitudini).
 5. **Ultra completo**: veicoli, cibi, animali, piante, edifici, aerei, elicotteri, tutti gli sport.
 6. **Gratis e offline**: nessun acquisto, funziona senza connessione dopo i download.
-7. **Ovunque**: app iOS (iPhone e iPad) e **versione web** giocabile da browser su qualsiasi dispositivo (telefono, tablet, desktop), con lo **stesso account e gli stessi salvataggi** sincronizzati: inizi sull'iPhone e continui sul PC.
+7. **Ovunque**: app iOS (iPhone e iPad), app **Android** (APK) e **versione web** giocabile da browser su qualsiasi dispositivo (telefono, tablet, desktop), con lo **stesso account e gli stessi salvataggi** sincronizzati: inizi sull'iPhone e continui sul PC.
 
 ## 2. Modalità di gioco e ruoli
 
@@ -115,7 +115,7 @@ Orbis è un **simulatore di vita e di città completo e realistico** ambientato 
 - Tocco su un edificio → menu contestuale: Entra, Dettagli, Potenzia, Varianti, Sposta, Ruota, Demolisci, Arreda, Compra/Vendi, Affitta, e azioni specifiche del tipo di edificio.
 
 ## 11. Account e social
-- Login con username e password, poi **Face ID** sull'app iOS e **passkey** (Face ID / Touch ID / Windows Hello) sul web; sessioni lunghe (nessun login ripetuto).
+- Login con username e password, poi **Face ID** sull'app iOS, **impronta/volto** (sblocco biometrico) sull'app Android e **passkey** (Face ID / Touch ID / Windows Hello) sul web; sessioni lunghe (nessun login ripetuto).
 - Lo stesso salvataggio si gioca su più dispositivi: sincronizzazione online con gestione dei conflitti (vedi `docs/06-backend-api.md`).
 - Amici tramite username; **visita delle città** degli amici; scambio di progetti di edifici; classifiche.
 - Backup dei salvataggi online (Altervista), gioco sempre utilizzabile offline.
@@ -144,11 +144,12 @@ Orbis è un **simulatore di vita e di città completo e realistico** ambientato 
 | Meteo | reale / simulato | reale (se online, altrimenti simulato) |
 | Modalità creativa | on/off | off |
 
-## 15. Differenze tra app iOS e web
-Il gioco è lo stesso. Alcune funzioni dipendono da ciò che offre il dispositivo e hanno un ripiego (dettagli in `docs/01-architettura.md` §10):
-- **Dialoghi avanzati con IA**: sull'iPhone con Apple Intelligence; sul web solo se il browser offre un modello locale, altrimenti dialoghi standard e testi a modelli.
-- **"La mia musica"**: Apple Music sull'app iOS; sul web brani caricati dall'utente dal proprio dispositivo.
-- **Dimensione della città simulata in dettaglio**: più grande sull'iPhone e sul desktop potente, ridotta automaticamente su browser lenti.
+## 15. Differenze tra iOS, Android e web
+Il gioco è lo stesso. Alcune funzioni dipendono da ciò che offre il dispositivo e hanno un ripiego (dettagli in `docs/01-architettura.md` §9–§10):
+- **Intelligenza degli NPC**: identica ovunque. Routine, scelte, memoria, relazioni, sindaco e comportamenti sono simulazione del gioco e **non dipendono dall'IA del dispositivo**.
+- **Dialoghi avanzati con IA (conversazione libera)**: con l'IA di sistema dove c'è (Apple Intelligence su iPhone/iPad compatibili, IA integrata su Android e browser compatibili). Dove manca: dialoghi standard a menu con frasi generate da modelli testuali (vedi §9 di `docs/01-architettura.md` per eventuali estensioni).
+- **"La mia musica"**: Apple Music sull'app iOS; su Android e web brani scelti dall'utente dal proprio dispositivo.
+- **Dimensione della città simulata in dettaglio**: si adatta alla potenza del dispositivo.
 
 ## 16. Impostazioni dell'app
 Stile grafico, qualità (auto/basso/medio/alto/ultra), fps (30/60), musica (on/off, playlist per contesto, "La mia musica"), volumi, Face ID, gestione download e spazio occupato, notifiche locali, crediti, lingua (solo italiano per ora).

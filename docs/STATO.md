@@ -9,11 +9,12 @@
 - Secrets GitHub: `UNITY_EMAIL`, `UNITY_PASSWORD`, `UNITY_LICENSE` (contenuto di `UnityEntitlementLicense.xml`), `FTP_HOST`, `FTP_USER`, `FTP_PASSWORD`.
 - Altervista: sito `giuliaa8.altervista.org`, cartella `/orbis/` creata, database attivo.
 - iPhone 15 Pro con iOS 26; Sideloadly già usato per altre app.
+- Android: build APK richiesta il 15/11/2026 (keystore da creare in M0).
 - Specifica completa in `docs/`.
 
 ## Decisioni prese
-- Motore Unity (non Unreal) per compilare IPA e web gratis su GitHub Actions.
-- Piattaforme: iOS (iPhone + iPad) e Web (GitHub Pages).
+- Motore Unity (non Unreal) per compilare IPA, APK e web gratis su GitHub Actions.
+- Piattaforme: iOS (iPhone + iPad), Android (APK) e Web (GitHub Pages).
 - Dati sportivi da fonti aperte, niente scraping vietato.
 - Tempo predefinito: 1 ora di gioco = 1 minuto reale.
 

@@ -77,7 +77,7 @@ Gli schemi JSON formali di ogni tipo stanno in `data/schemas/` e sono usati sia 
 ## 4. Profili di qualità
 `Auto` (predefinito: sceglie in base al dispositivo e alle prestazioni misurate nei primi minuti) / Basso / Medio / Alto / Ultra.
 Parametri: distanza di visualizzazione, densità di agenti L0, ombre, risoluzione di rendering (scala dinamica), qualità delle texture, densità di vegetazione, effetti.
-Su web: profilo massimo "Alto" con WebGPU, "Medio" con WebGL 2; su telefoni via browser "Basso".
+Su Android: "Auto" in base a GPU/RAM, fino a "Ultra" sui top di gamma. Su web: profilo massimo "Alto" con WebGPU, "Medio" con WebGL 2; su telefoni via browser "Basso".
 
 ## 5. Personaggi
 - Generatore modulare: corporatura, altezza, età (bambini → anziani), tratti del viso, carnagione, capelli, barba, vestiti (per stagione, lavoro, reddito, occasione), accessori.
@@ -86,5 +86,5 @@ Su web: profilo massimo "Alto" con WebGPU, "Medio" con WebGL 2; su telefoni via 
 
 ## 6. Prestazioni degli asset
 - Budget triangoli indicativi: edificio procedurale LOD0 ≤ 5k, mobile ≤ 2k, personaggio LOD0 ≤ 15k, veicolo ≤ 10k, landmark ≤ 150k (con LOD).
-- Atlas di texture per i kit di facciate; compressione ASTC (iOS) e formati adatti al web.
-- Addressables raggruppati per regione/stile/categoria per scaricare solo il necessario.
+- Atlas di texture per i kit di facciate; compressione ASTC (iOS e Android) e formati adatti al web.
+- Addressables raggruppati per regione/stile/categoria per scaricare solo il necessario, con build separate per iOS, Android e Web.

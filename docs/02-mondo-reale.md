@@ -38,7 +38,7 @@ Eseguita da GitHub Actions (`world-data.yml`, avvio manuale con parametro region
 Un pack "globo" sempre presente, poche centinaia di MB al massimo: terreno mondiale a bassa risoluzione, coste, laghi, fiumi principali, confini, città con popolazione (punti → generano "macchie" urbane stilizzate da lontano), autostrade e ferrovie principali semplificate. Permette di girare il mondo intero dal primo avvio.
 
 ### Pack incluso nella build
-Il region pack della **provincia di Chieti** (dettaglio completo) è incluso nell'app/build web: si gioca subito senza download.
+Il region pack della **provincia di Chieti** (dettaglio completo) è incluso nelle app iOS/Android e scaricato per primo sul web: si gioca subito senza download.
 
 ## 3. Livelli di dettaglio del mondo
 
@@ -78,7 +78,7 @@ Gli edifici normali **non** sono modelli salvati: si generano al volo dal tile (
 ## 6. Download e spazio
 - All'avvio: globo + Chieti già pronti.
 - Quando la camera si avvicina a una zona non scaricata, il region pack si scarica con priorità alta; mentre arriva si mostra il livello del globo.
-- **Italia in background**: tutte le regioni italiane si scaricano automaticamente (solo Wi-Fi sull'app iOS, configurabile), poi il resto del mondo **su richiesta** o in background se attivato.
+- **Italia in background**: tutte le regioni italiane si scaricano automaticamente (solo Wi-Fi sulle app iOS e Android, configurabile), poi il resto del mondo **su richiesta** o in background se attivato.
 - Una zona scaricata è **completa e permanente**, funziona offline.
 - **Gestione spazio** nelle impostazioni: spazio usato per regione, eliminazione, limite massimo, "scarica tutta Italia ora".
 - Il 3D si rigenera dai dati: lo spazio occupato è soprattutto dati compatti. Stima indicativa da verificare in M10: una regione italiana media 50–300 MB.

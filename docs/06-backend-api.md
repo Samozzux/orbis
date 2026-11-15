@@ -28,7 +28,7 @@ backend/
 |---|---|
 | `orb_migrations` | id, name, applied_at |
 | `orb_users` | id, username (unico, 3–20 caratteri), password_hash, display_name, is_admin, created_at, last_login_at, status |
-| `orb_refresh_tokens` | id, user_id, token_hash, device_id, device_name, platform (ios/web), created_at, expires_at, revoked_at, replaced_by |
+| `orb_refresh_tokens` | id, user_id, token_hash, device_id, device_name, platform (ios/android/web), created_at, expires_at, revoked_at, replaced_by |
 | `orb_passkeys` | id, user_id, credential_id, public_key, sign_count, device_name, created_at |
 | `orb_login_attempts` | id, ip_hash, username, success, created_at (limite tentativi) |
 | `orb_friendships` | id, user_id, friend_id, status (pending/accepted/blocked), created_at |
@@ -59,6 +59,9 @@ Contenuti sport, catalogo, eventi ecc. sono nel modello generico `orb_content_it
 - Dopo il primo login, l'app chiede se attivare Face ID. Se sì, il refresh token viene salvato nel **Keychain** con controllo di accesso biometrico (`.biometryCurrentSet`).
 - Ai successivi avvii: Face ID → lettura del refresh token → `/auth/refresh` → dentro. Nessuna password.
 - Se cambia la configurazione di Face ID o il token scade: login con password.
+
+### Sblocco biometrico (Android)
+Come su iOS: il refresh token viene salvato cifrato con una chiave dell'**Android Keystore** che richiede l'autenticazione biometrica (BiometricPrompt, impronta o volto). Ai successivi avvii: sblocco biometrico → `/auth/refresh` → dentro.
 
 ### Passkey (web)
 - `POST /api/auth/passkey/register/options`, `.../register/verify`, `POST /api/auth/passkey/login/options`, `.../login/verify` (WebAuthn: challenge, verifica firma ES256/RS256 con openssl, contatore).

@@ -1,10 +1,10 @@
 # 09 — Milestone
 
-La specifica descrive il gioco completo (versione 1.0). Si costruisce **a tappe**: ogni milestone aggiunge sistemi allo stesso gioco, che resta sempre installabile e giocabile su **iOS e web**.
+La specifica descrive il gioco completo (versione 1.0). Si costruisce **a tappe**: ogni milestone aggiunge sistemi allo stesso gioco, che resta sempre installabile e giocabile su **iOS, Android e web**.
 
 Regole valide per tutte le milestone:
-- Criteri di completamento comuni: `core-tests` verde, build **IPA** e **web** verdi, nessun errore in console all'avvio, `docs/STATO.md` aggiornato, `CREDITS.md` aggiornato se sono stati aggiunti asset/dati esterni.
-- A fine milestone: tag di versione (`v0.<n>.0`) e breve nota per Samuele in `docs/STATO.md` con **cosa provare** sull'iPhone e sul web.
+- Criteri di completamento comuni: `core-tests` verde, build **IPA**, **APK** e **web** verdi, nessun errore in console all'avvio, `docs/STATO.md` aggiornato, `CREDITS.md` aggiornato se sono stati aggiunti asset/dati esterni.
+- A fine milestone: tag di versione (`v0.<n>.0`) e breve nota per Samuele in `docs/STATO.md` con **cosa provare** sull'iPhone, su Android e sul web.
 - Quando serve un'azione di Samuele (segreti, account, impostazioni GitHub/Altervista), fermarsi e dargli istruzioni passo passo semplici.
 
 ---
@@ -15,11 +15,11 @@ Regole valide per tutte le milestone:
 - Generatore di scene da codice; scena di avvio con logo "Orbis", schermata di caricamento, menu principale vuoto (UI Toolkit, layout adattivo).
 - Progetto `tests/Orbis.Core.Tests` con un primo test.
 - Interfacce `Orbis.Platform` con implementazioni Editor/Ios/Web vuote o minime.
-- Workflow: `core-tests`, `ios-build` (IPA scaricabile), `web-build` (online su GitHub Pages), `backend` (deploy + `/api/health`).
+- Workflow: `core-tests`, `ios-build` (IPA scaricabile), `android-build` (APK firmato scaricabile), `web-build` (online su GitHub Pages), `backend` (deploy + `/api/health`).
 - Verifiche e annotazioni in `STATO.md`: azioni per licenza Unity in CI, valori di `/api/health`, HTTPS Altervista, **CORS dei download GitHub Releases dal web**.
-- Chiedere a Samuele: `ORBIS_JWT_SECRET`, `ORBIS_ADMIN_USERNAME`, eventuale `DB_PASSWORD`, attivazione GitHub Pages.
+- Chiedere a Samuele: `ORBIS_JWT_SECRET`, `ORBIS_ADMIN_USERNAME`, eventuale `DB_PASSWORD`, keystore Android (creazione guidata + 4 secret), attivazione GitHub Pages.
 
-**Completata quando**: Samuele installa l'IPA e vede il menu; apre `https://samozzux.github.io/orbis/` e vede lo stesso menu; `/orbis/api/health` risponde.
+**Completata quando**: Samuele installa l'IPA e l'APK e vede il menu; apre `https://samozzux.github.io/orbis/` e vede lo stesso menu; `/orbis/api/health` risponde.
 
 ## M1 — Il mondo: Chieti
 - Pipeline `tools/world-pipeline` per la **provincia di Chieti** + pack globo base.
@@ -30,7 +30,7 @@ Regole valide per tutte le milestone:
 - Primi landmark di Chieti (almeno 3, es. Cattedrale di San Giustino, Teatro Marrucino, stadio Angelini).
 - Stile **Classico**.
 
-**Completata quando**: si naviga Chieti fluidamente (≥ 30 fps su iPhone 15 Pro e desktop), si riconoscono le strade reali e i landmark, si tocca un edificio e se ne vedono i dati.
+**Completata quando**: si naviga Chieti fluidamente (≥ 30 fps su iPhone 15 Pro, Android di fascia medio-alta e desktop), si riconoscono le strade reali e i landmark, si tocca un edificio e se ne vedono i dati.
 
 ## M2 — Costruire ed economia
 - Catalogo dati (prime 150 voci tra tutte le categorie edifici/natura/decorazioni), varianti e livelli.
@@ -44,7 +44,7 @@ Regole valide per tutte le milestone:
 **Completata quando**: si gioca una partita stile Megapolis su Chieti per un mese di gioco, guadagnando e spendendo, con annulla e riavvolgi funzionanti; chiudendo e riaprendo tutto è com'era.
 
 ## M3 — Account, cloud e amici
-- Backend: migrazioni, auth completa (token, rotazione, limiti), Face ID (iOS), passkey o ripiego (web), CORS.
+- Backend: migrazioni, auth completa (token, rotazione, limiti), Face ID (iOS), sblocco biometrico (Android), passkey o ripiego (web), CORS.
 - Backup e sincronizzazione salvataggi con conflitti; stesso salvataggio su iPhone e web.
 - Amici, visita della città di un amico, progetti condivisi, mi piace.
 
@@ -77,9 +77,9 @@ Regole valide per tutte le milestone:
 **Completata quando**: si può vivere a Chieti da cittadino, lavorare, comprare casa e arredarla, aprire un bar, candidarsi sindaco e, vincendo, passare alla gestione della città.
 
 ## M7 — IA, media e musica
-- Plugin Swift **Foundation Models** + interfaccia; modello locale del browser se disponibile; ripieghi.
+- Plugin Swift **Foundation Models** + interfaccia; IA di sistema Android sui dispositivi compatibili; modello locale del browser se disponibile; ripieghi.
 - Dialoghi **avanzati IA**, sindaco IA, giornale, social "Piazza", radio con DJ e voce sintetica.
-- Sistema musica: libreria libera, playlist per contesto, "La mia musica" (Apple Music su iOS, file utente su web), impostazioni.
+- Sistema musica: libreria libera, playlist per contesto, "La mia musica" (Apple Music su iOS, file utente su Android e web), impostazioni.
 
 **Completata quando**: sull'iPhone 15 Pro si parla liberamente con un NPC che ricorda i fatti della simulazione, e il giornale racconta gli eventi reali della partita.
 
@@ -100,7 +100,7 @@ Scenari e sfide, obiettivi, achievement, livelli completi, eventi casuali e macr
 Region pack di tutte le regioni italiane, download manager completo (background, priorità, gestione spazio), profili architettonici per aree del mondo, pack dei paesi su richiesta, landmark Italia (100) e mondo (300), aeroporti e voli, viaggi tra città, partita "storica" per Chieti.
 
 ## M11 — Stili grafici completi
-Stile **Realistico** e stile **Pixel** completi, cambio a runtime, profili di qualità automatici per iOS e web, ottimizzazioni finali.
+Stile **Realistico** e stile **Pixel** completi, cambio a runtime, profili di qualità automatici per iOS, Android e web, ottimizzazioni finali.
 
 ## M12 — Amministrazione completa e rifinitura
 Pannello admin completo per tutti i pack (catalogo, landmark, eventi, scenari, musica, testi), menu sviluppatore nel gioco, accessibilità, bilanciamento economico, test di lunga durata (1 anno di gioco), pulizia e **v1.0.0**.
