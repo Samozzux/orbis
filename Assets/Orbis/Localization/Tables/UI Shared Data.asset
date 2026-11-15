@@ -111,6 +111,30 @@ MonoBehaviour:
     m_Key: web.description
     m_Metadata:
       m_Items: []
+  - m_Id: 32717612769280
+    m_Key: loading.percent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740800
+    m_Key: loading.tip_title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740801
+    m_Key: tips.1
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740802
+    m_Key: tips.2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740803
+    m_Key: tips.3
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740804
+    m_Key: tips.4
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

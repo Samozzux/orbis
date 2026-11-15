@@ -1,8 +1,10 @@
 /*
- * Orbis — stile dell'interfaccia: minimal, moderno, "liquid glass" come iOS 26.
+ * Orbis — stile dell'interfaccia: da gioco, colorato e "cicciotto", con bottoni e navbar in liquid glass.
  * 1 px USS = 1 punto logico (vedi AdaptiveLayout). Classi di layout sull'elemento .app:
  * layout-compact (telefono), layout-medium (tablet), layout-wide (desktop), orientation-portrait,
  * input-touch / input-pointer.
+ * Nota: il progetto è in spazio colore lineare, quindi le velature bianche semitrasparenti schiariscono
+ * molto: per questo le tinte bianche del vetro hanno alfa bassa.
  */
 
 /* ---------- Base ---------- */
@@ -11,7 +13,6 @@
     flex-grow: 1;
     color: rgb(255, 255, 255);
     font-size: 15px;
-    --accent: rgb(10, 132, 255);
 }
 
 .backdrop {
@@ -20,6 +21,23 @@
     top: 0;
     right: 0;
     bottom: 0;
+    transition-property: opacity;
+    transition-duration: 1.2s;
+    transition-timing-function: ease-in-out-sine;
+}
+
+/* quando la città 3D è pronta lo sfondo fisso sfuma e la si vede */
+.backdrop--hidden {
+    opacity: 0;
+}
+
+.vignette {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    -unity-background-scale-mode: stretch-to-fill;
 }
 
 .safe-area {
@@ -32,6 +50,17 @@
     color: rgb(255, 255, 255);
     -unity-text-align: middle-left;
     white-space: nowrap;
+}
+
+/* font da gioco (Lilita One, OFL) per titoli, bottoni ed etichette */
+.wordmark,
+.game-button__label,
+.nav-item__label,
+.toast__text,
+.loading__percent,
+.tip__title {
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+    -unity-font-style: normal;
 }
 
 /* ---------- Schermate e transizioni ---------- */
@@ -57,20 +86,25 @@
 .logo {
     flex-shrink: 0;
     --logo-color: rgb(255, 255, 255);
-    --logo-accent: rgb(100, 210, 255);
-    --logo-fill: rgba(6, 14, 34, 0.55);
+    --logo-accent: rgb(255, 196, 60);
+    --logo-fill: rgba(10, 40, 90, 0.55);
 }
 
 .wordmark {
-    -unity-font-style: bold;
-    letter-spacing: -1px;
-    text-shadow: 0 2px 16px rgba(0, 10, 40, 0.45);
+    color: rgb(255, 255, 255);
+    -unity-text-outline-width: 2.5px;
+    -unity-text-outline-color: rgb(16, 52, 120);
+    text-shadow: 0 4px 0 rgba(10, 30, 80, 0.75);
+    letter-spacing: 1px;
 }
 
 .tagline {
-    color: rgba(255, 255, 255, 0.72);
-    font-size: 15px;
+    font-size: 16px;
+    -unity-font-style: bold;
     margin-top: 2px;
+    -unity-text-outline-width: 1.2px;
+    -unity-text-outline-color: rgba(10, 30, 80, 0.85);
+    text-shadow: 0 2px 4px rgba(0, 10, 40, 0.6);
 }
 
 /* ---------- Logo iniziale ---------- */
@@ -81,12 +115,12 @@
 }
 
 .logo--splash {
-    width: 168px;
-    height: 168px;
-    scale: 0.86 0.86;
+    width: 176px;
+    height: 176px;
+    scale: 0.6 0.6;
     transition-property: scale;
-    transition-duration: 1.4s;
-    transition-timing-function: ease-out-cubic;
+    transition-duration: 0.9s;
+    transition-timing-function: ease-out-back;
 }
 
 .splash.screen--visible .logo--splash {
@@ -94,9 +128,14 @@
 }
 
 .wordmark--splash {
-    font-size: 56px;
-    margin-top: 4px;
+    font-size: 72px;
     -unity-text-align: middle-center;
+    -unity-text-outline-width: 3px;
+}
+
+.tagline--splash {
+    -unity-text-align: middle-center;
+    font-size: 18px;
 }
 
 /* ---------- Caricamento ---------- */
@@ -106,53 +145,115 @@
     justify-content: center;
 }
 
+.loading__center {
+    align-items: center;
+}
+
 .logo--loading {
     width: 112px;
     height: 112px;
 }
 
 .wordmark--loading {
-    font-size: 40px;
+    font-size: 48px;
     -unity-text-align: middle-center;
 }
 
 .progress {
-    width: 260px;
-    height: 16px;
-    margin-top: 28px;
-    padding: 4px;
+    width: 320px;
+    height: 30px;
+    margin-top: 22px;
+    padding: 6px;
 }
 
 .progress > .glass-fill {
-    border-radius: 8px;
-    --glass-shadow-spread: 8;
-    --glass-shadow-offset: 3;
+    --glass-tint-top: rgba(0, 20, 60, 0.30);
+    --glass-tint-bottom: rgba(0, 20, 60, 0.20);
+    --glass-lip: rgba(0, 18, 50, 0.45);
+    --glass-lip-height: 3;
+    --glass-shadow-spread: 10;
+    --glass-shadow-offset: 4;
 }
 
 .progress__track {
     flex-grow: 1;
-    border-radius: 4px;
+    border-radius: 999px;
     overflow: hidden;
 }
 
 .progress__fill {
     width: 0;
     height: 100%;
-    border-radius: 4px;
-    background-color: rgb(100, 210, 255);
+    border-radius: 999px;
+    background-color: rgb(255, 160, 30);
+    border-bottom-width: 3px;
+    border-color: rgb(214, 104, 8);
+}
+
+.progress__shine {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 3px;
+    height: 35%;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.loading__row {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 308px;
+    margin-top: 10px;
 }
 
 .loading__status {
-    margin-top: 12px;
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.66);
+    font-size: 14px;
+    -unity-font-style: bold;
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgba(10, 30, 80, 0.8);
+}
+
+.loading__percent {
+    font-size: 18px;
+    -unity-text-outline-width: 1.5px;
+    -unity-text-outline-color: rgb(16, 52, 120);
+}
+
+.tip {
+    position: absolute;
+    bottom: 24px;
+    align-self: center;
+    max-width: 560px;
+    padding: 12px 22px 14px 22px;
+    align-items: center;
+}
+
+.tip > .glass-fill {
+    border-radius: 22px;
+    --glass-tint-top: rgba(255, 255, 255, 0.07);
+    --glass-tint-bottom: rgba(255, 255, 255, 0.01);
+}
+
+.tip__title {
+    font-size: 16px;
+    color: rgb(255, 210, 80);
+    -unity-text-align: middle-center;
+    -unity-text-outline-width: 1.2px;
+    -unity-text-outline-color: rgb(120, 60, 0);
+}
+
+.app .tip__text {
+    font-size: 14px;
+    margin-top: 3px;
+    white-space: normal;
     -unity-text-align: middle-center;
 }
 
 /* ---------- Menu principale ---------- */
 
 .menu {
-    padding: 20px 40px 96px 40px;
+    padding: 20px 40px 104px 40px;
 }
 
 .menu__content {
@@ -166,11 +267,11 @@
     flex-direction: row;
     align-items: center;
     flex-shrink: 1;
-    translate: -18px 0;
+    translate: -30px 0;
     opacity: 0;
     transition-property: translate, opacity;
-    transition-duration: 0.7s, 0.7s;
-    transition-timing-function: ease-out-cubic;
+    transition-duration: 0.8s, 0.6s;
+    transition-timing-function: ease-out-back, ease-out-cubic;
 }
 
 .menu.screen--visible .menu__hero {
@@ -179,24 +280,24 @@
 }
 
 .logo--hero {
-    width: 112px;
-    height: 112px;
-    margin-right: 8px;
+    width: 120px;
+    height: 120px;
+    margin-right: 6px;
 }
 
 .wordmark--hero {
-    font-size: 56px;
+    font-size: 68px;
 }
 
 .menu__actions {
-    width: 300px;
+    width: 310px;
     flex-shrink: 0;
-    translate: 24px 0;
+    translate: 0 40px;
     opacity: 0;
     transition-property: translate, opacity;
-    transition-duration: 0.7s, 0.6s;
-    transition-delay: 0.08s, 0.08s;
-    transition-timing-function: ease-out-cubic;
+    transition-duration: 0.75s, 0.5s;
+    transition-delay: 0.1s, 0.1s;
+    transition-timing-function: ease-out-back, ease-out-cubic;
 }
 
 .menu.screen--visible .menu__actions {
@@ -213,108 +314,134 @@
     right: 0;
     bottom: 0;
     border-radius: 999px;
-    /* velature leggere: il progetto è in spazio colore lineare e il bianco semitrasparente schiarisce molto */
-    --glass-tint-top: rgba(255, 255, 255, 0.05);
+    --glass-tint-top: rgba(255, 255, 255, 0.06);
     --glass-tint-bottom: rgba(255, 255, 255, 0);
-    --glass-rim-top: rgba(255, 255, 255, 0.65);
-    --glass-rim-bottom: rgba(255, 255, 255, 0.06);
-    --glass-rim-width: 1.2;
-    --glass-shadow: rgba(0, 4, 24, 0.30);
-    --glass-shadow-spread: 16;
-    --glass-shadow-offset: 6;
+    --glass-rim-top: rgba(255, 255, 255, 0.75);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.10);
+    --glass-rim-width: 1.6;
+    --glass-shadow: rgba(0, 10, 40, 0.35);
+    --glass-shadow-spread: 14;
+    --glass-shadow-offset: 8;
+    --glass-lip: rgba(0, 0, 0, 0);
+    --glass-lip-height: 0;
 }
 
-/* ---------- Bottoni a capsula ---------- */
+/* ---------- Bottoni da gioco (capsule di vetro colorato con spessore) ---------- */
 
-.glass-button.unity-button,
-.glass-button.unity-button:hover,
-.glass-button.unity-button:active,
-.glass-button.unity-button:focus,
-.glass-button.unity-button:disabled {
+.game-button.unity-button,
+.game-button.unity-button:hover,
+.game-button.unity-button:active,
+.game-button.unity-button:focus,
+.game-button.unity-button:disabled {
     background-color: rgba(0, 0, 0, 0);
     border-width: 0;
     border-radius: 999px;
-    margin: 0 0 14px 0;
-    padding: 0 22px 0 18px;
-    height: 66px;
+    margin: 0 0 18px 0;
+    padding: 0 24px 0 10px;
+    height: 74px;
     flex-direction: row;
     align-items: center;
     -unity-text-align: middle-left;
     color: rgb(255, 255, 255);
 }
 
-.glass-button {
-    transition-property: scale, opacity;
-    transition-duration: 0.14s, 0.25s;
-    transition-timing-function: ease-out-cubic;
+.game-button {
+    transition-property: scale, translate;
+    transition-duration: 0.18s, 0.08s;
+    transition-timing-function: ease-out-back, ease-out-cubic;
 }
 
-.glass-button:active {
-    scale: 0.965 0.965;
+.input-pointer .game-button:hover {
+    scale: 1.04 1.04;
+}
+
+.game-button:active {
+    scale: 0.97 0.97;
+    translate: 0 4px;
+}
+
+.game-button > .glass-fill {
+    --glass-lip-height: 6;
+}
+
+.game-button:active > .glass-fill {
+    --glass-lip-height: 2;
 }
 
 /* disattivato: il vetro resta, si attenua solo il contenuto */
-.glass-button:disabled > .glass-button__icon,
-.glass-button:disabled > .glass-button__texts {
-    opacity: 0.42;
+.game-button:disabled > .game-button__badge,
+.game-button:disabled > .game-button__texts {
+    opacity: 0.5;
 }
 
-.input-pointer .glass-button:hover > .glass-fill {
-    --glass-tint-top: rgba(255, 255, 255, 0.09);
-    --glass-tint-bottom: rgba(255, 255, 255, 0.02);
+.input-pointer .game-button:focus > .glass-fill {
+    --glass-rim-top: rgba(255, 255, 255, 1);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.7);
+    --glass-rim-width: 3;
 }
 
-.glass-button:active > .glass-fill {
-    --glass-tint-top: rgba(255, 255, 255, 0.14);
-    --glass-tint-bottom: rgba(255, 255, 255, 0.05);
+/* principale: arancio dorato */
+.game-button--primary > .glass-fill {
+    --glass-tint-top: rgba(255, 200, 50, 0.93);
+    --glass-tint-bottom: rgba(255, 128, 20, 0.90);
+    --glass-rim-top: rgba(255, 255, 255, 0.95);
+    --glass-rim-bottom: rgba(255, 220, 160, 0.35);
+    --glass-lip: rgb(196, 86, 8);
+    --glass-shadow: rgba(120, 50, 0, 0.45);
 }
 
-.input-pointer .glass-button:focus > .glass-fill {
-    --glass-rim-top: rgba(120, 190, 255, 1);
-    --glass-rim-bottom: rgba(120, 190, 255, 0.6);
-    --glass-rim-width: 2;
+.input-pointer .game-button--primary:hover > .glass-fill {
+    --glass-tint-top: rgba(255, 214, 80, 0.96);
+    --glass-tint-bottom: rgba(255, 142, 30, 0.93);
 }
 
-/* azione principale: vetro colorato */
-.glass-button--primary > .glass-fill {
-    --glass-tint-top: rgba(10, 132, 255, 0.70);
-    --glass-tint-bottom: rgba(10, 100, 230, 0.48);
-    --glass-rim-top: rgba(255, 255, 255, 0.75);
-    --glass-rim-bottom: rgba(255, 255, 255, 0.18);
-    --glass-shadow: rgba(0, 40, 140, 0.40);
+/* secondario: blu cielo */
+.game-button--secondary > .glass-fill {
+    --glass-tint-top: rgba(70, 180, 255, 0.78);
+    --glass-tint-bottom: rgba(24, 110, 240, 0.72);
+    --glass-lip: rgb(14, 66, 160);
 }
 
-.input-pointer .glass-button--primary:hover > .glass-fill {
-    --glass-tint-top: rgba(40, 150, 255, 0.80);
-    --glass-tint-bottom: rgba(20, 115, 245, 0.58);
-}
-
-.glass-button--primary:active > .glass-fill {
-    --glass-tint-top: rgba(60, 160, 255, 0.88);
-    --glass-tint-bottom: rgba(30, 125, 250, 0.66);
-}
-
-.glass-button__icon {
-    width: 22px;
-    height: 22px;
+.game-button__badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 26px;
     margin-right: 14px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.28);
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.75);
+}
+
+.game-button__icon {
+    width: 24px;
+    height: 24px;
     color: rgb(255, 255, 255);
 }
 
-.glass-button__texts {
+.game-button__texts {
     flex-grow: 1;
     justify-content: center;
 }
 
-.glass-button__label {
-    font-size: 18px;
-    -unity-font-style: bold;
+.game-button__label {
+    font-size: 26px;
+    -unity-text-outline-width: 1.6px;
+    -unity-text-outline-color: rgba(90, 40, 0, 0.85);
+    text-shadow: 0 2px 0 rgba(90, 40, 0, 0.55);
 }
 
-.glass-button__detail {
+.game-button--secondary .game-button__label {
+    -unity-text-outline-color: rgba(10, 40, 110, 0.9);
+    text-shadow: 0 2px 0 rgba(10, 40, 110, 0.55);
+}
+
+.game-button__detail {
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.70);
-    margin-top: 1px;
+    -unity-font-style: bold;
+    color: rgba(255, 255, 255, 0.92);
+    margin-top: 0;
 }
 
 /* ---------- Navbar fluttuante ---------- */
@@ -324,13 +451,19 @@
     bottom: 16px;
     align-self: center;
     flex-direction: row;
-    padding: 6px;
-    translate: 0 28px;
+    padding: 6px 10px 8px 10px;
+    translate: 0 60px;
     opacity: 0;
     transition-property: translate, opacity;
-    transition-duration: 0.7s, 0.6s;
-    transition-delay: 0.16s, 0.16s;
-    transition-timing-function: ease-out-cubic;
+    transition-duration: 0.8s, 0.5s;
+    transition-delay: 0.2s, 0.2s;
+    transition-timing-function: ease-out-back, ease-out-cubic;
+}
+
+.navbar > .glass-fill {
+    border-radius: 30px;
+    --glass-lip: rgba(0, 20, 60, 0.35);
+    --glass-lip-height: 4;
 }
 
 .menu.screen--visible .navbar {
@@ -344,11 +477,11 @@
 .nav-item.unity-button:focus {
     background-color: rgba(0, 0, 0, 0);
     border-width: 0;
-    border-radius: 999px;
-    margin: 0;
-    padding: 0;
+    border-radius: 20px;
+    margin: 0 2px;
+    padding: 4px 0 2px 0;
     width: 96px;
-    height: 52px;
+    height: 74px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -356,23 +489,38 @@
 }
 
 .nav-item {
-    transition-property: scale, background-color;
-    transition-duration: 0.14s, 0.18s;
-    transition-timing-function: ease-out-cubic;
+    transition-property: scale, translate;
+    transition-duration: 0.18s, 0.08s;
+    transition-timing-function: ease-out-back, ease-out-cubic;
 }
 
-.input-pointer .nav-item.unity-button:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+.input-pointer .nav-item:hover {
+    scale: 1.08 1.08;
 }
 
 .input-pointer .nav-item.unity-button:focus {
     background-color: rgba(255, 255, 255, 0.07);
 }
 
-.nav-item.unity-button:active {
-    background-color: rgba(255, 255, 255, 0.10);
-    scale: 0.94 0.94;
+.nav-item:active {
+    scale: 0.92 0.92;
+    translate: 0 2px;
 }
+
+.nav-item__badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    align-items: center;
+    justify-content: center;
+    border-width: 2px;
+    border-bottom-width: 4px;
+    border-color: rgba(255, 255, 255, 0.85);
+}
+
+.nav-item--friends .nav-item__badge { background-color: rgb(52, 199, 89); border-bottom-color: rgb(28, 128, 54); }
+.nav-item--settings .nav-item__badge { background-color: rgb(175, 82, 222); border-bottom-color: rgb(110, 44, 150); }
+.nav-item--credits .nav-item__badge { background-color: rgb(255, 159, 10); border-bottom-color: rgb(196, 100, 0); }
 
 .nav-item__icon {
     width: 22px;
@@ -381,10 +529,11 @@
 }
 
 .nav-item__label {
-    font-size: 11px;
-    margin-top: 3px;
-    color: rgba(255, 255, 255, 0.86);
+    font-size: 13px;
+    margin-top: 4px;
     -unity-text-align: middle-center;
+    -unity-text-outline-width: 1.2px;
+    -unity-text-outline-color: rgba(10, 30, 80, 0.85);
 }
 
 /* ---------- Avviso (toast) ---------- */
@@ -395,35 +544,40 @@
     align-self: center;
     flex-direction: row;
     align-items: center;
-    height: 44px;
-    padding: 0 20px 0 16px;
+    height: 50px;
+    padding: 0 22px 0 16px;
     opacity: 0;
-    translate: 0 -14px;
-    transition-property: opacity, translate;
-    transition-duration: 0.3s, 0.4s;
-    transition-timing-function: ease-out-cubic;
+    translate: 0 -40px;
+    scale: 0.8 0.8;
+    transition-property: opacity, translate, scale;
+    transition-duration: 0.25s, 0.5s, 0.5s;
+    transition-timing-function: ease-out-cubic, ease-out-back, ease-out-back;
 }
 
 .toast--visible {
     opacity: 1;
     translate: 0 0;
+    scale: 1 1;
 }
 
 .toast > .glass-fill {
-    --glass-tint-top: rgba(255, 255, 255, 0.08);
-    --glass-tint-bottom: rgba(255, 255, 255, 0.02);
+    --glass-tint-top: rgba(255, 200, 50, 0.92);
+    --glass-tint-bottom: rgba(255, 140, 20, 0.88);
+    --glass-lip: rgb(196, 86, 8);
+    --glass-lip-height: 4;
 }
 
 .toast__icon {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     margin-right: 10px;
     color: rgb(255, 255, 255);
 }
 
 .toast__text {
-    font-size: 14px;
-    -unity-font-style: bold;
+    font-size: 18px;
+    -unity-text-outline-width: 1.4px;
+    -unity-text-outline-color: rgba(90, 40, 0, 0.85);
 }
 
 /* ---------- Versione ---------- */
@@ -433,44 +587,50 @@
     right: 18px;
     bottom: 10px;
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.42);
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 /* ---------- Tablet ---------- */
 
-.layout-medium .logo--hero { width: 144px; height: 144px; }
-.layout-medium .wordmark--hero { font-size: 76px; }
-.layout-medium .tagline { font-size: 18px; }
-.layout-medium .menu__actions { width: 340px; }
-.layout-medium .glass-button.unity-button { height: 72px; }
-.layout-medium .menu { padding: 32px 56px 112px 56px; }
+.layout-medium .logo--hero { width: 150px; height: 150px; }
+.layout-medium .wordmark--hero { font-size: 88px; }
+.layout-medium .tagline { font-size: 19px; }
+.layout-medium .menu__actions { width: 350px; }
+.layout-medium .game-button.unity-button { height: 82px; }
+.layout-medium .game-button__label { font-size: 28px; }
+.layout-medium .menu { padding: 32px 56px 120px 56px; }
 .layout-medium .navbar { bottom: 22px; }
-.layout-medium .nav-item.unity-button { width: 108px; height: 56px; }
+.layout-medium .nav-item.unity-button { width: 108px; height: 80px; }
+.layout-medium .nav-item__badge { width: 50px; height: 50px; border-radius: 25px; }
 
 /* ---------- Desktop ---------- */
 
-.layout-wide .logo--hero { width: 176px; height: 176px; margin-right: 16px; }
-.layout-wide .wordmark--hero { font-size: 96px; letter-spacing: -2px; }
-.layout-wide .tagline { font-size: 20px; }
-.layout-wide .menu__actions { width: 380px; }
-.layout-wide .glass-button.unity-button { height: 76px; padding: 0 26px 0 22px; }
-.layout-wide .glass-button__label { font-size: 19px; }
-.layout-wide .menu { padding: 48px 12% 128px 10%; }
-.layout-wide .navbar { bottom: 28px; padding: 7px; }
-.layout-wide .nav-item.unity-button { width: 112px; height: 58px; }
-.layout-wide .nav-item__label { font-size: 12px; }
-.layout-wide .logo--splash { width: 208px; height: 208px; }
-.layout-wide .wordmark--splash { font-size: 72px; }
+.layout-wide .logo--hero { width: 180px; height: 180px; margin-right: 12px; }
+.layout-wide .wordmark--hero { font-size: 112px; -unity-text-outline-width: 3.5px; }
+.layout-wide .tagline { font-size: 22px; }
+.layout-wide .menu__actions { width: 400px; }
+.layout-wide .game-button.unity-button { height: 88px; padding: 0 28px 0 12px; }
+.layout-wide .game-button__label { font-size: 32px; }
+.layout-wide .game-button__badge { width: 60px; height: 60px; border-radius: 30px; }
+.layout-wide .menu { padding: 48px 10% 140px 8%; }
+.layout-wide .navbar { bottom: 28px; }
+.layout-wide .nav-item.unity-button { width: 116px; height: 84px; }
+.layout-wide .nav-item__badge { width: 52px; height: 52px; border-radius: 26px; }
+.layout-wide .nav-item__label { font-size: 15px; }
+.layout-wide .logo--splash { width: 220px; height: 220px; }
+.layout-wide .wordmark--splash { font-size: 96px; }
 
 /* ---------- Verticale (browser del telefono, menu nel telefono di gioco) ---------- */
 
-.orientation-portrait .menu { padding: 32px 24px 104px 24px; }
-.orientation-portrait .menu__content { flex-direction: column; justify-content: center; }
-.orientation-portrait .menu__hero { flex-direction: column; margin-bottom: 36px; translate: 0 -12px; }
+.orientation-portrait .menu { padding: 40px 24px 112px 24px; }
+.orientation-portrait .menu__content { flex-direction: column; justify-content: space-between; }
+.orientation-portrait .menu__hero { flex-direction: column; translate: 0 -20px; }
 .orientation-portrait.app .menu.screen--visible .menu__hero { translate: 0 0; }
-.orientation-portrait .logo--hero { margin-right: 0; margin-bottom: 4px; }
+.orientation-portrait .logo--hero { margin-right: 0; margin-bottom: 2px; }
 .orientation-portrait .menu__titles { align-items: center; }
 .orientation-portrait .wordmark--hero { -unity-text-align: middle-center; }
 .orientation-portrait .tagline { -unity-text-align: middle-center; }
-.orientation-portrait .menu__actions { width: 100%; max-width: 360px; translate: 0 16px; }
+.orientation-portrait .menu__actions { width: 100%; max-width: 360px; }
 .orientation-portrait .version { top: 10px; bottom: auto; }
+.orientation-portrait .tip { max-width: 92%; }

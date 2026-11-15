@@ -34,6 +34,30 @@
       "it": "Pronto"
     },
     {
+      "key": "loading.percent",
+      "it": "{0}%"
+    },
+    {
+      "key": "loading.tip_title",
+      "it": "Lo sapevi?"
+    },
+    {
+      "key": "tips.1",
+      "it": "Chieti sorge su un colle tra la Majella e il mare Adriatico."
+    },
+    {
+      "key": "tips.2",
+      "it": "Chieti è tra le città più antiche d'Italia: i Romani la chiamavano Teate."
+    },
+    {
+      "key": "tips.3",
+      "it": "In Orbis potrai essere sindaco o semplice cittadino, e cambiare ruolo quando vuoi."
+    },
+    {
+      "key": "tips.4",
+      "it": "Strade ed edifici di Orbis arriveranno dalle mappe vere di OpenStreetMap."
+    },
+    {
       "key": "menu.continue",
       "it": "Continua"
     },
