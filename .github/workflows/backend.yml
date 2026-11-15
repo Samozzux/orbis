@@ -20,7 +20,7 @@ env:
 
 jobs:
   test:
-    name: test (PHP ${{ matrix.php }})
+    name: backend (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -63,6 +63,7 @@ jobs:
         run: php backend/tests/run.php
 
   deploy:
+    name: backend-deploy
     needs: test
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest

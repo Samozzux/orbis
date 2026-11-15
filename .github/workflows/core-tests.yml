@@ -10,7 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  core:
+    name: core
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

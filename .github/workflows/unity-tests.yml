@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   test:
+    name: unity-tests
     # una build Unity alla volta in tutto il repository (licenza Personal, docs/07 §2):
     # le altre aspettano in coda, nessuna viene annullata
     concurrency:

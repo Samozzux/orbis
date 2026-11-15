@@ -20,6 +20,7 @@ permissions:
 
 jobs:
   build:
+    name: web
     # una build Unity alla volta in tutto il repository (licenza Personal, docs/07 §2):
     # le altre aspettano in coda, nessuna viene annullata
     concurrency:
@@ -88,6 +89,7 @@ jobs:
           path: build/web
 
   deploy:
+    name: web-deploy
     needs: build
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
