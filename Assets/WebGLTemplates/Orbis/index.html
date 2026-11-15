@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>{{{ PRODUCT_NAME }}}</title>
+    <meta name="description" content="{{{ ORBIS_DESCRIPTION }}}">
+    <meta name="theme-color" content="#071024">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="{{{ PRODUCT_NAME }}}">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" href="TemplateData/favicon.png">
+    <link rel="apple-touch-icon" href="TemplateData/apple-touch-icon.png">
+    <link rel="stylesheet" href="TemplateData/orbis.css">
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+
+    <div id="orbis-loader" role="status" aria-live="polite">
+      <img id="orbis-loader-logo" src="TemplateData/icon-192.png" alt="">
+      <div id="orbis-loader-title">{{{ PRODUCT_NAME }}}</div>
+      <div id="orbis-loader-bar"><div id="orbis-loader-fill"></div></div>
+      <div id="orbis-loader-text">{{{ ORBIS_LOADING }}}</div>
+    </div>
+
+    <div id="orbis-message" hidden></div>
+
+    <script>
+      (function () {
+        var canvas = document.getElementById("unity-canvas");
+        var loader = document.getElementById("orbis-loader");
+        var fill = document.getElementById("orbis-loader-fill");
+        var message = document.getElementById("orbis-message");
+        var texts = {
+          unsupported: {{{ JSON.stringify(ORBIS_UNSUPPORTED) }}},
+          error: {{{ JSON.stringify(ORBIS_ERROR) }}}
+        };
+
+        function showMessage(text) {
+          loader.hidden = true;
+          message.textContent = text;
+          message.hidden = false;
+        }
+
+        // Banner di Unity: gli errori diventano un messaggio a schermo, gli avvisi vanno solo in console.
+        function unityShowBanner(msg, type) {
+          if (type === "error") showMessage(texts.error);
+          else console.warn(msg);
+        }
+
+        function canRun() {
+          if (typeof WebAssembly !== "object") return false;
+          if (navigator.gpu) return true; // WebGPU
+          try {
+            return !!document.createElement("canvas").getContext("webgl2");
+          } catch (e) {
+            return false;
+          }
+        }
+
+        if (!canRun()) {
+          showMessage(texts.unsupported);
+          return;
+        }
+
+        var buildUrl = "Build";
+        var config = {
+          arguments: [],
+#if PROGRESSIVE_ASSET_LOADING
+          primaryDataUrls: {{{ JSON.stringify(PRIMARY_DATA_FILES) }}},
+          secondaryDataUrls: {{{ JSON.stringify(SECONDARY_DATA_FILES) }}},
+#else
+          dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+#endif
+          frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+#if USE_WASM
+          codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+          symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
+#endif
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+          productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+          productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+          showBanner: unityShowBanner
+        };
+
+        // Sui telefoni la risoluzione del canvas è limitata a 2x per non sprecare GPU.
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          config.devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        }
+
+        var script = document.createElement("script");
+        script.src = buildUrl + "/{{{ LOADER_FILENAME }}}";
+        script.onload = function () {
+          createUnityInstance(canvas, config, function (progress) {
+            fill.style.width = Math.round(100 * progress) + "%";
+          }).then(function () {
+            loader.classList.add("orbis-loader--done");
+            setTimeout(function () { loader.hidden = true; }, 500);
+          }).catch(function (err) {
+            console.error(err);
+            showMessage(texts.error);
+          });
+        };
+        script.onerror = function () { showMessage(texts.error); };
+        document.body.appendChild(script);
+      })();
+    </script>
+  </body>
+</html>
