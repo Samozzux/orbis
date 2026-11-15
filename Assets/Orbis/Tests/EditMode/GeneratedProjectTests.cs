@@ -87,6 +87,23 @@ namespace Orbis.Tests.EditMode
         }
 
         [Test]
+        public void CittaDelMenu_HaTuttiIMateriali()
+        {
+            var names = System.Enum.GetNames(typeof(Orbis.UI.Menu3D.MenuCityMaterial));
+            Assert.That(names.Length, Is.EqualTo(Orbis.UI.Menu3D.MenuCity.MaterialCount));
+            foreach (var n in names)
+            {
+                var mat = AssetDatabase.LoadAssetAtPath<UnityEngine.Material>($"{MenuAssetsGenerator.Folder}/Materials/City_{n}.mat");
+                Assert.That(mat, Is.Not.Null, $"Materiale mancante: {n}");
+                Assert.That(mat.shader.name, Is.EqualTo("Universal Render Pipeline/Simple Lit"));
+            }
+            var blur = AssetDatabase.LoadAssetAtPath<UnityEngine.Material>(MenuAssetsGenerator.BlurMaterial);
+            Assert.That(blur, Is.Not.Null);
+            Assert.That(blur.shader.name, Is.EqualTo(MenuAssetsGenerator.BlurShader));
+            Assert.That(blur.passCount, Is.EqualTo(2));
+        }
+
+        [Test]
         public void ImpostazioniPlayer_ComeDaSpecifica()
         {
             Assert.That(PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.iOS), Is.EqualTo(OrbisPaths.BundleId));
