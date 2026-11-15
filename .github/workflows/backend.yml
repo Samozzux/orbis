@@ -1,0 +1,140 @@
+# Backend PHP (docs/07 §2): test con MySQL 5.7 → config.php dai segreti → deploy FTP su Altervista → verifica /api/health.
+name: Backend
+
+on:
+  push:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ORBIS_API_BASE: https://giuliaa8.altervista.org/orbis/api
+
+jobs:
+  test:
+    name: test (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # 7.0 = versione minima che il codice deve rispettare (Altervista PHP 7.x); 8.3 = futuro
+        php: ['7.0', '8.3']
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: test
+          MYSQL_DATABASE: orbis_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_mysql, mbstring, openssl, zlib, json
+          coverage: none
+
+      - name: Sintassi PHP
+        run: find backend -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Test
+        env:
+          ORBIS_TEST_DB_HOST: 127.0.0.1
+          ORBIS_TEST_DB_PORT: '3306'
+          ORBIS_TEST_DB_NAME: orbis_test
+          ORBIS_TEST_DB_USER: root
+          ORBIS_TEST_DB_PASSWORD: test
+        run: php backend/tests/run.php
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: backend-deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+
+      - name: Genera config.php dai segreti
+        env:
+          FTP_USER: ${{ secrets.FTP_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ORBIS_JWT_SECRET: ${{ secrets.ORBIS_JWT_SECRET }}
+          ORBIS_ADMIN_USERNAME: ${{ vars.ORBIS_ADMIN_USERNAME }}
+        run: |
+          php -r '
+            $user = (string)getenv("FTP_USER");
+            $config = array(
+              "env" => "production",
+              // Altervista: database "my_<sito>", utente "<sito>", host localhost
+              "db" => array("host" => "localhost", "port" => 3306, "name" => "my_" . $user, "user" => $user, "password" => (string)getenv("DB_PASSWORD")),
+              "jwt_secret" => (string)getenv("ORBIS_JWT_SECRET"),
+              "admin_username" => (string)getenv("ORBIS_ADMIN_USERNAME"),
+              "cors_origins" => array("https://samozzux.github.io"),
+              "cors_allow_localhost" => true,
+            );
+            file_put_contents("backend/config.php", "<?php\n// Generato da .github/workflows/backend.yml: non modificare.\nreturn " . var_export($config, true) . ";\n");
+          '
+          php -l backend/config.php
+          if [ -z "$ORBIS_JWT_SECRET" ]; then echo "::warning::Secret ORBIS_JWT_SECRET non impostato (servirà da M3)"; fi
+          if [ -z "$ORBIS_ADMIN_USERNAME" ]; then echo "::warning::Variabile ORBIS_ADMIN_USERNAME non impostata"; fi
+
+      # Altervista accetta FTP con TLS esplicito; il certificato è per *.altervista.org,
+      # quindi il nome ftp.<sito>.altervista.org non corrisponde: "loose" accetta comunque la cifratura.
+      - name: Deploy FTP su Altervista (/orbis/)
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          security: loose
+          local-dir: ./backend/
+          server-dir: /orbis/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            tests/**
+            storage/migrations.ok
+
+      - name: Verifica /api/health
+        run: |
+          code=0
+          for i in 1 2 3 4 5 6; do
+            code=$(curl -sS -o health.json -w '%{http_code}' -H 'Origin: https://samozzux.github.io' "$ORBIS_API_BASE/health" || echo 000)
+            if [ "$code" = "200" ]; then break; fi
+            alt=$(curl -sS -o health-alt.json -w '%{http_code}' "$ORBIS_API_BASE/index.php?route=health" || echo 000)
+            echo "Tentativo $i: /health → $code, index.php?route=health → $alt"
+            sleep 10
+          done
+          cat health.json || true
+          {
+            echo "### /orbis/api/health → HTTP $code"
+            echo '```json'
+            cat health.json || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          test "$code" = "200"

@@ -1,0 +1,58 @@
+# Test Unity EditMode e PlayMode (docs/07 §2): sulle pull request e a mano.
+name: Unity tests
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unity-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Cache Library
+        uses: actions/cache@v6
+        with:
+          path: Library
+          key: Library-Tests-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ github.sha }}
+          restore-keys: |
+            Library-Tests-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-
+            Library-Tests-
+
+      - name: Installa Unity
+        uses: buildalon/unity-setup@v3
+        with:
+          version-file: ProjectSettings/ProjectVersion.txt
+          modules: None
+
+      - name: Attiva la licenza Unity
+        uses: buildalon/activate-unity-license@v3
+        with:
+          license: personal
+          username: ${{ secrets.UNITY_EMAIL }}
+          password: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Test EditMode
+        run: |
+          "$UNITY_EDITOR_PATH" -batchmode -nographics -projectPath . -runTests -testPlatform EditMode \
+            -testResults "$PWD/test-results/editmode.xml" -logFile -
+
+      - name: Test PlayMode
+        run: |
+          "$UNITY_EDITOR_PATH" -batchmode -nographics -projectPath . -runTests -testPlatform PlayMode \
+            -testResults "$PWD/test-results/playmode.xml" -logFile -
+
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: unity-test-results
+          path: test-results/

@@ -1,0 +1,24 @@
+# Test della logica pura (Orbis.Core) con .NET, senza Unity: veloce, a ogni push e PR.
+name: Core tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: dotnet test
+        run: dotnet test tests/Orbis.Core.Tests --logger "console;verbosity=normal"

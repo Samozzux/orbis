@@ -1,0 +1,101 @@
+# Build Web (WebGPU con ripiego WebGL 2) → GitHub Pages: https://samozzux.github.io/orbis/
+name: Web build
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+    paths:
+      - 'Assets/**'
+      - 'Packages/**'
+      - 'ProjectSettings/**'
+      - 'data/localization/**'
+      - '.github/workflows/web-build.yml'
+      - '.github/scripts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-build-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Libera spazio su disco
+        uses: jlumbroso/free-disk-space@v2.0.0
+        with:
+          tool-cache: false
+          large-packages: false
+
+      - uses: actions/checkout@v7
+        with:
+          fetch-tags: true
+
+      - name: Versione
+        run: .github/scripts/orbis-env.sh
+
+      - name: Cache Library
+        uses: actions/cache@v6
+        with:
+          path: Library
+          key: Library-WebGL-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ github.sha }}
+          restore-keys: |
+            Library-WebGL-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-
+            Library-WebGL-
+
+      - name: Installa Unity
+        uses: buildalon/unity-setup@v3
+        with:
+          version-file: ProjectSettings/ProjectVersion.txt
+          build-targets: WebGL
+
+      - name: Attiva la licenza Unity
+        uses: buildalon/activate-unity-license@v3
+        with:
+          license: personal
+          username: ${{ secrets.UNITY_EMAIL }}
+          password: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Build
+        run: |
+          "$UNITY_EDITOR_PATH" -batchmode -nographics -quit -projectPath . -buildTarget WebGL \
+            -executeMethod Orbis.EditorTools.Build.BuildScript.BuildWeb -logFile -
+
+      - name: Controlla dimensione (max 60 MB compressi)
+        run: |
+          bytes=$(du -sb build/web | cut -f1)
+          mb=$(( bytes / 1024 / 1024 ))
+          echo "Build web: ${mb} MB"
+          {
+            echo "### Build web: ${mb} MB (limite 60 MB)"
+            echo '```'
+            ls -la build/web/Build
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          test "$mb" -le 60
+
+      - name: Prepara per GitHub Pages
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: build/web
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Pubblica su GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
