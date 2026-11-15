@@ -1,0 +1,472 @@
+/*
+ * Orbis — stile dell'interfaccia: minimal, moderno, "liquid glass" come iOS 26.
+ * 1 px USS = 1 punto logico (vedi AdaptiveLayout). Classi di layout sull'elemento .app:
+ * layout-compact (telefono), layout-medium (tablet), layout-wide (desktop), orientation-portrait,
+ * input-touch / input-pointer.
+ */
+
+/* ---------- Base ---------- */
+
+.app {
+    flex-grow: 1;
+    color: rgb(255, 255, 255);
+    font-size: 15px;
+    --accent: rgb(10, 132, 255);
+}
+
+.backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.safe-area {
+    flex-grow: 1;
+}
+
+.app Label {
+    padding: 0;
+    margin: 0;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}
+
+/* ---------- Schermate e transizioni ---------- */
+
+.screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.screen--visible {
+    opacity: 1;
+}
+
+/* ---------- Logo e marchio ---------- */
+
+.logo {
+    flex-shrink: 0;
+    --logo-color: rgb(255, 255, 255);
+    --logo-accent: rgb(100, 210, 255);
+}
+
+.wordmark {
+    -unity-font-style: bold;
+    letter-spacing: -1px;
+    text-shadow: 0 2px 16px rgba(0, 10, 40, 0.45);
+}
+
+.tagline {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+/* ---------- Logo iniziale ---------- */
+
+.splash {
+    align-items: center;
+    justify-content: center;
+}
+
+.logo--splash {
+    width: 168px;
+    height: 168px;
+    scale: 0.86 0.86;
+    transition-property: scale;
+    transition-duration: 1.4s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.splash.screen--visible .logo--splash {
+    scale: 1 1;
+}
+
+.wordmark--splash {
+    font-size: 56px;
+    margin-top: 4px;
+    -unity-text-align: middle-center;
+}
+
+/* ---------- Caricamento ---------- */
+
+.loading {
+    align-items: center;
+    justify-content: center;
+}
+
+.logo--loading {
+    width: 112px;
+    height: 112px;
+}
+
+.wordmark--loading {
+    font-size: 40px;
+    -unity-text-align: middle-center;
+}
+
+.progress {
+    width: 260px;
+    height: 16px;
+    margin-top: 28px;
+    padding: 4px;
+}
+
+.progress > .glass-fill {
+    border-radius: 8px;
+    --glass-shadow-spread: 8;
+    --glass-shadow-offset: 3;
+}
+
+.progress__track {
+    flex-grow: 1;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress__fill {
+    width: 0;
+    height: 100%;
+    border-radius: 4px;
+    background-color: rgb(100, 210, 255);
+}
+
+.loading__status {
+    margin-top: 12px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.66);
+    -unity-text-align: middle-center;
+}
+
+/* ---------- Menu principale ---------- */
+
+.menu {
+    padding: 20px 40px 96px 40px;
+}
+
+.menu__content {
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu__hero {
+    flex-direction: row;
+    align-items: center;
+    flex-shrink: 1;
+    translate: -18px 0;
+    opacity: 0;
+    transition-property: translate, opacity;
+    transition-duration: 0.7s, 0.7s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.menu.screen--visible .menu__hero {
+    translate: 0 0;
+    opacity: 1;
+}
+
+.logo--hero {
+    width: 112px;
+    height: 112px;
+    margin-right: 8px;
+}
+
+.wordmark--hero {
+    font-size: 56px;
+}
+
+.menu__actions {
+    width: 300px;
+    flex-shrink: 0;
+    translate: 24px 0;
+    opacity: 0;
+    transition-property: translate, opacity;
+    transition-duration: 0.7s, 0.6s;
+    transition-delay: 0.08s, 0.08s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.menu.screen--visible .menu__actions {
+    translate: 0 0;
+    opacity: 1;
+}
+
+/* ---------- Superfici di vetro ---------- */
+
+.glass-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 999px;
+    --glass-tint-top: rgba(255, 255, 255, 0.15);
+    --glass-tint-bottom: rgba(255, 255, 255, 0.05);
+    --glass-rim-top: rgba(255, 255, 255, 0.60);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.10);
+    --glass-rim-width: 1.2;
+    --glass-shadow: rgba(0, 4, 24, 0.30);
+    --glass-shadow-spread: 16;
+    --glass-shadow-offset: 6;
+}
+
+/* ---------- Bottoni a capsula ---------- */
+
+.glass-button.unity-button,
+.glass-button.unity-button:hover,
+.glass-button.unity-button:active,
+.glass-button.unity-button:focus,
+.glass-button.unity-button:disabled {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-radius: 999px;
+    margin: 0 0 14px 0;
+    padding: 0 22px 0 18px;
+    height: 66px;
+    flex-direction: row;
+    align-items: center;
+    -unity-text-align: middle-left;
+    color: rgb(255, 255, 255);
+}
+
+.glass-button {
+    transition-property: scale, opacity;
+    transition-duration: 0.14s, 0.25s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.glass-button:active {
+    scale: 0.965 0.965;
+}
+
+.glass-button:disabled {
+    opacity: 0.5;
+}
+
+.input-pointer .glass-button:hover > .glass-fill {
+    --glass-tint-top: rgba(255, 255, 255, 0.22);
+    --glass-tint-bottom: rgba(255, 255, 255, 0.09);
+}
+
+.glass-button:active > .glass-fill {
+    --glass-tint-top: rgba(255, 255, 255, 0.28);
+    --glass-tint-bottom: rgba(255, 255, 255, 0.12);
+}
+
+.input-pointer .glass-button:focus > .glass-fill {
+    --glass-rim-top: rgba(120, 190, 255, 1);
+    --glass-rim-bottom: rgba(120, 190, 255, 0.6);
+    --glass-rim-width: 2;
+}
+
+/* azione principale: vetro colorato */
+.glass-button--primary > .glass-fill {
+    --glass-tint-top: rgba(10, 132, 255, 0.70);
+    --glass-tint-bottom: rgba(10, 100, 230, 0.48);
+    --glass-rim-top: rgba(255, 255, 255, 0.75);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.18);
+    --glass-shadow: rgba(0, 40, 140, 0.40);
+}
+
+.input-pointer .glass-button--primary:hover > .glass-fill {
+    --glass-tint-top: rgba(40, 150, 255, 0.80);
+    --glass-tint-bottom: rgba(20, 115, 245, 0.58);
+}
+
+.glass-button--primary:active > .glass-fill {
+    --glass-tint-top: rgba(60, 160, 255, 0.88);
+    --glass-tint-bottom: rgba(30, 125, 250, 0.66);
+}
+
+.glass-button__icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 14px;
+    color: rgb(255, 255, 255);
+}
+
+.glass-button__texts {
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.glass-button__label {
+    font-size: 18px;
+    -unity-font-style: bold;
+}
+
+.glass-button__detail {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.70);
+    margin-top: 1px;
+}
+
+/* ---------- Navbar fluttuante ---------- */
+
+.navbar {
+    position: absolute;
+    bottom: 16px;
+    align-self: center;
+    flex-direction: row;
+    padding: 6px;
+    translate: 0 28px;
+    opacity: 0;
+    transition-property: translate, opacity;
+    transition-duration: 0.7s, 0.6s;
+    transition-delay: 0.16s, 0.16s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.menu.screen--visible .navbar {
+    translate: 0 0;
+    opacity: 1;
+}
+
+.nav-item.unity-button,
+.nav-item.unity-button:hover,
+.nav-item.unity-button:active,
+.nav-item.unity-button:focus {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    border-radius: 999px;
+    margin: 0;
+    padding: 0;
+    width: 96px;
+    height: 52px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255, 255, 255);
+}
+
+.nav-item {
+    transition-property: scale, background-color;
+    transition-duration: 0.14s, 0.18s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.input-pointer .nav-item.unity-button:hover {
+    background-color: rgba(255, 255, 255, 0.10);
+}
+
+.input-pointer .nav-item.unity-button:focus {
+    background-color: rgba(255, 255, 255, 0.16);
+}
+
+.nav-item.unity-button:active {
+    background-color: rgba(255, 255, 255, 0.20);
+    scale: 0.94 0.94;
+}
+
+.nav-item__icon {
+    width: 22px;
+    height: 22px;
+    color: rgb(255, 255, 255);
+}
+
+.nav-item__label {
+    font-size: 11px;
+    margin-top: 3px;
+    color: rgba(255, 255, 255, 0.86);
+    -unity-text-align: middle-center;
+}
+
+/* ---------- Avviso (toast) ---------- */
+
+.toast {
+    position: absolute;
+    top: 14px;
+    align-self: center;
+    flex-direction: row;
+    align-items: center;
+    height: 44px;
+    padding: 0 20px 0 16px;
+    opacity: 0;
+    translate: 0 -14px;
+    transition-property: opacity, translate;
+    transition-duration: 0.3s, 0.4s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.toast--visible {
+    opacity: 1;
+    translate: 0 0;
+}
+
+.toast > .glass-fill {
+    --glass-tint-top: rgba(255, 255, 255, 0.20);
+    --glass-tint-bottom: rgba(255, 255, 255, 0.10);
+}
+
+.toast__icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    color: rgb(255, 255, 255);
+}
+
+.toast__text {
+    font-size: 14px;
+    -unity-font-style: bold;
+}
+
+/* ---------- Versione ---------- */
+
+.version {
+    position: absolute;
+    right: 18px;
+    bottom: 10px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.42);
+}
+
+/* ---------- Tablet ---------- */
+
+.layout-medium .logo--hero { width: 144px; height: 144px; }
+.layout-medium .wordmark--hero { font-size: 76px; }
+.layout-medium .tagline { font-size: 18px; }
+.layout-medium .menu__actions { width: 340px; }
+.layout-medium .glass-button.unity-button { height: 72px; }
+.layout-medium .menu { padding: 32px 56px 112px 56px; }
+.layout-medium .navbar { bottom: 22px; }
+.layout-medium .nav-item.unity-button { width: 108px; height: 56px; }
+
+/* ---------- Desktop ---------- */
+
+.layout-wide .logo--hero { width: 176px; height: 176px; margin-right: 16px; }
+.layout-wide .wordmark--hero { font-size: 96px; letter-spacing: -2px; }
+.layout-wide .tagline { font-size: 20px; }
+.layout-wide .menu__actions { width: 380px; }
+.layout-wide .glass-button.unity-button { height: 76px; padding: 0 26px 0 22px; }
+.layout-wide .glass-button__label { font-size: 19px; }
+.layout-wide .menu { padding: 48px 12% 128px 10%; }
+.layout-wide .navbar { bottom: 28px; padding: 7px; }
+.layout-wide .nav-item.unity-button { width: 112px; height: 58px; }
+.layout-wide .nav-item__label { font-size: 12px; }
+.layout-wide .logo--splash { width: 208px; height: 208px; }
+.layout-wide .wordmark--splash { font-size: 72px; }
+
+/* ---------- Verticale (browser del telefono, menu nel telefono di gioco) ---------- */
+
+.orientation-portrait .menu { padding: 32px 24px 104px 24px; }
+.orientation-portrait .menu__content { flex-direction: column; justify-content: center; }
+.orientation-portrait .menu__hero { flex-direction: column; margin-bottom: 36px; translate: 0 -12px; }
+.orientation-portrait.app .menu.screen--visible .menu__hero { translate: 0 0; }
+.orientation-portrait .logo--hero { margin-right: 0; margin-bottom: 4px; }
+.orientation-portrait .menu__titles { align-items: center; }
+.orientation-portrait .wordmark--hero { -unity-text-align: middle-center; }
+.orientation-portrait .tagline { -unity-text-align: middle-center; }
+.orientation-portrait .menu__actions { width: 100%; max-width: 360px; translate: 0 16px; }
+.orientation-portrait .version { top: 10px; bottom: auto; }
