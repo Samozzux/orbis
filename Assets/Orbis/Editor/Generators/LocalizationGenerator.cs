@@ -132,10 +132,14 @@ namespace Orbis.EditorTools
 
         private static void EnsureStartupSelector(LocalizationSettings settings, Locale locale)
         {
-            // con una sola lingua si parte sempre in italiano, qualunque sia la lingua del dispositivo
+            // con una sola lingua si parte sempre in italiano, qualunque sia la lingua del dispositivo.
+            // Attenzione: le impostazioni nuove contengono già un SpecificLocaleSelector impostato su "en".
             var selectors = settings.GetStartupLocaleSelectors();
-            if (!selectors.OfType<SpecificLocaleSelector>().Any())
-                selectors.Insert(0, new SpecificLocaleSelector { LocaleId = locale.Identifier });
+            var specific = selectors.OfType<SpecificLocaleSelector>().ToList();
+            if (specific.Count == 0)
+                selectors.Add(new SpecificLocaleSelector { LocaleId = locale.Identifier });
+            foreach (var s in specific)
+                s.LocaleId = locale.Identifier;
         }
 
         internal static void EnsureFolder(string path)

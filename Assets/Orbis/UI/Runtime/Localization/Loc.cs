@@ -36,6 +36,17 @@ namespace Orbis.UI.Localization
                 yield break;
             }
 
+            if (LocalizationSettings.SelectedLocale == null)
+            {
+                var locales = LocalizationSettings.AvailableLocales.Locales;
+                if (locales.Count == 0)
+                {
+                    Debug.LogError("[Orbis] Nessuna lingua disponibile in Localization.");
+                    yield break;
+                }
+                LocalizationSettings.SelectedLocale = locales[0];
+            }
+
             var op = LocalizationSettings.StringDatabase.GetTableAsync(TableName);
             yield return op;
             if (op.Status == AsyncOperationStatus.Succeeded && op.Result != null)

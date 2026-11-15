@@ -6,6 +6,7 @@ using Orbis.EditorTools;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Localization;
+using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.UIElements;
 
@@ -72,6 +73,17 @@ namespace Orbis.Tests.EditMode
                 Assert.That(entry, Is.Not.Null, $"Manca {e.key}");
                 Assert.That(entry.Value, Is.EqualTo(e.it), $"Testo diverso per {e.key}: rigenerare il progetto");
             }
+        }
+
+        [Test]
+        public void LinguaDiAvvio_SempreItaliano()
+        {
+            // su dispositivi in un'altra lingua il selettore "specifico" deve scegliere l'italiano
+            var settings = LocalizationEditorSettings.ActiveLocalizationSettings;
+            Assert.That(settings, Is.Not.Null);
+            var specific = settings.GetStartupLocaleSelectors().OfType<SpecificLocaleSelector>().ToList();
+            Assert.That(specific, Is.Not.Empty, "Manca il selettore di lingua specifico");
+            Assert.That(specific.Select(s => s.LocaleId.Code), Is.All.EqualTo(LocalizationGenerator.LocaleCode));
         }
 
         [Test]
