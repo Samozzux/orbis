@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using Orbis.Platform;
@@ -23,23 +24,25 @@ namespace Orbis.UI.App
         private readonly Label _toastText;
         private IVisualElementScheduledItem _toastHide;
 
-        public MainMenuController(VisualElement root, IPlatformServices services)
+        /// <param name="menu">schermata del menu</param>
+        /// <param name="toast">avviso a capsula (sta fuori dal menu, sopra tutte le schermate)</param>
+        public MainMenuController(VisualElement menu, VisualElement toast, IPlatformServices services)
         {
-            _root = root;
+            _root = menu;
             _services = services;
-            _continue = root.Q<Button>("btn-continue");
-            _newGame = root.Q<Button>("btn-new-game");
-            _toast = root.Q("toast");
-            _toastText = root.Q<Label>("toast-text");
+            _continue = Require<Button>(menu, "btn-continue");
+            _newGame = Require<Button>(menu, "btn-new-game");
+            _toast = toast ?? throw new ArgumentNullException(nameof(toast));
+            _toastText = Require<Label>(toast, "toast-text");
 
             _newGame.clicked += ComingSoon;
             _continue.clicked += ComingSoon;
             foreach (var id in new[] { "nav-friends", "nav-settings", "nav-credits" })
-                root.Q<Button>(id).clicked += ComingSoon;
+                Require<Button>(menu, id).clicked += ComingSoon;
 
             var build = BuildInfo.Load();
             var device = services.DeviceProfile.Info;
-            root.Q<Label>("version").text =
+            Require<Label>(menu, "version").text =
                 $"{Loc.Format("menu.version", build.version, build.build)} · {device.Platform} · {device.GraphicsApi}";
         }
 
@@ -51,7 +54,7 @@ namespace Orbis.UI.App
                 yield return null;
             var hasSaves = list.Status == TaskStatus.RanToCompletion && list.Result.Count > 0;
             _continue.SetEnabled(hasSaves);
-            _root.Q<Label>("continue-detail").text = Loc.Get(hasSaves ? "menu.continue.detail" : "menu.continue.empty");
+            Require<Label>(_root, "continue-detail").text = Loc.Get(hasSaves ? "menu.continue.detail" : "menu.continue.empty");
         }
 
         public void OnShown()
@@ -61,14 +64,19 @@ namespace Orbis.UI.App
                 _newGame.Focus();
         }
 
+        /// <summary>Elemento obbligatorio: sul web i null non generano eccezioni, quindi si controlla qui.</summary>
+        internal static T Require<T>(VisualElement parent, string name) where T : VisualElement =>
+            parent.Q<T>(name) ?? throw new InvalidOperationException($"Elemento UI mancante: {typeof(T).Name} '{name}'");
+
+        public bool IsToastVisible => _toast.ClassListContains("toast--visible");
+
         private void ComingSoon()
         {
             _services.Haptics.Play(HapticKind.Selection);
             _toastText.text = Loc.Get("menu.coming_soon");
             _toast.AddToClassList("toast--visible");
             _toastHide?.Pause();
-            _toastHide = _toast.schedule.Execute(() => _toast.RemoveFromClassList("toast--visible"));
-            _toastHide.ExecuteLater(ToastMs);
+            _toastHide = _toast.schedule.Execute(() => _toast.RemoveFromClassList("toast--visible")).StartingIn(ToastMs);
         }
     }
 }

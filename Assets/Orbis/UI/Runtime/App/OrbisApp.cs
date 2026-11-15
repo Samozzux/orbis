@@ -30,6 +30,9 @@ namespace Orbis.UI.App
 
         public AppState State { get; private set; } = AppState.Starting;
 
+        /// <summary>Menu principale (disponibile quando <see cref="State"/> è MainMenu).</summary>
+        public MainMenuController MainMenu => _mainMenu;
+
         private UIDocument _document;
         private AdaptiveLayout _layout;
         private readonly ScreenSwitcher _screens = new ScreenSwitcher();
@@ -58,14 +61,15 @@ namespace Orbis.UI.App
         {
             var root = _document.rootVisualElement;
             var services = PlatformServices.Current;
-            _layout = new AdaptiveLayout(_document.panelSettings, services.DeviceProfile, root.Q("app"), root.Q("safe-area"));
+            _layout = new AdaptiveLayout(_document.panelSettings, services.DeviceProfile,
+                MainMenuController.Require<VisualElement>(root, "app"), MainMenuController.Require<VisualElement>(root, "safe-area"));
             _layout.Update(force: true);
 
-            _splash = root.Q("splash");
-            _loading = root.Q("loading");
-            _menu = root.Q("menu");
-            _progressFill = root.Q("progress-fill");
-            _loadingStatus = root.Q<Label>("loading-status");
+            _splash = MainMenuController.Require<VisualElement>(root, "splash");
+            _loading = MainMenuController.Require<VisualElement>(root, "loading");
+            _menu = MainMenuController.Require<VisualElement>(root, "menu");
+            _progressFill = MainMenuController.Require<VisualElement>(root, "progress-fill");
+            _loadingStatus = MainMenuController.Require<Label>(root, "loading-status");
             _screens.Register(_splash);
             _screens.Register(_loading);
             _screens.Register(_menu);
@@ -118,7 +122,7 @@ namespace Orbis.UI.App
             _loadingStatus.text = Loc.Get("loading.ready");
 
             // 4) menu principale
-            _mainMenu = new MainMenuController(_menu, services);
+            _mainMenu = new MainMenuController(_menu, MainMenuController.Require<VisualElement>(root, "toast"), services);
             yield return _mainMenu.Prepare();
             State = AppState.MainMenu;
             _screens.Show(_menu);

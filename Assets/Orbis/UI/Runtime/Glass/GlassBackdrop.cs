@@ -30,6 +30,9 @@ namespace Orbis.UI.Glass
             var pixels = Wallpaper.Generate(Width, Height, seed: 1907);
             Sharp = CreateTexture("OrbisBackdrop", Width, Height, pixels);
             var small = Wallpaper.Blur(Wallpaper.Downsample(pixels, Width, Height, BlurDownsample, out var w, out var h), w, h, radius: 3, passes: 3);
+            // "vibrancy" come su iOS: il vetro schiarisce e satura un po' ciò che sta dietro.
+            // Si fa qui, in sRGB, perché le velature semitrasparenti nel progetto (spazio lineare) schiariscono troppo.
+            Wallpaper.Vibrancy(small, lighten: 0.10f, saturation: 1.3f);
             Blurred = CreateTexture("OrbisBackdropBlurred", w, h, small);
         }
 

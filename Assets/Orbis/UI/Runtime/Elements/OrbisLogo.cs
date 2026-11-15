@@ -13,6 +13,7 @@ namespace Orbis.UI.Elements
     {
         private static readonly CustomStyleProperty<Color> ColorProp = new CustomStyleProperty<Color>("--logo-color");
         private static readonly CustomStyleProperty<Color> AccentProp = new CustomStyleProperty<Color>("--logo-accent");
+        private static readonly CustomStyleProperty<Color> FillProp = new CustomStyleProperty<Color>("--logo-fill");
 
         private const float Tilt = 0.38f;       // inclinazione dell'asse (radianti)
         private const float SpinSpeed = 0.22f;  // radianti al secondo
@@ -20,6 +21,7 @@ namespace Orbis.UI.Elements
 
         private Color _color = Color.white;
         private Color _accent = new Color(0.35f, 0.78f, 0.98f, 1f);
+        private Color _fill = new Color(0.03f, 0.06f, 0.14f, 0.55f);
         private float _time;
         private readonly List<Vector3> _points = new List<Vector3>(96);
 
@@ -34,6 +36,7 @@ namespace Orbis.UI.Elements
             {
                 if (e.customStyle.TryGetValue(ColorProp, out var c)) _color = c;
                 if (e.customStyle.TryGetValue(AccentProp, out var a)) _accent = a;
+                if (e.customStyle.TryGetValue(FillProp, out var f)) _fill = f;
                 MarkDirtyRepaint();
             });
             schedule.Execute(t =>
@@ -62,8 +65,8 @@ namespace Orbis.UI.Elements
             // metà posteriore dell'orbita (dietro al globo)
             DrawOrbit(p, c, radius, line, back: true);
 
-            // disco del globo: leggermente pieno per "coprire" l'orbita posteriore
-            p.fillColor = new Color(_color.r, _color.g, _color.b, 0.07f);
+            // disco del globo: riempimento scuro semitrasparente per "coprire" l'orbita posteriore
+            p.fillColor = _fill;
             p.BeginPath();
             p.Arc(c, radius, Angle.Degrees(0f), Angle.Degrees(360f));
             p.Fill();

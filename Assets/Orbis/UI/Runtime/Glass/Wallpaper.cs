@@ -87,6 +87,22 @@ namespace Orbis.UI.Glass
             return dst;
         }
 
+        /// <summary>Schiarisce verso il bianco e aumenta la saturazione (valori sRGB).</summary>
+        public static void Vibrancy(Color32[] pixels, float lighten, float saturation)
+        {
+            for (var i = 0; i < pixels.Length; i++)
+            {
+                Color c = pixels[i];
+                var grey = c.r * 0.299f + c.g * 0.587f + c.b * 0.114f;
+                c.r = Mathf.Clamp01(grey + (c.r - grey) * saturation);
+                c.g = Mathf.Clamp01(grey + (c.g - grey) * saturation);
+                c.b = Mathf.Clamp01(grey + (c.b - grey) * saturation);
+                c = Color.Lerp(c, Color.white, lighten);
+                c.a = 1f;
+                pixels[i] = c;
+            }
+        }
+
         /// <summary>Sfocatura a box separabile ripetuta (approssima una gaussiana).</summary>
         public static Color32[] Blur(Color32[] src, int width, int height, int radius, int passes)
         {

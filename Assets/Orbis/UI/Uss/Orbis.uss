@@ -58,6 +58,7 @@
     flex-shrink: 0;
     --logo-color: rgb(255, 255, 255);
     --logo-accent: rgb(100, 210, 255);
+    --logo-fill: rgba(6, 14, 34, 0.55);
 }
 
 .wordmark {
@@ -212,10 +213,11 @@
     right: 0;
     bottom: 0;
     border-radius: 999px;
-    --glass-tint-top: rgba(255, 255, 255, 0.15);
-    --glass-tint-bottom: rgba(255, 255, 255, 0.05);
-    --glass-rim-top: rgba(255, 255, 255, 0.60);
-    --glass-rim-bottom: rgba(255, 255, 255, 0.10);
+    /* velature leggere: il progetto è in spazio colore lineare e il bianco semitrasparente schiarisce molto */
+    --glass-tint-top: rgba(255, 255, 255, 0.05);
+    --glass-tint-bottom: rgba(255, 255, 255, 0);
+    --glass-rim-top: rgba(255, 255, 255, 0.65);
+    --glass-rim-bottom: rgba(255, 255, 255, 0.06);
     --glass-rim-width: 1.2;
     --glass-shadow: rgba(0, 4, 24, 0.30);
     --glass-shadow-spread: 16;
@@ -251,18 +253,20 @@
     scale: 0.965 0.965;
 }
 
-.glass-button:disabled {
-    opacity: 0.5;
+/* disattivato: il vetro resta, si attenua solo il contenuto */
+.glass-button:disabled > .glass-button__icon,
+.glass-button:disabled > .glass-button__texts {
+    opacity: 0.42;
 }
 
 .input-pointer .glass-button:hover > .glass-fill {
-    --glass-tint-top: rgba(255, 255, 255, 0.22);
-    --glass-tint-bottom: rgba(255, 255, 255, 0.09);
+    --glass-tint-top: rgba(255, 255, 255, 0.09);
+    --glass-tint-bottom: rgba(255, 255, 255, 0.02);
 }
 
 .glass-button:active > .glass-fill {
-    --glass-tint-top: rgba(255, 255, 255, 0.28);
-    --glass-tint-bottom: rgba(255, 255, 255, 0.12);
+    --glass-tint-top: rgba(255, 255, 255, 0.14);
+    --glass-tint-bottom: rgba(255, 255, 255, 0.05);
 }
 
 .input-pointer .glass-button:focus > .glass-fill {
@@ -358,15 +362,15 @@
 }
 
 .input-pointer .nav-item.unity-button:hover {
-    background-color: rgba(255, 255, 255, 0.10);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .input-pointer .nav-item.unity-button:focus {
-    background-color: rgba(255, 255, 255, 0.16);
+    background-color: rgba(255, 255, 255, 0.07);
 }
 
 .nav-item.unity-button:active {
-    background-color: rgba(255, 255, 255, 0.20);
+    background-color: rgba(255, 255, 255, 0.10);
     scale: 0.94 0.94;
 }
 
@@ -406,8 +410,8 @@
 }
 
 .toast > .glass-fill {
-    --glass-tint-top: rgba(255, 255, 255, 0.20);
-    --glass-tint-bottom: rgba(255, 255, 255, 0.10);
+    --glass-tint-top: rgba(255, 255, 255, 0.08);
+    --glass-tint-bottom: rgba(255, 255, 255, 0.02);
 }
 
 .toast__icon {

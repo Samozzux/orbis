@@ -22,8 +22,8 @@ namespace Orbis.UI.Glass
         private static readonly CustomStyleProperty<float> ShadowSpreadProp = new CustomStyleProperty<float>("--glass-shadow-spread");
         private static readonly CustomStyleProperty<float> ShadowOffsetProp = new CustomStyleProperty<float>("--glass-shadow-offset");
 
-        private Color _tintTop = new Color(1f, 1f, 1f, 0.14f);
-        private Color _tintBottom = new Color(1f, 1f, 1f, 0.05f);
+        private Color _tintTop = new Color(1f, 1f, 1f, 0.05f);
+        private Color _tintBottom = new Color(1f, 1f, 1f, 0f);
         private Color _rimTop = new Color(1f, 1f, 1f, 0.55f);
         private Color _rimBottom = new Color(1f, 1f, 1f, 0.10f);
         private Color _shadow = new Color(0f, 0f, 0.05f, 0.28f);
