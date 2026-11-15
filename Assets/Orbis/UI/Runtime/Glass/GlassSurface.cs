@@ -21,6 +21,8 @@ namespace Orbis.UI.Glass
         private static readonly CustomStyleProperty<float> RimWidthProp = new CustomStyleProperty<float>("--glass-rim-width");
         private static readonly CustomStyleProperty<float> ShadowSpreadProp = new CustomStyleProperty<float>("--glass-shadow-spread");
         private static readonly CustomStyleProperty<float> ShadowOffsetProp = new CustomStyleProperty<float>("--glass-shadow-offset");
+        private static readonly CustomStyleProperty<Color> LipProp = new CustomStyleProperty<Color>("--glass-lip");
+        private static readonly CustomStyleProperty<float> LipHeightProp = new CustomStyleProperty<float>("--glass-lip-height");
 
         private Color _tintTop = new Color(1f, 1f, 1f, 0.05f);
         private Color _tintBottom = new Color(1f, 1f, 1f, 0f);
@@ -30,6 +32,8 @@ namespace Orbis.UI.Glass
         private float _rimWidth = 1.2f;
         private float _shadowSpread = 14f;
         private float _shadowOffset = 6f;
+        private Color _lip = new Color(0f, 0f, 0f, 0f);
+        private float _lipHeight;
 
         private readonly List<Vector2> _outer = new List<Vector2>(80);
         private readonly List<Vector2> _inner = new List<Vector2>(80);
@@ -76,12 +80,13 @@ namespace Orbis.UI.Glass
             if (s.TryGetValue(RimWidthProp, out var f)) _rimWidth = f;
             if (s.TryGetValue(ShadowSpreadProp, out f)) _shadowSpread = f;
             if (s.TryGetValue(ShadowOffsetProp, out f)) _shadowOffset = f;
+            if (s.TryGetValue(LipProp, out c)) _lip = c;
+            if (s.TryGetValue(LipHeightProp, out f)) _lipHeight = f;
             MarkDirtyRepaint();
         }
 
         private void Draw(MeshGenerationContext mgc)
         {
-            GlassBackdrop.EnsureTextures();
             var rect = new Rect(0f, 0f, layout.width, layout.height);
             if (rect.width < 1f || rect.height < 1f)
                 return;
@@ -111,11 +116,23 @@ namespace Orbis.UI.Glass
                 Submit(mgc, null);
             }
 
+            // 1b) "spessore" da bottone di gioco: un bordo più scuro che spunta sotto il vetro
+            if (_lip.a > 0.001f && _lipHeight > 0.1f)
+            {
+                var lipRect = new Rect(rect.x, rect.y + _lipHeight, rect.width, rect.height);
+                RoundedRectMesh.Perimeter(_outer, lipRect, radii, 0f, segments);
+                _vertices.Clear();
+                _indices.Clear();
+                var lip = _lip;
+                RoundedRectMesh.Fan(_vertices, _indices, _outer, lipRect.center, _ => lip, _ => Vector2.zero);
+                Submit(mgc, null);
+            }
+
             // 2) lo sfondo sfocato visto "attraverso" il vetro
             RoundedRectMesh.Perimeter(_outer, rect, radii, 0f, segments);
             _vertices.Clear();
             _indices.Clear();
-            var mesh = mgc.Allocate(_outer.Count + 1, _outer.Count * 3, GlassBackdrop.Blurred);
+            var mesh = mgc.Allocate(_outer.Count + 1, _outer.Count * 3, GlassBackdrop.GlassTexture);
             RoundedRectMesh.Fan(_vertices, _indices, _outer, center, _ => Color.white, p => GlassBackdrop.UvAt(this.LocalToWorld(p)));
             mesh.SetAllVertices(_vertices.ToArray());
             mesh.SetAllIndices(_indices.ToArray());

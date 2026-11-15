@@ -17,6 +17,31 @@ namespace Orbis.UI.Glass
         public static Texture2D Sharp { get; private set; }
         public static Texture2D Blurred { get; private set; }
 
+        private static Texture _live;
+
+        /// <summary>Vero quando il vetro sfoca la scena 3D vera (vedi Menu3D.GlassBlurCapture).</summary>
+        public static bool IsLive => _live != null;
+
+        /// <summary>Texture che il vetro deve campionare: la scena sfocata se c'è, altrimenti lo sfondo fisso.</summary>
+        public static Texture GlassTexture
+        {
+            get
+            {
+                if (_live != null) return _live;
+                EnsureTextures();
+                return Blurred;
+            }
+        }
+
+        /// <summary>Imposta (o toglie, con null) la scena sfocata. La texture copre tutto lo schermo.</summary>
+        public static void SetLive(Texture blurredScene)
+        {
+            if (_live == blurredScene)
+                return;
+            _live = blurredScene;
+            Changed?.Invoke();
+        }
+
         /// <summary>Area dello sfondo in coordinate del pannello UI.</summary>
         public static Rect Area { get; private set; }
 
@@ -52,6 +77,8 @@ namespace Orbis.UI.Glass
                 return new Vector2(0.5f, 0.5f);
             var nx = (panelPoint.x - area.x) / area.width;
             var ny = (panelPoint.y - area.y) / area.height;
+            if (_live != null)
+                return new Vector2(nx, 1f - ny); // la scena sfocata ha già le proporzioni dello schermo
             var elementAspect = area.width / area.height;
             var textureAspect = (float)Width / Height;
             float sx = 1f, sy = 1f;
