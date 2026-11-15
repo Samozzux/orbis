@@ -123,3 +123,5 @@ InitTestScene*.unity*
 *.keystore
 *.jks
 .DS_Store
+# file generati da Burst nelle build web (su macOS "Data/" coincide con "data/")
+/[Dd]ata/Plugins/

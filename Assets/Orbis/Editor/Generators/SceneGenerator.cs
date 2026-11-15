@@ -10,11 +10,21 @@ using UnityEngine.UIElements;
 
 namespace Orbis.EditorTools
 {
-    /// <summary>Genera la scena di avvio (Boot): camera, EventSystem (touch + mouse/tastiera) e documento UI.</summary>
+    /// <summary>
+    /// Genera la scena di avvio (Boot): camera, EventSystem (touch + mouse/tastiera) e documento UI.
+    /// Se la scena esiste ed è già corretta non la riscrive (gli ID interni cambierebbero a ogni build).
+    /// </summary>
     public static class SceneGenerator
     {
-        public static void Generate()
+        [MenuItem("Orbis/Rigenera scena di avvio")]
+        public static void Regenerate() => Generate(force: true);
+
+        public static void Generate(bool force = false)
         {
+            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(OrbisPaths.BootScene, true) };
+            if (!force && IsUpToDate())
+                return;
+
             LocalizationGenerator.EnsureFolder(System.IO.Path.GetDirectoryName(OrbisPaths.BootScene)?.Replace('\\', '/'));
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -51,8 +61,33 @@ namespace Orbis.EditorTools
             SceneManager.SetActiveScene(scene);
             if (!EditorSceneManager.SaveScene(scene, OrbisPaths.BootScene))
                 throw new System.IO.IOException("Salvataggio della scena fallito: " + OrbisPaths.BootScene);
+            Debug.Log("[Orbis] Scena di avvio generata.");
+        }
 
-            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(OrbisPaths.BootScene, true) };
+        /// <summary>Controlla struttura e riferimenti della scena salvata.</summary>
+        private static bool IsUpToDate()
+        {
+            if (!System.IO.File.Exists(OrbisPaths.BootScene))
+                return false;
+            var scene = EditorSceneManager.OpenScene(OrbisPaths.BootScene, OpenSceneMode.Single);
+            var panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(OrbisPaths.PanelSettings);
+            var uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(OrbisPaths.AppUxml);
+            var roots = scene.GetRootGameObjects();
+            GameObject Find(string name) => System.Array.Find(roots, g => g.name == name);
+
+            var camera = Find("Main Camera");
+            var eventSystem = Find("EventSystem");
+            var app = Find("Orbis");
+            if (roots.Length != 3 || camera == null || eventSystem == null || app == null)
+                return false;
+            var document = app.GetComponent<UIDocument>();
+            return camera.GetComponent<Camera>() != null
+                   && camera.GetComponent<UniversalAdditionalCameraData>() != null
+                   && eventSystem.GetComponent<InputSystemUIInputModule>() != null
+                   && app.GetComponent<OrbisApp>() != null
+                   && document != null
+                   && document.panelSettings == panelSettings
+                   && document.visualTreeAsset == uxml;
         }
     }
 }
