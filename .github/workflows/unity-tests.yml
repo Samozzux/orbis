@@ -8,12 +8,15 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: unity-tests-${{ github.ref }}
-  cancel-in-progress: true
 
 jobs:
   test:
+    # una build Unity alla volta in tutto il repository (licenza Personal, docs/07 §2):
+    # le altre aspettano in coda, nessuna viene annullata
+    concurrency:
+      group: unity-license
+      queue: max
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
