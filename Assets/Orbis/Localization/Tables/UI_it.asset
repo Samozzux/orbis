@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_it
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.StringTable
+  m_LocaleId:
+    m_Code: it
+  m_SharedData: {fileID: 11400000, guid: 281f09f7e647349e196c8ca066fdafa4, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 464510976
+    m_Localized: Orbis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288192
+    m_Localized: "La tua citt\xE0, nel mondo vero."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288193
+    m_Localized: "Preparo i testi\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288194
+    m_Localized: "Preparo il dispositivo\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288195
+    m_Localized: "Carico i contenuti\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288196
+    m_Localized: "Preparo il mondo\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288197
+    m_Localized: Pronto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288198
+    m_Localized: Continua
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288199
+    m_Localized: Nessuna partita salvata
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288200
+    m_Localized: Riprendi l'ultima partita
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288201
+    m_Localized: Nuova partita
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288202
+    m_Localized: Parti da Chieti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288203
+    m_Localized: Amici
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288204
+    m_Localized: Impostazioni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288205
+    m_Localized: Crediti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288206
+    m_Localized: In arrivo nelle prossime versioni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288207
+    m_Localized: Versione {0} ({1})
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288208
+    m_Localized: Orbis usa Face ID per farti entrare senza password.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288209
+    m_Localized: "Orbis pu\xF2 riprodurre i brani della tua libreria musicale durante il gioco."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288210
+    m_Localized: Orbis salva nella tua libreria le foto scattate nel gioco.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288211
+    m_Localized: Caricamento
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288212
+    m_Localized: "Questo browser non pu\xF2 avviare Orbis: serve WebGPU o WebGL 2. Usa una versione recente di Safari, Chrome, Edge o Firefox."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288213
+    m_Localized: "Non \xE8 stato possibile avviare Orbis. Ricarica la pagina per riprovare."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288214
+    m_Localized: "Simulatore di citt\xE0 e di vita ambientato nel mondo reale, a partire da Chieti."
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

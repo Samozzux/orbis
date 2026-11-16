@@ -1,0 +1,101 @@
+/* Pagina web di Orbis: canvas a tutto schermo + caricamento nello stesso stile del gioco. */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #071024;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+#unity-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #071024;
+  outline: none;
+}
+
+#orbis-loader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(60% 70% at 80% 18%, rgba(38, 104, 255, 0.55), transparent 70%),
+    radial-gradient(55% 60% at 8% 88%, rgba(18, 186, 172, 0.40), transparent 70%),
+    linear-gradient(180deg, #071024 0%, #0a1e3c 100%);
+  transition: opacity 0.5s ease-out;
+}
+
+#orbis-loader.orbis-loader--done { opacity: 0; }
+
+#orbis-loader-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  box-shadow: 0 12px 40px rgba(0, 10, 40, 0.5);
+}
+
+#orbis-loader-title {
+  margin-top: 14px;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+#orbis-loader-bar {
+  position: relative;
+  width: 240px;
+  height: 8px;
+  margin-top: 26px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  backdrop-filter: blur(20px) saturate(160%);
+  box-shadow: 0 6px 20px rgba(0, 4, 24, 0.35);
+}
+
+#orbis-loader-fill {
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: rgb(100, 210, 255);
+  transition: width 0.2s ease-out;
+}
+
+#orbis-loader-text {
+  margin-top: 12px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.66);
+}
+
+#orbis-message {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: min(440px, calc(100vw - 48px));
+  padding: 18px 22px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  font-size: 15px;
+  line-height: 1.45;
+  text-align: center;
+}

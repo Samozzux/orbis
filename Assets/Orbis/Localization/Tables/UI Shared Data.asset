@@ -1,0 +1,124 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UI Shared Data
+  m_EditorClassIdentifier: Unity.Localization::UnityEngine.Localization.Tables.SharedTableData
+  m_TableCollectionName: UI
+  m_TableCollectionNameGuidString: 281f09f7e647349e196c8ca066fdafa4
+  m_Entries:
+  - m_Id: 464510976
+    m_Key: app.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288192
+    m_Key: app.tagline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288193
+    m_Key: loading.texts
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288194
+    m_Key: loading.platform
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288195
+    m_Key: loading.content
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288196
+    m_Key: loading.world
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288197
+    m_Key: loading.ready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288198
+    m_Key: menu.continue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288199
+    m_Key: menu.continue.empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288200
+    m_Key: menu.continue.detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288201
+    m_Key: menu.new_game
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288202
+    m_Key: menu.new_game.detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288203
+    m_Key: menu.friends
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288204
+    m_Key: menu.settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288205
+    m_Key: menu.credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288206
+    m_Key: menu.coming_soon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288207
+    m_Key: menu.version
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288208
+    m_Key: ios.usage.faceid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288209
+    m_Key: ios.usage.apple_music
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288210
+    m_Key: ios.usage.photos_add
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288211
+    m_Key: web.loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288212
+    m_Key: web.unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288213
+    m_Key: web.error
+    m_Metadata:
+      m_Items: []
+  - m_Id: 481288214
+    m_Key: web.description
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5294009209976520704
+  references:
+    version: 2
+    RefIds:
+    - rid: 5294009209976520704
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1794778899439

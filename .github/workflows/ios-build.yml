@@ -1,0 +1,95 @@
+# Build iOS (iPhone + iPad, iOS 26) → progetto Xcode → Orbis.ipa senza firma (artifact "Orbis-ipa", si installa con Sideloadly).
+name: iOS build
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+    paths:
+      - 'Assets/**'
+      - 'Packages/**'
+      - 'ProjectSettings/**'
+      - 'data/localization/**'
+      - '.github/workflows/ios-build.yml'
+      - '.github/scripts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write # per allegare l'IPA alla Release sui tag
+
+
+jobs:
+  build:
+    name: ios
+    # una build Unity alla volta in tutto il repository (licenza Personal, docs/07 §2):
+    # le altre aspettano in coda, nessuna viene annullata
+    concurrency:
+      group: unity-license
+      queue: max
+      cancel-in-progress: false
+    runs-on: macos-26
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-tags: true
+
+      - name: Versione
+        run: .github/scripts/orbis-env.sh
+
+      - name: Cache Library
+        uses: actions/cache@v6
+        with:
+          path: Library
+          key: Library-iOS-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ github.sha }}
+          restore-keys: |
+            Library-iOS-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-
+            Library-iOS-
+
+      - name: Installa Unity
+        uses: buildalon/unity-setup@v3
+        with:
+          version-file: ProjectSettings/ProjectVersion.txt
+          build-targets: iOS
+
+      - name: Attiva la licenza Unity
+        uses: buildalon/activate-unity-license@v3
+        with:
+          license: personal
+          username: ${{ secrets.UNITY_EMAIL }}
+          password: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Build Unity → progetto Xcode
+        run: |
+          "$UNITY_EDITOR_PATH" -batchmode -nographics -quit -projectPath . -buildTarget iOS \
+            -executeMethod Orbis.EditorTools.Build.BuildScript.BuildIOS -logFile -
+
+      - name: Compila con Xcode (senza firma)
+        run: |
+          xcodebuild -version
+          set -o pipefail
+          xcodebuild -project build/ios/Unity-iPhone.xcodeproj -scheme Unity-iPhone \
+            -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath build/dd \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build > build/xcodebuild.log 2>&1 || { tail -n 200 build/xcodebuild.log; exit 1; }
+          tail -n 5 build/xcodebuild.log
+
+      - name: Crea Orbis.ipa
+        run: |
+          rm -rf Payload && mkdir Payload
+          cp -R build/dd/Build/Products/Release-iphoneos/*.app Payload/
+          zip -qry Orbis.ipa Payload
+          echo "### IPA: $(du -h Orbis.ipa | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: Orbis-ipa
+          path: Orbis.ipa
+          retention-days: 30
+
+      - name: Allega alla Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v3
+        with:
+          files: Orbis.ipa

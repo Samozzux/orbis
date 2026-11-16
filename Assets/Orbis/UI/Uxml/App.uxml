@@ -1,0 +1,81 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:glass="Orbis.UI.Glass" xmlns:el="Orbis.UI.Elements">
+    <!-- Interfaccia di avvio di Orbis. I testi "#chiave" vengono dalla tabella Localization "UI". -->
+    <Style src="project://database/Assets/Orbis/UI/Uss/Orbis.uss" />
+    <ui:VisualElement name="app" class="app">
+        <glass:GlassBackdropElement name="backdrop" class="backdrop" />
+        <ui:VisualElement name="safe-area" class="safe-area" picking-mode="Ignore">
+
+            <ui:VisualElement name="splash" class="screen splash">
+                <el:OrbisLogo class="logo logo--splash" />
+                <ui:Label class="wordmark wordmark--splash" text="#app.title" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="loading" class="screen loading">
+                <el:OrbisLogo class="logo logo--loading" />
+                <ui:Label class="wordmark wordmark--loading" text="#app.title" />
+                <ui:VisualElement class="progress">
+                    <glass:GlassSurface />
+                    <ui:VisualElement class="progress__track">
+                        <ui:VisualElement name="progress-fill" class="progress__fill" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:Label name="loading-status" class="loading__status" text="" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="menu" class="screen menu">
+                <ui:VisualElement class="menu__content">
+                    <ui:VisualElement class="menu__hero">
+                        <el:OrbisLogo class="logo logo--hero" />
+                        <ui:VisualElement class="menu__titles">
+                            <ui:Label class="wordmark wordmark--hero" text="#app.title" />
+                            <ui:Label class="tagline" text="#app.tagline" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="menu__actions">
+                        <ui:Button name="btn-new-game" class="glass-button glass-button--primary">
+                            <glass:GlassSurface />
+                            <el:OrbisIcon icon="Plus" class="glass-button__icon" />
+                            <ui:VisualElement class="glass-button__texts" picking-mode="Ignore">
+                                <ui:Label class="glass-button__label" text="#menu.new_game" picking-mode="Ignore" />
+                                <ui:Label class="glass-button__detail" text="#menu.new_game.detail" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                        </ui:Button>
+                        <ui:Button name="btn-continue" class="glass-button">
+                            <glass:GlassSurface />
+                            <el:OrbisIcon icon="Play" class="glass-button__icon" />
+                            <ui:VisualElement class="glass-button__texts" picking-mode="Ignore">
+                                <ui:Label class="glass-button__label" text="#menu.continue" picking-mode="Ignore" />
+                                <ui:Label name="continue-detail" class="glass-button__detail" text="" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="navbar">
+                    <glass:GlassSurface />
+                    <ui:Button name="nav-friends" class="nav-item">
+                        <el:OrbisIcon icon="Friends" class="nav-item__icon" />
+                        <ui:Label class="nav-item__label" text="#menu.friends" picking-mode="Ignore" />
+                    </ui:Button>
+                    <ui:Button name="nav-settings" class="nav-item">
+                        <el:OrbisIcon icon="Settings" class="nav-item__icon" />
+                        <ui:Label class="nav-item__label" text="#menu.settings" picking-mode="Ignore" />
+                    </ui:Button>
+                    <ui:Button name="nav-credits" class="nav-item">
+                        <el:OrbisIcon icon="Info" class="nav-item__icon" />
+                        <ui:Label class="nav-item__label" text="#menu.credits" picking-mode="Ignore" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:Label name="version" class="version" picking-mode="Ignore" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="toast" class="toast" picking-mode="Ignore">
+                <glass:GlassSurface />
+                <el:OrbisIcon icon="Info" class="toast__icon" />
+                <ui:Label name="toast-text" class="toast__text" picking-mode="Ignore" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -107,3 +107,21 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# --- Orbis ---
+# progetti .NET dei test (fuori da Unity) vanno versionati
+!/tests/**/*.csproj
+/tests/**/bin/
+/tests/**/obj/
+# file generati dalla build
+/Assets/Orbis/UI/Resources/OrbisBuildInfo.json
+/Assets/Orbis/UI/Resources/OrbisBuildInfo.json.meta
+*.ipa
+/Payload/
+# segreti: mai nel repo
+/backend/config.php
+*.keystore
+*.jks
+.DS_Store
+# file generati da Burst nelle build web (su macOS "Data/" coincide con "data/")
+/[Dd]ata/Plugins/

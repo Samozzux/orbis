@@ -1,0 +1,105 @@
+{
+  "_info": "Testi dell'interfaccia di Orbis. Sorgente della tabella Localization 'UI': in Unity si rigenera con Orbis > Genera progetto (lo fa anche ogni build). Chiavi: inglese con punti; testi: italiano.",
+  "table": "UI",
+  "locales": [
+    "it"
+  ],
+  "entries": [
+    {
+      "key": "app.title",
+      "it": "Orbis"
+    },
+    {
+      "key": "app.tagline",
+      "it": "La tua città, nel mondo vero."
+    },
+    {
+      "key": "loading.texts",
+      "it": "Preparo i testi…"
+    },
+    {
+      "key": "loading.platform",
+      "it": "Preparo il dispositivo…"
+    },
+    {
+      "key": "loading.content",
+      "it": "Carico i contenuti…"
+    },
+    {
+      "key": "loading.world",
+      "it": "Preparo il mondo…"
+    },
+    {
+      "key": "loading.ready",
+      "it": "Pronto"
+    },
+    {
+      "key": "menu.continue",
+      "it": "Continua"
+    },
+    {
+      "key": "menu.continue.empty",
+      "it": "Nessuna partita salvata"
+    },
+    {
+      "key": "menu.continue.detail",
+      "it": "Riprendi l'ultima partita"
+    },
+    {
+      "key": "menu.new_game",
+      "it": "Nuova partita"
+    },
+    {
+      "key": "menu.new_game.detail",
+      "it": "Parti da Chieti"
+    },
+    {
+      "key": "menu.friends",
+      "it": "Amici"
+    },
+    {
+      "key": "menu.settings",
+      "it": "Impostazioni"
+    },
+    {
+      "key": "menu.credits",
+      "it": "Crediti"
+    },
+    {
+      "key": "menu.coming_soon",
+      "it": "In arrivo nelle prossime versioni"
+    },
+    {
+      "key": "menu.version",
+      "it": "Versione {0} ({1})"
+    },
+    {
+      "key": "ios.usage.faceid",
+      "it": "Orbis usa Face ID per farti entrare senza password."
+    },
+    {
+      "key": "ios.usage.apple_music",
+      "it": "Orbis può riprodurre i brani della tua libreria musicale durante il gioco."
+    },
+    {
+      "key": "ios.usage.photos_add",
+      "it": "Orbis salva nella tua libreria le foto scattate nel gioco."
+    },
+    {
+      "key": "web.loading",
+      "it": "Caricamento"
+    },
+    {
+      "key": "web.unsupported",
+      "it": "Questo browser non può avviare Orbis: serve WebGPU o WebGL 2. Usa una versione recente di Safari, Chrome, Edge o Firefox."
+    },
+    {
+      "key": "web.error",
+      "it": "Non è stato possibile avviare Orbis. Ricarica la pagina per riprovare."
+    },
+    {
+      "key": "web.description",
+      "it": "Simulatore di città e di vita ambientato nel mondo reale, a partire da Chieti."
+    }
+  ]
+}
