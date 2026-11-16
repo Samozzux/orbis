@@ -231,8 +231,8 @@
 
 .tip > .glass-fill {
     border-radius: 22px;
-    --glass-tint-top: rgba(8, 30, 80, 0.40);
-    --glass-tint-bottom: rgba(8, 30, 80, 0.52);
+    --glass-tint-top: rgba(8, 30, 80, 0.60);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.72);
 }
 
 .tip__title {
@@ -343,6 +343,7 @@
     align-items: center;
     -unity-text-align: middle-left;
     color: rgb(255, 255, 255);
+    opacity: 1; /* il tema di Unity rende semitrasparente il bottone disattivato: qui si attenua solo il contenuto */
 }
 
 .game-button {
@@ -371,7 +372,7 @@
 /* disattivato: il vetro resta, si attenua solo il contenuto */
 .game-button:disabled > .game-button__badge,
 .game-button:disabled > .game-button__texts {
-    opacity: 0.5;
+    opacity: 0.62;
 }
 
 .input-pointer .game-button:focus > .glass-fill {
@@ -397,8 +398,8 @@
 
 /* secondario: blu cielo */
 .game-button--secondary > .glass-fill {
-    --glass-tint-top: rgba(70, 180, 255, 0.78);
-    --glass-tint-bottom: rgba(24, 110, 240, 0.72);
+    --glass-tint-top: rgba(50, 160, 255, 0.90);
+    --glass-tint-bottom: rgba(20, 100, 235, 0.88);
     --glass-lip: rgb(14, 66, 160);
 }
 
@@ -463,9 +464,9 @@
 .navbar > .glass-fill {
     border-radius: 30px;
     /* vetro fumé: le etichette bianche restano leggibili anche sopra la città chiara */
-    --glass-tint-top: rgba(8, 30, 80, 0.38);
-    --glass-tint-bottom: rgba(8, 30, 80, 0.50);
-    --glass-lip: rgba(0, 20, 60, 0.45);
+    --glass-tint-top: rgba(8, 30, 80, 0.60);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.72);
+    --glass-lip: rgba(0, 20, 60, 0.55);
     --glass-lip-height: 4;
 }
 
