@@ -13,7 +13,8 @@ namespace Orbis.EditorTools.Build
     /// Unity -batchmode -nographics -quit -projectPath . -buildTarget WebGL
     ///       -executeMethod Orbis.EditorTools.Build.BuildScript.BuildWeb
     /// Variabili d'ambiente: ORBIS_VERSION (es. 0.1.0), ORBIS_BUILD_NUMBER, ORBIS_COMMIT,
-    /// per Android ORBIS_KEYSTORE_PATH, ORBIS_KEYSTORE_PASS, ORBIS_KEY_ALIAS, ORBIS_KEY_PASS.
+    /// per Android ORBIS_KEYSTORE_PATH, ORBIS_KEYSTORE_PASS, ORBIS_KEY_ALIAS, ORBIS_KEY_PASS;
+    /// ORBIS_WEB_FAST=1 solo per build web di prova in locale (senza compressione).
     /// </summary>
     public static class BuildScript
     {
@@ -37,6 +38,12 @@ namespace Orbis.EditorTools.Build
                 WriteBuildInfo(info);
                 if (target == BuildTarget.Android)
                     ConfigureAndroidSigning();
+                if (target == BuildTarget.WebGL && Environment.GetEnvironmentVariable("ORBIS_WEB_FAST") == "1")
+                {
+                    // solo per provare in locale: senza Brotli la build è molto più veloce (mai in CI)
+                    PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+                    Debug.Log("[Orbis] Build web di prova: compressione disattivata.");
+                }
 
                 var parent = Path.GetDirectoryName(output);
                 if (!string.IsNullOrEmpty(parent)) Directory.CreateDirectory(parent);
