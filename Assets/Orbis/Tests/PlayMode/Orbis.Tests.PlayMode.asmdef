@@ -8,7 +8,9 @@
         "Orbis.Platform",
         "Orbis.UI",
         "Unity.InputSystem",
-        "Unity.InputSystem.TestFramework"
+        "Unity.InputSystem.TestFramework",
+        "Orbis.Gameplay",
+        "Orbis.World"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

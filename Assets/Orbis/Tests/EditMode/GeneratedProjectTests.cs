@@ -16,7 +16,7 @@ namespace Orbis.Tests.EditMode
     public class GeneratedProjectTests
     {
         private static readonly Regex UxmlKey = new Regex("text=\"#([a-z0-9_.]+)\"");
-        private static readonly Regex CodeKey = new Regex("\"((?:app|loading|menu|web|ios|settings)\\.[a-z0-9_.]+)\"");
+        private static readonly Regex CodeKey = new Regex("\"((?:app|loading|menu|web|ios|settings|game|details|weather|osm)\\.[a-z0-9_.]+)\"");
 
         [Test]
         public void ScenaDiAvvio_NelleBuildSettings()

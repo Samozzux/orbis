@@ -67,6 +67,14 @@ namespace Orbis.UI.Localization
 
         public static string Format(string key, params object[] args) => string.Format(Get(key), args);
 
+        /// <summary>Testo della chiave se esiste (senza avvisi): per chiavi facoltative come le categorie dei POI.</summary>
+        public static bool TryGet(string key, out string text)
+        {
+            var entry = _table != null ? _table.GetEntry(key) : null;
+            text = entry != null ? entry.GetLocalizedString() : null;
+            return entry != null;
+        }
+
         /// <summary>Sostituisce i testi "#chiave" di tutti gli elementi testuali sotto <paramref name="root"/>.</summary>
         public static void LocalizeTree(VisualElement root)
         {

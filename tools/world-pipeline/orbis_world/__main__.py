@@ -20,7 +20,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.a
 
 
 def _log(msg):
-    print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
+    # su stderr: stdout del comando "boundary" contiene solo il riquadro da estrarre
+    print(f"[{time.strftime('%H:%M:%S')}] {msg}", file=sys.stderr, flush=True)
 
 
 def _region(path):

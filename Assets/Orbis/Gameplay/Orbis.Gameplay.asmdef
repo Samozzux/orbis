@@ -1,7 +1,14 @@
 {
     "name": "Orbis.Gameplay",
     "rootNamespace": "Orbis.Gameplay",
-    "references": ["Orbis.Core", "Orbis.World", "Orbis.Sim"],
+    "references": [
+        "Orbis.Core",
+        "Orbis.World",
+        "Orbis.Sim",
+        "Unity.InputSystem",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

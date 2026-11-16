@@ -175,6 +175,694 @@ MonoBehaviour:
     m_Key: settings.more_soon
     m_Metadata:
       m_Items: []
+  - m_Id: 308628513873920
+    m_Key: tips.5
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456832
+    m_Key: tips.6
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456833
+    m_Key: game.loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456834
+    m_Key: game.missing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456835
+    m_Key: game.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456836
+    m_Key: game.back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456837
+    m_Key: game.view.3d
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456838
+    m_Key: game.view.2d
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456839
+    m_Key: game.lots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456840
+    m_Key: game.lots.on
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456841
+    m_Key: game.lots.off
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456842
+    m_Key: game.speed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456843
+    m_Key: game.paused
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456844
+    m_Key: game.time
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456845
+    m_Key: game.date
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456846
+    m_Key: weather.Clear
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456847
+    m_Key: weather.PartlyCloudy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456848
+    m_Key: weather.Cloudy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456849
+    m_Key: weather.Rain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456850
+    m_Key: weather.Fog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456851
+    m_Key: details.unnamed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456852
+    m_Key: details.address
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456853
+    m_Key: details.use
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456854
+    m_Key: details.height
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456855
+    m_Key: details.height.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456856
+    m_Key: details.height.estimated
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456857
+    m_Key: details.roof
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456858
+    m_Key: details.year
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456859
+    m_Key: details.footprint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456860
+    m_Key: details.footprint.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456861
+    m_Key: details.inside
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456862
+    m_Key: details.landmark
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456863
+    m_Key: details.position
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456864
+    m_Key: details.source
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456865
+    m_Key: details.source.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456866
+    m_Key: details.attribution
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456867
+    m_Key: osm.way
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456868
+    m_Key: osm.relation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456869
+    m_Key: osm.node
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456870
+    m_Key: roof.Flat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456871
+    m_Key: roof.Gabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456872
+    m_Key: roof.Hipped
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456873
+    m_Key: roof.Pyramidal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456874
+    m_Key: roof.Skillion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456875
+    m_Key: roof.HalfHipped
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456876
+    m_Key: roof.Mansard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456877
+    m_Key: roof.Dome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456878
+    m_Key: roof.Onion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456879
+    m_Key: roof.Round
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456880
+    m_Key: roof.Gambrel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456881
+    m_Key: roof.Unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456882
+    m_Key: use.Unknown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456883
+    m_Key: use.House
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456884
+    m_Key: use.Detached
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456885
+    m_Key: use.Apartments
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456886
+    m_Key: use.Residential
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456887
+    m_Key: use.Terrace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456888
+    m_Key: use.Commercial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456889
+    m_Key: use.Retail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456890
+    m_Key: use.Office
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456891
+    m_Key: use.Industrial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456892
+    m_Key: use.Warehouse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456893
+    m_Key: use.Religious
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456894
+    m_Key: use.Church
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456895
+    m_Key: use.Cathedral
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456896
+    m_Key: use.Chapel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456897
+    m_Key: use.School
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456898
+    m_Key: use.University
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456899
+    m_Key: use.Kindergarten
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456900
+    m_Key: use.Hospital
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456901
+    m_Key: use.Civic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456902
+    m_Key: use.Government
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456903
+    m_Key: use.Hotel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456904
+    m_Key: use.Garage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456905
+    m_Key: use.Garages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456906
+    m_Key: use.Shed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456907
+    m_Key: use.Hut
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456908
+    m_Key: use.Farm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456909
+    m_Key: use.FarmAuxiliary
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456910
+    m_Key: use.Barn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456911
+    m_Key: use.Greenhouse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456912
+    m_Key: use.Stable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456913
+    m_Key: use.Sports
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456914
+    m_Key: use.Stadium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456915
+    m_Key: use.TrainStation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456916
+    m_Key: use.Transportation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456917
+    m_Key: use.Parking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456918
+    m_Key: use.Ruins
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456919
+    m_Key: use.Roof
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456920
+    m_Key: use.Construction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456921
+    m_Key: use.Tower
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456922
+    m_Key: use.Castle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456923
+    m_Key: use.Bunker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456924
+    m_Key: use.Service
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456925
+    m_Key: use.Toilets
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456926
+    m_Key: use.Kiosk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456927
+    m_Key: use.Bridge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456928
+    m_Key: use.Monument
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456929
+    m_Key: use.Theatre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456930
+    m_Key: use.Museum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456931
+    m_Key: poi.amenity.bar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456932
+    m_Key: poi.amenity.cafe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456933
+    m_Key: poi.amenity.restaurant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456934
+    m_Key: poi.amenity.pharmacy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456935
+    m_Key: poi.amenity.bank
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456936
+    m_Key: poi.amenity.place_of_worship
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456937
+    m_Key: poi.amenity.school
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456938
+    m_Key: poi.amenity.townhall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456939
+    m_Key: poi.amenity.post_office
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456940
+    m_Key: poi.amenity.police
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456941
+    m_Key: poi.amenity.hospital
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456942
+    m_Key: poi.amenity.theatre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456943
+    m_Key: poi.amenity.cinema
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456944
+    m_Key: poi.amenity.library
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456945
+    m_Key: poi.amenity.fast_food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456946
+    m_Key: poi.amenity.ice_cream
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456947
+    m_Key: poi.amenity.pub
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456948
+    m_Key: poi.amenity.parking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456949
+    m_Key: poi.amenity.fuel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456950
+    m_Key: poi.amenity.university
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456951
+    m_Key: poi.amenity.kindergarten
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456952
+    m_Key: poi.amenity.clinic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456953
+    m_Key: poi.amenity.doctors
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456954
+    m_Key: poi.amenity.dentist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456955
+    m_Key: poi.amenity.courthouse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456956
+    m_Key: poi.amenity.fire_station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456957
+    m_Key: poi.shop.supermarket
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456958
+    m_Key: poi.shop.bakery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456959
+    m_Key: poi.shop.butcher
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456960
+    m_Key: poi.shop.clothes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456961
+    m_Key: poi.shop.hairdresser
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456962
+    m_Key: poi.shop.convenience
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456963
+    m_Key: poi.shop.tobacco
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456964
+    m_Key: poi.shop.newsagent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456965
+    m_Key: poi.shop.books
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456966
+    m_Key: poi.shop.shoes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456967
+    m_Key: poi.shop.optician
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456968
+    m_Key: poi.shop.florist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456969
+    m_Key: poi.shop.jewelry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456970
+    m_Key: poi.shop.car
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456971
+    m_Key: poi.shop.car_repair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456972
+    m_Key: poi.shop.mobile_phone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456973
+    m_Key: poi.shop.hardware
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456974
+    m_Key: poi.shop.beauty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456975
+    m_Key: poi.shop.greengrocer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456976
+    m_Key: poi.shop.wine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456977
+    m_Key: poi.shop.deli
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456978
+    m_Key: poi.shop.pastry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456979
+    m_Key: poi.shop.kiosk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456980
+    m_Key: poi.tourism.museum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456981
+    m_Key: poi.tourism.hotel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456982
+    m_Key: poi.tourism.attraction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456983
+    m_Key: poi.tourism.guest_house
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456984
+    m_Key: poi.tourism.information
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456985
+    m_Key: poi.historic.monument
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456986
+    m_Key: poi.historic.memorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456987
+    m_Key: poi.historic.castle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456988
+    m_Key: poi.historic.archaeological_site
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456989
+    m_Key: poi.historic.church
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456990
+    m_Key: poi.leisure.stadium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456991
+    m_Key: poi.leisure.sports_centre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456992
+    m_Key: poi.leisure.park
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456993
+    m_Key: poi.leisure.fitness_centre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456994
+    m_Key: poi.leisure.swimming_pool
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456995
+    m_Key: poi.railway.station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456996
+    m_Key: poi.public_transport.station
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456997
+    m_Key: poi.office.company
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456998
+    m_Key: poi.office.government
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456999
+    m_Key: poi.healthcare.pharmacy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526457000
+    m_Key: poi.power.plant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526457001
+    m_Key: poi.power.generator
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526457002
+    m_Key: poi.power.substation
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

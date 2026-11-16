@@ -63,7 +63,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 481288202
-    m_Localized: Parti da Chieti
+    m_Localized: Esplora Chieti in 3D
     m_Metadata:
       m_Items: []
   - m_Id: 481288203
@@ -135,7 +135,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 32717633740804
-    m_Localized: Strade ed edifici di Orbis arriveranno dalle mappe vere di OpenStreetMap.
+    m_Localized: 'Strade ed edifici di Orbis vengono dalle mappe vere di OpenStreetMap: ogni edificio ha la sua sagoma reale.'
     m_Metadata:
       m_Items: []
   - m_Id: 73679407931392
@@ -176,6 +176,694 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 73679424708609
     m_Localized: Altre impostazioni in arrivo nelle prossime versioni.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628513873920
+    m_Localized: Tocca un edificio per vederne nome, indirizzo e dati reali.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456832
+    m_Localized: "Con due dita ruoti e inclini la citt\xE0; con il mouse usa il tasto destro."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456833
+    m_Localized: "Carico {0}\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456834
+    m_Localized: "Il mondo di Chieti non \xE8 ancora incluso in questa versione: arriva con il prossimo aggiornamento."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456835
+    m_Localized: "Non riesco a caricare il mondo. Riprova pi\xF9 tardi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456836
+    m_Localized: Torna al menu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456837
+    m_Localized: 3D
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456838
+    m_Localized: 2D
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456839
+    m_Localized: Lotti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456840
+    m_Localized: 'Lotti e griglia: visibili'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456841
+    m_Localized: 'Lotti e griglia: nascosti'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456842
+    m_Localized: "Velocit\xE0 \xD7{0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456843
+    m_Localized: In pausa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456844
+    m_Localized: '{0:HH:mm}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456845
+    m_Localized: '{0:dddd d MMMM}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456846
+    m_Localized: Sereno
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456847
+    m_Localized: Poco nuvoloso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456848
+    m_Localized: Nuvoloso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456849
+    m_Localized: Pioggia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456850
+    m_Localized: Nebbia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456851
+    m_Localized: Edificio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456852
+    m_Localized: Indirizzo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456853
+    m_Localized: Tipo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456854
+    m_Localized: Altezza
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456855
+    m_Localized: "{0} m \xB7 {1} piani"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456856
+    m_Localized: "{0} m \xB7 {1} piani (stima)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456857
+    m_Localized: Tetto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456858
+    m_Localized: Costruito nel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456859
+    m_Localized: Superficie a terra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456860
+    m_Localized: "{0} m\xB2"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456861
+    m_Localized: Dentro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456862
+    m_Localized: Luogo famoso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456863
+    m_Localized: Posizione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456864
+    m_Localized: Fonte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456865
+    m_Localized: "OpenStreetMap \xB7 {0} {1}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456866
+    m_Localized: "Dati \xA9 OpenStreetMap contributors (ODbL)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456867
+    m_Localized: way
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456868
+    m_Localized: relation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456869
+    m_Localized: node
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456870
+    m_Localized: Piano (terrazzo)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456871
+    m_Localized: A capanna
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456872
+    m_Localized: A padiglione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456873
+    m_Localized: A piramide
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456874
+    m_Localized: A falda unica
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456875
+    m_Localized: A padiglione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456876
+    m_Localized: Mansarda
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456877
+    m_Localized: A cupola
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456878
+    m_Localized: A cipolla
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456879
+    m_Localized: A botte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456880
+    m_Localized: A capanna spezzato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456881
+    m_Localized: Non indicato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456882
+    m_Localized: Edificio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456883
+    m_Localized: Casa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456884
+    m_Localized: Villetta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456885
+    m_Localized: Condominio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456886
+    m_Localized: Residenziale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456887
+    m_Localized: Case a schiera
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456888
+    m_Localized: Commerciale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456889
+    m_Localized: Negozi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456890
+    m_Localized: Uffici
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456891
+    m_Localized: Industriale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456892
+    m_Localized: Magazzino
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456893
+    m_Localized: Edificio religioso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456894
+    m_Localized: Chiesa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456895
+    m_Localized: Cattedrale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456896
+    m_Localized: Cappella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456897
+    m_Localized: Scuola
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456898
+    m_Localized: "Universit\xE0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456899
+    m_Localized: Scuola dell'infanzia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456900
+    m_Localized: Ospedale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456901
+    m_Localized: Edificio pubblico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456902
+    m_Localized: Uffici pubblici
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456903
+    m_Localized: Albergo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456904
+    m_Localized: Garage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456905
+    m_Localized: Box auto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456906
+    m_Localized: Capanno
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456907
+    m_Localized: Capanna
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456908
+    m_Localized: Casa colonica
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456909
+    m_Localized: Annesso agricolo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456910
+    m_Localized: Fienile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456911
+    m_Localized: Serra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456912
+    m_Localized: Stalla
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456913
+    m_Localized: Impianto sportivo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456914
+    m_Localized: Stadio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456915
+    m_Localized: Stazione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456916
+    m_Localized: Trasporti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456917
+    m_Localized: Parcheggio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456918
+    m_Localized: Rovine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456919
+    m_Localized: Tettoia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456920
+    m_Localized: In costruzione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456921
+    m_Localized: Torre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456922
+    m_Localized: Castello
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456923
+    m_Localized: Bunker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456924
+    m_Localized: Locale tecnico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456925
+    m_Localized: Servizi igienici
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456926
+    m_Localized: Chiosco
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456927
+    m_Localized: Ponte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456928
+    m_Localized: Monumento
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456929
+    m_Localized: Teatro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456930
+    m_Localized: Museo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456931
+    m_Localized: Bar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456932
+    m_Localized: "Caff\xE8"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456933
+    m_Localized: Ristorante
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456934
+    m_Localized: Farmacia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456935
+    m_Localized: Banca
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456936
+    m_Localized: Luogo di culto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456937
+    m_Localized: Scuola
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456938
+    m_Localized: Municipio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456939
+    m_Localized: Ufficio postale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456940
+    m_Localized: Polizia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456941
+    m_Localized: Ospedale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456942
+    m_Localized: Teatro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456943
+    m_Localized: Cinema
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456944
+    m_Localized: Biblioteca
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456945
+    m_Localized: Fast food
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456946
+    m_Localized: Gelateria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456947
+    m_Localized: Pub
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456948
+    m_Localized: Parcheggio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456949
+    m_Localized: Distributore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456950
+    m_Localized: "Universit\xE0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456951
+    m_Localized: Scuola dell'infanzia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456952
+    m_Localized: Ambulatorio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456953
+    m_Localized: Medico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456954
+    m_Localized: Dentista
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456955
+    m_Localized: Tribunale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456956
+    m_Localized: Vigili del fuoco
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456957
+    m_Localized: Supermercato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456958
+    m_Localized: Forno
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456959
+    m_Localized: Macelleria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456960
+    m_Localized: Abbigliamento
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456961
+    m_Localized: Parrucchiere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456962
+    m_Localized: Alimentari
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456963
+    m_Localized: Tabaccheria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456964
+    m_Localized: Edicola
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456965
+    m_Localized: Libreria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456966
+    m_Localized: Calzature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456967
+    m_Localized: Ottica
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456968
+    m_Localized: Fioraio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456969
+    m_Localized: Gioielleria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456970
+    m_Localized: Concessionaria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456971
+    m_Localized: Officina
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456972
+    m_Localized: Telefonia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456973
+    m_Localized: Ferramenta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456974
+    m_Localized: Estetista
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456975
+    m_Localized: Frutta e verdura
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456976
+    m_Localized: Enoteca
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456977
+    m_Localized: Gastronomia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456978
+    m_Localized: Pasticceria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456979
+    m_Localized: Chiosco
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456980
+    m_Localized: Museo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456981
+    m_Localized: Albergo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456982
+    m_Localized: Attrazione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456983
+    m_Localized: B&B
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456984
+    m_Localized: Informazioni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456985
+    m_Localized: Monumento
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456986
+    m_Localized: Memoriale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456987
+    m_Localized: Castello
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456988
+    m_Localized: Sito archeologico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456989
+    m_Localized: Chiesa storica
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456990
+    m_Localized: Stadio
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456991
+    m_Localized: Centro sportivo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456992
+    m_Localized: Parco
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456993
+    m_Localized: Palestra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456994
+    m_Localized: Piscina
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456995
+    m_Localized: Stazione ferroviaria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456996
+    m_Localized: Stazione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456997
+    m_Localized: Azienda
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456998
+    m_Localized: Ufficio pubblico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526456999
+    m_Localized: Farmacia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526457000
+    m_Localized: Centrale elettrica
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526457001
+    m_Localized: Generatore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 308628526457002
+    m_Localized: Sottostazione elettrica
     m_Metadata:
       m_Items: []
   references:

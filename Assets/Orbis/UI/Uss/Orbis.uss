@@ -918,3 +918,317 @@
 .orientation-portrait .menu__actions { width: 100%; max-width: 360px; }
 .orientation-portrait .version { top: 10px; bottom: auto; }
 .orientation-portrait .tip { max-width: 92%; }
+
+/* ======================================================================
+   Gioco: HUD sopra il mondo (M1). Stesso vetro e stile del menu.
+   ====================================================================== */
+
+.game {
+    padding: 14px 14px 14px 14px;
+    justify-content: space-between;
+}
+
+.hud-top {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.hud-side {
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.hud-button.unity-button,
+.hud-button.unity-button:hover,
+.hud-button.unity-button:active,
+.hud-button.unity-button:focus {
+    width: 52px;
+    height: 52px;
+    margin: 0 0 10px 0;
+    padding: 0;
+    border-width: 0;
+    border-radius: 26px;
+    background-color: rgba(0, 0, 0, 0);
+    align-items: center;
+    justify-content: center;
+}
+
+.hud-button {
+    transition-property: scale;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out-back;
+}
+
+.hud-button:active {
+    scale: 0.9 0.9;
+}
+
+.input-pointer .hud-button:hover {
+    scale: 1.06 1.06;
+}
+
+.hud-button > .glass-fill,
+.hud-clock > .glass-fill,
+.world-loading > .glass-fill {
+    --glass-tint-top: rgba(8, 30, 80, 0.55);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.70);
+    --glass-lip: rgba(0, 16, 50, 0.55);
+    --glass-lip-height: 4;
+}
+
+.hud-button--on > .glass-fill {
+    --glass-tint-top: rgba(50, 160, 255, 0.90);
+    --glass-tint-bottom: rgba(20, 100, 235, 0.88);
+    --glass-lip: rgb(14, 66, 160);
+}
+
+.hud-button__icon {
+    width: 24px;
+    height: 24px;
+    color: rgb(255, 255, 255);
+}
+
+.hud-clock {
+    flex-direction: row;
+    align-items: center;
+    height: 52px;
+    padding: 0 6px 0 14px;
+    margin: 0 10px;
+    flex-shrink: 1;
+}
+
+.hud-clock__weather {
+    width: 26px;
+    height: 26px;
+    color: rgb(255, 214, 80);
+    margin-right: 8px;
+}
+
+.hud-clock__texts {
+    flex-direction: column;
+    margin-right: 8px;
+}
+
+.hud-clock__time {
+    font-size: 22px;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(16, 52, 120);
+    margin: 0;
+    padding: 0;
+}
+
+.app .hud-clock__detail {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    margin: -2px 0 0 0;
+    padding: 0;
+}
+
+.hud-speed.unity-button,
+.hud-speed.unity-button:hover,
+.hud-speed.unity-button:active,
+.hud-speed.unity-button:focus {
+    flex-direction: row;
+    align-items: center;
+    height: 40px;
+    min-width: 58px;
+    margin: 0;
+    padding: 0 10px;
+    border-width: 2px;
+    border-bottom-width: 4px;
+    border-radius: 20px;
+    border-color: rgba(255, 255, 255, 0.8);
+    border-bottom-color: rgb(196, 86, 8);
+    background-color: rgb(255, 160, 30);
+}
+
+.hud-speed__icon {
+    width: 16px;
+    height: 16px;
+    color: rgb(255, 255, 255);
+    margin-right: 4px;
+}
+
+.hud-speed__label {
+    font-size: 16px;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+    margin: 0;
+    padding: 0;
+}
+
+.world-loading {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    translate: -50% -50%;
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 22px 12px 14px;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.3s;
+}
+
+.world-loading--visible {
+    opacity: 1;
+}
+
+.world-loading__icon {
+    width: 28px;
+    height: 28px;
+    color: rgb(255, 255, 255);
+    margin-right: 10px;
+}
+
+.world-loading__text {
+    font-size: 18px;
+    white-space: normal;
+    max-width: 320px;
+}
+
+/* pannello Dettagli: in basso in verticale, a destra in orizzontale e su desktop */
+.details {
+    position: absolute;
+    right: 14px;
+    top: 80px;
+    bottom: 14px;
+    width: 360px;
+    padding: 14px 16px 12px 16px;
+    translate: 120% 0;
+    opacity: 0;
+    transition-property: translate, opacity;
+    transition-duration: 0.35s, 0.2s;
+    transition-timing-function: ease-out-cubic, linear;
+}
+
+.details--visible {
+    translate: 0 0;
+    opacity: 1;
+}
+
+.details > .glass-fill {
+    border-radius: 28px;
+    --glass-tint-top: rgba(8, 30, 80, 0.80);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.88);
+    --glass-lip: rgba(0, 16, 50, 0.6);
+    --glass-lip-height: 6;
+}
+
+.details__header {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.details__badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 24px;
+    margin-right: 12px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(255, 160, 30);
+    border-width: 2px;
+    border-bottom-width: 4px;
+    border-color: rgba(255, 255, 255, 0.85);
+    border-bottom-color: rgb(196, 86, 8);
+}
+
+.details--landmark .details__badge {
+    background-color: rgb(175, 82, 222);
+    border-bottom-color: rgb(110, 44, 150);
+}
+
+.details__badge-icon {
+    width: 26px;
+    height: 26px;
+    color: rgb(255, 255, 255);
+}
+
+.details__titles {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.details__title {
+    font-size: 22px;
+    white-space: normal;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(16, 52, 120);
+    margin: 0;
+}
+
+.app .details__subtitle {
+    font-size: 14px;
+    color: rgb(255, 214, 120);
+    margin: 0;
+    white-space: normal;
+}
+
+.details__scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.details__row {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px 4px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.app .details__label {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 10px 0 0;
+    flex-shrink: 0;
+}
+
+.app .details__value {
+    font-size: 15px;
+    color: rgb(255, 255, 255);
+    margin: 0;
+    white-space: normal;
+    -unity-text-align: upper-right;
+    flex-shrink: 1;
+}
+
+.app .details__attribution {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 8px 0 0 0;
+    -unity-text-align: middle-center;
+}
+
+.app .hud-attribution {
+    position: absolute;
+    left: 16px;
+    bottom: 6px;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+/* telefono in verticale: pannello dal basso, metà schermo */
+.orientation-portrait .details {
+    left: 10px;
+    right: 10px;
+    top: auto;
+    bottom: 10px;
+    width: auto;
+    height: 46%;
+    translate: 0 120%;
+}
+
+.orientation-portrait .details--visible {
+    translate: 0 0;
+}
+
+.layout-compact .hud-clock__time { font-size: 19px; }
+.layout-compact .hud-button.unity-button { width: 46px; height: 46px; }
+.layout-compact .hud-clock { height: 46px; }
+.layout-wide .details { width: 400px; }
