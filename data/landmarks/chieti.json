@@ -1,0 +1,30 @@
+{
+  "region": "chieti",
+  "note": "Landmark di Chieti (docs/02 §5). match: ID OSM ('way/123', 'relation/45') oppure nome (regex) con tag richiesti. La pipeline scrive in report.json quali elementi ha trovato.",
+  "landmarks": [
+    {
+      "key": "cattedrale_san_giustino",
+      "name": "Cattedrale di San Giustino",
+      "category": "chiesa",
+      "generator": "cathedral",
+      "match": { "name_regex": "(cattedrale|duomo).*giustino|san giustino", "types": ["building"] },
+      "effects": { "tourism": 5, "happiness": 2 }
+    },
+    {
+      "key": "teatro_marrucino",
+      "name": "Teatro Marrucino",
+      "category": "teatro",
+      "generator": "theatre",
+      "match": { "name_regex": "teatro marrucino", "types": ["building"] },
+      "effects": { "tourism": 3, "happiness": 2 }
+    },
+    {
+      "key": "stadio_guido_angelini",
+      "name": "Stadio Guido Angelini",
+      "category": "stadio",
+      "generator": "stadium",
+      "match": { "name_regex": "angelini", "types": ["area", "building"] },
+      "effects": { "tourism": 2, "happiness": 2 }
+    }
+  ]
+}

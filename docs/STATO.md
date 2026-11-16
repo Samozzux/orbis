@@ -1,7 +1,18 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M1 — Il mondo: Chieti**: da iniziare.
+**M1 — Il mondo: Chieti**: in corso (iniziata il 16/11/2026).
+
+### Piano di M1 (a blocchi, ognuno con PR e test)
+1. **Formato dei tile** — schema FlatBuffers `tools/world-pipeline/schema/orbis_tile.fbs`, codice generato per Python e C# (in `Orbis.Core`, testabile con `dotnet test`), compressione Deflate.
+2. **Pipeline** `tools/world-pipeline` (Python): estratto Geofabrik `italy/sud` → confine della provincia di Chieti (OSM) → tile z14 con edifici (sagoma reale, altezza, tetto, colori, nome, indirizzo, ID OSM), strade, aree (verde, acqua, **campi, vigneti, uliveti, frutteti**, boschi, urbano), POI con nomi, alberi, **lotti** (isolati tra le strade) e terreno (Terrain Tiles Terrarium) → file per tile + indice. Test con dati finti.
+3. **Workflow `world-data.yml`** (manuale): esegue la pipeline in CI, pubblica il pack come Release `world-chieti-v<n>`; le build lo scaricano in `StreamingAssets/world` (sul web i tile arrivano uno alla volta da GitHub Pages, stessa origine, niente problemi CORS).
+4. **Unity — mondo**: caricamento dei tile attorno alla camera, terreno con le colture disegnate, strade, edifici procedurali stile *Abruzzo* (facciate con finestre, tetti in coppi), alberi, acqua.
+5. **Camera** completa (3D/2D, gesti touch, mouse, tastiera), verticale e orizzontale.
+6. **Selezione** di un edificio → pannello Dettagli in vetro con i dati OSM.
+7. **Lotti e griglia di occupazione** (`docs/04` §4) dalle sagome reali, con vista di controllo.
+8. **Giorno/notte, cielo, meteo simulato**, **3 landmark** (Cattedrale di San Giustino, Teatro Marrucino, stadio Guido Angelini), **globo** base e zoom continuo.
+9. **Prestazioni** (≥ 30 fps), prova su iPhone e web, tag `v0.1.0`.
 
 **M0 — Fondamenta: completata il 16/11/2026 (tag `v0.0.0`).** Samuele ha provato l'app iOS (tutto ok) e la versione web (dopo la correzione dei clic); `/api/health` risponde `ok`. **L'APK Android non è stato provato su un telefono** (Samuele non ha un dispositivo Android): la build è verde e firmata, la prova resta da fare quando ci sarà un Android.
 
@@ -69,6 +80,7 @@
 - Database di produzione: `my_<FTP_USER>` / utente `<FTP_USER>` / host `localhost` (convenzione Altervista), password vuota salvo secret `DB_PASSWORD`.
 
 ## Decisioni da confermare
+0. **Compressione dei tile: Deflate invece di zstd** (`docs/02` §2 punto 6). zstd su iOS, Android e soprattutto web richiederebbe una libreria nativa o codice non sicuro in C#; Deflate è già incluso in .NET/Unity su tutte le piattaforme e comprime poco meno. Proposta: Deflate ora, zstd solo se servirà davvero.
 1. **Hosting dei dati pesanti per il web** (CORS GitHub Releases negativo). Proposta: (a) per M1 il pack di Chieti e il globo base, inclusi nelle app, sul web si servono da **GitHub Pages** insieme al gioco (stessa origine, nessun problema CORS; limiti: sito ≤ 1 GB, file ≤ 100 MB); (b) per Italia/mondo (M10) **Cloudflare R2** (piano gratuito 10 GB, traffico in uscita gratuito, richiede un account Cloudflare di Samuele), alimentato dallo stesso workflow. Le app iOS/Android continuano a scaricare dalle GitHub Releases. Nessun account creato.
 2. **.NET dei test**: .NET 8 è fuori supporto dal 10/11/2026. Funziona, ma propongo di passare il progetto di test a **.NET 10 (LTS)**.
 3. **Versione PHP**: Altervista usa **PHP 8.0.30**, non 7.x. Le regole di `CLAUDE.md` (niente `fn()`, `match`, `?->`, proprietà tipizzate) restano rispettate e i test girano anche su PHP 7.0. Proposta: alzare il minimo a PHP 8.0 (si potrebbero usare `match`, `?->`, proprietà tipizzate), oppure lasciare tutto com'è per sicurezza. Non urgente.

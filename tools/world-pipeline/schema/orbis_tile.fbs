@@ -1,0 +1,201 @@
+// Orbis — formato dei tile del mondo (docs/02 §2).
+// Condiviso tra la pipeline Python (scrittura) e il gioco C# (lettura).
+// Dopo ogni modifica: tools/world-pipeline/genera-codice.sh (rigenera Python e C#)
+// e aumentare FORMAT_VERSION in orbis_world/encode.py e TileFormat.Version in C#.
+//
+// Coordinate: interi in centimetri "Mercatore" (metri Web Mercator × 100, non scalati),
+// relativi all'angolo sud-ovest del tile, x verso est e y verso nord. Il gioco li converte in
+// metri veri moltiplicando per cos(latitudine di riferimento della regione).
+// Gli elementi non tagliati (edifici, lotti piccoli) possono uscire un po' dal tile.
+// I poligoni sono liste piatte [x0, y0, x1, y1, ...], anello esterno antiorario,
+// buchi orari, senza ripetere il primo punto.
+
+namespace Orbis.Core.World.Fb;
+
+file_identifier "ORBT";
+file_extension "bin";
+
+enum OsmType : ubyte { None = 0, Node = 1, Way = 2, Relation = 3 }
+
+enum RoofShape : ubyte {
+  Unknown = 0, Flat, Gabled, Hipped, Pyramidal, Skillion, HalfHipped, Mansard, Dome, Onion, Round, Gambrel
+}
+
+enum BuildingUse : ubyte {
+  Unknown = 0, House, Detached, Apartments, Residential, Terrace, Commercial, Retail, Office,
+  Industrial, Warehouse, Religious, Church, Cathedral, Chapel, School, University, Kindergarten,
+  Hospital, Civic, Government, Hotel, Garage, Garages, Shed, Hut, Farm, FarmAuxiliary, Barn,
+  Greenhouse, Stable, Sports, Stadium, TrainStation, Transportation, Parking, Ruins, Roof,
+  Construction, Tower, Castle, Bunker, Service, Toilets, Kiosk, Bridge, Monument, Theatre, Museum
+}
+
+enum WallMaterial : ubyte { Unknown = 0, Plaster, Brick, Stone, Concrete, Glass, Metal, Wood, Marble }
+
+// bit di Building.flags
+enum BuildingFlag : ushort (bit_flags) { HeightEstimated, RoofEstimated, Part, Historic, Underground, HasShops }
+
+table Ring { pts:[int]; }
+
+table Building {
+  osm_id:long;
+  osm_type:OsmType;
+  outer:[int] (required);
+  holes:[Ring];
+  height:int;            // cm sopra il terreno (cima del tetto)
+  min_height:int;        // cm (parti sospese, portici)
+  levels:ubyte;
+  roof_shape:RoofShape;
+  roof_height:int;       // cm, 0 = da stimare nel gioco
+  use:BuildingUse;
+  material:WallMaterial;
+  wall_color:uint;       // 0x01RRGGBB se indicato in OSM, 0 = colore dal profilo di stile
+  roof_color:uint;
+  flags:ushort;
+  year:short;            // anno di costruzione (start_date), 0 = ignoto
+  name:string;
+  address:string;        // "Via Arniense 12"
+  landmark:string;       // chiave in data/landmarks, vuota se non è un landmark
+}
+
+enum RoadClass : ubyte {
+  Motorway = 0, Trunk, Primary, Secondary, Tertiary, Unclassified, Residential, LivingStreet,
+  Service, Pedestrian, Track, Footway, Cycleway, Path, Steps, Bridleway, Raceway, BusWay,
+  Rail = 32, LightRail, Tram, Subway, NarrowGauge, Funicular, Monorail, Abandoned,
+  Runway = 48, Taxiway, Apron
+}
+
+enum RoadFlag : ushort (bit_flags) {
+  Bridge, Tunnel, Link, Roundabout, SidewalkLeft, SidewalkRight, Unpaved, Lit, Area, Embankment, Cutting
+}
+
+table Road {
+  osm_id:long;
+  pts:[int] (required);
+  cls:RoadClass;
+  width:ushort;          // cm, carreggiata (stimata se manca)
+  lanes:ubyte;
+  oneway:byte;           // 0 doppio senso, 1 nel verso dei punti, -1 contrario
+  layer:byte;
+  flags:ushort;
+  max_speed:ubyte;       // km/h, 0 = ignoto
+  name:string;
+  ref:string;            // es. "SS 81"
+}
+
+enum LineKind : ubyte {
+  Unknown = 0, River, Stream, Canal, Drain, Ditch,
+  PowerLine = 16, MinorPowerLine,
+  Wall = 32, CityWall, RetainingWall, Fence, Hedge, Guardrail
+}
+
+table Line {
+  osm_id:long;
+  kind:LineKind;
+  pts:[int] (required);
+  width:ushort;          // cm
+  name:string;
+}
+
+enum AreaKind : ubyte {
+  Unknown = 0,
+  // urbano
+  Residential, Commercial, Retail, Industrial, Construction, Railway, Military, Cemetery,
+  Parking, Pedestrian, School, University, Hospital, Brownfield, Greenfield, Garages,
+  // verde e svago
+  Park = 32, Garden, Grass, Meadow, Playground, Pitch, SportsCentre, Stadium, GolfCourse,
+  Track, Camping, Zoo, ThemePark,
+  // natura
+  Forest = 64, Scrub, Heath, Grassland, Wetland, Beach, Sand, BareRock, Scree, Glacier, Cliff,
+  // campagna
+  Farmland = 96, Vineyard, Orchard, OliveGrove, Allotments, Greenhouse, Farmyard, PlantNursery,
+  Quarry, Landfill, Meadowland,
+  // acqua
+  Water = 128, River, Lake, Reservoir, Basin, Pond, SwimmingPool, Sea
+}
+
+table Area {
+  osm_id:long;
+  osm_type:OsmType;
+  kind:AreaKind;
+  outer:[int] (required);
+  holes:[Ring];
+  name:string;
+  landmark:string;       // es. lo stadio come area (leisure=stadium)
+}
+
+table Poi {
+  osm_id:long;
+  osm_type:OsmType;
+  x:int;
+  y:int;
+  category:string;       // "amenity/bar", "shop/supermarket", "tourism/museum"…
+  name:string;
+  address:string;
+  building:int = -1;     // indice dell'edificio del tile che lo contiene, -1 = nessuno
+}
+
+enum TreeKind : ubyte { Broadleaf = 0, Conifer, Palm, Olive, Cypress, StonePine, Fruit, Shrub }
+
+enum LotKind : ubyte { Urban = 0, Suburban, Rural, Park, Water }
+
+table Lot {
+  id:uint;               // unico nella regione
+  kind:LotKind;
+  outer:[int] (required);
+  holes:[Ring];
+  grid_x:int;            // origine della griglia (cm Mercatore, nel sistema del tile)
+  grid_y:int;
+  grid_angle:int;        // asse x della griglia: millesimi di grado da est, antiorario
+  front_road:long;       // ID OSM della strada su cui si affaccia il lato principale, 0 = nessuna
+  area:float;            // m² veri
+}
+
+table Terrain {
+  size:ushort;           // campioni per lato (65): il primo e l'ultimo cadono sui bordi del tile
+  base:int;              // cm, quota del valore 0
+  step:ushort;           // mm per unità di heights
+  heights:[ushort];      // size×size, righe da sud a nord, ogni riga da ovest a est
+}
+
+table Tile {
+  format:ushort;
+  z:ubyte;
+  x:uint;
+  y:uint;
+  buildings:[Building];
+  roads:[Road];
+  lines:[Line];
+  areas:[Area];
+  pois:[Poi];
+  tree_pts:[int];        // x, y di ogni albero
+  tree_kinds:[TreeKind];
+  tree_heights:[ubyte];  // dm, 0 = stima
+  lots:[Lot];
+  terrain:Terrain;
+}
+
+// Indice di un region pack (file index.bin accanto ai tile).
+struct TileEntry {
+  x:uint;
+  y:uint;
+  size:uint;             // byte del file compresso
+  crc:uint;              // CRC-32 del file compresso
+  buildings:uint;
+}
+
+table RegionIndex {
+  format:ushort;
+  key:string;            // "chieti"
+  name:string;           // "Provincia di Chieti"
+  version:uint;
+  z:ubyte;
+  tiles:[TileEntry];
+  origin_lat:double;     // punto di partenza della camera e latitudine di riferimento della scala
+  origin_lon:double;
+  boundary:[double];     // confine semplificato: lon, lat, lon, lat…
+  attribution:string;
+  created:string;        // data UTC ISO 8601
+  source:string;         // estratto OSM usato
+}
+
+root_type Tile;

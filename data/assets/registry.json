@@ -10,6 +10,36 @@
       "source": "https://github.com/google/fonts/tree/main/ofl/lilitaone",
       "path": "Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf",
       "added": "2026-11-16"
+    },
+    {
+      "id": "data-osm",
+      "type": "data",
+      "name": "OpenStreetMap",
+      "author": "OpenStreetMap contributors",
+      "license": "ODbL-1.0",
+      "source": "https://download.geofabrik.de/europe/italy/sud.html",
+      "path": "tools/world-pipeline (region pack)",
+      "added": "2026-11-16"
+    },
+    {
+      "id": "data-terrain-tiles",
+      "type": "data",
+      "name": "Terrain Tiles (Terrarium)",
+      "author": "Mapzen / AWS Open Data",
+      "license": "open data (attribuzione)",
+      "source": "https://registry.opendata.aws/terrain-tiles/",
+      "path": "tools/world-pipeline (region pack)",
+      "added": "2026-11-16"
+    },
+    {
+      "id": "lib-flatbuffers",
+      "type": "software",
+      "name": "FlatBuffers runtime C#",
+      "author": "Google",
+      "license": "Apache-2.0",
+      "source": "https://github.com/google/flatbuffers/tree/v25.12.19/net/FlatBuffers",
+      "path": "Assets/Orbis/Core/ThirdParty/FlatBuffers",
+      "added": "2026-11-16"
     }
   ]
 }
