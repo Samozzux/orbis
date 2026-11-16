@@ -76,6 +76,11 @@ namespace Orbis.Tests.PlayMode
         private static IEnumerator LoadMenu()
         {
             var previous = OrbisApp.Instance;
+            // InputTestFixture sostituisce lo stato dell'Input System, ma l'asset di azioni salvato nella scena
+            // conserva lo stato dei test precedenti: all'OnEnable il modulo UI può lanciare un'eccezione
+            // dell'Input System (solo nei test, mai nel gioco). Qui la si ignora e sotto si danno al modulo
+            // azioni nuove; gli errori veri dell'avvio li controlla BootFlowTests.
+            LogAssert.ignoreFailingMessages = true;
             SceneManager.LoadScene("Boot");
             var deadline = Time.realtimeSinceStartup + 30f;
             while ((OrbisApp.Instance == null || OrbisApp.Instance == previous || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu)
@@ -93,6 +98,8 @@ namespace Orbis.Tests.PlayMode
             module.submit = InputActionReference.Create(actions.UI.Submit);
             module.cancel = InputActionReference.Create(actions.UI.Cancel);
             module.scrollWheel = InputActionReference.Create(actions.UI.ScrollWheel);
+            yield return null;
+            LogAssert.ignoreFailingMessages = false;
             // le animazioni di entrata del menu (translate) devono finire prima di cliccare
             yield return new WaitForSecondsRealtime(1.2f);
         }
