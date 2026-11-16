@@ -167,8 +167,8 @@
 }
 
 .progress > .glass-fill {
-    --glass-tint-top: rgba(0, 20, 60, 0.30);
-    --glass-tint-bottom: rgba(0, 20, 60, 0.20);
+    --glass-tint-top: rgba(8, 30, 80, 0.45);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.55);
     --glass-lip: rgba(0, 18, 50, 0.45);
     --glass-lip-height: 3;
     --glass-shadow-spread: 10;
@@ -231,8 +231,8 @@
 
 .tip > .glass-fill {
     border-radius: 22px;
-    --glass-tint-top: rgba(255, 255, 255, 0.07);
-    --glass-tint-bottom: rgba(255, 255, 255, 0.01);
+    --glass-tint-top: rgba(8, 30, 80, 0.40);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.52);
 }
 
 .tip__title {
@@ -462,7 +462,10 @@
 
 .navbar > .glass-fill {
     border-radius: 30px;
-    --glass-lip: rgba(0, 20, 60, 0.35);
+    /* vetro fumé: le etichette bianche restano leggibili anche sopra la città chiara */
+    --glass-tint-top: rgba(8, 30, 80, 0.38);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.50);
+    --glass-lip: rgba(0, 20, 60, 0.45);
     --glass-lip-height: 4;
 }
 

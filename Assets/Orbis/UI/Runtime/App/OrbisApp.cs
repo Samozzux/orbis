@@ -133,6 +133,7 @@ namespace Orbis.UI.App
                 yield return menuCity.Build(f => progress.Report("world", f));
                 if (glassBlur != null)
                     glassBlur.Activate();
+                _backdrop.AddToClassList("backdrop--hidden"); // sfuma lo sfondo fisso: appare la città
             }
             progress.Complete("world");
 
@@ -147,8 +148,6 @@ namespace Orbis.UI.App
             _mainMenu = new MainMenuController(_menu, MainMenuController.Require<VisualElement>(root, "toast"), services);
             yield return _mainMenu.Prepare();
             State = AppState.MainMenu;
-            if (city3D)
-                _backdrop.AddToClassList("backdrop--hidden"); // sfuma lo sfondo fisso: appare la città
             _screens.Show(_menu);
             _mainMenu.OnShown();
             Debug.Log("[Orbis] Menu principale pronto.");
