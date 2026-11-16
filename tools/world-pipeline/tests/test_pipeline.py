@@ -105,6 +105,8 @@ def make_city(path):
     w.node(-60, 50, natural="tree", leaf_type="needleleaved")
     w.node(30, 20, amenity="bar", name="Bar Centrale")
     w.node(-100, 200, shop="bakery", name="Forno Abruzzese")
+    w.rect(-200, 60, -170, 90, building="yes")
+    w.node(-185, 75, amenity="theatre", name="Teatro Marrucino")
     w.way([(-300, 250), (300, 260)], power="line")
     w.way([(-250, 210), (-200, 230), (-150, 210)], waterway="stream", name="Fosso")
     # confine "provincia"
@@ -198,7 +200,8 @@ def test_build_region(city):
 
     region = {"key": "test", "name": "Città di prova", "origin": {"lat": LAT0, "lon": LON0}, "zoom": 14,
               "full_buffer_m": 100, "outer_buffer_m": 600}
-    landmarks = [{"key": "cattedrale_san_giustino", "match": {"name_regex": "san giustino", "types": ["building"]}}]
+    landmarks = [{"key": "cattedrale_san_giustino", "match": {"name_regex": "san giustino", "types": ["building"]}},
+                 {"key": "teatro_marrucino", "match": {"name_regex": "teatro marrucino", "types": ["building", "poi"]}}]
     out = str(d / "pack")
     logs = []
     region["far_radius_m"] = 3000
@@ -206,6 +209,7 @@ def test_build_region(city):
     report = tiler.build(region, path, geom, terrain.FunctionSource(hills), out, landmarks=landmarks,
                          version=3, source_name="city.osm", log=logs.append, far_source=terrain.FunctionSource(hills))
     assert report["landmarks"][0]["matches"], logs
+    assert report["landmarks"][1]["matches"], logs  # trovato dal POI dentro l'edificio
 
     with open(os.path.join(out, "index.bin"), "rb") as f:
         index_file = f.read()
@@ -216,7 +220,7 @@ def test_build_region(city):
     assert far is not None and far.Cols() > 10 and far.Rows() > 10
     assert len(far.HeightsAsNumpy()) == far.Cols() * far.Rows()
     assert len(entries) >= 1
-    assert sum(e.Buildings() for e in entries) == 5  # 3 edifici + 2 parti (contorno sostituito)
+    assert sum(e.Buildings() for e in entries) == 6  # 4 edifici + 2 parti (contorno sostituito)
 
     tx, ty = geo.tile_of(14, float(x0), float(y0))
     tile_path = os.path.join(out, "14", str(tx), f"{ty}.bin")
