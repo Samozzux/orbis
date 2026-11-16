@@ -135,6 +135,46 @@ MonoBehaviour:
     m_Key: tips.4
     m_Metadata:
       m_Items: []
+  - m_Id: 73679407931392
+    m_Key: settings.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514304
+    m_Key: settings.section.screen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514305
+    m_Key: settings.autorotate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514306
+    m_Key: settings.autorotate.detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514307
+    m_Key: settings.orientation
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514308
+    m_Key: settings.orientation.detail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514309
+    m_Key: settings.orientation.portrait
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514310
+    m_Key: settings.orientation.landscape
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679424708608
+    m_Key: settings.orientation.web_note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679424708609
+    m_Key: settings.more_soon
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

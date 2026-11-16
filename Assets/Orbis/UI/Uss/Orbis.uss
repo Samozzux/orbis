@@ -58,7 +58,11 @@
 .nav-item__label,
 .toast__text,
 .loading__percent,
-.tip__title {
+.tip__title,
+.sheet__title,
+.sheet__section,
+.setting-row__label,
+.segmented__label {
     -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
     -unity-font-style: normal;
 }
@@ -582,6 +586,282 @@
     font-size: 18px;
     -unity-text-outline-width: 1.4px;
     -unity-text-outline-color: rgba(90, 40, 0, 0.85);
+}
+
+/* ---------- Pannello Impostazioni ---------- */
+
+.sheet-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-out-cubic;
+}
+
+.sheet-layer--visible {
+    opacity: 1;
+}
+
+.scrim {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 8, 30, 0.45);
+}
+
+.sheet {
+    width: 520px;
+    max-width: 92%;
+    max-height: 92%;
+    padding: 18px 22px 22px 22px;
+    scale: 0.88 0.88;
+    transition-property: scale;
+    transition-duration: 0.45s;
+    transition-timing-function: ease-out-back;
+}
+
+.sheet-layer--visible .sheet {
+    scale: 1 1;
+}
+
+.sheet > .glass-fill {
+    border-radius: 30px;
+    --glass-tint-top: rgba(8, 30, 80, 0.70);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.80);
+    --glass-lip: rgba(0, 16, 50, 0.6);
+    --glass-lip-height: 6;
+}
+
+.sheet__header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.sheet__title {
+    font-size: 30px;
+    -unity-text-outline-width: 1.6px;
+    -unity-text-outline-color: rgb(16, 52, 120);
+}
+
+.icon-button.unity-button,
+.icon-button.unity-button:hover,
+.icon-button.unity-button:active,
+.icon-button.unity-button:focus {
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    border-width: 2px;
+    border-bottom-width: 4px;
+    border-radius: 22px;
+    border-color: rgba(255, 255, 255, 0.8);
+    border-bottom-color: rgb(150, 40, 30);
+    background-color: rgb(235, 72, 56);
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button {
+    transition-property: scale;
+    transition-duration: 0.15s;
+    transition-timing-function: ease-out-back;
+}
+
+.icon-button:active {
+    scale: 0.9 0.9;
+}
+
+.icon-button__icon {
+    width: 18px;
+    height: 18px;
+    color: rgb(255, 255, 255);
+}
+
+.sheet__section {
+    font-size: 17px;
+    color: rgb(255, 210, 80);
+    margin: 8px 0 8px 4px;
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(120, 60, 0);
+}
+
+.settings-group {
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.07);
+    padding: 4px 0;
+}
+
+.setting-row.unity-button,
+.setting-row.unity-button:hover,
+.setting-row.unity-button:active,
+.setting-row.unity-button:focus,
+.setting-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    margin: 0;
+    padding: 8px 16px;
+    border-width: 0;
+    border-radius: 18px;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.input-pointer .setting-row.unity-button:hover,
+.input-pointer .setting-row.unity-button:focus {
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.setting-row__texts {
+    flex-shrink: 1;
+    margin-right: 12px;
+}
+
+.setting-row__label {
+    font-size: 19px;
+}
+
+.app .setting-row__detail {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.75);
+    white-space: normal;
+    margin-top: 1px;
+}
+
+/* il suggerimento "spegni la rotazione per scegliere" si vede solo quando la scelta è disattivata */
+.setting-row__detail--when-disabled {
+    display: none;
+}
+
+.setting-row--choice:disabled .setting-row__detail--when-disabled {
+    display: flex;
+}
+
+.setting-row--choice:disabled .segmented {
+    opacity: 0.45;
+}
+
+.setting-row--choice:disabled {
+    opacity: 1;
+}
+
+/* interruttore a capsula */
+.switch {
+    width: 60px;
+    height: 34px;
+    border-radius: 17px;
+    flex-shrink: 0;
+    padding: 3px;
+    background-color: rgba(255, 255, 255, 0.22);
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.5);
+    transition-property: background-color;
+    transition-duration: 0.2s;
+}
+
+.switch--on {
+    background-color: rgb(52, 199, 89);
+}
+
+.switch__knob {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    background-color: rgb(255, 255, 255);
+    border-bottom-width: 2px;
+    border-color: rgba(0, 0, 0, 0.2);
+    transition-property: translate;
+    transition-duration: 0.25s;
+    transition-timing-function: ease-out-back;
+}
+
+.switch--on .switch__knob {
+    translate: 26px 0;
+}
+
+/* scelta a segmenti (verticale / orizzontale) */
+.segmented {
+    flex-direction: row;
+    flex-shrink: 0;
+    padding: 4px;
+    border-radius: 18px;
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.segmented__item.unity-button,
+.segmented__item.unity-button:hover,
+.segmented__item.unity-button:active,
+.segmented__item.unity-button:focus,
+.segmented__item.unity-button:disabled {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 92px;
+    height: 64px;
+    margin: 0;
+    padding: 4px 0;
+    border-width: 0;
+    border-radius: 14px;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgb(255, 255, 255);
+}
+
+.segmented__item.unity-button.segmented__item--selected {
+    background-color: rgb(255, 160, 30);
+    border-bottom-width: 3px;
+    border-color: rgb(196, 86, 8);
+}
+
+.segmented__icon {
+    width: 24px;
+    height: 24px;
+    color: rgb(255, 255, 255);
+}
+
+.segmented__label {
+    font-size: 14px;
+    margin-top: 2px;
+    -unity-text-align: middle-center;
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgba(10, 30, 80, 0.8);
+}
+
+.app .sheet__note {
+    font-size: 14px;
+    white-space: normal;
+    margin: 12px 6px 0 6px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.app .sheet__note--muted {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+}
+
+/* in verticale le righe vanno a capo: testo sopra, controlli sotto */
+.orientation-portrait .setting-row--choice {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.orientation-portrait .setting-row--choice .segmented {
+    margin-top: 10px;
+    align-self: stretch;
+}
+
+.orientation-portrait .segmented__item.unity-button {
+    flex-grow: 1;
 }
 
 /* ---------- Versione ---------- */

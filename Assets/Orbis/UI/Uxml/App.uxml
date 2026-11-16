@@ -95,6 +95,49 @@
                 <ui:Label name="version" class="version" picking-mode="Ignore" />
             </ui:VisualElement>
 
+            <ui:VisualElement name="settings" class="sheet-layer">
+                <ui:VisualElement name="settings-scrim" class="scrim" />
+                <ui:VisualElement class="sheet">
+                    <glass:GlassSurface />
+                    <ui:VisualElement class="sheet__header">
+                        <ui:Label class="sheet__title" text="#settings.title" />
+                        <ui:Button name="settings-close" class="icon-button">
+                            <el:OrbisIcon icon="Close" class="icon-button__icon" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                    <ui:Label class="sheet__section" text="#settings.section.screen" />
+                    <ui:VisualElement name="orientation-controls" class="settings-group">
+                        <ui:Button name="toggle-autorotate" class="setting-row">
+                            <ui:VisualElement class="setting-row__texts" picking-mode="Ignore">
+                                <ui:Label class="setting-row__label" text="#settings.autorotate" picking-mode="Ignore" />
+                                <ui:Label class="setting-row__detail" text="#settings.autorotate.detail" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:VisualElement name="autorotate-switch" class="switch" picking-mode="Ignore">
+                                <ui:VisualElement class="switch__knob" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                        </ui:Button>
+                        <ui:VisualElement name="orientation-row" class="setting-row setting-row--choice">
+                            <ui:VisualElement class="setting-row__texts" picking-mode="Ignore">
+                                <ui:Label class="setting-row__label" text="#settings.orientation" picking-mode="Ignore" />
+                                <ui:Label class="setting-row__detail setting-row__detail--when-disabled" text="#settings.orientation.detail" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="segmented">
+                                <ui:Button name="orientation-portrait" class="segmented__item">
+                                    <el:OrbisIcon icon="PhonePortrait" class="segmented__icon" />
+                                    <ui:Label class="segmented__label" text="#settings.orientation.portrait" picking-mode="Ignore" />
+                                </ui:Button>
+                                <ui:Button name="orientation-landscape" class="segmented__item">
+                                    <el:OrbisIcon icon="PhoneLandscape" class="segmented__icon" />
+                                    <ui:Label class="segmented__label" text="#settings.orientation.landscape" picking-mode="Ignore" />
+                                </ui:Button>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:Label name="orientation-note" class="sheet__note" text="#settings.orientation.web_note" />
+                    <ui:Label class="sheet__note sheet__note--muted" text="#settings.more_soon" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
             <ui:VisualElement name="toast" class="toast" picking-mode="Ignore">
                 <glass:GlassSurface />
                 <el:OrbisIcon icon="Info" class="toast__icon" />

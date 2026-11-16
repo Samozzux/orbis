@@ -15,11 +15,12 @@ namespace Orbis.EditorTools
             foreach (var target in new[] { NamedBuildTarget.iOS, NamedBuildTarget.Android, NamedBuildTarget.WebGL, NamedBuildTarget.Standalone })
                 PlayerSettings.SetApplicationIdentifier(target, OrbisPaths.BundleId);
 
-            // gioco in orizzontale (il telefono nel gioco gestirà il verticale a runtime)
+            // verticale e orizzontale su telefono e tablet (decisione di Samuele, 16/11/2026):
+            // rotazione automatica di default; il blocco si sceglie nelle Impostazioni a runtime
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.AutoRotation;
+            PlayerSettings.allowedAutorotateToPortrait = true;
             PlayerSettings.allowedAutorotateToLandscapeLeft = true;
             PlayerSettings.allowedAutorotateToLandscapeRight = true;
-            PlayerSettings.allowedAutorotateToPortrait = false;
             PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
 
             PlayerSettings.colorSpace = ColorSpace.Linear;

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Threading.Tasks;
 using Orbis.Platform;
 using Orbis.UI.Localization;
+using Orbis.UI.Settings;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -10,7 +11,7 @@ namespace Orbis.UI.App
 {
     /// <summary>
     /// Menu principale (docs/04 §1): Continua, Nuova partita e navbar con Amici, Impostazioni, Crediti.
-    /// In M0 le voci non aprono ancora nulla: mostrano un avviso "in arrivo".
+    /// Impostazioni apre il pannello (per ora: orientamento dello schermo); le altre voci mostrano "in arrivo".
     /// </summary>
     public sealed class MainMenuController
     {
@@ -26,7 +27,7 @@ namespace Orbis.UI.App
 
         /// <param name="menu">schermata del menu</param>
         /// <param name="toast">avviso a capsula (sta fuori dal menu, sopra tutte le schermate)</param>
-        public MainMenuController(VisualElement menu, VisualElement toast, IPlatformServices services)
+        public MainMenuController(VisualElement menu, VisualElement toast, IPlatformServices services, SettingsController settings)
         {
             _root = menu;
             _services = services;
@@ -37,8 +38,9 @@ namespace Orbis.UI.App
 
             _newGame.clicked += ComingSoon;
             _continue.clicked += ComingSoon;
-            foreach (var id in new[] { "nav-friends", "nav-settings", "nav-credits" })
+            foreach (var id in new[] { "nav-friends", "nav-credits" })
                 Require<Button>(menu, id).clicked += ComingSoon;
+            Require<Button>(menu, "nav-settings").clicked += settings.Open;
 
             var build = BuildInfo.Load();
             var device = services.DeviceProfile.Info;

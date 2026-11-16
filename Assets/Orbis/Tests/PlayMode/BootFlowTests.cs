@@ -24,9 +24,11 @@ namespace Orbis.Tests.PlayMode
             };
             Application.logMessageReceived += collect;
 
+            var previous = OrbisApp.Instance;
             SceneManager.LoadScene("Boot");
             var deadline = Time.realtimeSinceStartup + 30f;
-            while ((OrbisApp.Instance == null || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu)
+            // si aspetta la NUOVA istanza (quella del test precedente può essere ancora viva per un frame)
+            while ((OrbisApp.Instance == null || OrbisApp.Instance == previous || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu)
                    && Time.realtimeSinceStartup < deadline)
                 yield return null;
 

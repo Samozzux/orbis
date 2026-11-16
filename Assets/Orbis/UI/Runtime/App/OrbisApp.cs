@@ -5,6 +5,7 @@ using Orbis.UI.Glass;
 using Orbis.UI.Layout;
 using Orbis.UI.Localization;
 using Orbis.UI.Menu3D;
+using Orbis.UI.Settings;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UIElements;
@@ -42,6 +43,9 @@ namespace Orbis.UI.App
         /// <summary>Menu principale (disponibile quando <see cref="State"/> è MainMenu).</summary>
         public MainMenuController MainMenu => _mainMenu;
 
+        /// <summary>Pannello Impostazioni.</summary>
+        public SettingsController Settings => _settings;
+
         private UIDocument _document;
         private AdaptiveLayout _layout;
         private readonly ScreenSwitcher _screens = new ScreenSwitcher();
@@ -53,11 +57,14 @@ namespace Orbis.UI.App
         private Label _loadingPercent;
         private VisualElement _backdrop;
         private MainMenuController _mainMenu;
+        private SettingsController _settings;
 
         private void Awake()
         {
             Instance = this;
             Application.targetFrameRate = 60;
+            // orientamento scelto nelle impostazioni (predefinito: rotazione automatica, avvio in verticale)
+            PlatformServices.Current.ScreenOrientation.Apply(SettingsRepository.LoadDisplay());
             _document = GetComponent<UIDocument>();
             // copia delle impostazioni del pannello: la scala cambia a runtime senza toccare l'asset
             _document.panelSettings = Instantiate(_document.panelSettings);
@@ -145,7 +152,8 @@ namespace Orbis.UI.App
             _loadingStatus.text = Loc.Get("loading.ready");
 
             // 4) menu principale
-            _mainMenu = new MainMenuController(_menu, MainMenuController.Require<VisualElement>(root, "toast"), services);
+            _settings = new SettingsController(root, services.ScreenOrientation, SettingsRepository.LoadDisplay());
+            _mainMenu = new MainMenuController(_menu, MainMenuController.Require<VisualElement>(root, "toast"), services, _settings);
             yield return _mainMenu.Prepare();
             State = AppState.MainMenu;
             _screens.Show(_menu);

@@ -98,6 +98,46 @@
       "it": "Versione {0} ({1})"
     },
     {
+      "key": "settings.title",
+      "it": "Impostazioni"
+    },
+    {
+      "key": "settings.section.screen",
+      "it": "Schermo"
+    },
+    {
+      "key": "settings.autorotate",
+      "it": "Rotazione automatica"
+    },
+    {
+      "key": "settings.autorotate.detail",
+      "it": "Il gioco gira insieme al telefono o al tablet"
+    },
+    {
+      "key": "settings.orientation",
+      "it": "Orientamento"
+    },
+    {
+      "key": "settings.orientation.detail",
+      "it": "Spegni la rotazione automatica per scegliere"
+    },
+    {
+      "key": "settings.orientation.portrait",
+      "it": "Verticale"
+    },
+    {
+      "key": "settings.orientation.landscape",
+      "it": "Orizzontale"
+    },
+    {
+      "key": "settings.orientation.web_note",
+      "it": "Nel browser lo schermo segue come tieni il dispositivo. Nell'app per iPhone, iPad e Android puoi bloccarlo in verticale o in orizzontale."
+    },
+    {
+      "key": "settings.more_soon",
+      "it": "Altre impostazioni in arrivo nelle prossime versioni."
+    },
+    {
       "key": "ios.usage.faceid",
       "it": "Orbis usa Face ID per farti entrare senza password."
     },
