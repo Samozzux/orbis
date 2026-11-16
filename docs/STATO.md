@@ -1,7 +1,7 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M0 — Fondamenta**: unita in `main` il 16/11/2026 (PR #1). In corso il nuovo stile "da gioco" del menu (branch `m0-ui-gioco`, PR #2). Manca la prova di Samuele sui dispositivi, poi il tag `v0.0.0`.
+**M0 — Fondamenta**: tutto in `main` (PR #1 e PR #2, 16/11/2026); backend online su Altervista (`/api/health` → `ok`), versione web su GitHub Pages, IPA e APK firmato dalle build di `main`. Manca solo la prova di Samuele sui dispositivi (menu nuovo, verticale/orizzontale), poi il tag `v0.0.0`.
 
 ## Già pronto (fatto da Samuele il 15/11/2026)
 - Repository pubblico `Samozzux/orbis` con `.gitignore` Unity.
@@ -45,7 +45,8 @@
 - **HTTPS Altervista**: attivo (certificato valido su `https://giuliaa8.altervista.org`).
 - **FTP Altervista**: accetta TLS esplicito; il certificato è per `*.altervista.org` e non copre `ftp.giuliaa8.altervista.org`, quindi il deploy usa FTPS in modalità "loose" (cifrato, senza controllo del nome).
 - **Su `main` dopo l'unione (16/11/2026)**: build **Android** verde con APK firmato dal keystore di Orbis (42,7 MB), **iOS** verde (IPA 54,5 MB), **Web** verde e **pubblicata** su https://samozzux.github.io/orbis/ (verificato: la pagina carica e parte).
-- **`/api/health`**: non ancora disponibile. Il deploy FTP è stato **rifiutato da Altervista**: "530 Autenticazione fallita. Accedi al pannello di controllo di AlterVista e aggiungi la nazione da cui ti stai connettendo tra quelle consentite". I server di GitHub sono all'estero (di solito Stati Uniti): va aggiunta la nazione nel pannello Altervista, poi si rilancia il workflow "Backend". Il workflow ora stampa da quale Paese si collega.
+- **Altervista e FTP**: il primo deploy è stato rifiutato ("aggiungi la nazione da cui ti stai connettendo tra quelle consentite"): i server di GitHub si collegano dagli **Stati Uniti**. Samuele ha aggiunto gli USA tra le nazioni FTP consentite e il deploy del 16/11 è riuscito. Il workflow stampa sempre il Paese di provenienza.
+- **`/api/health`** (16/11/2026, dal vivo): `status: ok`, HTTPS attivo; **PHP 8.0.30**; **MySQL 8.0.45** con utf8mb4, connesso con password vuota; migrazioni 1 applicata / 0 in attesa; estensioni openssl, zlib, mbstring, pdo_mysql, curl presenti, **sodium assente**; `upload_max_filesize` 128M, `post_max_size` 256M, `memory_limit` 512M, `max_execution_time` 60 s → pezzi di upload da 512 KB; segreto JWT e username admin configurati. CORS: ammessa solo `https://samozzux.github.io` (+ localhost), preflight 204. `config.php`, `src/`, `migrations/`, `storage/` e il file di stato del deploy rispondono 403.
 - **CORS dei download GitHub Releases dal web** (verificato il 15/11/2026): **non utilizzabili**. `github.com/.../releases/download/...` risponde 302 senza `Access-Control-Allow-Origin`; anche passando da `api.github.com` (che ha CORS) il redirect finale su `release-assets.githubusercontent.com` risponde senza header CORS. GitHub Pages invece risponde con `Access-Control-Allow-Origin: *`. → vedi "Decisioni da confermare".
 
 ## Decisioni prese
@@ -64,22 +65,24 @@
 ## Decisioni da confermare
 1. **Hosting dei dati pesanti per il web** (CORS GitHub Releases negativo). Proposta: (a) per M1 il pack di Chieti e il globo base, inclusi nelle app, sul web si servono da **GitHub Pages** insieme al gioco (stessa origine, nessun problema CORS; limiti: sito ≤ 1 GB, file ≤ 100 MB); (b) per Italia/mondo (M10) **Cloudflare R2** (piano gratuito 10 GB, traffico in uscita gratuito, richiede un account Cloudflare di Samuele), alimentato dallo stesso workflow. Le app iOS/Android continuano a scaricare dalle GitHub Releases. Nessun account creato.
 2. **.NET dei test**: .NET 8 è fuori supporto dal 10/11/2026. Funziona, ma propongo di passare il progetto di test a **.NET 10 (LTS)**.
-3. **Riferimenti tra assembly**: `Orbis.UI` usa anche `Orbis.Platform` (per profilo del dispositivo e servizi), non solo Core e Gameplay come nella tabella di `docs/01` §2.
+3. **Versione PHP**: Altervista usa **PHP 8.0.30**, non 7.x. Le regole di `CLAUDE.md` (niente `fn()`, `match`, `?->`, proprietà tipizzate) restano rispettate e i test girano anche su PHP 7.0. Proposta: alzare il minimo a PHP 8.0 (si potrebbero usare `match`, `?->`, proprietà tipizzate), oppure lasciare tutto com'è per sicurezza. Non urgente.
+4. **Riferimenti tra assembly**: `Orbis.UI` usa anche `Orbis.Platform` (per profilo del dispositivo e servizi), non solo Core e Gameplay come nella tabella di `docs/01` §2.
 
 ## Problemi aperti
-- **Deploy del backend bloccato dal filtro FTP per nazione di Altervista** (vedi Verifiche): serve un'azione di Samuele nel pannello Altervista.
 - Il modulo **iOS Build Support** non è installato sul Mac: non serve (l'IPA si compila in CI), ma senza non si può provare la build iOS in locale.
 - Gli APK compilati prima del 15/11 alle 23:38 sono firmati con una chiave di debug: se ne hai installato uno, va disinstallato prima di installare quello firmato con la chiave di Orbis.
 
 ## Cosa deve fare Samuele
 - ✅ Fatto il 15/11: script `tools/setup/configura-github.sh` (JWT, admin, keystore Android, GitHub Pages); tolta la password del database.
-- ⏳ **Altervista, FTP dall'estero**: nel pannello di controllo di Altervista aggiungere gli **Stati Uniti** tra le nazioni da cui è consentito l'accesso FTP (i server di GitHub sono lì). Poi rilanciare il workflow "Backend" (GitHub → Actions → Backend → ultima esecuzione → "Re-run failed jobs"), oppure scrivere a Claude "rilancia il backend".
+- ✅ Fatto il 16/11: Stati Uniti aggiunti tra le nazioni FTP consentite su Altervista.
+- ⏳ **Provare sui dispositivi** (vedi sotto) e dire a Claude com'è andata: poi tag `v0.0.0` e si passa a M1.
 
 ## Cosa provare (fine M0)
-- **Web**: aprire `https://samozzux.github.io/orbis/` da Mac, iPhone (anche in verticale) e iPad → logo animato, caricamento, menu con bottoni di vetro e navbar; toccare una voce → avviso "In arrivo nelle prossime versioni"; su Mac anche Tab/frecce + Invio.
-- **iPhone**: scaricare `Orbis-ipa` dall'ultima esecuzione verde di "iOS build" e installarlo con Sideloadly (istruzioni nel README) → stesso menu, in orizzontale, rispettando la Dynamic Island.
-- **Android**: scaricare `Orbis-apk` dall'ultima esecuzione verde di "Android build" e installarlo (istruzioni nel README).
-- **Backend** (dopo lo sblocco FTP): aprire `https://giuliaa8.altervista.org/orbis/api/health` → JSON con `"status": "ok"`.
+Le build con la grafica nuova partono da `main` dopo l'unione della PR #2 (16/11, ~06:05 UTC): web dopo circa 30 minuti, APK e IPA dopo circa un'ora (una build alla volta).
+- **Web**: aprire `https://samozzux.github.io/orbis/` da Mac, iPhone (in verticale e in orizzontale) e iPad → logo, caricamento con consigli, città 3D che gira con mare e Majella, bottoni di vetro e navbar; "Impostazioni" apre il pannello (nel browser con la nota sull'orientamento); le altre voci mostrano "In arrivo"; su Mac anche Tab/frecce + Invio, Esc chiude le Impostazioni.
+- **iPhone / iPad**: scaricare `Orbis-ipa` dall'ultima esecuzione verde di "iOS build" e installarlo con Sideloadly (istruzioni nel README) → parte in verticale e ruota col telefono; in Impostazioni → Schermo spegnere "Rotazione automatica" e provare Verticale/Orizzontale; chiudere e riaprire l'app: la scelta resta. Controllare la Dynamic Island in entrambi gli orientamenti.
+- **Android**: scaricare `Orbis-apk` dall'ultima esecuzione verde di "Android build" e installarlo (istruzioni nel README) → stesse prove dell'iPhone; anche il tasto "indietro" chiude le Impostazioni.
+- **Backend**: `https://giuliaa8.altervista.org/orbis/api/health` → JSON con `"status": "ok"` (verificato il 16/11).
 
 ## Registro sessioni
 ### 15/11/2026 — M0 Fondamenta
@@ -89,4 +92,5 @@
 
 ### 16/11/2026 — M0 su main e menu "da gioco"
 - **Fatto**: PR #1 unita in `main`; build Android (APK firmato), iOS e Web verdi; versione web pubblicata su GitHub Pages. Menu rifatto in stile gioco con città 3D, mare, Majella, vetro che sfoca la scena vera, font Lilita One (PR #2). CI resa più veloce: sulle PR solo test.
-- **Resta**: sblocco FTP su Altervista e lettura di `/api/health`; unione della PR #2; prova sui dispositivi; tag `v0.0.0`.
+- **Poi**: gioco in verticale e orizzontale con Impostazioni → Schermo (decisione di Samuele, specifica aggiornata); PR #2 unita; backend online dopo lo sblocco FTP su Altervista, `/api/health` verificato.
+- **Resta**: prova di Samuele sui dispositivi; tag `v0.0.0`; decisioni da confermare (hosting web dei dati pesanti, .NET 10, versione PHP minima, riferimenti tra assembly).
