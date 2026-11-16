@@ -77,11 +77,6 @@ namespace Orbis.Gameplay
             _groundY = Target.y;
         }
 
-        private void OnDisable()
-        {
-            EnhancedTouchSupport.Disable();
-        }
-
         public void SetTopDown(bool topDown)
         {
             if (TopDown == topDown) return;

@@ -60,6 +60,7 @@ namespace Orbis.Gameplay
         public void Enter(double lat, double lon, float altitudeKm = EnterAltitudeKm)
         {
             Active = true;
+            EnhancedTouchSupport.Enable(); // il tocco serve anche nel globo (resta attivo: lo usa anche la città)
             _enteredAt = Time.unscaledTime;
             Lat = lat;
             Lon = lon;

@@ -39,6 +39,7 @@ namespace Orbis.UI.Game
         private readonly Label _detailsTitle;
         private readonly Label _detailsSubtitle;
         private readonly VisualElement _rows;
+        private readonly StreetLabels _labels;
         private WeatherKind _shownWeather = (WeatherKind)(-1);
         private string _shownTime;
 
@@ -77,6 +78,7 @@ namespace Orbis.UI.Game
             session.SelectionChanged += ShowDetails;
             session.CameraRig.ModeChanged += topDown => _viewIcon.icon = topDown ? OrbisIconKind.Cube : OrbisIconKind.Map;
             session.CameraRig.IsOverUi = IsOverUi;
+            _labels = new StreetLabels(screen, session);
             _details.RemoveFromClassList("details--visible");
             _loading.AddToClassList("world-loading--visible");
             _loadingText.text = Loc.Format("game.loading", "Chieti");
@@ -120,6 +122,7 @@ namespace Orbis.UI.Game
                 _weather.text = Loc.Get("weather." + w);
             }
             _weatherIcon.icon = WeatherIcon(w, night);
+            _labels.Update();
             // bussola: l'ago indica il nord
             _northIcon.style.rotate = new Rotate(new Angle(-_session.CameraRig.Yaw, AngleUnit.Degree));
         }

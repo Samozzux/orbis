@@ -1232,3 +1232,24 @@
 .layout-compact .hud-button.unity-button { width: 46px; height: 46px; }
 .layout-compact .hud-clock { height: 46px; }
 .layout-wide .details { width: 400px; }
+
+/* nomi delle strade sulla mappa */
+.street-labels {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.app .street-label {
+    position: absolute;
+    font-size: 12px;
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
+    -unity-text-outline-width: 1.2px;
+    -unity-text-outline-color: rgba(20, 30, 50, 0.95);
+    white-space: nowrap;
+    margin: 0;
+    padding: 0 4px;
+}
