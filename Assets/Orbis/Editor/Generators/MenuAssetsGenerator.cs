@@ -66,8 +66,8 @@ namespace Orbis.EditorTools
                 var mat = LoadOrCreate(path, simpleLit);
                 mat.SetColor("_BaseColor", Colors[key]);
                 mat.SetFloat("_Smoothness", 0.1f);
-                mat.SetFloat("_SpecularHighlights", 0f);
-                mat.DisableKeyword("_SPECULAR_COLOR");
+                // in Simple Lit 1 = "nessun riflesso" (enum SpecularSource); le keyword le aggiorna URP
+                mat.SetFloat("_SpecularHighlights", 1f);
                 mat.enableInstancing = true;
                 EditorUtility.SetDirty(mat);
                 result[i] = path;
