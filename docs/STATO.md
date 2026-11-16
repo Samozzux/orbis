@@ -1,7 +1,34 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M1 — Il mondo: Chieti**: quasi completa (iniziata il 16/11/2026): manca la prova sui dispositivi.
+**M2 — Costruire ed economia**: in corso (iniziata il 16/11/2026, scelta di Samuele: "M2 adesso").
+
+### Piano di M2 (a blocchi, ognuno con PR e test)
+1. **Core del gioco** (logica pura, `Orbis.Core.Game`):
+   - lettore JSON;
+   - catalogo con sagoma esatta, livelli e varianti;
+   - stato della partita e comandi con annulla/ripeti illimitato;
+   - piazzamento sulla griglia dei lotti (docs/04 §4), anche la demolizione degli edifici OSM che libera la loro sagoma;
+   - orologio e scheduler;
+   - economia del proprietario (affitti, tasse, suolo pubblico, manutenzione, cassa, registro dei movimenti);
+   - XP, livelli e missioni;
+   - salvataggio binario versionato, istantanee giornaliere, riavvolgimento, tempo ad app chiusa con riepilogo.
+   - Test: un anno di gioco senza valori assurdi e conservazione del denaro (docs/03 §12).
+2. **Dati**:
+   - prime 150 voci del catalogo in `data/catalog/` (residenziale, commerciale, uffici e industria, energia, agricoltura, servizi, sport, cultura, trasporti, natura, decorazioni);
+   - bilanciamento in `data/balance/` e 20 missioni in `data/scenarios/`.
+3. **Unity**: modelli procedurali per famiglie di oggetti (case e palazzi, negozi, capannoni, pale eoliche, campi solari, centrali, campi e vigneti, alberi, arredo urbano), oggetti piazzati nel mondo, anteprima "fantasma" verde/rossa che si aggancia alla griglia.
+4. **Interfaccia**:
+   - nell'HUD: cassa, livello, annulla/ripeti, costruisci, finanze, missioni;
+   - catalogo a schede con ricerca;
+   - azioni sugli oggetti (sposta, ruota, demolisci, potenzia, varianti);
+   - schermata finanze con le aliquote;
+   - riavvolgi;
+   - nuova partita con la configurazione del mondo e più salvataggi; "Continua".
+5. **Salvataggi sul dispositivo** (app e web), salvataggio automatico, riepilogo al ritorno.
+6. **Prove, build, STATO, tag `v0.2.0`**.
+
+**M1 — Il mondo: Chieti**: completata il 16/11/2026, a conferma di Samuele ("quasi perfetto" + correzioni unite con la PR #5). Tag `v0.1.0` dopo le build verdi.
 
 ### Piano di M1 (a blocchi, ognuno con PR e test)
 1. **Formato dei tile** — schema FlatBuffers `tools/world-pipeline/schema/orbis_tile.fbs`, codice generato per Python e C# (in `Orbis.Core`, testabile con `dotnet test`), compressione Deflate.
@@ -120,6 +147,8 @@
 - Database di produzione: `my_<FTP_USER>` / utente `<FTP_USER>` / host `localhost` (convenzione Altervista), password vuota salvo secret `DB_PASSWORD`.
 
 ## Decisioni da confermare
+- **Strade nuove in M2** (docs/09: "strade" in modalità costruzione): in M2 si piazzano come elementi sulla griglia dei lotti (vialetti, parcheggi, piazze), senza cambiare la rete stradale. Il disegno libero di nuove strade, con incroci e lotti ricalcolati, si sposta a M4 insieme al traffico, che usa il grafo stradale. Motivo: ridisegnare i lotti richiede di ricalcolare le sagome a runtime su tutti i dispositivi.
+- **Salvataggi locali**: file binari versionati in `persistentDataPath` (su web Unity li tiene in IndexedDB) invece di SQLite. SQLite richiederebbe librerie native diverse per iOS, Android e web; l'interfaccia `ISaveStore` resta quella di docs/01 §7, quindi si potrà cambiare in seguito.
 0. **Compressione dei tile: Deflate invece di zstd** (`docs/02` §2 punto 6). zstd su iOS, Android e soprattutto web richiederebbe una libreria nativa o codice non sicuro in C#; Deflate è già incluso in .NET/Unity su tutte le piattaforme e comprime poco meno. Proposta: Deflate ora, zstd solo se servirà davvero.
 1. **Hosting dei dati pesanti per il web** (CORS GitHub Releases negativo). Proposta: (a) per M1 il pack di Chieti e il globo base, inclusi nelle app, sul web si servono da **GitHub Pages** insieme al gioco (stessa origine, nessun problema CORS; limiti: sito ≤ 1 GB, file ≤ 100 MB); (b) per Italia/mondo (M10) **Cloudflare R2** (piano gratuito 10 GB, traffico in uscita gratuito, richiede un account Cloudflare di Samuele), alimentato dallo stesso workflow. Le app iOS/Android continuano a scaricare dalle GitHub Releases. Nessun account creato.
 2. **.NET dei test**: .NET 8 è fuori supporto dal 10/11/2026. Funziona, ma propongo di passare il progetto di test a **.NET 10 (LTS)**.
