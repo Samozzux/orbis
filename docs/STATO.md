@@ -1,7 +1,9 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M0 — Fondamenta**: tutto in `main` (PR #1 e PR #2, 16/11/2026); backend online su Altervista (`/api/health` → `ok`), versione web su GitHub Pages, IPA e APK firmato dalle build di `main`. Manca solo la prova di Samuele sui dispositivi (menu nuovo, verticale/orizzontale), poi il tag `v0.0.0`.
+**M1 — Il mondo: Chieti**: da iniziare.
+
+**M0 — Fondamenta: completata il 16/11/2026 (tag `v0.0.0`).** Samuele ha provato l'app iOS (tutto ok) e la versione web (dopo la correzione dei clic); `/api/health` risponde `ok`. **L'APK Android non è stato provato su un telefono** (Samuele non ha un dispositivo Android): la build è verde e firmata, la prova resta da fare quando ci sarà un Android.
 
 ## Già pronto (fatto da Samuele il 15/11/2026)
 - Repository pubblico `Samozzux/orbis` con `.gitignore` Unity.
@@ -61,6 +63,9 @@
 - Testi nei file UXML come chiavi `#chiave` sostituite all'avvio dalla tabella Localization "UI" (scelta più semplice e verificabile da test: un test controlla che ogni chiave usata esista).
 - Classi di layout: lato corto < 500 pt → telefono; lato lungo ≥ 1280 pt e lato corto ≥ 700 pt → desktop; altrimenti tablet (scelta semplice, da rivedere se serve).
 - Prima del Keychain/Keystore (M3) `ISecureStore` è solo in memoria; salvataggi su file (iOS/Android/Editor) e in memoria sul web fino a M2 (SQLite / IndexedDB).
+- **Sagome precise e posizionamento a griglia** (Samuele, 16/11/2026): ogni edificio/oggetto ha un'impronta esatta che coincide con il modello e si piazza solo dentro lotti delimitati, su griglia (1 m edifici, 0,5 m decorazioni), con mappa di occupazione e rotazioni a 90°/45°; mai posizioni casuali. Dettagli in `docs/04` §4; recepito in `docs/00`, `docs/08`, `docs/09` (M1 prepara i lotti, M2 li usa).
+- **Energia e campagne** (Samuele, 16/11/2026): nel catalogo pale eoliche, fotovoltaico, idroelettrico, termoelettrico, biomasse, geotermico, **nucleare**, linee elettriche; campi coltivati, **vigneti**, uliveti, frutteti, serre, fattorie. Simulazione di rete elettrica e produzione agricola in `docs/03` §8; aree agricole reali da OSM già in M1.
+- **Grafica**: la città del menu è un diorama generato da codice che anticipa lo stile **Classico** (3D colorato); in gioco la città sarà la Chieti vera (strade e sagome OSM, facciate, tetti, alberi, giorno/notte), molto più dettagliata; gli stili Realistico e Pixel arrivano in M11.
 - Database di produzione: `my_<FTP_USER>` / utente `<FTP_USER>` / host `localhost` (convenzione Altervista), password vuota salvo secret `DB_PASSWORD`.
 
 ## Decisioni da confermare

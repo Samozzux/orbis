@@ -81,6 +81,15 @@ Manutenzione edifici e strade, servizi pubblici (polizia, pompieri, sanità, scu
 ## 8. Servizi ed emergenze
 Polizia, vigili del fuoco, ambulanze, rifiuti, manutenzione: ogni servizio ha copertura (raggio/tempo di arrivo), capacità e costo. Gli interventi sono eventi visibili (mezzi con sirene, incendi spenti).
 
+### Energia
+- Ogni edificio consuma elettricità (per tipo, livello e ora del giorno); le centrali la producono: **eolico** (dipende dal vento del meteo), **solare** (dall'ora e dalle nuvole), idroelettrico, termoelettrico, biomasse, geotermico, **nucleare** (molta energia costante, costoso da costruire, consenso dei cittadini da gestire).
+- Bilancio rete: se la produzione non basta → acquisto di energia (costo) o **blackout** nelle zone servite peggio. Linee elettriche e sottostazioni definiscono la copertura.
+- Effetti: costi, inquinamento (termoelettrico), rumore e paesaggio (eolico), felicità e valore immobiliare nelle vicinanze.
+
+### Agricoltura
+- Campi, vigneti, uliveti, frutteti, serre e fattorie producono (per stagione) grano, uva, olive, frutta, ortaggi; la produzione alimenta cantine, frantoi, mercati e supermercati e quindi l'economia della città (vino e olio d'Abruzzo).
+- Le aree agricole reali arrivano da OpenStreetMap (`landuse=farmland/vineyard/orchard`).
+
 ## 9. Ambiente
 Inquinamento (aria, rumore) da traffico e industrie, verde urbano, rifiuti; effetti su salute, felicità e valore immobiliare. Meteo che influenza comportamenti (con la pioggia meno gente al parco, più traffico).
 

@@ -23,7 +23,8 @@ Regole valide per tutte le milestone:
 
 ## M1 — Il mondo: Chieti
 - Pipeline `tools/world-pipeline` per la **provincia di Chieti** + pack globo base.
-- Caricamento tile, terreno, strade, edifici procedurali (profilo *Abruzzo*), aree verdi, acqua, alberi, POI con nomi reali.
+- Caricamento tile, terreno, strade, edifici procedurali (profilo *Abruzzo*) con la **sagoma reale OSM** come impronta, aree verdi, **campagne e coltivazioni reali** (campi, vigneti, uliveti, frutteti da `landuse` OSM), acqua, alberi, POI con nomi reali.
+- Prima **griglia dei lotti** (isolati delimitati dalle strade) e mappa di occupazione con le sagome degli edifici reali: è la base su cui M2 piazza e sposta gli elementi (`docs/04` §4).
 - Camera completa (3D/2D, tutti i gesti e comandi mouse/tastiera di `docs/04` §2), zoom continuo dal globo alla strada; camera e HUD funzionano sia in verticale sia in orizzontale.
 - Selezione con pannello Dettagli (dati reali OSM).
 - Ciclo giorno/notte, cielo, meteo simulato base.
@@ -33,8 +34,8 @@ Regole valide per tutte le milestone:
 **Completata quando**: si naviga Chieti fluidamente (≥ 30 fps su iPhone 15 Pro, Android di fascia medio-alta e desktop), in verticale e in orizzontale, si riconoscono le strade reali e i landmark, si tocca un edificio e se ne vedono i dati.
 
 ## M2 — Costruire ed economia
-- Catalogo dati (prime 150 voci tra tutte le categorie edifici/natura/decorazioni), varianti e livelli.
-- Modalità costruzione: posiziona, sposta, ruota, demolisci, potenzia, varianti, strade, piani di progetto.
+- Catalogo dati (prime 150 voci tra tutte le categorie edifici/natura/decorazioni, comprese **energia** — pale eoliche, centrali, nucleare — e **agricoltura** — vigneti, uliveti, fattorie), varianti e livelli, ognuna con sagoma esatta.
+- Modalità costruzione: posiziona, sposta, ruota, demolisci, potenzia, varianti, strade, piani di progetto — su griglia dentro i lotti, con anteprima verde/rossa e senza sovrapposizioni (`docs/04` §4).
 - Comandi + **annulla/ripeti illimitato**; **snapshot giornalieri** e **riavvolgi**.
 - Tempo di gioco con velocità, pausa, tempo ad app chiusa con riepilogo.
 - Economia del proprietario: affitti, suolo pubblico, tasse, manutenzione, bilancio, cassa; schermata finanze.

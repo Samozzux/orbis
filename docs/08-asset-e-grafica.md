@@ -26,7 +26,9 @@ Tutto è dati (`data/catalog/*.json` → content pack "catalog"). Obiettivi di q
 |---|---|---|
 | Residenziale | case, villette, condomini, ville, grattacieli | 60 |
 | Commerciale | negozi per tipo, supermercati, centri commerciali, bar, ristoranti, hotel | 80 |
-| Uffici e industria | uffici, fabbriche per settore, magazzini, porti, centrali | 50 |
+| Uffici e industria | uffici, fabbriche per settore, magazzini, porti | 50 |
+| Energia | pale eoliche (singole e parchi), fotovoltaico a terra e sui tetti, centrali idroelettriche, termoelettriche (gas, carbone), a biomasse, geotermiche, **nucleari**, tralicci e linee elettriche, sottostazioni | 30 |
+| Agricoltura e campagna | campi per coltura (grano, mais, girasoli, ortaggi…), **vigneti**, uliveti, frutteti, serre, fattorie, casali, stalle, silos, cantine, frantoi | 50 |
 | Servizi pubblici | municipio, scuole, università, ospedali, polizia, pompieri, poste, biblioteche | 40 |
 | Sport | campi, stadi, palazzetti, piscine, circuiti, piste, palestre | 50 |
 | Cultura e svago | musei, teatri, cinema, parchi divertimento, zoo, discoteche | 40 |
@@ -37,6 +39,8 @@ Tutto è dati (`data/catalog/*.json` → content pack "catalog"). Obiettivi di q
 | Veicoli | auto (per segmento), moto, bici, bus, tram, metro, treni, camion, emergenza, aerei, elicotteri, barche | 150 |
 | Cibi e prodotti | alimenti per scaffali/frigo/menu (con prezzo, valore nutritivo di gioco, scadenza) | 400 |
 | Animali | domestici, da fattoria, selvatici, zoo | 80 |
+
+Ogni elemento ha una **sagoma esatta** (impronta a terra + altezza) e si piazza su griglia dentro lotti delimitati (`docs/04` §4): nello schema `footprint` è l'impronta in metri (eventualmente un poligono `shape` in coordinate locali), e il modello non deve uscirne.
 
 ### Schema di un elemento (esempio)
 ```json

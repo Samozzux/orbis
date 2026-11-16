@@ -65,7 +65,8 @@ Orbis è un **simulatore di vita e di città completo e realistico** ambientato 
 - Turismo: i monumenti attirano visitatori che spendono in hotel, ristoranti, negozi.
 
 ## 5. Costruzione ed edifici
-- **Catalogo enorme**: residenziale, commerciale, industriale, uffici, servizi pubblici, istruzione, sanità, sport, svago, cultura, religione, trasporti, infrastrutture, natura, decorazioni, monumenti reali.
+- **Catalogo enorme**: residenziale, commerciale, industriale, uffici, servizi pubblici, istruzione, sanità, sport, svago, cultura, religione, trasporti, infrastrutture, **energia** (pale eoliche e parchi eolici, fotovoltaico, idroelettrico, centrali termoelettriche e **nucleari**, linee elettriche), **agricoltura e campagna** (campi coltivati, **vigneti**, uliveti, frutteti, serre, fattorie, stalle), natura, decorazioni, monumenti reali.
+- **Posizionamento preciso**: ogni elemento ha una sagoma esatta e si piazza su una griglia dentro lotti delimitati, mai a caso (dettagli in `docs/04` §4).
 - Ogni elemento ha **molte varianti** (stile, colori, materiali, dimensioni) e **livelli di potenziamento 1→5** (più capienza, più rendita, aspetto che cambia).
 - Editor modulare: componi edifici da pezzi (piani, tetti, facciate, balconi) e salvali come progetti riutilizzabili e condivisibili con gli amici.
 - Strade, ponti, gallerie, ferrovie, piste ciclabili, piazze, parcheggi.

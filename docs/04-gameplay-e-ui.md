@@ -52,6 +52,15 @@ Tocco su un edificio/oggetto/cittadino/veicolo → evidenziazione + pannello con
 ## 4. Modalità costruzione
 - Catalogo a schede per categoria con ricerca, filtri (livello sbloccato, costo, stile), preferiti.
 - Posizionamento con griglia allineata alle strade reali (snap ai lotti/strade), anteprima "fantasma" verde/rossa, rotazione, info costi ed effetti (felicità, valore immobiliare nell'area evidenziati con mappa di calore).
+
+### Sagome e posizionamento (regola fondamentale — Samuele, 16/11/2026)
+Il gioco si basa sul piazzare e spostare cose: deve essere preciso e prevedibile, mai casuale.
+- **Sagoma esatta**: ogni edificio, oggetto, decorazione, albero piazzabile ha un'**impronta a terra** definita (rettangolo o poligono, in metri, più l'altezza) che coincide con ciò che si vede. Il modello 3D non esce dalla sagoma; un test sugli asset lo controlla.
+- **Spazio perimetrato**: si piazza solo dentro aree delimitate: i **lotti** (isolati tra le strade reali, aree libere, terreni acquistati) e, dentro ogni lotto, una **griglia** allineata alla strada principale del lotto. Griglia base **1 m** per edifici e impianti, **0,5 m** per decorazioni e arredo urbano (gli arredi interni avranno una griglia propria in M5).
+- **Mappa di occupazione**: ogni cella occupata appartiene a un solo elemento; niente sovrapposizioni né compenetrazioni. L'anteprima è verde se la sagoma sta tutta dentro il perimetro e su celle libere, rossa altrimenti (con il motivo: fuori lotto, occupato, pendenza, distanza minima dalla strada…).
+- **Rotazione** a passi di 90° rispetto alla griglia del lotto (45° per gli oggetti piccoli); **aggancio** ai bordi del lotto, al fronte strada e agli elementi vicini.
+- **Spostare/ruotare/demolire** liberano e occupano esattamente le celle della sagoma; tutto annullabile.
+- Gli **edifici reali** di OpenStreetMap usano la loro sagoma OSM come impronta: demolirli libera proprio quell'area.
 - **Strade**: disegno a curve/rettilinei, incroci automatici, ponti/gallerie, tipi (vicolo → autostrada).
 - **Zone** opzionali (residenziale/commerciale/industriale) che crescono da sole, oltre al posizionamento manuale.
 - **Piani di progetto**: più elementi in stato "pianificato" senza spesa; si confermano tutti o uno alla volta.
