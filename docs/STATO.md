@@ -1,7 +1,7 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M1 — Il mondo: Chieti**: in corso (iniziata il 16/11/2026).
+**M1 — Il mondo: Chieti**: quasi completa (iniziata il 16/11/2026): manca la prova sui dispositivi.
 
 ### Piano di M1 (a blocchi, ognuno con PR e test)
 1. **Formato dei tile** — schema FlatBuffers `tools/world-pipeline/schema/orbis_tile.fbs`, codice generato per Python e C# (in `Orbis.Core`, testabile con `dotnet test`), compressione Deflate.
@@ -13,6 +13,34 @@
 7. **Lotti e griglia di occupazione** (`docs/04` §4) dalle sagome reali, con vista di controllo.
 8. **Giorno/notte, cielo, meteo simulato**, **3 landmark** (Cattedrale di San Giustino, Teatro Marrucino, stadio Guido Angelini), **globo** base e zoom continuo.
 9. **Prestazioni** (≥ 30 fps), prova su iPhone e web, tag `v0.1.0`.
+
+### Avanzamento M1 (16/11/2026)
+- **In `main` (PR #3)**: formato dei tile (FlatBuffers + Deflate, decompressore C# puro), lettore C#, pipeline Python con test, workflow *World data*.
+- **Pack di Chieti** (Release `world-chieti-v*`, costruito in CI in ~6 minuti). Numeri del v1:
+  - 1.863 tile (70 MB): 955 completi più 908 di contorno;
+  - dentro la provincia: 77 mila edifici, 94 mila strade, 227 mila aree, 16 mila POI, 12 mila lotti, 372 mila alberi.
+  - Il v3 aggiunge l'orizzonte (terreno a 50 km), il globo, il Teatro Marrucino trovato dal POI e il fondale sotto il mare.
+- **Sul ramo `m1-mondo`** (PR in preparazione):
+  - mondo 3D a tile con 3 livelli di dettaglio, su un thread di lavoro sulle app e a passi da pochi ms sul web;
+  - edifici sulla sagoma reale: i tetti sono calcolati come "minimo di piani", quindi mai fuori dall'impronta; facciate con finestre, persiane, portoni, vetrine e chiese con monofore; coppi; luci di notte;
+  - strade con marciapiedi, strisce, ponti, ferrovie e sampietrini;
+  - colture disegnate sul terreno (mosaico dei campi), uliveti e frutteti a sesto, vigneti a filari, boschi, parchi;
+  - mare e orizzonte fino a 50 km (Majella, Gran Sasso, costa);
+  - cielo a gradiente con sole reale per Chieti (posizione per data e ora), stelle, nuvole, pioggia, nebbia, meteo simulato;
+  - telecamera completa (touch, mouse, tastiera), 3D e 2D, inerzia, doppio tocco per centrare;
+  - globo con passaggio continuo: oltre i 45 km si sale sul globo, sotto i 55 km si torna a terra;
+  - HUD con orologio, meteo, velocità (pausa, 1×, 2×, 4×, 10×), 2D/3D, nord e lotti;
+  - nomi delle strade sulla mappa; pannello Dettagli con i dati OSM (nome, indirizzo, tipo, altezza, piani, tetto, superficie, negozi dentro, posizione, ID OSM);
+  - vista "Lotti": griglia da 1 m dei lotti vicini, celle libere in verde e occupate in rosso (mappa di occupazione con test in Core);
+  - landmark: Cattedrale di San Giustino (dalle parti OSM, con campanile), Teatro Marrucino (portico), stadio Guido Angelini (campo con linee e torri faro; tribune dai dati OSM);
+  - profili di qualità automatici: desktop, mobile, web, web su telefono.
+- **Test**: 92 .NET, 9 pytest, Unity EditMode 9/9 e PlayMode 7/7. Le foto di controllo (`WorldSnapshotTests`) si fanno con GPU e pack: `ORBIS_SNAPSHOT_DIR=… Unity -runTests -testFilter WorldSnapshotTests`.
+- **Build**: iOS, Android e web scaricano il pack indicato in `data/world/packs.json` (StreamingAssets). Il limite di 60 MB del web esclude i tile, che arrivano uno alla volta.
+- **Ambiguità risolte**:
+  - Quote del terreno come `base + valore × passo`: `int16` in cm non arriva ai 2.793 m della Majella.
+  - Il globo base per ora sta dentro il pack di Chieti (`globe.jpg`, generato dai Terrain Tiles); i confini e le città di Natural Earth arrivano più avanti.
+  - "Nuova partita" entra direttamente a Chieti: la scelta del luogo e del ruolo è in M2.
+- **Da fare per chiudere M1**: unione di `m1-mondo`, build verdi, prova su iPhone e web (fluidità ≥ 30 fps), tag `v0.1.0`.
 
 **M0 — Fondamenta: completata il 16/11/2026 (tag `v0.0.0`).** Samuele ha provato l'app iOS (tutto ok) e la versione web (dopo la correzione dei clic); `/api/health` risponde `ok`. **L'APK Android non è stato provato su un telefono** (Samuele non ha un dispositivo Android): la build è verde e firmata, la prova resta da fare quando ci sarà un Android.
 

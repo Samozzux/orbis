@@ -7,6 +7,7 @@ import numpy as np
 
 from Orbis.Core.World.Fb import Area as FA
 from Orbis.Core.World.Fb import Building as FB
+from Orbis.Core.World.Fb import FarTerrain as FFar
 from Orbis.Core.World.Fb import Line as FL
 from Orbis.Core.World.Fb import Lot as FLot
 from Orbis.Core.World.Fb import Poi as FP
@@ -247,9 +248,22 @@ def encode_tile(z, x, y, tile):
 
 
 def encode_index(key, name, version, z, entries, origin_lat, origin_lon, boundary_lonlat, attribution,
-                 created, source):
-    """`entries`: lista di (x, y, size, crc, buildings)."""
+                 created, source, far=None):
+    """`entries`: lista di (x, y, size, crc, buildings); `far`: dict del terreno lontano (facoltativo)."""
     b = flatbuffers.Builder(1 << 14)
+    far_off = None
+    if far is not None:
+        hv = b.CreateNumpyVector(np.ascontiguousarray(far["values"], dtype=np.uint16).ravel())
+        FFar.FarTerrainStart(b)
+        FFar.FarTerrainAddX0(b, far["x0"])
+        FFar.FarTerrainAddY0(b, far["y0"])
+        FFar.FarTerrainAddCell(b, far["cell"])
+        FFar.FarTerrainAddCols(b, far["cols"])
+        FFar.FarTerrainAddRows(b, far["rows"])
+        FFar.FarTerrainAddBase(b, far["base"])
+        FFar.FarTerrainAddStep(b, far["step"])
+        FFar.FarTerrainAddHeights(b, hv)
+        far_off = FFar.FarTerrainEnd(b)
     s_key, s_name = b.CreateString(key), b.CreateString(name)
     s_attr, s_created, s_source = b.CreateString(attribution), b.CreateString(created), b.CreateString(source)
     v_boundary = b.CreateNumpyVector(np.asarray(boundary_lonlat, dtype=np.float64).ravel())
@@ -271,6 +285,8 @@ def encode_index(key, name, version, z, entries, origin_lat, origin_lon, boundar
     FR.RegionIndexAddAttribution(b, s_attr)
     FR.RegionIndexAddCreated(b, s_created)
     FR.RegionIndexAddSource(b, s_source)
+    if far_off is not None:
+        FR.RegionIndexAddFar(b, far_off)
     root = FR.RegionIndexEnd(b)
     b.Finish(root)
     return pack(b.Output())

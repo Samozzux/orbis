@@ -1,0 +1,248 @@
+using System;
+using System.Globalization;
+using Orbis.Core.World.Fb;
+using Orbis.Core.World.Geometry;
+using Orbis.Core.World.Sky;
+using Orbis.Gameplay;
+using Orbis.Platform;
+using Orbis.UI.App;
+using Orbis.UI.Elements;
+using Orbis.UI.Localization;
+using UnityEngine;
+using UnityEngine.UIElements;
+
+namespace Orbis.UI.Game
+{
+    /// <summary>
+    /// HUD del gioco (docs/04 §2-3): casa, orologio con meteo e velocità, 2D/3D, nord, lotti,
+    /// pannello Dettagli dell'edificio selezionato con i dati reali OSM.
+    /// </summary>
+    public sealed class GameHud
+    {
+        private static readonly CultureInfo Italian = CultureInfo.GetCultureInfo("it-IT");
+
+        private readonly VisualElement _root;
+        private readonly VisualElement _screen;
+        private readonly WorldSession _session;
+        private readonly IPlatformServices _services;
+        private readonly Label _time;
+        private readonly Label _weather;
+        private readonly OrbisIcon _weatherIcon;
+        private readonly OrbisIcon _speedIcon;
+        private readonly Label _speedLabel;
+        private readonly OrbisIcon _viewIcon;
+        private readonly OrbisIcon _northIcon;
+        private readonly Button _lots;
+        private readonly VisualElement _loading;
+        private readonly Label _loadingText;
+        private readonly VisualElement _details;
+        private readonly Label _detailsTitle;
+        private readonly Label _detailsSubtitle;
+        private readonly VisualElement _rows;
+        private readonly StreetLabels _labels;
+        private WeatherKind _shownWeather = (WeatherKind)(-1);
+        private string _shownTime;
+
+        public event Action Home;
+        public event Action<bool> LotsToggled;
+
+        public bool LotsVisible { get; private set; }
+
+        public GameHud(VisualElement root, VisualElement screen, WorldSession session, IPlatformServices services)
+        {
+            _root = root;
+            _screen = screen;
+            _session = session;
+            _services = services;
+            _time = Req<Label>("hud-time");
+            _weather = Req<Label>("hud-weather");
+            _weatherIcon = Req<OrbisIcon>("hud-weather-icon");
+            _speedIcon = Req<OrbisIcon>("hud-speed-icon");
+            _speedLabel = Req<Label>("hud-speed-label");
+            _viewIcon = Req<OrbisIcon>("hud-view-icon");
+            _northIcon = Req<OrbisIcon>("hud-north-icon");
+            _lots = Req<Button>("hud-lots");
+            _loading = Req<VisualElement>("world-loading");
+            _loadingText = Req<Label>("world-loading-text");
+            _details = Req<VisualElement>("details");
+            _detailsTitle = Req<Label>("details-title");
+            _detailsSubtitle = Req<Label>("details-subtitle");
+            _rows = Req<VisualElement>("details-rows");
+
+            Req<Button>("hud-home").clicked += () => Home?.Invoke();
+            Req<Button>("hud-speed").clicked += CycleSpeed;
+            Req<Button>("hud-view").clicked += () => session.CameraRig.SetTopDown(!session.CameraRig.TopDown);
+            Req<Button>("hud-north").clicked += () => session.CameraRig.ResetNorth();
+            _lots.clicked += ToggleLots;
+            Req<Button>("details-close").clicked += () => session.Select(null);
+            session.SelectionChanged += ShowDetails;
+            session.CameraRig.ModeChanged += topDown => _viewIcon.icon = topDown ? OrbisIconKind.Cube : OrbisIconKind.Map;
+            session.CameraRig.IsOverUi = IsOverUi;
+            _labels = new StreetLabels(screen, session);
+            _details.RemoveFromClassList("details--visible");
+            _loading.AddToClassList("world-loading--visible");
+            _loadingText.text = Loc.Format("game.loading", "Chieti");
+            UpdateSpeed();
+        }
+
+        private T Req<T>(string name) where T : VisualElement => MainMenuController.Require<T>(_screen, name);
+
+        public void Update()
+        {
+            switch (_session.State)
+            {
+                case WorldSession.Phase.Loading:
+                    _loading.AddToClassList("world-loading--visible");
+                    break;
+                case WorldSession.Phase.Missing:
+                    _loadingText.text = Loc.Get("game.missing");
+                    _loading.AddToClassList("world-loading--visible");
+                    break;
+                case WorldSession.Phase.Failed:
+                    _loadingText.text = Loc.Get("game.failed");
+                    _loading.AddToClassList("world-loading--visible");
+                    break;
+                default:
+                    _loading.RemoveFromClassList("world-loading--visible");
+                    break;
+            }
+
+            var now = _session.Clock.Now;
+            var time = now.ToString("HH:mm", Italian);
+            if (time != _shownTime)
+            {
+                _shownTime = time;
+                _time.text = time;
+            }
+            var w = _session.Weather.Current;
+            bool night = _session.Sky.Night > 0.5f;
+            if (w != _shownWeather)
+            {
+                _shownWeather = w;
+                _weather.text = Loc.Get("weather." + w);
+            }
+            _weatherIcon.icon = WeatherIcon(w, night);
+            _labels.Update();
+            // bussola: l'ago indica il nord
+            _northIcon.style.rotate = new Rotate(new Angle(-_session.CameraRig.Yaw, AngleUnit.Degree));
+        }
+
+        private static OrbisIconKind WeatherIcon(WeatherKind w, bool night)
+        {
+            switch (w)
+            {
+                case WeatherKind.Rain: return OrbisIconKind.Rain;
+                case WeatherKind.Fog: return OrbisIconKind.Fog;
+                case WeatherKind.Cloudy: return OrbisIconKind.Cloud;
+                default: return night ? OrbisIconKind.Moon : OrbisIconKind.Sun;
+            }
+        }
+
+        private void CycleSpeed()
+        {
+            _services.Haptics.Play(HapticKind.Selection);
+            var clock = _session.Clock;
+            clock.SetSpeed(clock.SpeedIndex + 1 >= GameClock.Speeds.Length ? 0 : clock.SpeedIndex + 1);
+            UpdateSpeed();
+        }
+
+        private void UpdateSpeed()
+        {
+            var clock = _session.Clock;
+            _speedIcon.icon = clock.Paused ? OrbisIconKind.Pause : (clock.Speed > 1 ? OrbisIconKind.Fast : OrbisIconKind.Play);
+            _speedLabel.text = clock.Paused ? "‖" : clock.Speed.ToString("0", Italian) + "×";
+        }
+
+        private void ToggleLots()
+        {
+            LotsVisible = !LotsVisible;
+            _lots.EnableInClassList("hud-button--on", LotsVisible);
+            LotsToggled?.Invoke(LotsVisible);
+        }
+
+        /// <summary>Il punto (pixel, y in basso) è sopra un controllo dell'interfaccia?</summary>
+        public bool IsOverUi(Vector2 screen)
+        {
+            var panel = _root.panel;
+            if (panel == null) return false;
+            var p = RuntimePanelUtils.ScreenToPanel(panel, new Vector2(screen.x, Screen.height - screen.y));
+            for (var e = panel.Pick(p); e != null; e = e.parent)
+            {
+                if (e is Button || e.ClassListContains("details") || e.ClassListContains("hud-clock") ||
+                    e.ClassListContains("sheet-layer--visible") || e is ScrollView)
+                    return true;
+            }
+            return false;
+        }
+
+        // ------------------------------------------------------------------ dettagli
+
+        private void ShowDetails(WorldSelection s)
+        {
+            if (s == null || s.Building == null)
+            {
+                _details.RemoveFromClassList("details--visible");
+                return;
+            }
+            _services.Haptics.Play(HapticKind.Selection);
+            var b = s.Building;
+            string use = Loc.Get("use." + b.Use);
+            string title = !string.IsNullOrEmpty(b.Name) ? b.Name : FirstNamedPoi(s) ?? use;
+            _detailsTitle.text = title;
+            _detailsSubtitle.text = title == use ? (b.Address ?? "") : use;
+            _details.EnableInClassList("details--landmark", !string.IsNullOrEmpty(b.Landmark));
+            _rows.Clear();
+            if (!string.IsNullOrEmpty(b.Landmark)) Row("details.landmark", Loc.Get("use." + b.Use));
+            if (!string.IsNullOrEmpty(b.Address)) Row("details.address", b.Address);
+            Row("details.use", use);
+            var height = Mathf.RoundToInt(b.Height).ToString(Italian);
+            Row("details.height", Loc.Format(b.HasFlag(BuildingFlag.HeightEstimated) ? "details.height.estimated" : "details.height.value",
+                height, b.Levels));
+            Row("details.roof", Loc.Get("roof." + b.Roof));
+            float area = Mathf.Abs(Polygon2D.SignedArea(b.Outer));
+            foreach (var h in b.Holes) area -= Mathf.Abs(Polygon2D.SignedArea(h));
+            Row("details.footprint", Loc.Format("details.footprint.value", Mathf.RoundToInt(area).ToString("N0", Italian)));
+            if (b.Year > 0) Row("details.year", b.Year.ToString(Italian));
+            foreach (var p in s.Pois)
+            {
+                var cat = PoiLabel(p.Category);
+                Row("details.inside", string.IsNullOrEmpty(p.Name) ? cat : $"{p.Name} · {cat}");
+            }
+            Row("details.position", string.Format(Italian, "{0:0.00000}°N  {1:0.00000}°E", s.Lat, s.Lon));
+            Row("details.source", Loc.Format("details.source.value", Loc.Get("osm." + OsmKind(b.OsmType)), b.OsmId));
+            _details.AddToClassList("details--visible");
+        }
+
+        private static string OsmKind(OsmType t) => t == OsmType.Relation ? "relation" : (t == OsmType.Node ? "node" : "way");
+
+        private static string FirstNamedPoi(WorldSelection s)
+        {
+            foreach (var p in s.Pois)
+                if (!string.IsNullOrEmpty(p.Name)) return p.Name;
+            return null;
+        }
+
+        private static string PoiLabel(string category)
+        {
+            if (string.IsNullOrEmpty(category)) return "";
+            if (Loc.TryGet("poi." + category.Replace('/', '.'), out var text)) return text;
+            var slash = category.IndexOf('/');
+            var v = slash >= 0 ? category.Substring(slash + 1) : category;
+            v = v.Replace('_', ' ');
+            return v.Length > 0 ? char.ToUpperInvariant(v[0]) + v.Substring(1) : v;
+        }
+
+        private void Row(string labelKey, string value)
+        {
+            var row = new VisualElement();
+            row.AddToClassList("details__row");
+            var l = new Label(Loc.Get(labelKey));
+            l.AddToClassList("details__label");
+            var v = new Label(value);
+            v.AddToClassList("details__value");
+            row.Add(l);
+            row.Add(v);
+            _rows.Add(row);
+        }
+    }
+}

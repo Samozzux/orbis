@@ -127,6 +127,9 @@ jobs:
             --boundary work/boundary.geojson --out out/${REGION} --cache cache --version ${VERSION} \
             --source "$SOURCE_NAME"
 
+      - name: Globo base (Terrain Tiles z3)
+        run: python -m orbis_world globe --out out/${REGION}/globe.jpg --cache cache
+
       - name: Anteprime
         run: python -m orbis_world preview --pack out/${REGION} --out out/preview --region regions/${REGION}.json
 

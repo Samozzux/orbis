@@ -11,7 +11,7 @@ namespace Orbis.UI.App
 {
     /// <summary>
     /// Menu principale (docs/04 §1): Continua, Nuova partita e navbar con Amici, Impostazioni, Crediti.
-    /// Impostazioni apre il pannello (per ora: orientamento dello schermo); le altre voci mostrano "in arrivo".
+    /// Nuova partita entra nel mondo (Chieti), Impostazioni apre il pannello; le altre voci mostrano "in arrivo".
     /// </summary>
     public sealed class MainMenuController
     {
@@ -36,7 +36,11 @@ namespace Orbis.UI.App
             _toast = toast ?? throw new ArgumentNullException(nameof(toast));
             _toastText = Require<Label>(toast, "toast-text");
 
-            _newGame.clicked += ComingSoon;
+            _newGame.clicked += () =>
+            {
+                services.Haptics.Play(HapticKind.Selection);
+                NewGame?.Invoke();
+            };
             _continue.clicked += ComingSoon;
             foreach (var id in new[] { "nav-friends", "nav-credits" })
                 Require<Button>(menu, id).clicked += ComingSoon;
@@ -71,6 +75,9 @@ namespace Orbis.UI.App
             parent.Q<T>(name) ?? throw new InvalidOperationException($"Elemento UI mancante: {typeof(T).Name} '{name}'");
 
         public bool IsToastVisible => _toast.ClassListContains("toast--visible");
+
+        /// <summary>"Nuova partita" premuto.</summary>
+        public event Action NewGame;
 
         private void ComingSoon()
         {

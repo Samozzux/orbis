@@ -72,19 +72,22 @@ def resolve_parts(buildings, log=print):
     return [b for i, b in enumerate(buildings) if i not in drop]
 
 
-def match_landmarks(buildings, areas, landmarks, log=print):
-    """Collega gli elementi OSM ai landmark di data/landmarks (per ID OSM o per nome)."""
+def match_landmarks(buildings, areas, landmarks, pois=(), log=print):
+    """Collega gli elementi OSM ai landmark di data/landmarks: per ID OSM, per nome dell'edificio o
+    dell'area, oppure per nome di un POI (il landmark va all'edificio che lo contiene)."""
     report = []
+    tree = shapely.STRtree(np.array([b.geom for b in buildings], dtype=object)) if buildings else None
     for lm in landmarks:
         m = lm.get("match", {})
         ids = {(t, int(i)) for t, i in (x.split("/") for x in m.get("osm", []))}
         rx = re.compile(m["name_regex"], re.I) if m.get("name_regex") else None
         req = m.get("tags", {})
+        types = m.get("types", ["building", "area"])
         hits = []
         targets = []
-        if "building" in m.get("types", ["building", "area"]):
+        if "building" in types:
             targets += [("building", b) for b in buildings]
-        if "area" in m.get("types", ["building", "area"]):
+        if "area" in types:
             targets += [("area", a) for a in areas]
         for kind, e in targets:
             t = "way" if e.osm_type == 2 else ("relation" if e.osm_type == 3 else "node")
@@ -94,6 +97,16 @@ def match_landmarks(buildings, areas, landmarks, log=print):
             if ok:
                 e.landmark = lm["key"]
                 hits.append(f"{kind} {t}/{e.osm_id} «{e.name}»")
+        if not hits and "poi" in types and rx is not None and tree is not None:
+            for p in pois:
+                if not p.name or not rx.search(p.name):
+                    continue
+                idx = tree.query(shapely.points(p.x, p.y), predicate="within")
+                for j in idx:
+                    b = buildings[int(j)]
+                    b.landmark = lm["key"]
+                    b.name = b.name or p.name
+                    hits.append(f"building way/{b.osm_id} (dal POI «{p.name}»)")
         report.append({"key": lm["key"], "matches": hits})
         log(f"  landmark {lm['key']}: {len(hits)} elementi" + (f" ({hits[0]})" if hits else " — NON TROVATO"))
     return report
@@ -187,7 +200,7 @@ def _split(geom, z, keep_tiles):
 # ---------------------------------------------------------------- costruzione
 
 def build(region, osm_path, boundary_lonlat, terrain_source, out_dir, landmarks=(), version=1,
-          source_name="", log=print):
+          source_name="", log=print, far_source=None):
     """Costruisce il region pack in `out_dir` (index.bin + z/x/y.bin + report.json)."""
     z = region.get("zoom", 14)
     origin_lat, origin_lon = region["origin"]["lat"], region["origin"]["lon"]
@@ -205,11 +218,15 @@ def build(region, osm_path, boundary_lonlat, terrain_source, out_dir, landmarks=
     data = osm.load(osm_path, log=log)
     buildings = resolve_parts(data.buildings, log=log)
     buildings = [b for b in buildings if not (b.attrs["flags"] & BF.Underground)]
-    report = {"landmarks": match_landmarks(buildings, data.areas, landmarks, log=log)}
+    report = {"landmarks": match_landmarks(buildings, data.areas, landmarks, pois=data.pois, log=log)}
 
     tb = [geo.tile_bounds(z, *t) for t in all_tiles]
     bounds = (min(b[0] for b in tb), min(b[1] for b in tb), max(b[2] for b in tb), max(b[3] for b in tb))
-    areas = data.areas + sea_polygons(data.coastlines, bounds, log=log)
+    sea = sea_polygons(data.coastlines, bounds, log=log)
+    areas = data.areas + sea
+    sea_union = shapely.union_all([a.geom for a in sea]) if sea else None
+    if sea_union is not None:
+        shapely.prepare(sea_union)
 
     log("lotti…")
     full_union = shapely.union_all([box(*geo.tile_bounds(z, *t)) for t in full_tiles])
@@ -326,6 +343,12 @@ def build(region, osm_path, boundary_lonlat, terrain_source, out_dir, landmarks=
                 "kinds": [tr.kind for tr in trees],
                 "heights": [min(255, int(round(tr.height * 10))) for tr in trees]}
         heights = TR.tile_heights(terrain_source, z, *t)
+        if sea_union is not None and sea_union.intersects(box(*geo.tile_bounds(z, *t))):
+            # in mare il fondale resta sotto l'acqua (la batimetria a 30 m sfiora lo zero vicino a riva)
+            tx0, ty0, tx1, ty1 = geo.tile_bounds(z, *t)
+            gx, gy = np.meshgrid(np.linspace(tx0, tx1, TR.SAMPLES), np.linspace(ty0, ty1, TR.SAMPLES))
+            inside = shapely.contains_xy(sea_union, gx, gy)
+            heights = np.where(inside, np.minimum(heights, -2.0), heights)
         base, step, values = TR.quantize(heights)
         rec["terrain"] = (TR.SAMPLES, base, step, values)
         data_bytes = encode.encode_tile(z, t[0], t[1], rec)
@@ -342,10 +365,21 @@ def build(region, osm_path, boundary_lonlat, terrain_source, out_dir, landmarks=
         if (i + 1) % 200 == 0:
             log(f"  {i + 1}/{len(all_tiles)} tile")
 
+    far = None
+    if far_source is not None:
+        # orizzonte: ~50 km attorno alla regione, celle da ~450 m veri (max 65535 vertici in Unity)
+        radius = region.get("far_radius_m", 50000) / scale
+        bx0, by0, bx1, by1 = boundary.bounds
+        cell = region.get("far_cell_m", 450) / scale
+        fb = (bx0 - radius, by0 - radius, bx1 + radius, by1 + radius)
+        while ((fb[2] - fb[0]) / cell + 1) * ((fb[3] - fb[1]) / cell + 1) > 65000:
+            cell *= 1.1
+        far = TR.far_grid(far_source, fb, cell)
+        log(f"terreno lontano: {far['cols']}×{far['rows']} celle da {cell * scale:.0f} m")
     outline = max(_polygons(boundary_lonlat), key=lambda p: p.area).simplify(0.0005)
     created = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     index = encode.encode_index(region["key"], region["name"], version, z, entries, origin_lat, origin_lon,
-                                np.asarray(outline.exterior.coords), ATTRIBUTION, created, source_name)
+                                np.asarray(outline.exterior.coords), ATTRIBUTION, created, source_name, far=far)
     with open(os.path.join(out_dir, "index.bin"), "wb") as f:
         f.write(index)
     report.update({"version": version, "created": created, "source": source_name, "zoom": z,

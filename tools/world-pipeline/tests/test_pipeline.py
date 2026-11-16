@@ -105,6 +105,8 @@ def make_city(path):
     w.node(-60, 50, natural="tree", leaf_type="needleleaved")
     w.node(30, 20, amenity="bar", name="Bar Centrale")
     w.node(-100, 200, shop="bakery", name="Forno Abruzzese")
+    w.rect(-200, 60, -170, 90, building="yes")
+    w.node(-185, 75, amenity="theatre", name="Teatro Marrucino")
     w.way([(-300, 250), (300, 260)], power="line")
     w.way([(-250, 210), (-200, 230), (-150, 210)], waterway="stream", name="Fosso")
     # confine "provincia"
@@ -198,20 +200,27 @@ def test_build_region(city):
 
     region = {"key": "test", "name": "Città di prova", "origin": {"lat": LAT0, "lon": LON0}, "zoom": 14,
               "full_buffer_m": 100, "outer_buffer_m": 600}
-    landmarks = [{"key": "cattedrale_san_giustino", "match": {"name_regex": "san giustino", "types": ["building"]}}]
+    landmarks = [{"key": "cattedrale_san_giustino", "match": {"name_regex": "san giustino", "types": ["building"]}},
+                 {"key": "teatro_marrucino", "match": {"name_regex": "teatro marrucino", "types": ["building", "poi"]}}]
     out = str(d / "pack")
     logs = []
+    region["far_radius_m"] = 3000
+    region["far_cell_m"] = 500
     report = tiler.build(region, path, geom, terrain.FunctionSource(hills), out, landmarks=landmarks,
-                         version=3, source_name="city.osm", log=logs.append)
+                         version=3, source_name="city.osm", log=logs.append, far_source=terrain.FunctionSource(hills))
     assert report["landmarks"][0]["matches"], logs
+    assert report["landmarks"][1]["matches"], logs  # trovato dal POI dentro l'edificio
 
     with open(os.path.join(out, "index.bin"), "rb") as f:
         index_file = f.read()
     idx = RegionIndex.GetRootAs(encode.unpack(index_file), 0)
     assert idx.Format() == encode.FORMAT_VERSION and idx.Version() == 3 and idx.Key() == b"test"
     entries = [idx.Tiles(i) for i in range(idx.TilesLength())]
+    far = idx.Far()
+    assert far is not None and far.Cols() > 10 and far.Rows() > 10
+    assert len(far.HeightsAsNumpy()) == far.Cols() * far.Rows()
     assert len(entries) >= 1
-    assert sum(e.Buildings() for e in entries) == 5  # 3 edifici + 2 parti (contorno sostituito)
+    assert sum(e.Buildings() for e in entries) == 6  # 4 edifici + 2 parti (contorno sostituito)
 
     tx, ty = geo.tile_of(14, float(x0), float(y0))
     tile_path = os.path.join(out, "14", str(tx), f"{ty}.bin")
@@ -295,3 +304,17 @@ def test_cli_boundary_and_preview(city, tmp_path):
     if (pack / "index.bin").exists():
         preview.make_previews(str(pack), str(tmp_path / "prev"), region)
         assert (tmp_path / "prev" / "centro.png").exists() and (tmp_path / "prev" / "regione.png").exists()
+
+
+def test_globe_image_from_fake_tiles():
+    def fake(z, x, y):
+        # metà mare, metà terra
+        img = np.zeros((256, 256))
+        img[:, 128:] = 500.0
+        img[:, :128] = -3000.0
+        return img
+    im = terrain.globe_image(z=1, width=256, fetch=fake, log=lambda *_: None)
+    assert im.size == (256, 128)
+    px = np.asarray(im)
+    assert px[64, 10, 2] > px[64, 10, 0]   # mare: blu
+    assert px[64, 100, 1] > px[64, 100, 2]  # terra: verde

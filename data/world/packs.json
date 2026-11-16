@@ -1,6 +1,10 @@
 {
   "note": "Region pack inclusi nelle build (docs/02 §2 'Pack incluso nella build'). Li produce il workflow 'World data'; le build li scaricano in Assets/StreamingAssets/world/<regione>/. tag null = nessun pack ancora pubblicato.",
   "packs": {
-    "chieti": { "tag": null, "file": null, "sha256": null }
+    "chieti": {
+      "tag": "world-chieti-v3",
+      "file": "world-chieti-v3.zip",
+      "sha256": "5f08e3e17a97c29fb50d0d60fb0b31812e7ce1b5e8aaeb5ae39bcca4989e1324"
+    }
   }
 }

@@ -1,6 +1,8 @@
 using System.Collections;
 using Orbis.Core.Boot;
+using Orbis.Gameplay;
 using Orbis.Platform;
+using Orbis.UI.Game;
 using Orbis.UI.Glass;
 using Orbis.UI.Layout;
 using Orbis.UI.Localization;
@@ -25,16 +27,24 @@ namespace Orbis.UI.App
             Splash,
             Loading,
             MainMenu,
+            /// <summary>Nel mondo (M1: esplorazione di Chieti).</summary>
+            Game,
         }
 
         private const float SplashSeconds = 1.8f;
         private const float MinLoadingSeconds = 1.6f;
-        private const int TipCount = 4;
+        private const int TipCount = 6;
 
         [Tooltip("Città 3D dietro il menu (generata dalla scena).")]
         [SerializeField] private MenuCity menuCity;
         [Tooltip("Cattura sfocata della scena per il vetro.")]
         [SerializeField] private GlassBlurCapture glassBlur;
+
+        /// <summary>Partita in corso (null nel menu).</summary>
+        public WorldSession Session => _session;
+
+        /// <summary>HUD della partita (null nel menu).</summary>
+        public GameHud Hud => _hud;
 
         public static OrbisApp Instance { get; private set; }
 
@@ -58,6 +68,10 @@ namespace Orbis.UI.App
         private VisualElement _backdrop;
         private MainMenuController _mainMenu;
         private SettingsController _settings;
+        private VisualElement _game;
+        private WorldSession _session;
+        private GameHud _hud;
+        private LotsOverlay _lots;
 
         private void Awake()
         {
@@ -86,6 +100,7 @@ namespace Orbis.UI.App
             _splash = MainMenuController.Require<VisualElement>(root, "splash");
             _loading = MainMenuController.Require<VisualElement>(root, "loading");
             _menu = MainMenuController.Require<VisualElement>(root, "menu");
+            _game = MainMenuController.Require<VisualElement>(root, "game");
             _progressFill = MainMenuController.Require<VisualElement>(root, "progress-fill");
             _loadingStatus = MainMenuController.Require<Label>(root, "loading-status");
             _loadingPercent = MainMenuController.Require<Label>(root, "loading-percent");
@@ -94,6 +109,7 @@ namespace Orbis.UI.App
             _screens.Register(_splash);
             _screens.Register(_loading);
             _screens.Register(_menu);
+            _screens.Register(_game);
 
             var progress = new BootProgress(new[]
             {
@@ -154,6 +170,7 @@ namespace Orbis.UI.App
             // 4) menu principale
             _settings = new SettingsController(root, services.ScreenOrientation, SettingsRepository.LoadDisplay());
             _mainMenu = new MainMenuController(_menu, MainMenuController.Require<VisualElement>(root, "toast"), services, _settings);
+            _mainMenu.NewGame += StartGame;
             yield return _mainMenu.Prepare();
             State = AppState.MainMenu;
             _screens.Show(_menu);
@@ -164,6 +181,51 @@ namespace Orbis.UI.App
         private void Update()
         {
             _layout?.Update();
+            _hud?.Update();
+        }
+
+        /// <summary>Nuova partita: per ora si entra direttamente a Chieti (scelta del luogo e del ruolo in M2).</summary>
+        public void StartGame()
+        {
+            if (State == AppState.Game) return;
+            State = AppState.Game;
+            var camera = Camera.main;
+            if (menuCity != null) menuCity.gameObject.SetActive(false);
+            var rig = camera != null ? camera.GetComponent<MenuCameraRig>() : null;
+            if (rig != null) rig.enabled = false;
+            if (glassBlur != null) glassBlur.Interval = 3; // il vetro sfoca il mondo, ma un frame su tre
+            var sun = RenderSettings.sun != null ? RenderSettings.sun : FindAnyObjectByType<Light>();
+            var device = PlatformServices.Current.DeviceProfile.Info;
+            _session = WorldSession.Create(camera, sun, Orbis.World.WorldQuality.Auto(device.IsTouchPrimary, device.SystemMemoryMb));
+            _hud = new GameHud(_document.rootVisualElement, _game, _session, PlatformServices.Current);
+            _hud.Home += EndGame;
+            _lots = new LotsOverlay(_session);
+            _hud.LotsToggled += _lots.SetVisible;
+            _screens.Show(_game);
+            Debug.Log("[Orbis] Nuova partita: Chieti.");
+        }
+
+        /// <summary>Torna al menu principale chiudendo il mondo.</summary>
+        public void EndGame()
+        {
+            if (State != AppState.Game) return;
+            _lots?.Dispose();
+            _lots = null;
+            if (_session != null) Destroy(_session.gameObject);
+            _session = null;
+            _hud = null;
+            var camera = Camera.main;
+            if (camera != null)
+            {
+                var rig = camera.GetComponent<MenuCameraRig>();
+                if (rig != null) rig.enabled = true;
+                camera.orthographic = false;
+            }
+            if (menuCity != null) menuCity.gameObject.SetActive(true);
+            if (glassBlur != null) glassBlur.Interval = 1;
+            State = AppState.MainMenu;
+            _screens.Show(_menu);
+            _mainMenu.OnShown();
         }
 
         /// <summary>La barra avanza in modo morbido verso il valore reale.</summary>

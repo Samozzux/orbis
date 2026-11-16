@@ -55,7 +55,7 @@
     },
     {
       "key": "tips.4",
-      "it": "Strade ed edifici di Orbis arriveranno dalle mappe vere di OpenStreetMap."
+      "it": "Strade ed edifici di Orbis vengono dalle mappe vere di OpenStreetMap: ogni edificio ha la sua sagoma reale."
     },
     {
       "key": "menu.continue",
@@ -75,7 +75,7 @@
     },
     {
       "key": "menu.new_game.detail",
-      "it": "Parti da Chieti"
+      "it": "Esplora Chieti in 3D"
     },
     {
       "key": "menu.friends",
@@ -164,6 +164,694 @@
     {
       "key": "web.description",
       "it": "Simulatore di città e di vita ambientato nel mondo reale, a partire da Chieti."
+    },
+    {
+      "key": "tips.5",
+      "it": "Tocca un edificio per vederne nome, indirizzo e dati reali."
+    },
+    {
+      "key": "tips.6",
+      "it": "Con due dita ruoti e inclini la città; con il mouse usa il tasto destro."
+    },
+    {
+      "key": "game.loading",
+      "it": "Carico {0}…"
+    },
+    {
+      "key": "game.missing",
+      "it": "Il mondo di Chieti non è ancora incluso in questa versione: arriva con il prossimo aggiornamento."
+    },
+    {
+      "key": "game.failed",
+      "it": "Non riesco a caricare il mondo. Riprova più tardi."
+    },
+    {
+      "key": "game.back",
+      "it": "Torna al menu"
+    },
+    {
+      "key": "game.view.3d",
+      "it": "3D"
+    },
+    {
+      "key": "game.view.2d",
+      "it": "2D"
+    },
+    {
+      "key": "game.lots",
+      "it": "Lotti"
+    },
+    {
+      "key": "game.lots.on",
+      "it": "Lotti e griglia: visibili"
+    },
+    {
+      "key": "game.lots.off",
+      "it": "Lotti e griglia: nascosti"
+    },
+    {
+      "key": "game.speed",
+      "it": "Velocità ×{0}"
+    },
+    {
+      "key": "game.paused",
+      "it": "In pausa"
+    },
+    {
+      "key": "game.time",
+      "it": "{0:HH:mm}"
+    },
+    {
+      "key": "game.date",
+      "it": "{0:dddd d MMMM}"
+    },
+    {
+      "key": "weather.Clear",
+      "it": "Sereno"
+    },
+    {
+      "key": "weather.PartlyCloudy",
+      "it": "Poco nuvoloso"
+    },
+    {
+      "key": "weather.Cloudy",
+      "it": "Nuvoloso"
+    },
+    {
+      "key": "weather.Rain",
+      "it": "Pioggia"
+    },
+    {
+      "key": "weather.Fog",
+      "it": "Nebbia"
+    },
+    {
+      "key": "details.unnamed",
+      "it": "Edificio"
+    },
+    {
+      "key": "details.address",
+      "it": "Indirizzo"
+    },
+    {
+      "key": "details.use",
+      "it": "Tipo"
+    },
+    {
+      "key": "details.height",
+      "it": "Altezza"
+    },
+    {
+      "key": "details.height.value",
+      "it": "{0} m · {1} piani"
+    },
+    {
+      "key": "details.height.estimated",
+      "it": "{0} m · {1} piani (stima)"
+    },
+    {
+      "key": "details.roof",
+      "it": "Tetto"
+    },
+    {
+      "key": "details.year",
+      "it": "Costruito nel"
+    },
+    {
+      "key": "details.footprint",
+      "it": "Superficie a terra"
+    },
+    {
+      "key": "details.footprint.value",
+      "it": "{0} m²"
+    },
+    {
+      "key": "details.inside",
+      "it": "Dentro"
+    },
+    {
+      "key": "details.landmark",
+      "it": "Luogo famoso"
+    },
+    {
+      "key": "details.position",
+      "it": "Posizione"
+    },
+    {
+      "key": "details.source",
+      "it": "Fonte"
+    },
+    {
+      "key": "details.source.value",
+      "it": "OpenStreetMap · {0} {1}"
+    },
+    {
+      "key": "details.attribution",
+      "it": "Dati © OpenStreetMap contributors (ODbL)"
+    },
+    {
+      "key": "osm.way",
+      "it": "way"
+    },
+    {
+      "key": "osm.relation",
+      "it": "relation"
+    },
+    {
+      "key": "osm.node",
+      "it": "node"
+    },
+    {
+      "key": "roof.Flat",
+      "it": "Piano (terrazzo)"
+    },
+    {
+      "key": "roof.Gabled",
+      "it": "A capanna"
+    },
+    {
+      "key": "roof.Hipped",
+      "it": "A padiglione"
+    },
+    {
+      "key": "roof.Pyramidal",
+      "it": "A piramide"
+    },
+    {
+      "key": "roof.Skillion",
+      "it": "A falda unica"
+    },
+    {
+      "key": "roof.HalfHipped",
+      "it": "A padiglione"
+    },
+    {
+      "key": "roof.Mansard",
+      "it": "Mansarda"
+    },
+    {
+      "key": "roof.Dome",
+      "it": "A cupola"
+    },
+    {
+      "key": "roof.Onion",
+      "it": "A cipolla"
+    },
+    {
+      "key": "roof.Round",
+      "it": "A botte"
+    },
+    {
+      "key": "roof.Gambrel",
+      "it": "A capanna spezzato"
+    },
+    {
+      "key": "roof.Unknown",
+      "it": "Non indicato"
+    },
+    {
+      "key": "use.Unknown",
+      "it": "Edificio"
+    },
+    {
+      "key": "use.House",
+      "it": "Casa"
+    },
+    {
+      "key": "use.Detached",
+      "it": "Villetta"
+    },
+    {
+      "key": "use.Apartments",
+      "it": "Condominio"
+    },
+    {
+      "key": "use.Residential",
+      "it": "Residenziale"
+    },
+    {
+      "key": "use.Terrace",
+      "it": "Case a schiera"
+    },
+    {
+      "key": "use.Commercial",
+      "it": "Commerciale"
+    },
+    {
+      "key": "use.Retail",
+      "it": "Negozi"
+    },
+    {
+      "key": "use.Office",
+      "it": "Uffici"
+    },
+    {
+      "key": "use.Industrial",
+      "it": "Industriale"
+    },
+    {
+      "key": "use.Warehouse",
+      "it": "Magazzino"
+    },
+    {
+      "key": "use.Religious",
+      "it": "Edificio religioso"
+    },
+    {
+      "key": "use.Church",
+      "it": "Chiesa"
+    },
+    {
+      "key": "use.Cathedral",
+      "it": "Cattedrale"
+    },
+    {
+      "key": "use.Chapel",
+      "it": "Cappella"
+    },
+    {
+      "key": "use.School",
+      "it": "Scuola"
+    },
+    {
+      "key": "use.University",
+      "it": "Università"
+    },
+    {
+      "key": "use.Kindergarten",
+      "it": "Scuola dell'infanzia"
+    },
+    {
+      "key": "use.Hospital",
+      "it": "Ospedale"
+    },
+    {
+      "key": "use.Civic",
+      "it": "Edificio pubblico"
+    },
+    {
+      "key": "use.Government",
+      "it": "Uffici pubblici"
+    },
+    {
+      "key": "use.Hotel",
+      "it": "Albergo"
+    },
+    {
+      "key": "use.Garage",
+      "it": "Garage"
+    },
+    {
+      "key": "use.Garages",
+      "it": "Box auto"
+    },
+    {
+      "key": "use.Shed",
+      "it": "Capanno"
+    },
+    {
+      "key": "use.Hut",
+      "it": "Capanna"
+    },
+    {
+      "key": "use.Farm",
+      "it": "Casa colonica"
+    },
+    {
+      "key": "use.FarmAuxiliary",
+      "it": "Annesso agricolo"
+    },
+    {
+      "key": "use.Barn",
+      "it": "Fienile"
+    },
+    {
+      "key": "use.Greenhouse",
+      "it": "Serra"
+    },
+    {
+      "key": "use.Stable",
+      "it": "Stalla"
+    },
+    {
+      "key": "use.Sports",
+      "it": "Impianto sportivo"
+    },
+    {
+      "key": "use.Stadium",
+      "it": "Stadio"
+    },
+    {
+      "key": "use.TrainStation",
+      "it": "Stazione"
+    },
+    {
+      "key": "use.Transportation",
+      "it": "Trasporti"
+    },
+    {
+      "key": "use.Parking",
+      "it": "Parcheggio"
+    },
+    {
+      "key": "use.Ruins",
+      "it": "Rovine"
+    },
+    {
+      "key": "use.Roof",
+      "it": "Tettoia"
+    },
+    {
+      "key": "use.Construction",
+      "it": "In costruzione"
+    },
+    {
+      "key": "use.Tower",
+      "it": "Torre"
+    },
+    {
+      "key": "use.Castle",
+      "it": "Castello"
+    },
+    {
+      "key": "use.Bunker",
+      "it": "Bunker"
+    },
+    {
+      "key": "use.Service",
+      "it": "Locale tecnico"
+    },
+    {
+      "key": "use.Toilets",
+      "it": "Servizi igienici"
+    },
+    {
+      "key": "use.Kiosk",
+      "it": "Chiosco"
+    },
+    {
+      "key": "use.Bridge",
+      "it": "Ponte"
+    },
+    {
+      "key": "use.Monument",
+      "it": "Monumento"
+    },
+    {
+      "key": "use.Theatre",
+      "it": "Teatro"
+    },
+    {
+      "key": "use.Museum",
+      "it": "Museo"
+    },
+    {
+      "key": "poi.amenity.bar",
+      "it": "Bar"
+    },
+    {
+      "key": "poi.amenity.cafe",
+      "it": "Caffè"
+    },
+    {
+      "key": "poi.amenity.restaurant",
+      "it": "Ristorante"
+    },
+    {
+      "key": "poi.amenity.pharmacy",
+      "it": "Farmacia"
+    },
+    {
+      "key": "poi.amenity.bank",
+      "it": "Banca"
+    },
+    {
+      "key": "poi.amenity.place_of_worship",
+      "it": "Luogo di culto"
+    },
+    {
+      "key": "poi.amenity.school",
+      "it": "Scuola"
+    },
+    {
+      "key": "poi.amenity.townhall",
+      "it": "Municipio"
+    },
+    {
+      "key": "poi.amenity.post_office",
+      "it": "Ufficio postale"
+    },
+    {
+      "key": "poi.amenity.police",
+      "it": "Polizia"
+    },
+    {
+      "key": "poi.amenity.hospital",
+      "it": "Ospedale"
+    },
+    {
+      "key": "poi.amenity.theatre",
+      "it": "Teatro"
+    },
+    {
+      "key": "poi.amenity.cinema",
+      "it": "Cinema"
+    },
+    {
+      "key": "poi.amenity.library",
+      "it": "Biblioteca"
+    },
+    {
+      "key": "poi.amenity.fast_food",
+      "it": "Fast food"
+    },
+    {
+      "key": "poi.amenity.ice_cream",
+      "it": "Gelateria"
+    },
+    {
+      "key": "poi.amenity.pub",
+      "it": "Pub"
+    },
+    {
+      "key": "poi.amenity.parking",
+      "it": "Parcheggio"
+    },
+    {
+      "key": "poi.amenity.fuel",
+      "it": "Distributore"
+    },
+    {
+      "key": "poi.amenity.university",
+      "it": "Università"
+    },
+    {
+      "key": "poi.amenity.kindergarten",
+      "it": "Scuola dell'infanzia"
+    },
+    {
+      "key": "poi.amenity.clinic",
+      "it": "Ambulatorio"
+    },
+    {
+      "key": "poi.amenity.doctors",
+      "it": "Medico"
+    },
+    {
+      "key": "poi.amenity.dentist",
+      "it": "Dentista"
+    },
+    {
+      "key": "poi.amenity.courthouse",
+      "it": "Tribunale"
+    },
+    {
+      "key": "poi.amenity.fire_station",
+      "it": "Vigili del fuoco"
+    },
+    {
+      "key": "poi.shop.supermarket",
+      "it": "Supermercato"
+    },
+    {
+      "key": "poi.shop.bakery",
+      "it": "Forno"
+    },
+    {
+      "key": "poi.shop.butcher",
+      "it": "Macelleria"
+    },
+    {
+      "key": "poi.shop.clothes",
+      "it": "Abbigliamento"
+    },
+    {
+      "key": "poi.shop.hairdresser",
+      "it": "Parrucchiere"
+    },
+    {
+      "key": "poi.shop.convenience",
+      "it": "Alimentari"
+    },
+    {
+      "key": "poi.shop.tobacco",
+      "it": "Tabaccheria"
+    },
+    {
+      "key": "poi.shop.newsagent",
+      "it": "Edicola"
+    },
+    {
+      "key": "poi.shop.books",
+      "it": "Libreria"
+    },
+    {
+      "key": "poi.shop.shoes",
+      "it": "Calzature"
+    },
+    {
+      "key": "poi.shop.optician",
+      "it": "Ottica"
+    },
+    {
+      "key": "poi.shop.florist",
+      "it": "Fioraio"
+    },
+    {
+      "key": "poi.shop.jewelry",
+      "it": "Gioielleria"
+    },
+    {
+      "key": "poi.shop.car",
+      "it": "Concessionaria"
+    },
+    {
+      "key": "poi.shop.car_repair",
+      "it": "Officina"
+    },
+    {
+      "key": "poi.shop.mobile_phone",
+      "it": "Telefonia"
+    },
+    {
+      "key": "poi.shop.hardware",
+      "it": "Ferramenta"
+    },
+    {
+      "key": "poi.shop.beauty",
+      "it": "Estetista"
+    },
+    {
+      "key": "poi.shop.greengrocer",
+      "it": "Frutta e verdura"
+    },
+    {
+      "key": "poi.shop.wine",
+      "it": "Enoteca"
+    },
+    {
+      "key": "poi.shop.deli",
+      "it": "Gastronomia"
+    },
+    {
+      "key": "poi.shop.pastry",
+      "it": "Pasticceria"
+    },
+    {
+      "key": "poi.shop.kiosk",
+      "it": "Chiosco"
+    },
+    {
+      "key": "poi.tourism.museum",
+      "it": "Museo"
+    },
+    {
+      "key": "poi.tourism.hotel",
+      "it": "Albergo"
+    },
+    {
+      "key": "poi.tourism.attraction",
+      "it": "Attrazione"
+    },
+    {
+      "key": "poi.tourism.guest_house",
+      "it": "B&B"
+    },
+    {
+      "key": "poi.tourism.information",
+      "it": "Informazioni"
+    },
+    {
+      "key": "poi.historic.monument",
+      "it": "Monumento"
+    },
+    {
+      "key": "poi.historic.memorial",
+      "it": "Memoriale"
+    },
+    {
+      "key": "poi.historic.castle",
+      "it": "Castello"
+    },
+    {
+      "key": "poi.historic.archaeological_site",
+      "it": "Sito archeologico"
+    },
+    {
+      "key": "poi.historic.church",
+      "it": "Chiesa storica"
+    },
+    {
+      "key": "poi.leisure.stadium",
+      "it": "Stadio"
+    },
+    {
+      "key": "poi.leisure.sports_centre",
+      "it": "Centro sportivo"
+    },
+    {
+      "key": "poi.leisure.park",
+      "it": "Parco"
+    },
+    {
+      "key": "poi.leisure.fitness_centre",
+      "it": "Palestra"
+    },
+    {
+      "key": "poi.leisure.swimming_pool",
+      "it": "Piscina"
+    },
+    {
+      "key": "poi.railway.station",
+      "it": "Stazione ferroviaria"
+    },
+    {
+      "key": "poi.public_transport.station",
+      "it": "Stazione"
+    },
+    {
+      "key": "poi.office.company",
+      "it": "Azienda"
+    },
+    {
+      "key": "poi.office.government",
+      "it": "Ufficio pubblico"
+    },
+    {
+      "key": "poi.healthcare.pharmacy",
+      "it": "Farmacia"
+    },
+    {
+      "key": "poi.power.plant",
+      "it": "Centrale elettrica"
+    },
+    {
+      "key": "poi.power.generator",
+      "it": "Generatore"
+    },
+    {
+      "key": "poi.power.substation",
+      "it": "Sottostazione elettrica"
     }
   ]
 }

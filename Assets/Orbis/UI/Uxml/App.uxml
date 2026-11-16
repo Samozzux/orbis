@@ -95,6 +95,69 @@
                 <ui:Label name="version" class="version" picking-mode="Ignore" />
             </ui:VisualElement>
 
+            <ui:VisualElement name="game" class="screen game" picking-mode="Ignore">
+                <ui:VisualElement class="hud-top" picking-mode="Ignore">
+                    <ui:Button name="hud-home" class="hud-button">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Home" class="hud-button__icon" />
+                    </ui:Button>
+                    <ui:VisualElement name="hud-clock" class="hud-clock">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon name="hud-weather-icon" icon="Sun" class="hud-clock__weather" />
+                        <ui:VisualElement class="hud-clock__texts" picking-mode="Ignore">
+                            <ui:Label name="hud-time" class="hud-clock__time" text="" picking-mode="Ignore" />
+                            <ui:Label name="hud-weather" class="hud-clock__detail" text="" picking-mode="Ignore" />
+                        </ui:VisualElement>
+                        <ui:Button name="hud-speed" class="hud-speed">
+                            <el:OrbisIcon name="hud-speed-icon" icon="Play" class="hud-speed__icon" />
+                            <ui:Label name="hud-speed-label" class="hud-speed__label" text="1×" picking-mode="Ignore" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="hud-side" picking-mode="Ignore">
+                        <ui:Button name="hud-view" class="hud-button">
+                            <glass:GlassSurface />
+                            <el:OrbisIcon name="hud-view-icon" icon="Map" class="hud-button__icon" />
+                        </ui:Button>
+                        <ui:Button name="hud-north" class="hud-button">
+                            <glass:GlassSurface />
+                            <el:OrbisIcon name="hud-north-icon" icon="Compass" class="hud-button__icon" />
+                        </ui:Button>
+                        <ui:Button name="hud-lots" class="hud-button">
+                            <glass:GlassSurface />
+                            <el:OrbisIcon icon="Layers" class="hud-button__icon" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="world-loading" class="world-loading" picking-mode="Ignore">
+                    <glass:GlassSurface />
+                    <el:OrbisIcon icon="Globe" class="world-loading__icon" />
+                    <ui:Label name="world-loading-text" class="world-loading__text" text="" picking-mode="Ignore" />
+                </ui:VisualElement>
+
+                <ui:VisualElement name="details" class="details">
+                    <glass:GlassSurface />
+                    <ui:VisualElement class="details__header">
+                        <ui:VisualElement class="details__badge" picking-mode="Ignore">
+                            <el:OrbisIcon icon="Building" class="details__badge-icon" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="details__titles" picking-mode="Ignore">
+                            <ui:Label name="details-title" class="details__title" text="" picking-mode="Ignore" />
+                            <ui:Label name="details-subtitle" class="details__subtitle" text="" picking-mode="Ignore" />
+                        </ui:VisualElement>
+                        <ui:Button name="details-close" class="icon-button">
+                            <el:OrbisIcon icon="Close" class="icon-button__icon" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                    <ui:ScrollView name="details-scroll" class="details__scroll">
+                        <ui:VisualElement name="details-rows" class="details__rows" />
+                    </ui:ScrollView>
+                    <ui:Label class="details__attribution" text="#details.attribution" picking-mode="Ignore" />
+                </ui:VisualElement>
+
+                <ui:Label name="hud-attribution" class="hud-attribution" text="© OpenStreetMap" picking-mode="Ignore" />
+            </ui:VisualElement>
+
             <ui:VisualElement name="settings" class="sheet-layer">
                 <ui:VisualElement name="settings-scrim" class="scrim" />
                 <ui:VisualElement class="sheet">

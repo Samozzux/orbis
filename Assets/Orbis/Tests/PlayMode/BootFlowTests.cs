@@ -42,14 +42,29 @@ namespace Orbis.Tests.PlayMode
             Assert.That(root.Q<Button>("btn-continue").enabledSelf, Is.False, "Senza salvataggi 'Continua' deve essere disattivato");
             Assert.That(root.Q<Label>("version").text, Does.Contain("0."));
 
-            // "Nuova partita" (via tastiera/gamepad: evento di conferma) mostra l'avviso "in arrivo"
+            // le voci non ancora pronte (via tastiera/gamepad: evento di conferma) mostrano l'avviso "in arrivo"
+            var friends = root.Q<Button>("nav-friends");
+            using (var submit = NavigationSubmitEvent.GetPooled())
+            {
+                submit.target = friends;
+                friends.SendEvent(submit);
+            }
+            yield return null;
+            Assert.That(OrbisApp.Instance.MainMenu.IsToastVisible, Is.True, "L'avviso non è comparso");
+
+            // "Nuova partita" entra nel mondo: senza pack (test) l'HUD lo dice, senza errori
             using (var submit = NavigationSubmitEvent.GetPooled())
             {
                 submit.target = newGame;
                 newGame.SendEvent(submit);
             }
+            for (var i = 0; i < 30; i++) yield return null;
+            Assert.That(OrbisApp.Instance.State, Is.EqualTo(OrbisApp.AppState.Game), "Nuova partita non ha aperto il mondo");
+            Assert.That(OrbisApp.Instance.Session, Is.Not.Null);
+            Assert.That(root.Q("game").ClassListContains("screen--visible"), Is.True, "HUD del gioco non visibile");
+            OrbisApp.Instance.EndGame();
             yield return null;
-            Assert.That(OrbisApp.Instance.MainMenu.IsToastVisible, Is.True, "L'avviso non è comparso");
+            Assert.That(OrbisApp.Instance.State, Is.EqualTo(OrbisApp.AppState.MainMenu), "Il ritorno al menu non funziona");
 
             // i testi devono essere stati sostituiti dalla tabella (nessuna chiave "#..." a vista)
             root.Query<TextElement>().ForEach(t => Assert.That(t.text ?? string.Empty, Does.Not.StartWith("#"), t.name));

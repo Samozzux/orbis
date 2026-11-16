@@ -24,7 +24,13 @@ namespace Orbis.UI.Menu3D
         private RenderTexture _output;
         private bool _hasFrame;
 
-        public bool IsActive => _blurCamera != null && _blurCamera.enabled;
+        public bool IsActive => _blurCamera != null && _active;
+
+        /// <summary>Ogni quanti frame si aggiorna lo sfondo del vetro (nel mondo: 3, per risparmiare GPU).</summary>
+        public int Interval = 1;
+
+        private bool _active;
+        private int _frame;
 
         /// <summary>Avvia la cattura (dopo che la città è stata costruita).</summary>
         public void Activate()
@@ -49,6 +55,7 @@ namespace Orbis.UI.Menu3D
             }
             EnsureTargets();
             _blurCamera.enabled = true;
+            _active = true;
         }
 
         private void EnsureTargets()
@@ -77,7 +84,16 @@ namespace Orbis.UI.Menu3D
             if (!IsActive)
                 return;
             _blurCamera.fieldOfView = _main.fieldOfView;
+            _blurCamera.nearClipPlane = _main.nearClipPlane;
             _blurCamera.farClipPlane = _main.farClipPlane;
+            _blurCamera.orthographic = _main.orthographic;
+            _blurCamera.orthographicSize = _main.orthographicSize;
+            // la telecamera di sfocatura disegna solo un frame ogni Interval: si sfoca solo dopo un frame disegnato
+            bool rendered = _blurCamera.enabled;
+            _frame++;
+            _blurCamera.enabled = Interval <= 1 || _frame % Interval == 0;
+            if (!rendered)
+                return;
             EnsureTargets();
             if (!_hasFrame)
             {

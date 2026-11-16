@@ -107,6 +107,8 @@ namespace Orbis.Core.Tests
             Assert.Equal(14, region.Zoom);
             Assert.NotEmpty(region.Tiles);
             Assert.Contains("OpenStreetMap", region.Attribution);
+            Assert.NotNull(region.Far);
+            Assert.Equal(region.Far.Cols * region.Far.Rows, region.Far.Heights.Length);
 
             var frame = region.CreateFrame();
             var id = frame.TileAt(14, 0, 0);

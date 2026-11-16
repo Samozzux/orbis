@@ -54,15 +54,28 @@ namespace Orbis.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator ClicMouse_SuNuovaPartita_MostraLAvviso()
+        public IEnumerator ClicMouse_SuAmici_MostraLAvviso()
         {
             yield return LoadMenu();
             var root = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement;
-            var button = root.Q<Button>("btn-new-game");
+            var button = root.Q<Button>("nav-friends");
             var picked = button.panel.Pick(button.worldBound.center);
             yield return Click(button);
             Assert.That(OrbisApp.Instance.MainMenu.IsToastVisible, Is.True,
-                $"Il clic col mouse su Nuova partita non ha mostrato l'avviso (sotto il puntatore: {Describe(picked)})");
+                $"Il clic col mouse su Amici non ha mostrato l'avviso (sotto il puntatore: {Describe(picked)})");
+        }
+
+        [UnityTest]
+        public IEnumerator ClicMouse_SuNuovaPartita_ApreIlMondo()
+        {
+            yield return LoadMenu();
+            var root = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement;
+            yield return Click(root.Q<Button>("btn-new-game"));
+            Assert.That(OrbisApp.Instance.State, Is.EqualTo(OrbisApp.AppState.Game), "Il clic su Nuova partita non ha aperto il mondo");
+            for (var i = 0; i < 10; i++) yield return null;
+            // il pulsante Casa (mouse) riporta al menu
+            yield return Click(root.Q<Button>("hud-home"));
+            Assert.That(OrbisApp.Instance.State, Is.EqualTo(OrbisApp.AppState.MainMenu), "Il clic su Casa non è tornato al menu");
         }
 
         private static string Describe(VisualElement e)
