@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Orbis.Core.Device;
 using Orbis.Core.Persistence;
+using Orbis.Core.Settings;
 
 // Servizi di piattaforma (docs/01 §10). Tutto ciò che è nativo passa da queste interfacce:
 // nessuna chiamata nativa fuori dalla cartella Assets/Orbis/Platform.
@@ -21,6 +22,7 @@ namespace Orbis.Platform
         IHaptics Haptics { get; }
         INotifications Notifications { get; }
         IDeviceProfile DeviceProfile { get; }
+        IScreenOrientation ScreenOrientation { get; }
     }
 
     // --- IA sul dispositivo (docs/01 §9) ---
@@ -135,6 +137,20 @@ namespace Orbis.Platform
         Task<bool> RequestPermissionAsync();
         void Schedule(string id, string title, string body, TimeSpan delay);
         void Cancel(string id);
+    }
+
+    // --- Orientamento dello schermo ---
+
+    public interface IScreenOrientation
+    {
+        /// <summary>Vero nelle app iOS/Android; falso su web, desktop ed editor (l'orientamento segue il dispositivo).</summary>
+        bool CanControl { get; }
+
+        /// <summary>Orientamento attuale dello schermo.</summary>
+        FixedOrientation Current { get; }
+
+        /// <summary>Applica rotazione automatica o blocco scelti nelle impostazioni.</summary>
+        void Apply(DisplaySettings settings);
     }
 
     // --- Profilo del dispositivo ---

@@ -13,6 +13,7 @@ namespace Orbis.Platform
         public AndroidPlatformServices() : base(PlatformKind.Android)
         {
             SaveStore = new FileSaveStore(Path.Combine(Application.persistentDataPath, "store"));
+            ScreenOrientation = new MobileScreenOrientation();
             DeviceProfile = new UnityDeviceProfile(Kind, UnityDeviceProfile.AndroidPixelsPerPoint, () => true);
         }
     }

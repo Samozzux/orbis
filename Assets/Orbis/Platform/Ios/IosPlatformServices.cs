@@ -13,6 +13,7 @@ namespace Orbis.Platform
         public IosPlatformServices() : base(PlatformKind.Ios)
         {
             SaveStore = new FileSaveStore(Path.Combine(Application.persistentDataPath, "store"));
+            ScreenOrientation = new MobileScreenOrientation();
             DeviceProfile = new UnityDeviceProfile(Kind, UnityDeviceProfile.IosPixelsPerPoint, () => true);
         }
     }

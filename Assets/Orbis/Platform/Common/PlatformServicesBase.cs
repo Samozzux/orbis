@@ -21,5 +21,6 @@ namespace Orbis.Platform
         public IHaptics Haptics { get; protected set; } = new NoHaptics();
         public INotifications Notifications { get; protected set; } = new NoNotifications();
         public IDeviceProfile DeviceProfile { get; protected set; }
+        public IScreenOrientation ScreenOrientation { get; protected set; } = new FreeScreenOrientation();
     }
 }
