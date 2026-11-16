@@ -3,23 +3,37 @@
     <Style src="project://database/Assets/Orbis/UI/Uss/Orbis.uss" />
     <ui:VisualElement name="app" class="app">
         <glass:GlassBackdropElement name="backdrop" class="backdrop" />
+        <ui:VisualElement name="vignette" class="vignette" picking-mode="Ignore" />
         <ui:VisualElement name="safe-area" class="safe-area" picking-mode="Ignore">
 
             <ui:VisualElement name="splash" class="screen splash">
                 <el:OrbisLogo class="logo logo--splash" />
                 <ui:Label class="wordmark wordmark--splash" text="#app.title" />
+                <ui:Label class="tagline tagline--splash" text="#app.tagline" />
             </ui:VisualElement>
 
             <ui:VisualElement name="loading" class="screen loading">
-                <el:OrbisLogo class="logo logo--loading" />
-                <ui:Label class="wordmark wordmark--loading" text="#app.title" />
-                <ui:VisualElement class="progress">
-                    <glass:GlassSurface />
-                    <ui:VisualElement class="progress__track">
-                        <ui:VisualElement name="progress-fill" class="progress__fill" />
+                <ui:VisualElement class="loading__center">
+                    <el:OrbisLogo class="logo logo--loading" />
+                    <ui:Label class="wordmark wordmark--loading" text="#app.title" />
+                    <ui:VisualElement class="progress">
+                        <glass:GlassSurface />
+                        <ui:VisualElement class="progress__track">
+                            <ui:VisualElement name="progress-fill" class="progress__fill">
+                                <ui:VisualElement class="progress__shine" />
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement class="loading__row">
+                        <ui:Label name="loading-status" class="loading__status" text="" />
+                        <ui:Label name="loading-percent" class="loading__percent" text="" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-                <ui:Label name="loading-status" class="loading__status" text="" />
+                <ui:VisualElement class="tip">
+                    <glass:GlassSurface />
+                    <ui:Label class="tip__title" text="#loading.tip_title" picking-mode="Ignore" />
+                    <ui:Label name="tip-text" class="tip__text" text="" picking-mode="Ignore" />
+                </ui:VisualElement>
             </ui:VisualElement>
 
             <ui:VisualElement name="menu" class="screen menu">
@@ -33,20 +47,24 @@
                     </ui:VisualElement>
 
                     <ui:VisualElement class="menu__actions">
-                        <ui:Button name="btn-new-game" class="glass-button glass-button--primary">
+                        <ui:Button name="btn-new-game" class="game-button game-button--primary">
                             <glass:GlassSurface />
-                            <el:OrbisIcon icon="Plus" class="glass-button__icon" />
-                            <ui:VisualElement class="glass-button__texts" picking-mode="Ignore">
-                                <ui:Label class="glass-button__label" text="#menu.new_game" picking-mode="Ignore" />
-                                <ui:Label class="glass-button__detail" text="#menu.new_game.detail" picking-mode="Ignore" />
+                            <ui:VisualElement class="game-button__badge" picking-mode="Ignore">
+                                <el:OrbisIcon icon="Plus" class="game-button__icon" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="game-button__texts" picking-mode="Ignore">
+                                <ui:Label class="game-button__label" text="#menu.new_game" picking-mode="Ignore" />
+                                <ui:Label class="game-button__detail" text="#menu.new_game.detail" picking-mode="Ignore" />
                             </ui:VisualElement>
                         </ui:Button>
-                        <ui:Button name="btn-continue" class="glass-button">
+                        <ui:Button name="btn-continue" class="game-button game-button--secondary">
                             <glass:GlassSurface />
-                            <el:OrbisIcon icon="Play" class="glass-button__icon" />
-                            <ui:VisualElement class="glass-button__texts" picking-mode="Ignore">
-                                <ui:Label class="glass-button__label" text="#menu.continue" picking-mode="Ignore" />
-                                <ui:Label name="continue-detail" class="glass-button__detail" text="" picking-mode="Ignore" />
+                            <ui:VisualElement class="game-button__badge" picking-mode="Ignore">
+                                <el:OrbisIcon icon="Play" class="game-button__icon" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="game-button__texts" picking-mode="Ignore">
+                                <ui:Label class="game-button__label" text="#menu.continue" picking-mode="Ignore" />
+                                <ui:Label name="continue-detail" class="game-button__detail" text="" picking-mode="Ignore" />
                             </ui:VisualElement>
                         </ui:Button>
                     </ui:VisualElement>
@@ -54,21 +72,70 @@
 
                 <ui:VisualElement class="navbar">
                     <glass:GlassSurface />
-                    <ui:Button name="nav-friends" class="nav-item">
-                        <el:OrbisIcon icon="Friends" class="nav-item__icon" />
+                    <ui:Button name="nav-friends" class="nav-item nav-item--friends">
+                        <ui:VisualElement class="nav-item__badge" picking-mode="Ignore">
+                            <el:OrbisIcon icon="Friends" class="nav-item__icon" />
+                        </ui:VisualElement>
                         <ui:Label class="nav-item__label" text="#menu.friends" picking-mode="Ignore" />
                     </ui:Button>
-                    <ui:Button name="nav-settings" class="nav-item">
-                        <el:OrbisIcon icon="Settings" class="nav-item__icon" />
+                    <ui:Button name="nav-settings" class="nav-item nav-item--settings">
+                        <ui:VisualElement class="nav-item__badge" picking-mode="Ignore">
+                            <el:OrbisIcon icon="Settings" class="nav-item__icon" />
+                        </ui:VisualElement>
                         <ui:Label class="nav-item__label" text="#menu.settings" picking-mode="Ignore" />
                     </ui:Button>
-                    <ui:Button name="nav-credits" class="nav-item">
-                        <el:OrbisIcon icon="Info" class="nav-item__icon" />
+                    <ui:Button name="nav-credits" class="nav-item nav-item--credits">
+                        <ui:VisualElement class="nav-item__badge" picking-mode="Ignore">
+                            <el:OrbisIcon icon="Info" class="nav-item__icon" />
+                        </ui:VisualElement>
                         <ui:Label class="nav-item__label" text="#menu.credits" picking-mode="Ignore" />
                     </ui:Button>
                 </ui:VisualElement>
 
                 <ui:Label name="version" class="version" picking-mode="Ignore" />
+            </ui:VisualElement>
+
+            <ui:VisualElement name="settings" class="sheet-layer">
+                <ui:VisualElement name="settings-scrim" class="scrim" />
+                <ui:VisualElement class="sheet">
+                    <glass:GlassSurface />
+                    <ui:VisualElement class="sheet__header">
+                        <ui:Label class="sheet__title" text="#settings.title" />
+                        <ui:Button name="settings-close" class="icon-button">
+                            <el:OrbisIcon icon="Close" class="icon-button__icon" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                    <ui:Label class="sheet__section" text="#settings.section.screen" />
+                    <ui:VisualElement name="orientation-controls" class="settings-group">
+                        <ui:Button name="toggle-autorotate" class="setting-row">
+                            <ui:VisualElement class="setting-row__texts" picking-mode="Ignore">
+                                <ui:Label class="setting-row__label" text="#settings.autorotate" picking-mode="Ignore" />
+                                <ui:Label class="setting-row__detail" text="#settings.autorotate.detail" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:VisualElement name="autorotate-switch" class="switch" picking-mode="Ignore">
+                                <ui:VisualElement class="switch__knob" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                        </ui:Button>
+                        <ui:VisualElement name="orientation-row" class="setting-row setting-row--choice">
+                            <ui:VisualElement class="setting-row__texts" picking-mode="Ignore">
+                                <ui:Label class="setting-row__label" text="#settings.orientation" picking-mode="Ignore" />
+                                <ui:Label class="setting-row__detail setting-row__detail--when-disabled" text="#settings.orientation.detail" picking-mode="Ignore" />
+                            </ui:VisualElement>
+                            <ui:VisualElement class="segmented">
+                                <ui:Button name="orientation-portrait" class="segmented__item">
+                                    <el:OrbisIcon icon="PhonePortrait" class="segmented__icon" />
+                                    <ui:Label class="segmented__label" text="#settings.orientation.portrait" picking-mode="Ignore" />
+                                </ui:Button>
+                                <ui:Button name="orientation-landscape" class="segmented__item">
+                                    <el:OrbisIcon icon="PhoneLandscape" class="segmented__icon" />
+                                    <ui:Label class="segmented__label" text="#settings.orientation.landscape" picking-mode="Ignore" />
+                                </ui:Button>
+                            </ui:VisualElement>
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:Label name="orientation-note" class="sheet__note" text="#settings.orientation.web_note" />
+                    <ui:Label class="sheet__note sheet__note--muted" text="#settings.more_soon" />
+                </ui:VisualElement>
             </ui:VisualElement>
 
             <ui:VisualElement name="toast" class="toast" picking-mode="Ignore">

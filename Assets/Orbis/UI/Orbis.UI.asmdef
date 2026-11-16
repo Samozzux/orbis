@@ -1,7 +1,16 @@
 {
     "name": "Orbis.UI",
     "rootNamespace": "Orbis.UI",
-    "references": ["Orbis.Core", "Orbis.Gameplay", "Orbis.Platform", "Unity.Localization", "Unity.ResourceManager", "Unity.Addressables"],
+    "references": [
+        "Orbis.Core",
+        "Orbis.Gameplay",
+        "Orbis.Platform",
+        "Unity.Localization",
+        "Unity.ResourceManager",
+        "Unity.Addressables",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

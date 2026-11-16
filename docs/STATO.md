@@ -1,7 +1,7 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M0 — Fondamenta**: codice completo e verificato in locale e in CI sul branch `m0-fondamenta`. Mancano le azioni di Samuele (segreti, keystore, GitHub Pages: vedi "Cosa deve fare Samuele"), poi l'unione in `main`, il deploy (web + backend) e la prova sui dispositivi.
+**M0 — Fondamenta**: unita in `main` il 16/11/2026 (PR #1). In corso il nuovo stile "da gioco" del menu (branch `m0-ui-gioco`, PR #2). Manca la prova di Samuele sui dispositivi, poi il tag `v0.0.0`.
 
 ## Già pronto (fatto da Samuele il 15/11/2026)
 - Repository pubblico `Samozzux/orbis` con `.gitignore` Unity.
@@ -27,8 +27,15 @@
 - **Workflow**: `core-tests`, `backend` (test su PHP 7.0 e 8.3 con MySQL 5.7 → deploy FTPS → verifica health), `web-build` (→ GitHub Pages), `android-build` (→ `Orbis-apk`), `ios-build` (→ `Orbis-ipa`), `unity-tests` (PR e manuale).
 - **Script** `tools/setup/configura-github.sh` per creare i segreti mancanti senza che le password passino da altre parti.
 
+## Fatto il 16/11/2026: menu in stile "da gioco" (richiesta di Samuele)
+- **Città 3D viva dietro il menu**: mini-città low-poly su un'isola-collina (omaggio a Chieti) generata da codice, sempre uguale: case con tetti in coppi, cattedrale con campanile, stadio, uliveti a filari, alberi, strada ad anello con auto che girano, nuvole che passano; telecamera che ruota lentamente e si adatta a orizzontale/verticale; cielo procedurale, sole con ombre morbide, nebbia. Si costruisce durante il passo "Preparo il mondo…" del caricamento (`Assets/Orbis/UI/Runtime/Menu3D`).
+- **Liquid glass vero**: una seconda telecamera disegna la scena a bassa risoluzione, lo shader `Hidden/Orbis/GlassBlur` la sfoca e la rende più viva; bottoni, navbar, barra e consigli mostrano la città sfocata che sta davvero dietro. Senza GPU (test in batchmode) resta lo sfondo fisso.
+- **Stile da gioco**: font **Lilita One** (OFL) per titoli ed etichette, titolo con contorno e ombra netta, bottoni a capsula spessi (arancio "Nuova partita", blu "Continua") che si schiacciano alla pressione e rimbalzano all'entrata, navbar con icone in cerchi colorati, barra di caricamento con percentuale e riquadro "Lo sapevi?" con consigli, avviso a banner arancio.
+- **Verticale e orizzontale**: `DisplaySettings` in Core (con test), servizio `IScreenOrientation` in Platform (app iOS/Android: rotazione automatica o blocco; web/desktop: segue il dispositivo), primo pannello **Impostazioni** (vetro, interruttore "Rotazione automatica", scelta Verticale/Orizzontale con icone), scelta salvata sul dispositivo e applicata a ogni avvio; player settings con verticale e orizzontale consentiti.
+- **CI più veloce** (come prevede `docs/07` §2): IPA, APK e web si compilano solo dopo l'unione in `main`, sui tag `v*` e a mano; sulle PR girano core, backend e test Unity. Regola su `main`: richiesti `core` e `unity-tests`, vietati force-push e cancellazione; unione automatica consentita.
+
 ## Verifiche M0
-- **Test locali**: `dotnet test` 42/42; Unity EditMode 7/7, PlayMode 1/1 (avvio fino al menu senza avvisi né errori in console); backend 17/17 senza DB.
+- **Test locali**: `dotnet test` 42/42; Unity EditMode 9/9, PlayMode 1/1 (avvio fino al menu senza avvisi né errori in console, anche con GPU Metal e città 3D); backend 17/17 senza DB.
 - **CI su `m0-fondamenta`**: tutte verdi. Core tests; Backend 21/21 su PHP 7.0.33 e 8.3 con MySQL 5.7; **Android** → `Orbis-apk` 42,7 MB (19 min); **iOS** su `macos-26` con Xcode 26 → `Orbis-ipa` 54,5 MB (20 min); **Web** → 15,2 MB compressi (27 min, limite 60 MB). Le tre build girano in parallelo senza problemi di licenza.
 - **Prova della build web in locale** (browser integrato, Chrome 156): WebGPU attivo, testi caricati da Localization (Addressables), logo → caricamento → menu, avviso "in arrivo" su clic/tap e con Invio; layout verificato a 1024×768 (desktop/tablet), 852×393 (telefono orizzontale) e 393×852 (telefono verticale, anche ridimensionando dal vivo). Console senza errori né avvisi; restano solo messaggi informativi di URP sugli shader di post-processing non inclusi (si sistemano in M1 con i profili di stile).
 - **Bug trovato dalla CI**: le impostazioni di Localization create da Unity contenevano un selettore di lingua fisso su "en". Sul Mac (sistema in italiano) funzionava, ma su dispositivi o browser in inglese il gioco avrebbe mostrato le chiavi al posto dei testi. Ora il generatore imposta sempre l'italiano, `Loc` ha un ripiego e un test EditMode lo controlla.
@@ -37,7 +44,8 @@
 - **Licenza Unity in CI**: `buildalon/unity-setup@v3` (installa 6000.6.9f1 dal `ProjectVersion.txt`, moduli per piattaforma) + `buildalon/activate-unity-license@v3` con `license: personal` e `UNITY_EMAIL`/`UNITY_PASSWORD`. Il secret `UNITY_LICENSE` per ora non serve (resta come riserva). Sui runner GitHub macOS/Linux l'azione **non restituisce** la licenza Personal a fine job, per scelta: le macchine condividono la stessa identità e restituirla revocherebbe la licenza agli altri job.
 - **HTTPS Altervista**: attivo (certificato valido su `https://giuliaa8.altervista.org`).
 - **FTP Altervista**: accetta TLS esplicito; il certificato è per `*.altervista.org` e non copre `ftp.giuliaa8.altervista.org`, quindi il deploy usa FTPS in modalità "loose" (cifrato, senza controllo del nome).
-- **`/api/health`**: _da leggere dopo il primo deploy su `main`_ (versione PHP/MySQL, estensioni, limiti).
+- **Su `main` dopo l'unione (16/11/2026)**: build **Android** verde con APK firmato dal keystore di Orbis (42,7 MB), **iOS** verde (IPA 54,5 MB), **Web** verde e **pubblicata** su https://samozzux.github.io/orbis/ (verificato: la pagina carica e parte).
+- **`/api/health`**: non ancora disponibile. Il deploy FTP è stato **rifiutato da Altervista**: "530 Autenticazione fallita. Accedi al pannello di controllo di AlterVista e aggiungi la nazione da cui ti stai connettendo tra quelle consentite". I server di GitHub sono all'estero (di solito Stati Uniti): va aggiunta la nazione nel pannello Altervista, poi si rilancia il workflow "Backend". Il workflow ora stampa da quale Paese si collega.
 - **CORS dei download GitHub Releases dal web** (verificato il 15/11/2026): **non utilizzabili**. `github.com/.../releases/download/...` risponde 302 senza `Access-Control-Allow-Origin`; anche passando da `api.github.com` (che ha CORS) il redirect finale su `release-assets.githubusercontent.com` risponde senza header CORS. GitHub Pages invece risponde con `Access-Control-Allow-Origin: *`. → vedi "Decisioni da confermare".
 
 ## Decisioni prese
@@ -45,7 +53,9 @@
 - Piattaforme: iOS (iPhone + iPad), Android (APK) e Web (GitHub Pages).
 - Dati sportivi da fonti aperte, niente scraping vietato.
 - Tempo predefinito: 1 ora di gioco = 1 minuto reale.
-- UI: ultra moderna, minimal, **liquid glass** stile iOS 26 per bottoni, navbar e pannelli (Samuele, 15/11/2026). Componenti riusabili in `Assets/Orbis/UI/Runtime/Glass` (`GlassSurface`, `GlassBackdrop`).
+- UI: **liquid glass** stile iOS 26 per bottoni, navbar e pannelli (Samuele, 15/11/2026), resa **più da gioco** (16/11/2026): città 3D animata dietro il menu, font Lilita One, bottoni spessi e colorati, animazioni a rimbalzo. Componenti riusabili in `Assets/Orbis/UI/Runtime/Glass` (`GlassSurface`, `GlassBackdrop`) e `Menu3D`.
+- CI: build IPA/APK/web su `main`, tag e a mano; sulle PR solo test (Samuele, 16/11/2026). Una build Unity alla volta con la coda `unity-license`.
+- **Orientamento** (Samuele, 16/11/2026, "importantissimo"): su telefono e tablet il gioco è giocabile **in verticale e in orizzontale**. Di default **rotazione automatica attiva e avvio in verticale**; in Impostazioni → Schermo si spegne la rotazione e si sceglie Verticale o Orizzontale (spegnendola si blocca l'orientamento in uso). Nel browser l'orientamento segue il dispositivo (Safari e gli altri browser non permettono il blocco) e le Impostazioni lo spiegano. Desktop: orizzontale. Aggiornati `CLAUDE.md`, `docs/00`, `docs/01`, `docs/04`, `docs/09`. Ogni schermata futura deve avere layout verticale e orizzontale.
 - Testi nei file UXML come chiavi `#chiave` sostituite all'avvio dalla tabella Localization "UI" (scelta più semplice e verificabile da test: un test controlla che ogni chiave usata esista).
 - Classi di layout: lato corto < 500 pt → telefono; lato lungo ≥ 1280 pt e lato corto ≥ 700 pt → desktop; altrimenti tablet (scelta semplice, da rivedere se serve).
 - Prima del Keychain/Keystore (M3) `ISecureStore` è solo in memoria; salvataggi su file (iOS/Android/Editor) e in memoria sul web fino a M2 (SQLite / IndexedDB).
@@ -57,27 +67,26 @@
 3. **Riferimenti tra assembly**: `Orbis.UI` usa anche `Orbis.Platform` (per profilo del dispositivo e servizi), non solo Core e Gameplay come nella tabella di `docs/01` §2.
 
 ## Problemi aperti
-- **Password del database (`DB_PASSWORD`)**: Samuele ne ha impostata una, ma su Altervista di solito il database non ha password e una password sbagliata impedisce l'accesso. Si verifica al primo deploy con `/api/health` (`database.connected`); se fallisce, basta cancellare il secret.
+- **Deploy del backend bloccato dal filtro FTP per nazione di Altervista** (vedi Verifiche): serve un'azione di Samuele nel pannello Altervista.
 - Il modulo **iOS Build Support** non è installato sul Mac: non serve (l'IPA si compila in CI), ma senza non si può provare la build iOS in locale.
-- Fino a quando non c'è il keystore, l'APK di CI è firmato con una chiave di debug: quella versione andrà disinstallata prima di installare l'APK firmato.
+- Gli APK compilati prima del 15/11 alle 23:38 sono firmati con una chiave di debug: se ne hai installato uno, va disinstallato prima di installare quello firmato con la chiave di Orbis.
 
-## Cosa deve fare Samuele (M0)
-Una sola volta, dal Terminale del Mac nella cartella del progetto:
-```
-bash tools/setup/configura-github.sh
-```
-Lo script chiede conferma passo per passo e: crea `ORBIS_JWT_SECRET` (casuale, mai mostrato); imposta la variabile `ORBIS_ADMIN_USERNAME` (chiede lo username); chiede se Altervista mostra una password del database (di solito no → Invio); crea il keystore Android in `~/Documents/Orbis-chiavi/` (chiede una password) e carica i 4 secret `ANDROID_*`; attiva GitHub Pages con sorgente "GitHub Actions". **Dopo**: copiare la cartella `~/Documents/Orbis-chiavi/` in un posto sicuro e salvare la password del keystore nel gestore di password.
-
-Alternativa senza script per Pages: GitHub → repository `orbis` → **Settings** → **Pages** → **Source: GitHub Actions**.
+## Cosa deve fare Samuele
+- ✅ Fatto il 15/11: script `tools/setup/configura-github.sh` (JWT, admin, keystore Android, GitHub Pages); tolta la password del database.
+- ⏳ **Altervista, FTP dall'estero**: nel pannello di controllo di Altervista aggiungere gli **Stati Uniti** tra le nazioni da cui è consentito l'accesso FTP (i server di GitHub sono lì). Poi rilanciare il workflow "Backend" (GitHub → Actions → Backend → ultima esecuzione → "Re-run failed jobs"), oppure scrivere a Claude "rilancia il backend".
 
 ## Cosa provare (fine M0)
 - **Web**: aprire `https://samozzux.github.io/orbis/` da Mac, iPhone (anche in verticale) e iPad → logo animato, caricamento, menu con bottoni di vetro e navbar; toccare una voce → avviso "In arrivo nelle prossime versioni"; su Mac anche Tab/frecce + Invio.
 - **iPhone**: scaricare `Orbis-ipa` dall'ultima esecuzione verde di "iOS build" e installarlo con Sideloadly (istruzioni nel README) → stesso menu, in orizzontale, rispettando la Dynamic Island.
 - **Android**: scaricare `Orbis-apk` dall'ultima esecuzione verde di "Android build" e installarlo (istruzioni nel README).
-- **Backend**: aprire `https://giuliaa8.altervista.org/orbis/api/health` → JSON con `"status": "ok"`.
+- **Backend** (dopo lo sblocco FTP): aprire `https://giuliaa8.altervista.org/orbis/api/health` → JSON con `"status": "ok"`.
 
 ## Registro sessioni
 ### 15/11/2026 — M0 Fondamenta
 - **Fatto**: tutto il codice di M0 (vedi sopra) sul branch `m0-fondamenta`, tutte le pipeline verdi (core, backend, IPA, APK, web), build web provata in locale. Su richiesta di Samuele l'interfaccia è in stile liquid glass iOS 26.
 - **Corretto durante la prova**: l'avviso "in arrivo" non compariva (elemento cercato nel posto sbagliato; sul web i riferimenti nulli non danno errore) → ora gli elementi mancanti fanno fallire subito l'avvio con un messaggio chiaro e il test PlayMode preme davvero "Nuova partita". Il vetro era troppo "lattiginoso" (spazio colore lineare) → sfocatura resa più viva e velature più leggere.
 - **Resta**: azioni di Samuele (sopra); unione in `main` con primo deploy di web e backend; lettura dei valori di `/api/health`; prova sui dispositivi; tag `v0.0.0`.
+
+### 16/11/2026 — M0 su main e menu "da gioco"
+- **Fatto**: PR #1 unita in `main`; build Android (APK firmato), iOS e Web verdi; versione web pubblicata su GitHub Pages. Menu rifatto in stile gioco con città 3D, mare, Majella, vetro che sfoca la scena vera, font Lilita One (PR #2). CI resa più veloce: sulle PR solo test.
+- **Resta**: sblocco FTP su Altervista e lettura di `/api/health`; unione della PR #2; prova sui dispositivi; tag `v0.0.0`.

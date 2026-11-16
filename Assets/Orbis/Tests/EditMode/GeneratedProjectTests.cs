@@ -16,7 +16,7 @@ namespace Orbis.Tests.EditMode
     public class GeneratedProjectTests
     {
         private static readonly Regex UxmlKey = new Regex("text=\"#([a-z0-9_.]+)\"");
-        private static readonly Regex CodeKey = new Regex("\"((?:app|loading|menu|web|ios)\\.[a-z0-9_.]+)\"");
+        private static readonly Regex CodeKey = new Regex("\"((?:app|loading|menu|web|ios|settings)\\.[a-z0-9_.]+)\"");
 
         [Test]
         public void ScenaDiAvvio_NelleBuildSettings()
@@ -87,6 +87,23 @@ namespace Orbis.Tests.EditMode
         }
 
         [Test]
+        public void CittaDelMenu_HaTuttiIMateriali()
+        {
+            var names = System.Enum.GetNames(typeof(Orbis.UI.Menu3D.MenuCityMaterial));
+            Assert.That(names.Length, Is.EqualTo(Orbis.UI.Menu3D.MenuCity.MaterialCount));
+            foreach (var n in names)
+            {
+                var mat = AssetDatabase.LoadAssetAtPath<UnityEngine.Material>($"{MenuAssetsGenerator.Folder}/Materials/City_{n}.mat");
+                Assert.That(mat, Is.Not.Null, $"Materiale mancante: {n}");
+                Assert.That(mat.shader.name, Is.EqualTo("Universal Render Pipeline/Simple Lit"));
+            }
+            var blur = AssetDatabase.LoadAssetAtPath<UnityEngine.Material>(MenuAssetsGenerator.BlurMaterial);
+            Assert.That(blur, Is.Not.Null);
+            Assert.That(blur.shader.name, Is.EqualTo(MenuAssetsGenerator.BlurShader));
+            Assert.That(blur.passCount, Is.EqualTo(2));
+        }
+
+        [Test]
         public void ImpostazioniPlayer_ComeDaSpecifica()
         {
             Assert.That(PlayerSettings.GetApplicationIdentifier(NamedBuildTarget.iOS), Is.EqualTo(OrbisPaths.BundleId));
@@ -98,6 +115,11 @@ namespace Orbis.Tests.EditMode
             Assert.That(PlayerSettings.Android.targetArchitectures, Is.EqualTo(AndroidArchitecture.ARM64));
             Assert.That(PlayerSettings.WebGL.compressionFormat, Is.EqualTo(WebGLCompressionFormat.Brotli));
             Assert.That(PlayerSettings.WebGL.decompressionFallback, Is.True);
+            // telefono e tablet: verticale e orizzontale, rotazione automatica di default
+            Assert.That(PlayerSettings.defaultInterfaceOrientation, Is.EqualTo(UIOrientation.AutoRotation));
+            Assert.That(PlayerSettings.allowedAutorotateToPortrait, Is.True);
+            Assert.That(PlayerSettings.allowedAutorotateToLandscapeLeft, Is.True);
+            Assert.That(PlayerSettings.allowedAutorotateToLandscapeRight, Is.True);
         }
     }
 }

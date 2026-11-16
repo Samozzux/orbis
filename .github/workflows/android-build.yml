@@ -2,8 +2,9 @@
 name: Android build
 
 on:
+  # come da docs/07 §2: le build partono dopo l'unione in main, sui tag v* e a mano (Actions → Run workflow)
   push:
-    branches: ['**']
+    branches: [main]
     tags: ['v*']
     paths:
       - 'Assets/**'

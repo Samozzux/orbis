@@ -34,6 +34,30 @@
       "it": "Pronto"
     },
     {
+      "key": "loading.percent",
+      "it": "{0}%"
+    },
+    {
+      "key": "loading.tip_title",
+      "it": "Lo sapevi?"
+    },
+    {
+      "key": "tips.1",
+      "it": "Chieti sorge su un colle tra la Majella e il mare Adriatico."
+    },
+    {
+      "key": "tips.2",
+      "it": "Chieti è tra le città più antiche d'Italia: i Romani la chiamavano Teate."
+    },
+    {
+      "key": "tips.3",
+      "it": "In Orbis potrai essere sindaco o semplice cittadino, e cambiare ruolo quando vuoi."
+    },
+    {
+      "key": "tips.4",
+      "it": "Strade ed edifici di Orbis arriveranno dalle mappe vere di OpenStreetMap."
+    },
+    {
       "key": "menu.continue",
       "it": "Continua"
     },
@@ -72,6 +96,46 @@
     {
       "key": "menu.version",
       "it": "Versione {0} ({1})"
+    },
+    {
+      "key": "settings.title",
+      "it": "Impostazioni"
+    },
+    {
+      "key": "settings.section.screen",
+      "it": "Schermo"
+    },
+    {
+      "key": "settings.autorotate",
+      "it": "Rotazione automatica"
+    },
+    {
+      "key": "settings.autorotate.detail",
+      "it": "Il gioco gira insieme al telefono o al tablet"
+    },
+    {
+      "key": "settings.orientation",
+      "it": "Orientamento"
+    },
+    {
+      "key": "settings.orientation.detail",
+      "it": "Spegni la rotazione automatica per scegliere"
+    },
+    {
+      "key": "settings.orientation.portrait",
+      "it": "Verticale"
+    },
+    {
+      "key": "settings.orientation.landscape",
+      "it": "Orizzontale"
+    },
+    {
+      "key": "settings.orientation.web_note",
+      "it": "Nel browser lo schermo segue come tieni il dispositivo. Nell'app per iPhone, iPad e Android puoi bloccarlo in verticale o in orizzontale."
+    },
+    {
+      "key": "settings.more_soon",
+      "it": "Altre impostazioni in arrivo nelle prossime versioni."
     },
     {
       "key": "ios.usage.faceid",

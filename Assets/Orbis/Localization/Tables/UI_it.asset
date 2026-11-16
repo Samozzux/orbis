@@ -114,6 +114,70 @@ MonoBehaviour:
     m_Localized: "Simulatore di citt\xE0 e di vita ambientato nel mondo reale, a partire da Chieti."
     m_Metadata:
       m_Items: []
+  - m_Id: 32717612769280
+    m_Localized: '{0}%'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740800
+    m_Localized: Lo sapevi?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740801
+    m_Localized: Chieti sorge su un colle tra la Majella e il mare Adriatico.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740802
+    m_Localized: "Chieti \xE8 tra le citt\xE0 pi\xF9 antiche d'Italia: i Romani la chiamavano Teate."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740803
+    m_Localized: In Orbis potrai essere sindaco o semplice cittadino, e cambiare ruolo quando vuoi.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32717633740804
+    m_Localized: Strade ed edifici di Orbis arriveranno dalle mappe vere di OpenStreetMap.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679407931392
+    m_Localized: Impostazioni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514304
+    m_Localized: Schermo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514305
+    m_Localized: Rotazione automatica
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514306
+    m_Localized: Il gioco gira insieme al telefono o al tablet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514307
+    m_Localized: Orientamento
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514308
+    m_Localized: Spegni la rotazione automatica per scegliere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514309
+    m_Localized: Verticale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679420514310
+    m_Localized: Orizzontale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679424708608
+    m_Localized: Nel browser lo schermo segue come tieni il dispositivo. Nell'app per iPhone, iPad e Android puoi bloccarlo in verticale o in orizzontale.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 73679424708609
+    m_Localized: Altre impostazioni in arrivo nelle prossime versioni.
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

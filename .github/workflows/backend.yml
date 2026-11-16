@@ -103,6 +103,13 @@ jobs:
           if [ -z "$ORBIS_JWT_SECRET" ]; then echo "::warning::Secret ORBIS_JWT_SECRET non impostato (servirà da M3)"; fi
           if [ -z "$ORBIS_ADMIN_USERNAME" ]; then echo "::warning::Variabile ORBIS_ADMIN_USERNAME non impostata"; fi
 
+      # Altervista accetta l'FTP solo dai Paesi autorizzati nel pannello: qui si vede da dove si collega GitHub
+      - name: Paese del server GitHub (per le nazioni consentite FTP di Altervista)
+        run: |
+          country=$(curl -sS --max-time 10 https://ipinfo.io/country || echo "sconosciuto")
+          echo "Il server GitHub si collega da: $country"
+          echo "### Il deploy FTP parte da: $country" >> "$GITHUB_STEP_SUMMARY"
+
       # Altervista accetta FTP con TLS esplicito; il certificato è per *.altervista.org,
       # quindi il nome ftp.<sito>.altervista.org non corrisponde: "loose" accetta comunque la cifratura.
       - name: Deploy FTP su Altervista (/orbis/)

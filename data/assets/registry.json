@@ -1,0 +1,15 @@
+{
+  "_info": "Registro di tutte le risorse esterne usate nel gioco (docs/08 §1). Ogni voce CC-BY/OFL va anche in CREDITS.md.",
+  "assets": [
+    {
+      "id": "font-lilita-one",
+      "type": "font",
+      "name": "Lilita One",
+      "author": "Juan Montoreano",
+      "license": "OFL-1.1",
+      "source": "https://github.com/google/fonts/tree/main/ofl/lilitaone",
+      "path": "Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf",
+      "added": "2026-11-16"
+    }
+  ]
+}

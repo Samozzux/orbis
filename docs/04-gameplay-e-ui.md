@@ -113,6 +113,6 @@ Aggiungi monete, salta il tempo, attiva eventi/disastri, mostra statistiche di p
 
 ## 14. Stile dell'interfaccia
 - Moderna, pulita, pannelli in vetro sfocato ("liquid glass") coerenti con iOS 26, icone chiare, animazioni brevi.
-- Leggibile su telefono in orizzontale; più dense su tablet/desktop.
+- Leggibile su telefono **in verticale e in orizzontale**; più dense su tablet/desktop. Ogni schermata ha entrambi i layout; l'orientamento (rotazione automatica o bloccato) si sceglie nelle Impostazioni.
 - Tutti i testi dalle tabelle Localization (italiano).
 - Accessibilità: dimensione testo regolabile, contrasto alto opzionale, sottotitoli per voci.

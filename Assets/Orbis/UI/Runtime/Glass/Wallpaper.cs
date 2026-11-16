@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Orbis.UI.Glass
 {
     /// <summary>Genera lo sfondo astratto del menu: blu profondo con aloni di colore morbidi (stile iOS 26).</summary>
-    internal static class Wallpaper
+    public static class Wallpaper
     {
         private struct Blob
         {
@@ -85,6 +85,34 @@ namespace Orbis.UI.Glass
                 dst[y * outWidth + x] = new Color32((byte)(r / n), (byte)(g / n), (byte)(b / n), 255);
             }
             return dst;
+        }
+
+        /// <summary>Vignettatura scura ai bordi (aiuta la leggibilità dei testi sopra la città 3D).</summary>
+        public static Texture2D CreateVignette()
+        {
+            const int size = 64;
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false)
+            {
+                name = "OrbisVignette",
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear,
+                hideFlags = HideFlags.DontSave,
+            };
+            var px = new Color32[size * size];
+            for (var y = 0; y < size; y++)
+            for (var x = 0; x < size; x++)
+            {
+                var u = (x + 0.5f) / size - 0.5f;
+                var v = (y + 0.5f) / size - 0.5f;
+                var d = Mathf.Sqrt(u * u * 1.2f + v * v) * 1.6f;
+                var a = Mathf.SmoothStep(0.45f, 1.05f, d) * 0.55f;
+                // un po' più scuro in basso, dove c'è la navbar
+                a = Mathf.Max(a, Mathf.SmoothStep(0.15f, -0.5f, v) * 0.25f);
+                px[y * size + x] = new Color(0.02f, 0.06f, 0.16f, a);
+            }
+            tex.SetPixels32(px);
+            tex.Apply(false, true);
+            return tex;
         }
 
         /// <summary>Schiarisce verso il bianco e aumenta la saturazione (valori sRGB).</summary>

@@ -111,7 +111,7 @@ Orbis è un **simulatore di vita e di città completo e realistico** ambientato 
 - Mondo **pronto da subito** a bassa risoluzione (globo intero), dettaglio scaricato automaticamente quando ti avvicini, Italia in background; tutto resta salvato e funziona **offline**.
 - **Tre stili grafici** selezionabili in qualsiasi momento: **Realistico** (il più vicino possibile alla realtà su iPhone), **Classico** (3D colorato tipo Megapolis), **Pixel**.
 - Vista **2D** (mappa dall'alto) e **3D**; gesti: un dito per spostarsi, pizzico per lo zoom, due dita in verticale per inclinare la visuale, rotazione a due dita. Su desktop: trascinamento col mouse, rotella per lo zoom, tasto destro per ruotare/inclinare, WASD in prima persona, scorciatoie da tastiera.
-- Interfaccia **adattiva**: telefono (orizzontale), tablet, desktop con finestre e pannelli più ampi.
+- Interfaccia **adattiva**: telefono e tablet **in verticale e in orizzontale** (di default rotazione automatica e avvio in verticale; dalle impostazioni si può bloccare l'orientamento), desktop con finestre e pannelli più ampi.
 - Tocco su un edificio → menu contestuale: Entra, Dettagli, Potenzia, Varianti, Sposta, Ruota, Demolisci, Arreda, Compra/Vendi, Affitta, e azioni specifiche del tipo di edificio.
 
 ## 11. Account e social
@@ -152,4 +152,4 @@ Il gioco è lo stesso. Alcune funzioni dipendono da ciò che offre il dispositiv
 - **Dimensione della città simulata in dettaglio**: si adatta alla potenza del dispositivo.
 
 ## 16. Impostazioni dell'app
-Stile grafico, qualità (auto/basso/medio/alto/ultra), fps (30/60), musica (on/off, playlist per contesto, "La mia musica"), volumi, Face ID, gestione download e spazio occupato, notifiche locali, crediti, lingua (solo italiano per ora).
+Stile grafico, **orientamento dello schermo** (rotazione automatica, oppure bloccato in verticale o in orizzontale; solo app iOS/Android), qualità (auto/basso/medio/alto/ultra), fps (30/60), musica (on/off, playlist per contesto, "La mia musica"), volumi, Face ID, gestione download e spazio occupato, notifiche locali, crediti, lingua (solo italiano per ora).

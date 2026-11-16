@@ -26,7 +26,7 @@ Prima di scrivere codice leggi, in quest'ordine:
 | Motore | **Unity 6000.6.9f1** (Unity 6), pipeline **URP** |
 | Linguaggio gioco | C# (versione supportata da Unity 6) |
 | Piattaforme | **iOS** (IPA universale iPhone + iPad, iOS minimo **26.0**), **Android** (APK firmato, Android minimo **10 / API 29**, ARM64, Vulkan con fallback OpenGL ES 3) e **Web** (Unity Web, WebGPU con fallback WebGL 2) ospitata su GitHub Pages |
-| Orientamento | orizzontale per il gioco; il telefono nel gioco e i menu si adattano anche in verticale |
+| Orientamento | telefono e tablet: **verticale e orizzontale** in tutto il gioco; di default rotazione automatica e avvio in verticale; nelle Impostazioni si può spegnere la rotazione e bloccare verticale o orizzontale. Web: segue il dispositivo (i browser non permettono il blocco). Desktop: orizzontale |
 | Input | touch (telefono/tablet) **e** mouse + tastiera (desktop), sempre entrambi supportati |
 | Dispositivi di riferimento | iPhone 15 Pro (A17 Pro, 8 GB RAM); Android di fascia medio-alta con 8 GB RAM; browser desktop Chrome/Safari/Edge recenti; iPad recente |
 | Pacchetti Unity | URP, Input System (EnhancedTouch), Addressables, Entities + Entities Graphics, Burst, Collections, Mathematics, Cinemachine, UI Toolkit, Localization, AI Navigation, Test Framework |
@@ -71,7 +71,7 @@ Claude Code non può aprire l'Editor Unity. Quindi:
 - Tutto ciò che dipende dalla piattaforma (IA locale, login biometrico, musica utente, sintesi vocale, archiviazione, download) passa da **interfacce** in `Assets/Orbis/Platform/` con implementazioni `Ios`, `Android`, `Web` ed `Editor`. Nessuna chiamata nativa fuori da quella cartella.
 - Plugin iOS in Swift (`Assets/Plugins/iOS/`), plugin Android in Kotlin (`Assets/Plugins/Android/`), plugin Web in JavaScript (`Assets/Plugins/WebGL/*.jslib`).
 - Ogni funzione deve avere un **ripiego** quando la piattaforma non la offre (tabella in `docs/01-architettura.md` §10).
-- La UI è **adattiva** (telefono, tablet, desktop) e ogni azione è possibile sia col touch sia con mouse/tastiera.
+- La UI è **adattiva** (telefono, tablet, desktop) e **ogni schermata funziona sia in verticale sia in orizzontale** su telefono e tablet; ogni azione è possibile sia col touch sia con mouse/tastiera.
 - Ogni milestone è completa solo se funziona **su tutte e tre** le build (IPA, APK, web).
 
 ### Test
