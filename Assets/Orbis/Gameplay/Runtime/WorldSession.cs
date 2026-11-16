@@ -37,6 +37,7 @@ namespace Orbis.Gameplay
         public WeatherSimulator Weather { get; private set; }
         public Phase State { get; private set; } = Phase.Loading;
         public WorldSelection Selection { get; private set; }
+        public GlobeController Globe { get; private set; }
 
         /// <summary>0..1 durante il primo caricamento (indice + tile vicini).</summary>
         public float LoadProgress { get; private set; }
@@ -49,17 +50,22 @@ namespace Orbis.Gameplay
         private float _originalShadowDistance = -1;
         private UniversalRenderPipelineAsset _urp;
 
-        public static WorldSession Create(Camera camera, Light sun, string region = "chieti", TileSource source = null)
+        public WorldQuality Quality { get; private set; }
+
+        public static WorldSession Create(Camera camera, Light sun, WorldQuality quality, string region = "chieti", TileSource source = null)
         {
             var root = new GameObject("Mondo");
             var session = root.AddComponent<WorldSession>();
-            session.Setup(camera, sun, source ?? TileSource.ForRegion(region));
+            session.Setup(camera, sun, quality, source ?? TileSource.ForRegion(region));
             return session;
         }
 
-        private void Setup(Camera camera, Light sun, TileSource source)
+        private void Setup(Camera camera, Light sun, WorldQuality quality, TileSource source)
         {
+            Quality = quality;
             World = gameObject.AddComponent<WorldStreamer>();
+            quality.ApplyTo(World);
+            Debug.Log("[Orbis] Qualità del mondo: " + quality.Name);
             World.ViewCamera = camera;
             Picker = new WorldPicker(World);
             Sky = gameObject.AddComponent<SkyController>();
@@ -101,7 +107,9 @@ namespace Orbis.Gameplay
                 State = Phase.Failed;
                 yield break;
             }
-            SeaPlane.Create(transform, World.Materials.Water).Follow = CameraRig.Cam.transform;
+            SeaPlane.Create(World.Content, World.Materials.Water).Follow = CameraRig.Cam.transform;
+            Globe = GlobeController.Create(this);
+            StartCoroutine(Globe.View.Load(source));
             Sky.Latitude = World.Region.OriginLat;
             Sky.Longitude = World.Region.OriginLon;
             // il primo tile (centro) si aspetta, gli altri arrivano mentre si gioca
@@ -123,9 +131,9 @@ namespace Orbis.Gameplay
         {
             if (State != Phase.Playing && State != Phase.Loading) return;
             Clock.Tick(Time.unscaledDeltaTime);
-            Sky.Apply(Clock.Now, CameraRig.Distance);
+            if (Globe == null || !Globe.Active) Sky.Apply(Clock.Now, CameraRig.Distance, CameraRig.Cam.orthographic);
             if (_urp != null)
-                _urp.shadowDistance = Mathf.Clamp(CameraRig.Distance * 2.2f, 150f, 1400f);
+                _urp.shadowDistance = Mathf.Clamp(CameraRig.Distance * 2.2f, 150f, Quality.MaxShadowDistance);
         }
 
         private void OnDestroy()

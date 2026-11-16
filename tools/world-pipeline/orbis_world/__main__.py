@@ -67,6 +67,14 @@ def cmd_build(a):
     return 0
 
 
+def cmd_globe(a):
+    img = terrain.globe_image(z=a.zoom, width=a.width, cache_dir=a.cache, log=_log)
+    os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
+    img.save(a.out, quality=88, optimize=True)
+    _log(f"globo: {a.out} ({os.path.getsize(a.out) // 1024} KB)")
+    return 0
+
+
 def cmd_preview(a):
     from . import preview
     preview.make_previews(a.pack, a.out, _region(a.region))
@@ -92,8 +100,13 @@ def main(argv=None):
     v.add_argument("--pack", required=True)
     v.add_argument("--out", required=True)
     v.add_argument("--region", required=True)
+    g = sub.add_parser("globe", help="immagine della Terra per il globo base")
+    g.add_argument("--out", required=True)
+    g.add_argument("--zoom", type=int, default=3)
+    g.add_argument("--width", type=int, default=2048)
+    g.add_argument("--cache", default="cache")
     a = p.parse_args(argv)
-    return {"boundary": cmd_boundary, "build": cmd_build, "preview": cmd_preview}[a.cmd](a)
+    return {"boundary": cmd_boundary, "build": cmd_build, "preview": cmd_preview, "globe": cmd_globe}[a.cmd](a)
 
 
 if __name__ == "__main__":

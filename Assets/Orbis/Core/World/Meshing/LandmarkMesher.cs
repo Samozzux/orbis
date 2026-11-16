@@ -148,9 +148,15 @@ namespace Orbis.Core.World.Meshing
                 field.HalfU = Math.Min(52.5f, box.HalfU - 10f);
                 field.HalfV = Math.Min(34f, box.HalfV - 10f);
             }
-            float g = ground(box.Center.X, box.Center.Y);
+            // quota: la più alta tra centro e angoli del campo, così il prato non resta sotto il terreno
+            float g = ground(field.Center.X, field.Center.Y);
+            for (int k = 0; k < 4; k++)
+            {
+                var corner = field.Center + field.U * ((k & 1) == 0 ? field.HalfU : -field.HalfU) + field.V * ((k & 2) == 0 ? field.HalfV : -field.HalfV);
+                g = Math.Max(g, ground(corner.X, corner.Y));
+            }
             // prato con le linee (tipo "campo" del materiale strade: uv1.x = 8)
-            Quad(mb, field.Center, field.U, field.V, field.HalfU + 3f, field.HalfV + 3f, g + 0.15f, MeshBuffer.Rgb(0x5FA24C), 8f);
+            Quad(mb, field.Center, field.U, field.V, field.HalfU + 3f, field.HalfV + 3f, g + 0.25f, MeshBuffer.Rgb(0x5FA24C), 8f);
 
             // tribune: quattro lati tra il bordo del campo (+ pista) e il bordo dell'area
             uint seats = MeshBuffer.Rgb(0xC9CED8), concrete = MeshBuffer.Rgb(0xB9B4AA);

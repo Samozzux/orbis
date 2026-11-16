@@ -17,6 +17,7 @@ namespace Orbis.World
         public double Longitude = 14.17;
 
         private Material _skybox;
+        private Material _menuSkybox;
         private Material _clouds;
         private Material _rain;
         private Transform _cloudLayer;
@@ -32,10 +33,13 @@ namespace Orbis.World
         {
             Sun = sun;
             Sun.shadows = LightShadows.Soft;
-            var proc = Shader.Find("Skybox/Procedural");
-            if (RenderSettings.skybox != null && RenderSettings.skybox.shader == proc) _skybox = new Material(RenderSettings.skybox);
-            else if (proc != null) _skybox = new Material(proc);
-            if (_skybox != null) RenderSettings.skybox = _skybox;
+            var skyShader = Resources.Load<Shader>("OrbisShaders/Sky");
+            _menuSkybox = RenderSettings.skybox;
+            if (skyShader != null && skyShader.isSupported)
+            {
+                _skybox = new Material(skyShader);
+                RenderSettings.skybox = _skybox;
+            }
             RenderSettings.sun = Sun;
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Linear;
@@ -73,8 +77,13 @@ namespace Orbis.World
 
         public void SetWeather(WeatherState w) => _weather = w;
 
+        private void OnDestroy()
+        {
+            if (_menuSkybox != null) RenderSettings.skybox = _menuSkybox;
+        }
+
         /// <summary>Aggiorna sole e cielo per l'ora civile data e per la distanza di vista (nebbia).</summary>
-        public void Apply(DateTime localTime, float viewDistance)
+        public void Apply(DateTime localTime, float viewDistance, bool orthographic = false)
         {
             if (Sun == null) return;
             float k = 1f - Mathf.Exp(-Time.unscaledDeltaTime * 0.6f);
@@ -101,7 +110,7 @@ namespace Orbis.World
                 Sun.transform.rotation = Quaternion.LookRotation(-toSun);
                 float warm = Mathf.InverseLerp(25f, 0f, (float)el);
                 Sun.color = Color.Lerp(new Color(1f, 0.96f, 0.9f), new Color(1f, 0.62f, 0.35f), warm);
-                Sun.intensity = Mathf.Lerp(0f, 1.25f, day) * dim;
+                Sun.intensity = Mathf.Lerp(0f, 1.0f, day) * dim;
             }
             else
             {
@@ -113,39 +122,47 @@ namespace Orbis.World
             Sun.shadowStrength = Mathf.Lerp(0.35f, 0.85f, day) * (1 - clouds * 0.6f);
 
             // cielo e ambiente
-            var skyDay = Color.Lerp(new Color(0.42f, 0.62f, 0.92f), new Color(0.6f, 0.64f, 0.7f), clouds);
-            var skyDusk = new Color(0.95f, 0.6f, 0.45f);
-            var skyNight = new Color(0.03f, 0.05f, 0.11f);
-            float dusk = Mathf.Clamp01(1f - Mathf.Abs((float)el - 2f) / 10f) * (1 - clouds * 0.7f);
-            var sky = Color.Lerp(Color.Lerp(skyNight, skyDay, day), skyDusk, dusk * 0.6f);
-            var horizon = Color.Lerp(sky, new Color(0.85f, 0.88f, 0.92f) * Mathf.Max(0.12f, day), 0.45f);
+            var zenithDay = Color.Lerp(new Color(0.20f, 0.45f, 0.86f), new Color(0.50f, 0.55f, 0.62f), clouds);
+            var horizonDay = Color.Lerp(new Color(0.66f, 0.80f, 0.94f), new Color(0.70f, 0.73f, 0.77f), clouds);
+            var zenithNight = new Color(0.015f, 0.025f, 0.07f);
+            var horizonNight = new Color(0.04f, 0.06f, 0.12f);
+            var duskGlow = new Color(1.0f, 0.55f, 0.32f);
+            float dusk = Mathf.Clamp01(1f - Mathf.Abs((float)el - 1f) / 9f) * (1 - clouds * 0.7f);
+            var zenith = Color.Lerp(zenithNight, zenithDay, day);
+            var horizon = Color.Lerp(Color.Lerp(horizonNight, horizonDay, day), duskGlow, dusk * 0.65f);
+            var sky = zenith;
             if (_skybox != null)
             {
-                _skybox.SetFloat("_Exposure", Mathf.Lerp(0.12f, 1.25f, day) * (1 - clouds * 0.25f));
-                _skybox.SetColor("_SkyTint", Color.Lerp(new Color(0.45f, 0.62f, 0.95f), new Color(0.62f, 0.66f, 0.72f), clouds));
-                _skybox.SetColor("_GroundColor", horizon);
-                _skybox.SetFloat("_AtmosphereThickness", Mathf.Lerp(0.8f, 1.4f, clouds));
-                _skybox.SetFloat("_SunSize", 0.035f * (1 - clouds * 0.8f));
+                _skybox.SetColor("_Zenith", zenith);
+                _skybox.SetColor("_Horizon", horizon);
+                _skybox.SetColor("_Ground", Color.Lerp(horizon, new Color(0.35f, 0.4f, 0.45f) * Mathf.Max(0.1f, day), 0.4f));
+                _skybox.SetVector("_SunDir", toSun);
+                _skybox.SetColor("_SunColor", el > -4 ? Sun.color : new Color(0.75f, 0.8f, 0.95f));
+                _skybox.SetFloat("_Glow", Mathf.Lerp(0.15f, 0.45f, day) * (1 - clouds * 0.8f));
+                _skybox.SetFloat("_SunSize", 0.0016f * (1 - clouds * 0.9f));
+                _skybox.SetFloat("_Stars", Night * (1 - clouds));
             }
             if (Time.unscaledTime >= _nextAmbient)
             {
                 _nextAmbient = Time.unscaledTime + 0.2f;
                 var sh = new SphericalHarmonicsL2();
-                var ambientSky = Color.Lerp(new Color(0.05f, 0.06f, 0.1f), sky * 0.95f, Mathf.Max(day, 0.15f));
-                var ground = Color.Lerp(new Color(0.03f, 0.03f, 0.03f), new Color(0.45f, 0.42f, 0.36f), day);
-                sh.AddAmbientLight(Color.Lerp(ambientSky, ground, 0.35f) * 0.9f);
-                sh.AddDirectionalLight(Vector3.up, ambientSky * 0.55f, 1f);
-                sh.AddDirectionalLight(Vector3.down, ground * 0.35f, 1f);
+                var ambientSky = Color.Lerp(new Color(0.06f, 0.08f, 0.14f), Color.Lerp(sky, horizon, 0.5f), Mathf.Max(day, 0.1f));
+                var ground = Color.Lerp(new Color(0.02f, 0.02f, 0.03f), new Color(0.36f, 0.33f, 0.28f), day);
+                sh.AddAmbientLight(Color.Lerp(ambientSky, ground, 0.4f) * 0.55f);
+                sh.AddDirectionalLight(Vector3.up, ambientSky * 0.35f, 1f);
+                sh.AddDirectionalLight(Vector3.down, ground * 0.2f, 1f);
                 RenderSettings.ambientProbe = sh;
             }
 
-            // nebbia: lontano di base (orizzonte), vicina con nebbia e pioggia
+            // nebbia: lontano di base (orizzonte), vicina con nebbia e pioggia; niente nebbia nella mappa 2D
+            RenderSettings.fog = !orthographic;
             float far = Mathf.Max(9000f, viewDistance * 14f);
             float near = Mathf.Max(1500f, viewDistance * 3f);
             float fog = _shown.Fog;
             RenderSettings.fogStartDistance = Mathf.Lerp(near, 30f, fog);
             RenderSettings.fogEndDistance = Mathf.Lerp(far, 900f + viewDistance * 2f, fog);
             RenderSettings.fogColor = Color.Lerp(horizon, new Color(0.72f, 0.74f, 0.76f) * Mathf.Max(0.1f, day), fog * 0.7f);
+            if (_skybox != null && fog > 0.3f) _skybox.SetColor("_Zenith", Color.Lerp(zenith, RenderSettings.fogColor, (fog - 0.3f) * 1.2f));
 
             WorldMaterials.SetNight(Night);
             WorldMaterials.SetWet(_shown.Wetness);

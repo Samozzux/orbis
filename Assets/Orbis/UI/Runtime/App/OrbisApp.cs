@@ -195,7 +195,8 @@ namespace Orbis.UI.App
             if (rig != null) rig.enabled = false;
             if (glassBlur != null) glassBlur.Interval = 3; // il vetro sfoca il mondo, ma un frame su tre
             var sun = RenderSettings.sun != null ? RenderSettings.sun : FindAnyObjectByType<Light>();
-            _session = WorldSession.Create(camera, sun);
+            var device = PlatformServices.Current.DeviceProfile.Info;
+            _session = WorldSession.Create(camera, sun, Orbis.World.WorldQuality.Auto(device.IsTouchPrimary, device.SystemMemoryMb));
             _hud = new GameHud(_document.rootVisualElement, _game, _session, PlatformServices.Current);
             _hud.Home += EndGame;
             _lots = new LotsOverlay(_session);

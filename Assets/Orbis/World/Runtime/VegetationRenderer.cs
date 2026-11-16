@@ -29,6 +29,7 @@ namespace Orbis.World
 
         /// <summary>Oltre questa distanza dalla telecamera le piante non si disegnano.</summary>
         public float MaxDistance = 1800f;
+        public bool CastShadows = true;
 
         public int TotalInstances { get; private set; }
 
@@ -91,7 +92,7 @@ namespace Orbis.World
             var camPos = camera.transform.position;
             var rp = new RenderParams(_material)
             {
-                shadowCastingMode = ShadowCastingMode.On,
+                shadowCastingMode = CastShadows ? ShadowCastingMode.On : ShadowCastingMode.Off,
                 receiveShadows = true,
                 layer = 0,
                 lightProbeUsage = LightProbeUsage.Off,

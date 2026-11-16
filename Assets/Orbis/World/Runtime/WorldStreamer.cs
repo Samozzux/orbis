@@ -33,6 +33,7 @@ namespace Orbis.World
         public float MediumRadius = 3200f;
         public float FarRadius = 9000f;
         public int MaxTiles = 260;
+        public WorldQuality Quality;
 
         private readonly Dictionary<TileId, TileView> _views = new Dictionary<TileId, TileView>();
         private readonly Dictionary<TileId, TileLod> _building = new Dictionary<TileId, TileLod>();
@@ -43,6 +44,16 @@ namespace Orbis.World
         private WorkRunner _runner;
         private float _nextScan;
         private int _activeDownloads;
+
+        /// <summary>Contenitore di tutto ciò che si vede del mondo piatto (si nasconde nel globo).</summary>
+        public Transform Content { get; private set; }
+
+        public bool Visible => Content == null || Content.gameObject.activeSelf;
+
+        public void SetVisible(bool visible)
+        {
+            if (Content != null) Content.gameObject.SetActive(visible);
+        }
 
         public event Action<TileView> TileLoaded;
         public event Action<TileId> TileUnloaded;
@@ -65,9 +76,17 @@ namespace Orbis.World
         {
             _source = source;
             State = Status.LoadingIndex;
+            Content = new GameObject("Contenuto").transform;
+            Content.SetParent(transform, false);
             Materials = new WorldMaterials();
             Vegetation = new VegetationRenderer(Materials.Plant);
             _runner = new WorkRunner();
+            if (Quality != null)
+            {
+                Vegetation.MaxDistance = Quality.VegetationDistance;
+                Vegetation.CastShadows = Quality.PlantShadows;
+                _runner.FrameBudgetMs = Quality.FrameBudgetMs;
+            }
             byte[] index = null;
             yield return source.Fetch("index.bin", b => index = b);
             if (index == null)
@@ -89,7 +108,7 @@ namespace Orbis.World
                 Debug.LogException(e);
                 yield break;
             }
-            FarTerrainView.Create(transform, Region, Frame, Materials.Plant);
+            FarTerrainView.Create(Content, Region, Frame, Materials.Plant);
             State = Status.Ready;
             Debug.Log($"[Orbis] Mondo «{Region.Name}» v{Region.Version}: {Region.Tiles.Count} tile ({Region.Created})");
         }
@@ -104,7 +123,7 @@ namespace Orbis.World
         private void Update()
         {
             _runner?.Tick();
-            if (State != Status.Ready) return;
+            if (State != Status.Ready || !Visible) return;
             if (Time.unscaledTime >= _nextScan)
             {
                 _nextScan = Time.unscaledTime + 0.25f;
@@ -228,7 +247,7 @@ namespace Orbis.World
             _building.Remove(id);
             if (!_views.TryGetValue(id, out var view))
             {
-                view = new TileView(id, transform, TileOrigin(id));
+                view = new TileView(id, Content, TileOrigin(id));
                 _views[id] = view;
             }
             view.Apply(result, Materials);

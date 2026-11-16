@@ -28,6 +28,8 @@ namespace Orbis.Gameplay
 
         /// <summary>Tocco o clic breve su un punto (pixel dello schermo).</summary>
         public event Action<Vector2> Tapped;
+        /// <summary>Si continua ad allontanarsi oltre la distanza massima (→ globo).</summary>
+        public event Action OverZoom;
         /// <summary>Passaggio tra vista 3D e 2D.</summary>
         public event Action<bool> ModeChanged;
 
@@ -55,6 +57,15 @@ namespace Orbis.Gameplay
         private Vector3 _flyTarget;
 
         private float Dpi => Screen.dpi > 0 ? Screen.dpi : 160f;
+
+        /// <summary>Posiziona subito la telecamera (senza smorzamento), es. uscendo dal globo.</summary>
+        public void Snap()
+        {
+            _target = Target;
+            _yaw = Yaw;
+            _pitch = Pitch;
+            _dist = Distance;
+        }
 
         private void OnEnable()
         {
@@ -187,6 +198,11 @@ namespace Orbis.Gameplay
 
         private void ZoomAt(Vector2 screen, float factor)
         {
+            if (factor > 1f && Distance >= MaxDistance * 0.98f)
+            {
+                OverZoom?.Invoke();
+                return;
+            }
             float before = Distance;
             Distance = Mathf.Clamp(Distance * factor, MinDistance, MaxDistance);
             if (GroundPoint(screen, out var p))
@@ -272,7 +288,11 @@ namespace Orbis.Gameplay
             if (kb.zKey.isPressed) Yaw += 70f * dt;
             if (kb.xKey.isPressed) Yaw -= 70f * dt;
             if (kb.equalsKey.isPressed || kb.numpadPlusKey.isPressed) Distance *= Mathf.Exp(-1.5f * dt);
-            if (kb.minusKey.isPressed || kb.numpadMinusKey.isPressed) Distance *= Mathf.Exp(1.5f * dt);
+            if (kb.minusKey.isPressed || kb.numpadMinusKey.isPressed)
+            {
+                if (Distance >= MaxDistance * 0.98f) OverZoom?.Invoke();
+                Distance *= Mathf.Exp(1.5f * dt);
+            }
             if (kb.mKey.wasPressedThisFrame) SetTopDown(!TopDown);
         }
 

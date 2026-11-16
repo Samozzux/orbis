@@ -6,7 +6,7 @@ Shader "Orbis/Terrain"
     {
         _MainTex ("Aree", 2D) = "white" {}
         _Rock ("Roccia", Color) = (0.55, 0.50, 0.44, 1)
-        _Water ("Acqua", Color) = (0.25, 0.45, 0.62, 1)
+        _Water ("Acqua", Color) = (0.12, 0.32, 0.50, 1)
     }
     SubShader
     {

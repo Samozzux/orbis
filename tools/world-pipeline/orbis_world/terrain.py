@@ -128,3 +128,43 @@ def far_grid(source, bounds, cell):
     base, step, values = quantize(h)
     return {"x0": float(minx), "y0": float(miny), "cell": float(cell), "cols": cols, "rows": rows,
             "base": base, "step": step, "values": values}
+
+
+def globe_image(z=3, width=2048, cache_dir="cache", log=print, fetch=None):
+    """Immagine equirettangolare della Terra (pack globo base): rilievi e fondali dai Terrain Tiles,
+    colori ipsometrici e ombreggiatura. Restituisce un'immagine PIL RGB."""
+    n = 1 << z
+    src = TerrariumSource((-geo.HALF + 1, -geo.HALF + 1, geo.HALF - 1, geo.HALF - 1), cache_dir, z=z, log=log, fetch=fetch)
+    height = width // 2
+    lon = (np.arange(width) + 0.5) / width * 360.0 - 180.0
+    lat = 90.0 - (np.arange(height) + 0.5) / height * 180.0
+    glon, glat = np.meshgrid(lon, lat)
+    x, y = geo.to_merc(glon, np.clip(glat, -geo.MAX_LAT, geo.MAX_LAT))
+    h = src.sample(x.ravel(), y.ravel()).reshape(height, width)
+    # oltre il limite del Mercatore (poli): ghiaccio sopra la terraferma, mare scuro
+    polar = np.abs(glat) > 84.5
+    h = np.where(polar & (glat > 0), -1000.0, h)
+    h = np.where(polar & (glat < 0), 2500.0, h)
+    land = h > 0
+    # colori: mare per profondità, terra per quota
+    def lerp(a, b, t):
+        t = np.clip(t, 0, 1)[..., None]
+        return np.asarray(a, dtype=np.float64) * (1 - t) + np.asarray(b, dtype=np.float64) * t
+    sea = lerp((79, 143, 192), (18, 52, 98), -h / 5000.0)
+    low = lerp((112, 152, 82), (160, 160, 104), h / 900.0)
+    mid = lerp((160, 160, 104), (140, 118, 92), (h - 900) / 1600.0)
+    high = lerp((140, 118, 92), (236, 236, 240), (h - 2500) / 1800.0)
+    col = np.where((h < 900)[..., None], low, np.where((h < 2500)[..., None], mid, high))
+    # deserti (fascia subtropicale bassa e secca): tono sabbia
+    desert = (np.abs(glat) > 15) & (np.abs(glat) < 33) & (h > 0) & (h < 1500)
+    col = np.where(desert[..., None], lerp(col, (214, 190, 140), np.full(h.shape, 0.55)), col)
+    # ghiacci polari
+    ice = (land & (np.abs(glat) > 66)) | (glat < -62)
+    col = np.where(ice[..., None], lerp(col, (240, 244, 248), np.full(h.shape, 0.85)), col)
+    col = np.where(land[..., None], col, sea)
+    # ombreggiatura dei rilievi (luce da nord-ovest)
+    gy, gx = np.gradient(np.where(land, h, 0.0))
+    shade = np.clip(1.0 + (gx - gy) * 0.0016, 0.7, 1.25)
+    col = col * np.where(land, shade, 1.0)[..., None]
+    from PIL import Image
+    return Image.fromarray(np.clip(col, 0, 255).astype(np.uint8), "RGB")

@@ -304,3 +304,17 @@ def test_cli_boundary_and_preview(city, tmp_path):
     if (pack / "index.bin").exists():
         preview.make_previews(str(pack), str(tmp_path / "prev"), region)
         assert (tmp_path / "prev" / "centro.png").exists() and (tmp_path / "prev" / "regione.png").exists()
+
+
+def test_globe_image_from_fake_tiles():
+    def fake(z, x, y):
+        # metà mare, metà terra
+        img = np.zeros((256, 256))
+        img[:, 128:] = 500.0
+        img[:, :128] = -3000.0
+        return img
+    im = terrain.globe_image(z=1, width=256, fetch=fake, log=lambda *_: None)
+    assert im.size == (256, 128)
+    px = np.asarray(im)
+    assert px[64, 10, 2] > px[64, 10, 0]   # mare: blu
+    assert px[64, 100, 1] > px[64, 100, 2]  # terra: verde

@@ -40,7 +40,7 @@ namespace Orbis.Core.World.Meshing
             float uv1z = (float)r.Class;
             Ribbon(mb, width, 0, color, (float)kind, r.Oneway, uv1z, markings ? 1 : 0, r.Lanes);
             if (HasSidewalks(r, kind))
-                Ribbon(mb, width + 2 * SidewalkWidth, -0.04f, MeshBuffer.Rgb(0xC9C4BA), (float)Kind.Sidewalk, 0, uv1z, 0, 0);
+                Ribbon(mb, width + 2 * SidewalkWidth, -0.04f, MeshBuffer.Rgb(0xB7B1A6), (float)Kind.Sidewalk, 0, uv1z, 0, 0);
             if (kind != Kind.Rail && kind != Kind.Steps)
             {
                 Cap(mb, 0, width, color, kind, uv1z);

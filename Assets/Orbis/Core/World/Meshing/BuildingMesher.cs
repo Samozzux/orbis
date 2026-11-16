@@ -92,15 +92,17 @@ namespace Orbis.Core.World.Meshing
             float wallH = eave - gRef;
             float category = (int)CategoryOf(b.Use) * 2 + (hasShops || b.HasFlag(BuildingFlag.HasShops) ? 1 : 0);
             uint wall = MeshBuffer.Rgb(StylePalette.WallColor(b), (byte)b.Material);
-            // da lontano (simple) il tetto è piatto ma conserva il colore dei coppi
-            bool flatLook = simple ? b.Roof == RoofShape.Flat || b.Roof == RoofShape.Unknown || holes != null && holes.Count > 0 : _planes.Count == 0;
-            uint roofColor = MeshBuffer.Rgb(StylePalette.RoofColor(b, flatLook));
+            // tetto previsto a falde ma geometria piana (da lontano, cortili, sagome molto irregolari):
+            // resta piano ma con i coppi, come appare dall'alto un centro storico
+            bool pitchedIntent = b.Roof != RoofShape.Flat && b.Roof != RoofShape.Unknown;
+            bool tiledFlat = _planes.Count == 0 && pitchedIntent;
+            uint roofColor = MeshBuffer.Rgb(StylePalette.RoofColor(b, !pitchedIntent));
 
             AddWalls(outer, mb, baseZ, eave, gRef, wallH, wall, seed, levels, category, simple);
             if (holes != null)
                 foreach (var h in holes)
                     AddWalls(h, mb, baseZ, eave, gRef, wallH, wall, seed, levels, category, simple);
-            AddRoof(outer, holes, mb, eave, roofColor, seed, levels);
+            AddRoof(outer, holes, mb, eave, roofColor, seed, levels, tiledFlat);
             return true;
         }
 
@@ -274,16 +276,17 @@ namespace Orbis.Core.World.Meshing
             return m < 0 ? 0 : m;
         }
 
-        private void AddRoof(List<Vec2> outer, List<List<Vec2>> holes, MeshBuffer mb, float eave, uint color, float seed, int levels)
+        private void AddRoof(List<Vec2> outer, List<List<Vec2>> holes, MeshBuffer mb, float eave, uint color, float seed, int levels, bool tiledFlat)
         {
             if (!Triangulator.Triangulate(outer, holes, _triVerts, _tris)) return;
             if (_planes.Count == 0)
             {
                 int start = mb.VertexCount;
+                float kind = tiledFlat ? 1 : 2;
                 for (int i = 0; i < _triVerts.Count; i++)
                 {
                     var p = _triVerts[i];
-                    mb.Add(p.X, p.Y, eave, 0, 0, 1, color, p.X, p.Y, 0, 0, 2, seed, levels, 0);
+                    mb.Add(p.X, p.Y, eave, 0, 0, 1, color, p.X, p.Y, 0, 0, kind, seed, levels, 0);
                 }
                 for (int i = 0; i < _tris.Count; i += 3) mb.Triangle(start + _tris[i], start + _tris[i + 1], start + _tris[i + 2]);
                 return;

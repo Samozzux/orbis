@@ -11,6 +11,8 @@ on:
       - 'Packages/**'
       - 'ProjectSettings/**'
       - 'data/localization/**'
+      - 'data/world/**'
+      - 'tools/world-pipeline/scarica-pack.sh'
       - '.github/workflows/ios-build.yml'
       - '.github/scripts/**'
   workflow_dispatch:
@@ -59,6 +61,11 @@ jobs:
           license: personal
           username: ${{ secrets.UNITY_EMAIL }}
           password: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Scarica il mondo (region pack in StreamingAssets)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/world-pipeline/scarica-pack.sh
 
       - name: Build Unity → progetto Xcode
         run: |

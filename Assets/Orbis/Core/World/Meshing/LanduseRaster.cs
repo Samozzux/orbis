@@ -23,19 +23,19 @@ namespace Orbis.Core.World.Meshing
         {
             switch (k)
             {
-                case AreaKind.Residential: return 0xCDC6B4;
+                case AreaKind.Residential: return 0xB4AE98;
                 case AreaKind.Commercial:
-                case AreaKind.Retail: return 0xD2CABD;
-                case AreaKind.Industrial: return 0xC6C2BA;
+                case AreaKind.Retail: return 0xBDB6A6;
+                case AreaKind.Industrial: return 0xB2AFA7;
                 case AreaKind.Construction: return 0xC7B49A;
                 case AreaKind.Railway: return 0xB3AA9C;
                 case AreaKind.Military: return 0xB4B99C;
                 case AreaKind.Cemetery: return 0xA5BA8E;
                 case AreaKind.Parking: return 0x9C9D9D;
-                case AreaKind.Pedestrian: return 0xD8CFBE;
+                case AreaKind.Pedestrian: return 0xC9BEA8;
                 case AreaKind.School:
                 case AreaKind.University:
-                case AreaKind.Hospital: return 0xCEC8BA;
+                case AreaKind.Hospital: return 0xBDB7A6;
                 case AreaKind.Brownfield: return 0xBFAE8E;
                 case AreaKind.Greenfield: return 0xB6C388;
                 case AreaKind.Garages: return 0xACABA5;
@@ -75,7 +75,7 @@ namespace Orbis.Core.World.Meshing
                 case AreaKind.Landfill: return 0xA39C84;
                 case AreaKind.Meadowland: return 0xB5C47C;
                 case AreaKind.SwimmingPool: return 0x57B5D7;
-                case AreaKind.Sea: return 0x5A8DB6;
+                case AreaKind.Sea: return 0x2A5A86;
             }
             return IsWater(k) ? 0x6C9DC2 : DefaultGround;
         }

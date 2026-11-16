@@ -59,8 +59,10 @@ namespace Orbis.Tests.PlayMode
                 new Shot { Name = "09-costa", Target = new Vector3(14000, 0, 4000), Yaw = 70, Pitch = 25, Distance = 4000, Hour = 9 },
             };
             var cam = session.CameraRig.Cam;
-            foreach (var s in shots)
+            var list = new System.Collections.Generic.List<Shot>(shots);
+            for (int n = 0; n < list.Count; n++)
             {
+                var s = list[n];
                 var rig = session.CameraRig;
                 rig.Target = s.Target;
                 rig.Yaw = s.Yaw;
@@ -77,7 +79,47 @@ namespace Orbis.Tests.PlayMode
                 for (int i = 0; i < 60; i++) yield return null;
                 Save(cam, Path.Combine(dir, s.Name + ".png"));
                 Debug.Log($"[Orbis] foto {s.Name}: {session.World.Tiles.Count} tile, {session.World.LoadedBuildings} edifici, {session.World.Vegetation.TotalInstances} piante");
+                if (s.Name == "02-panoramica")
+                {
+                    // dopo la panoramica i tile attorno a Chieti sono caricati: si cercano i landmark
+                    foreach (var view in session.World.Tiles.Values)
+                    {
+                        if (view.Data == null) continue;
+                        foreach (var b in view.Data.Buildings)
+                            if (!string.IsNullOrEmpty(b.Landmark) && !list.Exists(x => x.Name == "10-" + b.Landmark))
+                                list.Add(new Shot { Name = "10-" + b.Landmark, Target = view.Origin + new Vector3((b.Bounds.MinX + b.Bounds.MaxX) / 2, 0, (b.Bounds.MinY + b.Bounds.MaxY) / 2), Yaw = 160, Pitch = 32, Distance = 140, Hour = 11 });
+                        foreach (var a in view.Data.Areas)
+                            if (!string.IsNullOrEmpty(a.Landmark) && !list.Exists(x => x.Name == "10-" + a.Landmark))
+                                list.Add(new Shot { Name = "10-" + a.Landmark, Target = view.Origin + new Vector3((a.Bounds.MinX + a.Bounds.MaxX) / 2, 0, (a.Bounds.MinY + a.Bounds.MaxY) / 2), Yaw = 30, Pitch = 35, Distance = 260, Hour = 15 });
+                    }
+                }
             }
+        }
+
+        [UnityTest]
+        [Timeout(300000)]
+        public IEnumerator Globo()
+        {
+            var dir = Environment.GetEnvironmentVariable("ORBIS_SNAPSHOT_DIR");
+            if (string.IsNullOrEmpty(dir)) Assert.Ignore("ORBIS_SNAPSHOT_DIR non impostata");
+            SceneManager.LoadScene("Boot");
+            var deadline = Time.realtimeSinceStartup + 60f;
+            while ((OrbisApp.Instance == null || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu) && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            OrbisApp.Instance.StartGame();
+            var session = OrbisApp.Instance.Session;
+            while (session.State == WorldSession.Phase.Loading) yield return null;
+            for (int i = 0; i < 120; i++) yield return null; // texture del globo
+            session.Globe.Enter(42.35, 14.17, 9000f);
+            for (int i = 0; i < 90; i++) yield return null;
+            Save(session.CameraRig.Cam, Path.Combine(dir, "20-globo.png"));
+            session.Globe.Enter(42.35, 14.17, 900f);
+            for (int i = 0; i < 90; i++) yield return null;
+            Save(session.CameraRig.Cam, Path.Combine(dir, "21-globo-italia.png"));
+            session.Globe.Exit();
+            for (int i = 0; i < 30; i++) yield return null;
+            Assert.That(session.Globe.Active, Is.False);
+            Assert.That(session.World.Visible, Is.True);
         }
 
         private static void Save(Camera cam, string path)

@@ -112,7 +112,7 @@ Shader "Orbis/Building"
                     if (v < 0.0) albedo *= 0.62;
                     else if (v < 0.6) albedo *= 0.86;
                     // marcapiano e cornicione
-                    albedo *= 1.0 - 0.10 * Box(fv, 0.0, 0.035) * step(1.0, fi) * step(v, wallH - 0.5);
+                    albedo *= 1.0 - 0.10 * Box(fv, 0.0, 0.035) * step(1.0, fi) * step(v, wallH - 0.5) * (category > 2.5 && category < 3.5 ? 0 : 1);
                     float cornice = Box(v, wallH - 0.45, wallH + 0.01);
                     albedo = lerp(albedo, baseColor * 1.12 + 0.03, cornice * 0.8);
 
@@ -128,7 +128,7 @@ Shader "Orbis/Building"
                             // serra / vetro: tutta la parete trasparente a riquadri
                             window = Box(bu, 0.04, 0.96) * Box(fv, 0.05, 0.95);
                         }
-                        else if (fi < 0.5)
+                        else if (fi < 0.5 && !(category > 2.5 && category < 3.5))
                         {
                             // piano terra
                             float mid = floor(bays * 0.5);
@@ -145,7 +145,9 @@ Shader "Orbis/Building"
                         }
                         else if (category > 2.5 && category < 3.5)
                         {
-                            window = Box(bu, 0.42, 0.58) * Box(fv, 0.20, 0.90) * step(0.5, fmod(fi, 2.0) + 0.5); // monofore alte
+                            // chiese e monumenti: monofore alte a campate alterne, niente piani
+                            float tall = Box(v / wallH, 0.42, 0.80);
+                            window = Box(bu, 0.43, 0.57) * tall * step(fmod(bayIndex, 2.0), 0.5);
                         }
                         else
                         {

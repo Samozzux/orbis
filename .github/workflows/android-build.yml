@@ -11,6 +11,8 @@ on:
       - 'Packages/**'
       - 'ProjectSettings/**'
       - 'data/localization/**'
+      - 'data/world/**'
+      - 'tools/world-pipeline/scarica-pack.sh'
       - '.github/workflows/android-build.yml'
       - '.github/scripts/**'
   workflow_dispatch:
@@ -76,6 +78,11 @@ jobs:
           else
             echo "::warning::Secret ANDROID_KEYSTORE_BASE64 assente: APK firmato con chiave di debug"
           fi
+
+      - name: Scarica il mondo (region pack in StreamingAssets)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: tools/world-pipeline/scarica-pack.sh
 
       - name: Build
         env:
