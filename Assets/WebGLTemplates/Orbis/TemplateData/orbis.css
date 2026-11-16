@@ -15,6 +15,12 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* "hidden" deve nascondere davvero (il display: flex del caricamento lo annullerebbe):
+   altrimenti il caricamento, trasparente, resta sopra il gioco e prende tutti i clic */
+[hidden] {
+  display: none !important;
+}
+
 #unity-canvas {
   position: fixed;
   inset: 0;
@@ -39,7 +45,10 @@ html, body {
   transition: opacity 0.5s ease-out;
 }
 
-#orbis-loader.orbis-loader--done { opacity: 0; }
+#orbis-loader.orbis-loader--done {
+  opacity: 0;
+  pointer-events: none;
+}
 
 #orbis-loader-logo {
   width: 96px;

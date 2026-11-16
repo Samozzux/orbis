@@ -101,6 +101,7 @@
           }).then(function () {
             loader.classList.add("orbis-loader--done");
             setTimeout(function () { loader.hidden = true; }, 500);
+            canvas.focus(); // tastiera subito al gioco
           }).catch(function (err) {
             console.error(err);
             showMessage(texts.error);
