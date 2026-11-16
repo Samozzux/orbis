@@ -311,3 +311,59 @@ namespace Orbis.Core.Tests
         }
     }
 }
+
+namespace Orbis.Core.Tests
+{
+    /// <summary>I dati veri di data/ (catalogo, bilanciamento, missioni) si caricano e sono coerenti.</summary>
+    public class GameDataTests
+    {
+        private static string Root => System.IO.Path.GetFullPath(System.IO.Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+
+        private static Catalog LoadCatalog()
+        {
+            var c = new Catalog();
+            foreach (var f in System.IO.Directory.GetFiles(System.IO.Path.Combine(Root, "data", "catalog"), "*.json"))
+                c.Load(System.IO.File.ReadAllText(f));
+            return c;
+        }
+
+        [Fact]
+        public void Catalogo_150VociInTutteLeCategorie()
+        {
+            var c = LoadCatalog();
+            Assert.True(c.Count >= 150, "voci: " + c.Count);
+            foreach (CatalogCategory cat in Enum.GetValues(typeof(CatalogCategory)))
+                Assert.NotEmpty(c.InCategory(cat));
+            Assert.Contains(c.Items, i => i.Key == "centrale_nucleare");
+            Assert.Contains(c.Items, i => i.HasTag("vineyard"));
+            Assert.Contains(c.Items, i => i.HasTag("olive"));
+            Assert.Contains(c.Items, i => i.UnlockLevel == 1 && i.Category == CatalogCategory.Residential);
+        }
+
+        [Fact]
+        public void Missioni_TutteRaggiungibiliConIlCatalogo()
+        {
+            var c = LoadCatalog();
+            var m = Missions.Parse(System.IO.File.ReadAllText(System.IO.Path.Combine(Root, "data", "scenarios", "missions.json")));
+            Assert.Equal(20, m.All.Count);
+            foreach (var d in m.All)
+            {
+                if (d.Type == "tag") Assert.Contains(c.Items, i => i.HasTag(d.Target));
+                if (d.Type == "placed" && d.Target != "")
+                    Assert.True(Enum.TryParse<CatalogCategory>(d.Target, out _), d.Key);
+            }
+        }
+
+        [Fact]
+        public void Bilanciamento_LaCittaEsistenteEInLeggeroAttivo()
+        {
+            var b = Balance.Parse(System.IO.File.ReadAllText(System.IO.Path.Combine(Root, "data", "balance", "economy.json")));
+            var g = GameSession.New("Chieti", new WorldConfig(), new DateTime(2026, 11, 16, 10, 0, 0), DateTime.UtcNow, 1, LoadCatalog(), b, new FakeWorld(), new Missions());
+            var f = Economy.Compute(g.Context);
+            Assert.InRange(f.Net, 1000, 10000);
+            g.Advance(TimeSpan.FromDays(30));
+            Assert.True(g.State.Cash > b.StartCash);
+            Assert.Equal(g.State.StartCash + g.State.LedgerTotal, g.State.Cash);
+        }
+    }
+}

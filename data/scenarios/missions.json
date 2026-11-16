@@ -1,0 +1,285 @@
+{
+ "_info": "Missioni continue di M2 (docs/04): una alla volta, in ordine. Tipi di condizione: placed (categoria), tag, upgraded, variants, moved, demolishedOsm, taxChanged, level, population, cash, positiveDays, power.",
+ "missions": [
+  {
+   "key": "m01_prima_casa",
+   "title": "La prima casa",
+   "text": "Costruisci una casa in un lotto libero: tocca Costruisci, scegli Residenziale e posizionala sulla griglia verde.",
+   "condition": {
+    "type": "placed",
+    "target": "Residential",
+    "count": 1
+   },
+   "reward": {
+    "xp": 150,
+    "cash": 4000
+   }
+  },
+  {
+   "key": "m02_un_bar",
+   "title": "Un caffè al Corso",
+   "text": "Apri un bar: i negozi danno lavoro e pagano l'affitto alla città.",
+   "condition": {
+    "type": "placed",
+    "target": "Commercial",
+    "count": 1
+   },
+   "reward": {
+    "xp": 150,
+    "cash": 4000
+   }
+  },
+  {
+   "key": "m03_alberi",
+   "title": "Chieti più verde",
+   "text": "Pianta 5 alberi: rendono più felici i vicini.",
+   "condition": {
+    "type": "tag",
+    "target": "tree",
+    "count": 5
+   },
+   "reward": {
+    "xp": 120,
+    "cash": 2500
+   }
+  },
+  {
+   "key": "m04_potenzia",
+   "title": "Più grande e più bello",
+   "text": "Potenzia un edificio al livello successivo.",
+   "condition": {
+    "type": "upgraded",
+    "target": "",
+    "count": 1
+   },
+   "reward": {
+    "xp": 200,
+    "cash": 5000
+   }
+  },
+  {
+   "key": "m05_variante",
+   "title": "Cambia colore",
+   "text": "Cambia la variante di un edificio (colori e materiali).",
+   "condition": {
+    "type": "variants",
+    "target": "",
+    "count": 1
+   },
+   "reward": {
+    "xp": 100,
+    "cash": 2000
+   }
+  },
+  {
+   "key": "m06_sposta",
+   "title": "Al posto giusto",
+   "text": "Sposta o ruota un edificio che hai costruito.",
+   "condition": {
+    "type": "moved",
+    "target": "",
+    "count": 1
+   },
+   "reward": {
+    "xp": 100,
+    "cash": 2000
+   }
+  },
+  {
+   "key": "m07_decorazioni",
+   "title": "Arredo urbano",
+   "text": "Metti 3 decorazioni: panchine, lampioni, fontane.",
+   "condition": {
+    "type": "placed",
+    "target": "Decoration",
+    "count": 3
+   },
+   "reward": {
+    "xp": 150,
+    "cash": 3000
+   }
+  },
+  {
+   "key": "m08_livello5",
+   "title": "Livello 5",
+   "text": "Raggiungi il livello 5.",
+   "condition": {
+    "type": "level",
+    "target": "",
+    "count": 5
+   },
+   "reward": {
+    "xp": 0,
+    "cash": 8000
+   }
+  },
+  {
+   "key": "m09_bilancio3",
+   "title": "Conti in ordine",
+   "text": "Chiudi 3 giorni di fila in attivo.",
+   "condition": {
+    "type": "positiveDays",
+    "target": "",
+    "count": 3
+   },
+   "reward": {
+    "xp": 250,
+    "cash": 6000
+   }
+  },
+  {
+   "key": "m10_demolisci",
+   "title": "Fare spazio",
+   "text": "Demolisci un edificio reale per liberare il suo lotto.",
+   "condition": {
+    "type": "demolishedOsm",
+    "target": "",
+    "count": 1
+   },
+   "reward": {
+    "xp": 150,
+    "cash": 3000
+   }
+  },
+  {
+   "key": "m11_solare",
+   "title": "Energia dal sole",
+   "text": "Installa dei pannelli solari.",
+   "condition": {
+    "type": "tag",
+    "target": "solar",
+    "count": 1
+   },
+   "reward": {
+    "xp": 200,
+    "cash": 5000
+   }
+  },
+  {
+   "key": "m12_vigneto",
+   "title": "Montepulciano d'Abruzzo",
+   "text": "Pianta un vigneto in campagna.",
+   "condition": {
+    "type": "tag",
+    "target": "vineyard",
+    "count": 1
+   },
+   "reward": {
+    "xp": 250,
+    "cash": 6000
+   }
+  },
+  {
+   "key": "m13_uliveto",
+   "title": "L'olio di Chieti",
+   "text": "Pianta un uliveto.",
+   "condition": {
+    "type": "tag",
+    "target": "olive",
+    "count": 1
+   },
+   "reward": {
+    "xp": 250,
+    "cash": 6000
+   }
+  },
+  {
+   "key": "m14_quartiere",
+   "title": "Un nuovo quartiere",
+   "text": "Costruisci 5 edifici residenziali.",
+   "condition": {
+    "type": "placed",
+    "target": "Residential",
+    "count": 5
+   },
+   "reward": {
+    "xp": 400,
+    "cash": 10000
+   }
+  },
+  {
+   "key": "m15_tasse",
+   "title": "Il bilancio comunale",
+   "text": "Cambia un'aliquota nella schermata Finanze.",
+   "condition": {
+    "type": "taxChanged",
+    "target": "",
+    "count": 1
+   },
+   "reward": {
+    "xp": 100,
+    "cash": 2000
+   }
+  },
+  {
+   "key": "m16_popolazione",
+   "title": "Chieti cresce",
+   "text": "Porta la popolazione a 48.100 abitanti.",
+   "condition": {
+    "type": "population",
+    "target": "",
+    "count": 48100
+   },
+   "reward": {
+    "xp": 400,
+    "cash": 12000
+   }
+  },
+  {
+   "key": "m17_eolico",
+   "title": "Il vento della Majella",
+   "text": "Costruisci una pala eolica.",
+   "condition": {
+    "type": "tag",
+    "target": "wind",
+    "count": 1
+   },
+   "reward": {
+    "xp": 500,
+    "cash": 15000
+   }
+  },
+  {
+   "key": "m18_livello10",
+   "title": "Livello 10",
+   "text": "Raggiungi il livello 10.",
+   "condition": {
+    "type": "level",
+    "target": "",
+    "count": 10
+   },
+   "reward": {
+    "xp": 0,
+    "cash": 20000
+   }
+  },
+  {
+   "key": "m19_bilancio7",
+   "title": "Una settimana in attivo",
+   "text": "Chiudi 7 giorni di fila in attivo.",
+   "condition": {
+    "type": "positiveDays",
+    "target": "",
+    "count": 7
+   },
+   "reward": {
+    "xp": 600,
+    "cash": 20000
+   }
+  },
+  {
+   "key": "m20_tesoro",
+   "title": "Il tesoretto",
+   "text": "Arriva a 500.000 monete in cassa.",
+   "condition": {
+    "type": "cash",
+    "target": "",
+    "count": 500000
+   },
+   "reward": {
+    "xp": 800,
+    "cash": 0
+   }
+  }
+ ]
+}

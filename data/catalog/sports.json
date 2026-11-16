@@ -1,0 +1,520 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "campo_calcetto",
+   "category": "sports",
+   "name": "Campo da calcetto",
+   "footprint": {
+    "w": 42,
+    "d": 25
+   },
+   "height": 1,
+   "model": {
+    "family": "pitch",
+    "sport": "football5"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 60000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "rentPerMonth": 900,
+     "maintenancePerMonth": 360
+    },
+    {
+     "level": 2,
+     "cost": 42000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "rentPerMonth": 1170,
+     "maintenancePerMonth": 470
+    },
+    {
+     "level": 3,
+     "cost": 54000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "rentPerMonth": 1520,
+     "maintenancePerMonth": 610
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "campo_calcio",
+   "category": "sports",
+   "name": "Campo da calcio",
+   "footprint": {
+    "w": 110,
+    "d": 75
+   },
+   "height": 1,
+   "model": {
+    "family": "pitch",
+    "sport": "football"
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 260000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "rentPerMonth": 2500,
+     "maintenancePerMonth": 1560
+    },
+    {
+     "level": 2,
+     "cost": 182000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "rentPerMonth": 3250,
+     "maintenancePerMonth": 2030
+    },
+    {
+     "level": 3,
+     "cost": 234000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "rentPerMonth": 4220,
+     "maintenancePerMonth": 2640
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 3,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "campo_tennis",
+   "category": "sports",
+   "name": "Campo da tennis",
+   "footprint": {
+    "w": 36,
+    "d": 18
+   },
+   "height": 1,
+   "model": {
+    "family": "pitch",
+    "sport": "tennis"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 70000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "rentPerMonth": 1000,
+     "maintenancePerMonth": 420
+    },
+    {
+     "level": 2,
+     "cost": 49000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "rentPerMonth": 1300,
+     "maintenancePerMonth": 550
+    },
+    {
+     "level": 3,
+     "cost": 63000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "rentPerMonth": 1690,
+     "maintenancePerMonth": 710
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "campo_basket",
+   "category": "sports",
+   "name": "Campo da basket",
+   "footprint": {
+    "w": 32,
+    "d": 19
+   },
+   "height": 1,
+   "model": {
+    "family": "pitch",
+    "sport": "basket"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 45000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "rentPerMonth": 500,
+     "maintenancePerMonth": 270
+    },
+    {
+     "level": 2,
+     "cost": 31500,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "rentPerMonth": 650,
+     "maintenancePerMonth": 350
+    },
+    {
+     "level": 3,
+     "cost": 40500,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "rentPerMonth": 850,
+     "maintenancePerMonth": 460
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "piscina_scoperta",
+   "category": "sports",
+   "name": "Piscina scoperta",
+   "footprint": {
+    "w": 50,
+    "d": 30
+   },
+   "height": 2,
+   "model": {
+    "family": "pool"
+   },
+   "unlock": {
+    "playerLevel": 7
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 420000,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "rentPerMonth": 4000,
+     "maintenancePerMonth": 2520
+    },
+    {
+     "level": 2,
+     "cost": 294000,
+     "buildHours": 18.0,
+     "jobs": 3,
+     "rentPerMonth": 5200,
+     "maintenancePerMonth": 3280
+    },
+    {
+     "level": 3,
+     "cost": 378000,
+     "buildHours": 24.0,
+     "jobs": 3,
+     "rentPerMonth": 6760,
+     "maintenancePerMonth": 4260
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 4,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "palestra",
+   "category": "sports",
+   "name": "Palestra",
+   "footprint": {
+    "w": 24,
+    "d": 18
+   },
+   "height": 8,
+   "model": {
+    "family": "hall",
+    "kind": "gym"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 260000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "rentPerMonth": 3000,
+     "maintenancePerMonth": 1560
+    },
+    {
+     "level": 2,
+     "cost": 182000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "rentPerMonth": 3900,
+     "maintenancePerMonth": 2030
+    },
+    {
+     "level": 3,
+     "cost": 234000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "rentPerMonth": 5070,
+     "maintenancePerMonth": 2640
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "palazzetto",
+   "category": "sports",
+   "name": "Palazzetto dello sport",
+   "footprint": {
+    "w": 70,
+    "d": 50
+   },
+   "height": 16,
+   "model": {
+    "family": "hall",
+    "kind": "arena"
+   },
+   "unlock": {
+    "playerLevel": 14
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 2800000,
+     "buildHours": 12.0,
+     "jobs": 14,
+     "rentPerMonth": 12000,
+     "maintenancePerMonth": 16800
+    },
+    {
+     "level": 2,
+     "cost": 1960000,
+     "buildHours": 18.0,
+     "jobs": 18,
+     "rentPerMonth": 15600,
+     "maintenancePerMonth": 21840
+    },
+    {
+     "level": 3,
+     "cost": 2520000,
+     "buildHours": 24.0,
+     "jobs": 24,
+     "rentPerMonth": 20280,
+     "maintenancePerMonth": 28390
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 5,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "pista_atletica",
+   "category": "sports",
+   "name": "Pista di atletica",
+   "footprint": {
+    "w": 180,
+    "d": 100
+   },
+   "height": 2,
+   "model": {
+    "family": "track"
+   },
+   "unlock": {
+    "playerLevel": 12
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 900000,
+     "buildHours": 12.0,
+     "jobs": 4,
+     "rentPerMonth": 3000,
+     "maintenancePerMonth": 5400
+    },
+    {
+     "level": 2,
+     "cost": 630000,
+     "buildHours": 18.0,
+     "jobs": 5,
+     "rentPerMonth": 3900,
+     "maintenancePerMonth": 7020
+    },
+    {
+     "level": 3,
+     "cost": 810000,
+     "buildHours": 24.0,
+     "jobs": 7,
+     "rentPerMonth": 5070,
+     "maintenancePerMonth": 9130
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 4,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "skate_park",
+   "category": "sports",
+   "name": "Skate park",
+   "footprint": {
+    "w": 30,
+    "d": 20
+   },
+   "height": 2,
+   "model": {
+    "family": "pitch",
+    "sport": "skate"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 80000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 480
+    },
+    {
+     "level": 2,
+     "cost": 56000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "maintenancePerMonth": 620
+    },
+    {
+     "level": 3,
+     "cost": 72000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "maintenancePerMonth": 810
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport"
+   ]
+  },
+  {
+   "key": "stadio_piccolo",
+   "category": "sports",
+   "name": "Stadio (5.000 posti)",
+   "footprint": {
+    "w": 160,
+    "d": 120
+   },
+   "height": 18,
+   "model": {
+    "family": "stadium"
+   },
+   "unlock": {
+    "playerLevel": 20
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 9000000,
+     "buildHours": 12.0,
+     "jobs": 45,
+     "rentPerMonth": 45000,
+     "maintenancePerMonth": 54000
+    },
+    {
+     "level": 2,
+     "cost": 6300000,
+     "buildHours": 18.0,
+     "jobs": 58,
+     "rentPerMonth": 58500,
+     "maintenancePerMonth": 70200
+    },
+    {
+     "level": 3,
+     "cost": 8100000,
+     "buildHours": 24.0,
+     "jobs": 76,
+     "rentPerMonth": 76050,
+     "maintenancePerMonth": 91260
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 7,
+    "happinessRadius": 600,
+    "landValue": 1
+   },
+   "tags": [
+    "sport",
+    "stadio"
+   ]
+  }
+ ]
+}

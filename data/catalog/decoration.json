@@ -1,0 +1,488 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "panchina",
+   "category": "decoration",
+   "name": "Panchina",
+   "footprint": {
+    "w": 1.5,
+    "d": 0.5
+   },
+   "height": 0.9,
+   "model": {
+    "family": "bench"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 300,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.1,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "lampione",
+   "category": "decoration",
+   "name": "Lampione",
+   "footprint": {
+    "w": 0.5,
+    "d": 0.5
+   },
+   "height": 4.5,
+   "model": {
+    "family": "lamp"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 600,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.1,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "lampione_storico",
+   "category": "decoration",
+   "name": "Lampione storico",
+   "footprint": {
+    "w": 0.5,
+    "d": 0.5
+   },
+   "height": 4,
+   "model": {
+    "family": "lamp",
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 900,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 10
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.2,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "fontana",
+   "category": "decoration",
+   "name": "Fontana",
+   "footprint": {
+    "w": 4,
+    "d": 4
+   },
+   "height": 2.5,
+   "model": {
+    "family": "fountain"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 6000,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 40
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 1.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "fontana_monumentale",
+   "category": "decoration",
+   "name": "Fontana monumentale",
+   "footprint": {
+    "w": 8,
+    "d": 8
+   },
+   "height": 5,
+   "model": {
+    "family": "fountain",
+    "size": "large"
+   },
+   "unlock": {
+    "playerLevel": 10
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 30000,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 180
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 3,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "statua",
+   "category": "decoration",
+   "name": "Statua",
+   "footprint": {
+    "w": 2,
+    "d": 2
+   },
+   "height": 4,
+   "model": {
+    "family": "statue"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 9000,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 50
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "fioriera",
+   "category": "decoration",
+   "name": "Fioriera",
+   "footprint": {
+    "w": 1.5,
+    "d": 0.5
+   },
+   "height": 0.8,
+   "model": {
+    "family": "planter"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 250,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.1,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "cestino",
+   "category": "decoration",
+   "name": "Cestino",
+   "footprint": {
+    "w": 0.5,
+    "d": 0.5
+   },
+   "height": 1,
+   "model": {
+    "family": "bin"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 120,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.05,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "gazebo",
+   "category": "decoration",
+   "name": "Gazebo",
+   "footprint": {
+    "w": 4,
+    "d": 4
+   },
+   "height": 3.5,
+   "model": {
+    "family": "gazebo"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 4500,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 30
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.8,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "chiosco",
+   "category": "decoration",
+   "name": "Chiosco delle bibite",
+   "footprint": {
+    "w": 3,
+    "d": 2.5
+   },
+   "height": 3,
+   "model": {
+    "family": "kiosk"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 3500,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 20
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "parco_giochi",
+   "category": "decoration",
+   "name": "Parco giochi",
+   "footprint": {
+    "w": 12,
+    "d": 10
+   },
+   "height": 3,
+   "model": {
+    "family": "playground"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 12000,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 70
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "dehors",
+   "category": "decoration",
+   "name": "Dehors con tavolini",
+   "footprint": {
+    "w": 6,
+    "d": 4
+   },
+   "height": 2.5,
+   "model": {
+    "family": "terrace"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 2500,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 20
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.6,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "monumento_caduti",
+   "category": "decoration",
+   "name": "Monumento ai caduti",
+   "footprint": {
+    "w": 4,
+    "d": 4
+   },
+   "height": 6,
+   "model": {
+    "family": "statue",
+    "size": "large"
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 15000,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 90
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 1.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "bandiera",
+   "category": "decoration",
+   "name": "Pennone con bandiera",
+   "footprint": {
+    "w": 1,
+    "d": 1
+   },
+   "height": 8,
+   "model": {
+    "family": "flag"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 800,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.2,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  },
+  {
+   "key": "pensilina_bici",
+   "category": "decoration",
+   "name": "Rastrelliera per bici",
+   "footprint": {
+    "w": 3,
+    "d": 1
+   },
+   "height": 1,
+   "model": {
+    "family": "bikerack"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 700,
+     "buildHours": 0.5,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.2,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "decorazione"
+   ]
+  }
+ ]
+}

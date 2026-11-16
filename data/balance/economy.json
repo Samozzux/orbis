@@ -1,0 +1,31 @@
+{
+  "_info": "Bilanciamento dell'economia (docs/03 §4): valori iniziali da regolare. La città esistente (Chieti reale) parte con un piccolo attivo giornaliero; gli interventi del giocatore lo fanno crescere.",
+  "startCash": 150000,
+  "difficulty": { "easy": 1.4, "normal": 1.0, "hard": 0.7 },
+  "baseCity": {
+    "population": 48000,
+    "jobs": 21000,
+    "commercialJobShare": 0.7,
+    "incomePerResidentYear": 14000,
+    "revenuePerJobYear": 50000,
+    "serviceCostPerResidentYear": 120,
+    "baseServicesPerDay": 65764,
+    "publicLandPerResidentYear": 3
+  },
+  "taxes": {
+    "residential": { "default": 1.5, "min": 0, "max": 5 },
+    "commercial": { "default": 2.0, "min": 0, "max": 8 },
+    "industrial": { "default": 2.0, "min": 0, "max": 8 }
+  },
+  "energy": { "sellPerKwh": 0.06, "buyPerKwh": 0.14 },
+  "actions": {
+    "demolishOsmCostPerM2": 40,
+    "demolishRefundRatio": 0.2,
+    "moveCostRatio": 0.05,
+    "variantCostRatio": 0.1
+  },
+  "levels": { "xpBase": 120, "xpExponent": 1.45, "rewardPerLevel": 4000, "max": 60, "xpPerCost": 0.004 },
+  "happiness": { "base": 70, "perTaxPoint": 4 },
+  "snapshots": { "daily": 30, "weeklyWeeks": 26 },
+  "offline": { "maxRealHours": 12 }
+}
