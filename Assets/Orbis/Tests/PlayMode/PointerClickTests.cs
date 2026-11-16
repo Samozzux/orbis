@@ -78,6 +78,45 @@ namespace Orbis.Tests.PlayMode
             Assert.That(OrbisApp.Instance.State, Is.EqualTo(OrbisApp.AppState.MainMenu), "Il clic su Casa non è tornato al menu");
         }
 
+        [UnityTest]
+        public IEnumerator ClicMouse_SuUnEdificio_ApreIDettagli()
+        {
+            yield return LoadMenu();
+            OrbisApp.Instance.StartGame();
+            var session = OrbisApp.Instance.Session;
+            var deadline = Time.realtimeSinceStartup + 90f;
+            while (session.State == Orbis.Gameplay.WorldSession.Phase.Loading && Time.realtimeSinceStartup < deadline) yield return null;
+            if (session.State != Orbis.Gameplay.WorldSession.Phase.Playing) Assert.Ignore("pack del mondo assente (normale in CI)");
+            // un edificio del tile al centro, visto dall'alto
+            Orbis.World.TileView tile = null;
+            foreach (var v in session.World.Tiles.Values)
+                if (v.Lod == Orbis.World.TileLod.Full && v.Data.Buildings.Length > 50) { tile = v; break; }
+            Assert.That(tile, Is.Not.Null);
+            Orbis.Core.World.Tiles.BuildingInfo building = null;
+            foreach (var b in tile.Data.Buildings)
+                if (b.Bounds.Width > 15 && b.Bounds.Height > 15 && b.Height > 6) { building = b; break; }
+            Assert.That(building, Is.Not.Null);
+            var center = tile.Origin + new Vector3((building.Bounds.MinX + building.Bounds.MaxX) / 2, 0, (building.Bounds.MinY + building.Bounds.MaxY) / 2);
+            var rig = session.CameraRig;
+            rig.Target = center;
+            rig.Pitch = 89f;
+            rig.Distance = 250f;
+            rig.Snap();
+            for (var i = 0; i < 30; i++) yield return null;
+            var ground = session.World.HeightAt(center.x, center.z);
+            var screen = (Vector2)rig.Cam.WorldToScreenPoint(new Vector3(center.x, ground + building.Height * 0.5f, center.z));
+            Move(_mouse.position, screen);
+            yield return null;
+            Press(_mouse.leftButton);
+            for (var i = 0; i < 3; i++) yield return null;
+            Release(_mouse.leftButton);
+            for (var i = 0; i < 5; i++) yield return null;
+            Assert.That(session.Selection, Is.Not.Null, "il clic sull'edificio non lo ha selezionato");
+            var details = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement.Q("details");
+            Assert.That(details.ClassListContains("details--visible"), Is.True, "il pannello Dettagli non si è aperto");
+            OrbisApp.Instance.EndGame();
+        }
+
         private static string Describe(VisualElement e)
         {
             var parts = new System.Collections.Generic.List<string>();

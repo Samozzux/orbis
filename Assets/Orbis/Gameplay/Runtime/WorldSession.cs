@@ -75,7 +75,8 @@ namespace Orbis.Gameplay
             CameraRig.Cam = camera;
             CameraRig.World = World;
             CameraRig.Tapped += OnTapped;
-            Clock = new GameClock(DateTime.Now);
+            // M1: la partita parte alle 10 di oggi (luce piena); dal M2 l'ora fa parte del salvataggio
+            Clock = new GameClock(DateTime.Today.AddHours(10));
             Weather = new WeatherSimulator((uint)DateTime.Now.DayOfYear * 7919u + 17u, WeatherKind.Clear);
             Clock.HourChanged += t =>
             {

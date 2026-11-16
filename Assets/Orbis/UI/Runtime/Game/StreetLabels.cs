@@ -13,7 +13,7 @@ namespace Orbis.UI.Game
     /// </summary>
     public sealed class StreetLabels
     {
-        private const int MaxLabels = 22;
+        private const int MaxLabels = 12;
         private const float MaxViewDistance = 1600f;
 
         private struct Candidate
@@ -68,7 +68,7 @@ namespace Orbis.UI.Game
         private void Pick(Vector3 focus, float distance)
         {
             _best.Clear();
-            float radius = Mathf.Clamp(distance * 0.9f, 150f, 900f);
+            float radius = Mathf.Clamp(distance * 0.7f, 120f, 700f);
             foreach (var view in _session.World.Tiles.Values)
             {
                 if (view.Data == null || view.Lod != TileLod.Full) continue;
@@ -116,7 +116,8 @@ namespace Orbis.UI.Game
                 if (sp.z <= 0 || sp.x < 0 || sp.y < 0 || sp.x > Screen.width || sp.y > Screen.height) continue;
                 // pannello → coordinate locali dello strato (safe area e margini dell'HUD)
                 var pp = _layer.WorldToLocal(RuntimePanelUtils.ScreenToPanel(panel, new Vector2(sp.x, Screen.height - sp.y)));
-                float w = c.Name.Length * 6.6f + 12f, h = 20f;
+                // rettangolo un po' più largo dell'etichetta: le vie restano ben separate
+                float w = c.Name.Length * 6.6f + 40f, h = 34f;
                 var rect = new Rect(pp.x - w / 2, pp.y - h / 2, w, h);
                 bool overlaps = false;
                 foreach (var r in _placed)
