@@ -122,7 +122,26 @@
 ## Cosa deve fare Samuele
 - ✅ Fatto il 15/11: script `tools/setup/configura-github.sh` (JWT, admin, keystore Android, GitHub Pages); tolta la password del database.
 - ✅ Fatto il 16/11: Stati Uniti aggiunti tra le nazioni FTP consentite su Altervista.
-- ⏳ **Provare sui dispositivi** (vedi sotto) e dire a Claude com'è andata: poi tag `v0.0.0` e si passa a M1.
+- ✅ Fatto il 16/11: prova di M0 sui dispositivi (tag `v0.0.0`).
+- ⏳ **Provare M1** (vedi "Cosa provare (M1)") e dire a Claude com'è andata: poi tag `v0.1.0` e si passa a M2.
+
+## Cosa provare (M1 — Chieti in 3D)
+Build dopo l'unione della PR #4 (16/11): web su GitHub Pages, `Orbis-ipa` e `Orbis-apk` dalle ultime esecuzioni verdi.
+- **Entrare**: menu → "Nuova partita" → compare "Carico Chieti…" e poi la città vera, con il centro storico in vista.
+- **Muoversi**:
+  - sull'iPhone: un dito sposta, il pizzico fa lo zoom, due dita ruotano, due dita su/giù inclinano, doppio tocco centra;
+  - su Mac/PC: tasto sinistro sposta, destro ruota e inclina, rotella zoom verso il puntatore, WASD/frecce, Q-E, Z-X, M per il 2D.
+  - Provare sia in verticale sia in orizzontale.
+- **Riconoscere**: Corso Marrucino e le vie col nome sulla mappa, la Cattedrale di San Giustino col campanile, il Teatro Marrucino, lo stadio Angelini con la pista. Più fuori: vigneti a filari, uliveti, campi colorati, la costa e la Majella all'orizzonte.
+- **Toccare un edificio** → si illumina e si apre il pannello Dettagli (nome, indirizzo, tipo, altezza, piani, tetto, superficie, negozi dentro, posizione, ID OSM). Si chiude con la X o toccando il terreno.
+- **HUD**:
+  - orologio (1 ora di gioco = 1 minuto) e meteo: si vede passare il giorno, poi la notte con le finestre accese e le stelle;
+  - bottone arancio: pausa, 1×, 2×, 4×, 10×;
+  - mappa/cubo: 2D/3D; bussola: nord in alto;
+  - livelli: vista "Lotti" (griglia verde/rossa da vicino);
+  - casa: torna al menu.
+- **Globo**: allontanarsi al massimo e continuare a zoomare → si sale sul globo; trascinare per girarlo; zoomare verso l'Italia per tornare a terra.
+- **Fluidità**: dire se è fluido (obiettivo almeno 30 fps) sull'iPhone 15 Pro e nel browser del Mac; sul web il primo caricamento della città richiede qualche secondo in più.
 
 ## Cosa provare (fine M0)
 Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su GitHub Pages (16 MB, verificata), APK 43,5 MB firmato con la chiave di Orbis, IPA 54,8 MB.
