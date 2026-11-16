@@ -114,3 +114,17 @@ def quantize(heights):
     values = np.round((h * 1000.0 - base_cm * 10.0) / step)
     values = np.clip(values, 0, 65535).astype(np.uint16)
     return base_cm, step, values
+
+
+def far_grid(source, bounds, cell):
+    """Griglia di quote (righe da sud) che copre `bounds` (Mercatore) con celle di `cell` metri Mercatore."""
+    minx, miny, maxx, maxy = bounds
+    cols = int(math.ceil((maxx - minx) / cell)) + 1
+    rows = int(math.ceil((maxy - miny) / cell)) + 1
+    xs = minx + np.arange(cols) * cell
+    ys = miny + np.arange(rows) * cell
+    gx, gy = np.meshgrid(xs, ys)
+    h = source.sample(gx.ravel(), gy.ravel()).reshape(rows, cols)
+    base, step, values = quantize(h)
+    return {"x0": float(minx), "y0": float(miny), "cell": float(cell), "cols": cols, "rows": rows,
+            "base": base, "step": step, "values": values}

@@ -237,6 +237,19 @@ namespace Orbis.Core.World.Tiles
                 Created = idx.Created,
                 Source = idx.Source,
             };
+            var far = idx.Far;
+            if (far.HasValue && far.Value.Cols > 1 && far.Value.Rows > 1)
+            {
+                var f = far.Value;
+                var raw = f.GetHeightsArray();
+                if (raw != null && raw.Length == f.Cols * f.Rows)
+                {
+                    var h = new float[raw.Length];
+                    float baseM = f.Base * 0.01f, step = f.Step * 0.001f;
+                    for (int i = 0; i < raw.Length; i++) h[i] = baseM + raw[i] * step;
+                    info.Far = new FarTerrainInfo { X0 = f.X0, Y0 = f.Y0, Cell = f.Cell, Cols = f.Cols, Rows = f.Rows, Heights = h };
+                }
+            }
             for (int i = 0; i < idx.TilesLength; i++)
             {
                 var e = idx.Tiles(i).Value;
@@ -244,6 +257,22 @@ namespace Orbis.Core.World.Tiles
                 info.Tiles[id] = new RegionTile(id, e.Size, e.Crc, (int)e.Buildings);
             }
             return info;
+        }
+    }
+
+    /// <summary>Griglia di quote a bassa risoluzione attorno alla regione (coordinate in metri Mercatore assoluti).</summary>
+    public sealed class FarTerrainInfo
+    {
+        public double X0, Y0, Cell;
+        public int Cols, Rows;
+        /// <summary>Quote in metri [riga * Cols + colonna], righe da sud a nord.</summary>
+        public float[] Heights;
+
+        public float At(int col, int row)
+        {
+            col = col < 0 ? 0 : (col >= Cols ? Cols - 1 : col);
+            row = row < 0 ? 0 : (row >= Rows ? Rows - 1 : row);
+            return Heights[row * Cols + col];
         }
     }
 
@@ -277,6 +306,8 @@ namespace Orbis.Core.World.Tiles
         public string Created;
         public string Source;
         public readonly Dictionary<TileId, RegionTile> Tiles = new Dictionary<TileId, RegionTile>();
+        /// <summary>Terreno lontano (orizzonte), null se il pack non lo contiene.</summary>
+        public FarTerrainInfo Far;
 
         /// <summary>Metri veri per metro Mercatore (scala unica per tutta la regione).</summary>
         public double Scale => WebMercator.ScaleAt(OriginLat);

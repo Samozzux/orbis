@@ -89,6 +89,7 @@ namespace Orbis.World
                 Debug.LogException(e);
                 yield break;
             }
+            FarTerrainView.Create(transform, Region, Frame, Materials.Plant);
             State = Status.Ready;
             Debug.Log($"[Orbis] Mondo «{Region.Name}» v{Region.Version}: {Region.Tiles.Count} tile ({Region.Created})");
         }

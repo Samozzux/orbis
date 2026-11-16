@@ -187,7 +187,7 @@ def _split(geom, z, keep_tiles):
 # ---------------------------------------------------------------- costruzione
 
 def build(region, osm_path, boundary_lonlat, terrain_source, out_dir, landmarks=(), version=1,
-          source_name="", log=print):
+          source_name="", log=print, far_source=None):
     """Costruisce il region pack in `out_dir` (index.bin + z/x/y.bin + report.json)."""
     z = region.get("zoom", 14)
     origin_lat, origin_lon = region["origin"]["lat"], region["origin"]["lon"]
@@ -342,10 +342,21 @@ def build(region, osm_path, boundary_lonlat, terrain_source, out_dir, landmarks=
         if (i + 1) % 200 == 0:
             log(f"  {i + 1}/{len(all_tiles)} tile")
 
+    far = None
+    if far_source is not None:
+        # orizzonte: ~50 km attorno alla regione, celle da ~450 m veri (max 65535 vertici in Unity)
+        radius = region.get("far_radius_m", 50000) / scale
+        bx0, by0, bx1, by1 = boundary.bounds
+        cell = region.get("far_cell_m", 450) / scale
+        fb = (bx0 - radius, by0 - radius, bx1 + radius, by1 + radius)
+        while ((fb[2] - fb[0]) / cell + 1) * ((fb[3] - fb[1]) / cell + 1) > 65000:
+            cell *= 1.1
+        far = TR.far_grid(far_source, fb, cell)
+        log(f"terreno lontano: {far['cols']}×{far['rows']} celle da {cell * scale:.0f} m")
     outline = max(_polygons(boundary_lonlat), key=lambda p: p.area).simplify(0.0005)
     created = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     index = encode.encode_index(region["key"], region["name"], version, z, entries, origin_lat, origin_lon,
-                                np.asarray(outline.exterior.coords), ATTRIBUTION, created, source_name)
+                                np.asarray(outline.exterior.coords), ATTRIBUTION, created, source_name, far=far)
     with open(os.path.join(out_dir, "index.bin"), "wb") as f:
         f.write(index)
     report.update({"version": version, "created": created, "source": source_name, "zoom": z,

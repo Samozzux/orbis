@@ -12,7 +12,8 @@ if [ "$GOT" != "$WANT" ]; then
   echo "Serve flatc $WANT (trovato $GOT)" >&2
   exit 1
 fi
-rm -rf generated "$ROOT/Assets/Orbis/Core/World/Fb"
+rm -rf generated
+rm -f "$ROOT/Assets/Orbis/Core/World/Fb/"*.cs  # i file .meta restano (GUID stabili per Unity)
 flatc --python -o generated schema/orbis_tile.fbs
 flatc --csharp --gen-onefile -o "$ROOT/Assets/Orbis/Core/World/Fb" schema/orbis_tile.fbs
 mv "$ROOT/Assets/Orbis/Core/World/Fb/orbis_tile_generated.cs" "$ROOT/Assets/Orbis/Core/World/Fb/OrbisTile.g.cs"

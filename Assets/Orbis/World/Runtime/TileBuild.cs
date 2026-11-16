@@ -75,16 +75,42 @@ namespace Orbis.World
                 foreach (var p in data.Pois)
                     if (p.Building >= 0 && p.Building < shops.Length && IsShop(p.Category)) shops[p.Building] = true;
                 var mesher = new BuildingMesher();
+                var landmarks = new LandmarkMesher();
+                // per i landmark fatti di più parti: la parte più alta (es. il campanile)
+                var tallest = new Dictionary<string, float>();
+                foreach (var b in data.Buildings)
+                    if (!string.IsNullOrEmpty(b.Landmark) && (!tallest.TryGetValue(b.Landmark, out var h) || b.Height > h))
+                        tallest[b.Landmark] = b.Height;
                 float chunk = data.Size / TileBuildResult.Chunks;
+                MeshBuffer ChunkAt(float x, float y)
+                {
+                    int ix = Clamp((int)(x / chunk)), iy = Clamp((int)(y / chunk));
+                    return r.Buildings[iy * TileBuildResult.Chunks + ix] ?? (r.Buildings[iy * TileBuildResult.Chunks + ix] = new MeshBuffer());
+                }
                 for (int i = 0; i < data.Buildings.Length; i++)
                 {
                     var b = data.Buildings[i];
                     if (b.HasFlag(BuildingFlag.Underground)) continue;
-                    float cx = (b.Bounds.MinX + b.Bounds.MaxX) / 2, cy = (b.Bounds.MinY + b.Bounds.MaxY) / 2;
-                    int ix = Clamp((int)(cx / chunk)), iy = Clamp((int)(cy / chunk));
-                    var mb = r.Buildings[iy * TileBuildResult.Chunks + ix] ?? (r.Buildings[iy * TileBuildResult.Chunks + ix] = new MeshBuffer());
-                    if (mesher.Build(b, ground, mb, shops[i], lod != TileLod.Full)) r.BuildingCount++;
+                    var mb = ChunkAt((b.Bounds.MinX + b.Bounds.MaxX) / 2, (b.Bounds.MinY + b.Bounds.MaxY) / 2);
+                    bool done = !string.IsNullOrEmpty(b.Landmark) && lod == TileLod.Full &&
+                                landmarks.BuildBuilding(b, ground, mb, tallest.TryGetValue(b.Landmark, out var th) && b.Height >= th);
+                    if (done || mesher.Build(b, ground, mb, shops[i], lod != TileLod.Full)) r.BuildingCount++;
                     if (i % 96 == 95) yield return null;
+                }
+                // stadi (aree con landmark): campo, tribune, copertura, torri faro
+                foreach (var a in data.Areas)
+                {
+                    if (a.Kind != AreaKind.Stadium || LandmarkMesher.GeneratorFor(a.Landmark) != "stadium") continue;
+                    AreaInfo pitch = null;
+                    foreach (var p in data.Areas)
+                        if (p.Kind == AreaKind.Pitch && a.Bounds.Contains((p.Bounds.MinX + p.Bounds.MaxX) / 2, (p.Bounds.MinY + p.Bounds.MaxY) / 2))
+                            pitch = p;
+                    bool mappedStands = false;
+                    foreach (var b in data.Buildings)
+                        if (a.Bounds.Contains((b.Bounds.MinX + b.Bounds.MaxX) / 2, (b.Bounds.MinY + b.Bounds.MaxY) / 2) &&
+                            Orbis.Core.World.Geometry.Polygon2D.Contains(a.Outer, a.Holes, (b.Bounds.MinX + b.Bounds.MaxX) / 2, (b.Bounds.MinY + b.Bounds.MaxY) / 2))
+                            mappedStands = true;
+                    landmarks.Stadium(a, pitch, ground, ChunkAt((a.Bounds.MinX + a.Bounds.MaxX) / 2, (a.Bounds.MinY + a.Bounds.MaxY) / 2), !mappedStands);
                 }
             }
 

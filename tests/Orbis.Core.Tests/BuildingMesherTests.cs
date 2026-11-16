@@ -162,3 +162,45 @@ namespace Orbis.Core.Tests
         }
     }
 }
+
+namespace Orbis.Core.Tests
+{
+    public class LandmarkMesherTests
+    {
+        [Fact]
+        public void Cattedrale_CampanileDentroLaSagomaEPiuAlto()
+        {
+            var outer = new float[] { 0, 0, 60, 0, 60, 25, 0, 25 };
+            var b = new BuildingInfo
+            {
+                OsmId = 9, Outer = outer, Holes = Array.Empty<float[]>(), Height = 20, Roof = RoofShape.Gabled,
+                Use = BuildingUse.Cathedral, Landmark = "cattedrale_san_giustino", Bounds = Bounds2.Of(outer),
+            };
+            var mb = new MeshBuffer();
+            Assert.True(new LandmarkMesher().BuildBuilding(b, (x, y) => 0, mb, false));
+            float maxH = 0;
+            for (int i = 0; i < mb.VertexCount; i++)
+            {
+                Assert.InRange(mb.GetFloat(i, 0), -0.01f, 60.01f);
+                Assert.InRange(mb.GetFloat(i, 2), -0.01f, 25.01f);
+                maxH = Math.Max(maxH, mb.GetFloat(i, 1));
+            }
+            Assert.True(maxH >= 40f, "il campanile deve svettare: " + maxH);
+        }
+
+        [Fact]
+        public void Stadio_DentroLArea()
+        {
+            var outer = new float[] { 0, 0, 160, 0, 160, 110, 0, 110 };
+            var area = new AreaInfo { OsmId = 1, Kind = AreaKind.Stadium, Outer = outer, Holes = Array.Empty<float[]>(), Bounds = Bounds2.Of(outer), Landmark = "stadio_guido_angelini" };
+            var mb = new MeshBuffer();
+            Assert.True(new LandmarkMesher().Stadium(area, null, (x, y) => 5f, mb));
+            for (int i = 0; i < mb.VertexCount; i++)
+            {
+                Assert.InRange(mb.GetFloat(i, 0), -0.01f, 160.01f);
+                Assert.InRange(mb.GetFloat(i, 2), -0.01f, 110.01f);
+            }
+            Assert.Equal("stadium", LandmarkMesher.GeneratorFor("stadio_guido_angelini"));
+        }
+    }
+}

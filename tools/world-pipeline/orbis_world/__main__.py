@@ -60,8 +60,10 @@ def cmd_build(a):
     merc = shapely.transform(boundary, lambda c: np.column_stack(geo.to_merc(c[:, 0], c[:, 1])))
     pad = (region.get("outer_buffer_m", 12000) + 3000) / geo.scale_at(region["origin"]["lat"])
     source = terrain.TerrariumSource(merc.buffer(pad).bounds, a.cache, log=_log)
+    far_pad = (region.get("far_radius_m", 50000) + 5000) / geo.scale_at(region["origin"]["lat"])
+    far_source = terrain.TerrariumSource(merc.buffer(far_pad).bounds, a.cache, z=9, log=_log)
     tiler.build(region, a.pbf, boundary, source, a.out, landmarks=landmarks, version=a.version,
-                source_name=a.source or os.path.basename(a.pbf), log=_log)
+                source_name=a.source or os.path.basename(a.pbf), log=_log, far_source=far_source)
     return 0
 
 

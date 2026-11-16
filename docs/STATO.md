@@ -14,6 +14,27 @@
 8. **Giorno/notte, cielo, meteo simulato**, **3 landmark** (Cattedrale di San Giustino, Teatro Marrucino, stadio Guido Angelini), **globo** base e zoom continuo.
 9. **Prestazioni** (≥ 30 fps), prova su iPhone e web, tag `v0.1.0`.
 
+### Avanzamento M1 (sessione del 16/11/2026)
+- **Fatto e unito in `main` (PR #3)**: formato dei tile (FlatBuffers + Deflate, decompressore C# puro), lettore C#, pipeline Python con test, workflow *World data*.
+- **Sul ramo `m1-mondo` (compila in Unity, 92 test .NET verdi, non ancora in PR)**:
+  - mondo in Unity a tile con 3 livelli di dettaglio (thread su app, a passi sul web);
+  - edifici sulla sagoma reale: tetti calcolati come "minimo di piani", quindi mai fuori dall'impronta; facciate con finestre, persiane, portoni e vetrine disegnate dallo shader; coppi; luci di notte;
+  - strade con marciapiedi e segnaletica, ponti; colture disegnate sul terreno; uliveti e frutteti a sesto, vigneti a filari, boschi;
+  - mare e terreno lontano (orizzonte a 50 km);
+  - cielo con sole reale per Chieti, nuvole, pioggia, nebbia, meteo simulato;
+  - telecamera touch/mouse/tastiera e vista 2D;
+  - HUD con orologio, meteo e velocità; pannello Dettagli con i dati OSM;
+  - vista dei lotti con la griglia da 1 m e le celle occupate;
+  - generatori per Cattedrale, Teatro Marrucino e stadio; test di foto (`WorldSnapshotTests`).
+- **Pack di Chieti**: il primo tentativo è fallito (confine non trovato con `ref=CH`). È stato corretto sul ramo `m1-pipeline-fix` ed è ripartito (run 43924869628, in corso alla chiusura). Questo pack non ha ancora il terreno lontano: serve una v2 dopo l'unione di `m1-mondo`.
+- **Da fare**:
+  - controllare il pack e aggiornare `data/world/packs.json`;
+  - le build devono scaricare il pack in StreamingAssets, e il controllo dei 60 MB del web va fatto escludendo i tile;
+  - foto di prova con la GPU e correzioni grafiche;
+  - globo base con passaggio continuo;
+  - prestazioni su iPhone e web; PR, prova di Samuele, tag `v0.1.0`.
+- **Decisione (ambiguità risolta)**: le quote del terreno usano `base + valore×passo` invece di `int16` in cm, che non arriva ai 2.793 m della Majella.
+
 **M0 — Fondamenta: completata il 16/11/2026 (tag `v0.0.0`).** Samuele ha provato l'app iOS (tutto ok) e la versione web (dopo la correzione dei clic); `/api/health` risponde `ok`. **L'APK Android non è stato provato su un telefono** (Samuele non ha un dispositivo Android): la build è verde e firmata, la prova resta da fare quando ci sarà un Android.
 
 ## Già pronto (fatto da Samuele il 15/11/2026)

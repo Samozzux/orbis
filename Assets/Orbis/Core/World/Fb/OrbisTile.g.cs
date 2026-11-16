@@ -1184,6 +1184,90 @@ static public class TileVerify
       && verifier.VerifyTableEnd(tablePos);
   }
 }
+public struct FarTerrain : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_25_12_19(); }
+  public static FarTerrain GetRootAsFarTerrain(ByteBuffer _bb) { return GetRootAsFarTerrain(_bb, new FarTerrain()); }
+  public static FarTerrain GetRootAsFarTerrain(ByteBuffer _bb, FarTerrain obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public FarTerrain __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public double X0 { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
+  public double Y0 { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
+  public double Cell { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
+  public ushort Cols { get { int o = __p.__offset(10); return o != 0 ? __p.bb.GetUshort(o + __p.bb_pos) : (ushort)0; } }
+  public ushort Rows { get { int o = __p.__offset(12); return o != 0 ? __p.bb.GetUshort(o + __p.bb_pos) : (ushort)0; } }
+  public int Base { get { int o = __p.__offset(14); return o != 0 ? __p.bb.GetInt(o + __p.bb_pos) : (int)0; } }
+  public ushort Step { get { int o = __p.__offset(16); return o != 0 ? __p.bb.GetUshort(o + __p.bb_pos) : (ushort)0; } }
+  public ushort Heights(int j) { int o = __p.__offset(18); return o != 0 ? __p.bb.GetUshort(__p.__vector(o) + j * 2) : (ushort)0; }
+  public int HeightsLength { get { int o = __p.__offset(18); return o != 0 ? __p.__vector_len(o) : 0; } }
+#if ENABLE_SPAN_T
+  public Span<ushort> GetHeightsBytes() { return __p.__vector_as_span<ushort>(18, 2); }
+#else
+  public ArraySegment<byte>? GetHeightsBytes() { return __p.__vector_as_arraysegment(18); }
+#endif
+  public ushort[] GetHeightsArray() { return __p.__vector_as_array<ushort>(18); }
+
+  public static Offset<Orbis.Core.World.Fb.FarTerrain> CreateFarTerrain(FlatBufferBuilder builder,
+      double x0 = 0.0,
+      double y0 = 0.0,
+      double cell = 0.0,
+      ushort cols = 0,
+      ushort rows = 0,
+      int @base = 0,
+      ushort step = 0,
+      VectorOffset heightsOffset = default(VectorOffset)) {
+    builder.StartTable(8);
+    FarTerrain.AddCell(builder, cell);
+    FarTerrain.AddY0(builder, y0);
+    FarTerrain.AddX0(builder, x0);
+    FarTerrain.AddHeights(builder, heightsOffset);
+    FarTerrain.AddBase(builder, @base);
+    FarTerrain.AddStep(builder, step);
+    FarTerrain.AddRows(builder, rows);
+    FarTerrain.AddCols(builder, cols);
+    return FarTerrain.EndFarTerrain(builder);
+  }
+
+  public static void StartFarTerrain(FlatBufferBuilder builder) { builder.StartTable(8); }
+  public static void AddX0(FlatBufferBuilder builder, double x0) { builder.AddDouble(0, x0, 0.0); }
+  public static void AddY0(FlatBufferBuilder builder, double y0) { builder.AddDouble(1, y0, 0.0); }
+  public static void AddCell(FlatBufferBuilder builder, double cell) { builder.AddDouble(2, cell, 0.0); }
+  public static void AddCols(FlatBufferBuilder builder, ushort cols) { builder.AddUshort(3, cols, 0); }
+  public static void AddRows(FlatBufferBuilder builder, ushort rows) { builder.AddUshort(4, rows, 0); }
+  public static void AddBase(FlatBufferBuilder builder, int @base) { builder.AddInt(5, @base, 0); }
+  public static void AddStep(FlatBufferBuilder builder, ushort step) { builder.AddUshort(6, step, 0); }
+  public static void AddHeights(FlatBufferBuilder builder, VectorOffset heightsOffset) { builder.AddOffset(7, heightsOffset.Value, 0); }
+  public static VectorOffset CreateHeightsVector(FlatBufferBuilder builder, ushort[] data) { builder.StartVector(2, data.Length, 2); for (int i = data.Length - 1; i >= 0; i--) builder.AddUshort(data[i]); return builder.EndVector(); }
+  public static VectorOffset CreateHeightsVectorBlock(FlatBufferBuilder builder, ushort[] data) { builder.StartVector(2, data.Length, 2); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateHeightsVectorBlock(FlatBufferBuilder builder, ArraySegment<ushort> data) { builder.StartVector(2, data.Count, 2); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateHeightsVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<ushort>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartHeightsVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(2, numElems, 2); }
+  public static Offset<Orbis.Core.World.Fb.FarTerrain> EndFarTerrain(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<Orbis.Core.World.Fb.FarTerrain>(o);
+  }
+}
+
+
+static public class FarTerrainVerify
+{
+  static public bool Verify(Google.FlatBuffers.Verifier verifier, uint tablePos)
+  {
+    return verifier.VerifyTableStart(tablePos)
+      && verifier.VerifyField(tablePos, 4 /*X0*/, 8 /*double*/, 8, false)
+      && verifier.VerifyField(tablePos, 6 /*Y0*/, 8 /*double*/, 8, false)
+      && verifier.VerifyField(tablePos, 8 /*Cell*/, 8 /*double*/, 8, false)
+      && verifier.VerifyField(tablePos, 10 /*Cols*/, 2 /*ushort*/, 2, false)
+      && verifier.VerifyField(tablePos, 12 /*Rows*/, 2 /*ushort*/, 2, false)
+      && verifier.VerifyField(tablePos, 14 /*Base*/, 4 /*int*/, 4, false)
+      && verifier.VerifyField(tablePos, 16 /*Step*/, 2 /*ushort*/, 2, false)
+      && verifier.VerifyVectorOfData(tablePos, 18 /*Heights*/, 2 /*ushort*/, false)
+      && verifier.VerifyTableEnd(tablePos);
+  }
+}
 public struct TileEntry : IFlatbufferObject
 {
   private Struct __p;
@@ -1268,6 +1352,7 @@ public struct RegionIndex : IFlatbufferObject
   public ArraySegment<byte>? GetSourceBytes() { return __p.__vector_as_arraysegment(26); }
 #endif
   public byte[] GetSourceArray() { return __p.__vector_as_array<byte>(26); }
+  public Orbis.Core.World.Fb.FarTerrain? Far { get { int o = __p.__offset(28); return o != 0 ? (Orbis.Core.World.Fb.FarTerrain?)(new Orbis.Core.World.Fb.FarTerrain()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
 
   public static Offset<Orbis.Core.World.Fb.RegionIndex> CreateRegionIndex(FlatBufferBuilder builder,
       ushort format = 0,
@@ -1281,10 +1366,12 @@ public struct RegionIndex : IFlatbufferObject
       VectorOffset boundaryOffset = default(VectorOffset),
       StringOffset attributionOffset = default(StringOffset),
       StringOffset createdOffset = default(StringOffset),
-      StringOffset sourceOffset = default(StringOffset)) {
-    builder.StartTable(12);
+      StringOffset sourceOffset = default(StringOffset),
+      Offset<Orbis.Core.World.Fb.FarTerrain> farOffset = default(Offset<Orbis.Core.World.Fb.FarTerrain>)) {
+    builder.StartTable(13);
     RegionIndex.AddOriginLon(builder, origin_lon);
     RegionIndex.AddOriginLat(builder, origin_lat);
+    RegionIndex.AddFar(builder, farOffset);
     RegionIndex.AddSource(builder, sourceOffset);
     RegionIndex.AddCreated(builder, createdOffset);
     RegionIndex.AddAttribution(builder, attributionOffset);
@@ -1298,7 +1385,7 @@ public struct RegionIndex : IFlatbufferObject
     return RegionIndex.EndRegionIndex(builder);
   }
 
-  public static void StartRegionIndex(FlatBufferBuilder builder) { builder.StartTable(12); }
+  public static void StartRegionIndex(FlatBufferBuilder builder) { builder.StartTable(13); }
   public static void AddFormat(FlatBufferBuilder builder, ushort format) { builder.AddUshort(0, format, 0); }
   public static void AddKey(FlatBufferBuilder builder, StringOffset keyOffset) { builder.AddOffset(1, keyOffset.Value, 0); }
   public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(2, nameOffset.Value, 0); }
@@ -1317,6 +1404,7 @@ public struct RegionIndex : IFlatbufferObject
   public static void AddAttribution(FlatBufferBuilder builder, StringOffset attributionOffset) { builder.AddOffset(9, attributionOffset.Value, 0); }
   public static void AddCreated(FlatBufferBuilder builder, StringOffset createdOffset) { builder.AddOffset(10, createdOffset.Value, 0); }
   public static void AddSource(FlatBufferBuilder builder, StringOffset sourceOffset) { builder.AddOffset(11, sourceOffset.Value, 0); }
+  public static void AddFar(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.FarTerrain> farOffset) { builder.AddOffset(12, farOffset.Value, 0); }
   public static Offset<Orbis.Core.World.Fb.RegionIndex> EndRegionIndex(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<Orbis.Core.World.Fb.RegionIndex>(o);
@@ -1341,6 +1429,7 @@ static public class RegionIndexVerify
       && verifier.VerifyString(tablePos, 22 /*Attribution*/, false)
       && verifier.VerifyString(tablePos, 24 /*Created*/, false)
       && verifier.VerifyString(tablePos, 26 /*Source*/, false)
+      && verifier.VerifyTable(tablePos, 28 /*Far*/, Orbis.Core.World.Fb.FarTerrainVerify.Verify, false)
       && verifier.VerifyTableEnd(tablePos);
   }
 }

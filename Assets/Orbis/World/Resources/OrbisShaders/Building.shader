@@ -182,6 +182,24 @@ Shader "Orbis/Building"
                     float far = saturate(fwidth(x) * 4.0);
                     albedo = lerp(albedo, baseColor * 0.92, far);
                 }
+                else if (kind > 7.5)
+                {
+                    // ---------------- campo da calcio: strisce del prato e linee (uv0 = m nel rettangolo, lati)
+                    float x = i.uv0.x, y = i.uv0.y, L = i.uv0.z, W = i.uv0.w;
+                    albedo = baseColor * (0.9 + 0.12 * step(0.5, frac(x / 11.0)));
+                    float m = 3.0, lw = 0.07;
+                    float fx = x - m, fy = y - m, fl = L - 2 * m, fw = W - 2 * m;
+                    float inside = step(-lw, fx) * step(fx, fl + lw) * step(-lw, fy) * step(fy, fw + lw);
+                    float lines = (1 - Box(fx, lw, fl - lw) * Box(fy, lw, fw - lw)) * inside;
+                    lines += Box(fx, fl * 0.5 - lw, fl * 0.5 + lw) * inside;
+                    float r = distance(float2(fx, fy), float2(fl * 0.5, fw * 0.5));
+                    lines += Box(r, 9.15 - lw, 9.15 + lw);
+                    float boxW = min(40.3, fw * 0.6) * 0.5;
+                    float ends = Box(fx, 16.5 - lw, 16.5 + lw) + Box(fx, fl - 16.5 - lw, fl - 16.5 + lw);
+                    lines += ends * Box(fy, fw * 0.5 - boxW, fw * 0.5 + boxW);
+                    lines += (Box(fx, 0, 16.5) + Box(fx, fl - 16.5, fl)) * (Box(fy, fw * 0.5 - boxW - lw, fw * 0.5 - boxW + lw) + Box(fy, fw * 0.5 + boxW - lw, fw * 0.5 + boxW + lw));
+                    albedo = lerp(albedo, half3(0.92, 0.93, 0.9), saturate(lines));
+                }
                 else
                 {
                     // ---------------- terrazzo
@@ -189,7 +207,7 @@ Shader "Orbis/Building"
                     albedo = baseColor * (0.9 + 0.15 * g);
                 }
 
-                half3 color = OrbisLighting(i.positionWS, n, albedo, ao, spec * (1 - _OrbisWet * 0.0) + _OrbisWet * 0.3);
+                half3 color = OrbisLighting(i.positionWS, n, albedo, ao, spec + _OrbisWet * 0.3);
                 color += emission;
                 color = MixFog(color, i.fog);
                 return half4(color, 1);

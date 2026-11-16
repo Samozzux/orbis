@@ -201,8 +201,10 @@ def test_build_region(city):
     landmarks = [{"key": "cattedrale_san_giustino", "match": {"name_regex": "san giustino", "types": ["building"]}}]
     out = str(d / "pack")
     logs = []
+    region["far_radius_m"] = 3000
+    region["far_cell_m"] = 500
     report = tiler.build(region, path, geom, terrain.FunctionSource(hills), out, landmarks=landmarks,
-                         version=3, source_name="city.osm", log=logs.append)
+                         version=3, source_name="city.osm", log=logs.append, far_source=terrain.FunctionSource(hills))
     assert report["landmarks"][0]["matches"], logs
 
     with open(os.path.join(out, "index.bin"), "rb") as f:
@@ -210,6 +212,9 @@ def test_build_region(city):
     idx = RegionIndex.GetRootAs(encode.unpack(index_file), 0)
     assert idx.Format() == encode.FORMAT_VERSION and idx.Version() == 3 and idx.Key() == b"test"
     entries = [idx.Tiles(i) for i in range(idx.TilesLength())]
+    far = idx.Far()
+    assert far is not None and far.Cols() > 10 and far.Rows() > 10
+    assert len(far.HeightsAsNumpy()) == far.Cols() * far.Rows()
     assert len(entries) >= 1
     assert sum(e.Buildings() for e in entries) == 5  # 3 edifici + 2 parti (contorno sostituito)
 
