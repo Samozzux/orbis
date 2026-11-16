@@ -57,9 +57,9 @@ namespace Orbis.EditorTools
             RenderSettings.ambientGroundColor = new Color(0.40f, 0.36f, 0.30f);
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.Linear;
-            RenderSettings.fogColor = new Color(0.74f, 0.84f, 0.96f);
-            RenderSettings.fogStartDistance = 110f;
-            RenderSettings.fogEndDistance = 260f;
+            RenderSettings.fogColor = new Color(0.70f, 0.82f, 0.95f);
+            RenderSettings.fogStartDistance = 130f;
+            RenderSettings.fogEndDistance = 380f;
 
             var sunGo = new GameObject(SunName);
             var sun = sunGo.AddComponent<Light>();

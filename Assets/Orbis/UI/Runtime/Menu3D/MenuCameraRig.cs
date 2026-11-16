@@ -10,8 +10,8 @@ namespace Orbis.UI.Menu3D
     public sealed class MenuCameraRig : MonoBehaviour
     {
         [SerializeField] private Vector3 target = new Vector3(0f, 3.2f, 0f);
-        [SerializeField] private float fitRadius = 19f;
-        [SerializeField] private float pitch = 23f;
+        [SerializeField] private float fitRadius = 23f;
+        [SerializeField] private float pitch = 26f;
         [SerializeField] private float degreesPerSecond = 3.5f;
         [SerializeField] private float startYaw = 205f;
 
@@ -43,7 +43,7 @@ namespace Orbis.UI.Menu3D
             var rotation = Quaternion.Euler(pitch, _yaw, 0f);
             transform.position = target + Vector3.up * bob - rotation * Vector3.forward * distance;
             transform.rotation = rotation;
-            _camera.farClipPlane = distance + 120f;
+            _camera.farClipPlane = distance + 450f;
         }
     }
 }

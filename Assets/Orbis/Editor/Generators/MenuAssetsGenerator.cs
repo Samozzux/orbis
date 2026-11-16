@@ -43,6 +43,9 @@ namespace Orbis.EditorTools
             { MenuCityMaterial.CarYellow, new Color32(255, 204, 46, 255) },
             { MenuCityMaterial.Pitch, new Color32(87, 184, 82, 255) },
             { MenuCityMaterial.Stands, new Color32(219, 224, 237, 255) },
+            { MenuCityMaterial.Water, new Color32(64, 156, 222, 255) },
+            { MenuCityMaterial.Mountain, new Color32(120, 140, 128, 255) },
+            { MenuCityMaterial.Snow, new Color32(245, 248, 255, 255) },
         };
 
         /// <summary>Crea o aggiorna gli asset e restituisce i percorsi dei materiali della città (in ordine di enum).</summary>
@@ -76,13 +79,14 @@ namespace Orbis.EditorTools
             sky.SetFloat("_SunSizeConvergence", 6f);
             sky.SetFloat("_AtmosphereThickness", 0.8f);
             sky.SetColor("_SkyTint", new Color(0.45f, 0.62f, 0.95f));
-            sky.SetColor("_GroundColor", new Color(0.52f, 0.62f, 0.50f));
+            // sotto l'orizzonte lo stesso azzurro della nebbia: mare e cielo si fondono
+            sky.SetColor("_GroundColor", new Color(0.70f, 0.82f, 0.95f));
             sky.SetFloat("_Exposure", 1.3f);
             EditorUtility.SetDirty(sky);
 
             var blurShader = Shader.Find(BlurShader) ?? throw new InvalidOperationException("Shader " + BlurShader + " non trovato");
             var blur = LoadOrCreate(BlurMaterial, blurShader);
-            blur.SetFloat("_Lighten", 0.10f);
+            blur.SetFloat("_Lighten", 0.06f);
             blur.SetFloat("_Saturation", 1.35f);
             EditorUtility.SetDirty(blur);
 

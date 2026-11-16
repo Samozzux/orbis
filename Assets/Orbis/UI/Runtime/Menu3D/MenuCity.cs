@@ -12,6 +12,7 @@ namespace Orbis.UI.Menu3D
         Grass, GrassDark, FieldYellow, FieldGreen, Earth, Rock, Road,
         WallCream, WallOchre, WallSalmon, WallWhite, Roof, RoofDark, Stone,
         Tree, TreeLight, Trunk, Cloud, CarRed, CarBlue, CarYellow, Pitch, Stands,
+        Water, Mountain, Snow,
     }
 
     /// <summary>
@@ -20,7 +21,7 @@ namespace Orbis.UI.Menu3D
     /// </summary>
     public sealed class MenuCity : MonoBehaviour
     {
-        public const int MaterialCount = 23;
+        public const int MaterialCount = 26;
 
         private const float IslandRadius = 34f;
         private const float RingRoadRadius = 19.5f;
@@ -76,6 +77,7 @@ namespace Orbis.UI.Menu3D
             yield return null;
 
             CreateRenderer("Città", b, castShadows: true);
+            BuildLandscape();
             BuildCars();
             BuildClouds();
             progress?.Invoke(1f);
@@ -317,6 +319,39 @@ namespace Orbis.UI.Menu3D
                     b.Blob((int)MenuCityMaterial.GrassDark, p + Vector3.up * 0.7f, new Vector3(0.5f, 0.38f, 0.5f), _rng.Next());
                 }
             }
+        }
+
+        // ---------- mare e Majella ----------
+
+        /// <summary>Mare tutto intorno e, da un lato, i monti della Majella con le cime innevate.</summary>
+        private void BuildLandscape()
+        {
+            var b = new LowPolyMeshBuilder();
+            const int segments = 48;
+            const float seaRadius = 700f;
+            var center = new Vector3(0f, -1.4f, 0f);
+            for (var j = 0; j < segments; j++)
+            {
+                var a0 = j * Mathf.PI * 2f / segments;
+                var a1 = (j + 1) * Mathf.PI * 2f / segments;
+                b.Triangle((int)MenuCityMaterial.Water, center,
+                    center + new Vector3(Mathf.Cos(a1), 0f, Mathf.Sin(a1)) * seaRadius,
+                    center + new Vector3(Mathf.Cos(a0), 0f, Mathf.Sin(a0)) * seaRadius);
+            }
+
+            for (var i = 0; i < 7; i++)
+            {
+                var a = Mathf.Deg2Rad * (150f + i * 11f + ((float)_rng.NextDouble() - 0.5f) * 6f);
+                var dist = 150f + (float)_rng.NextDouble() * 45f;
+                var h = 26f + (float)_rng.NextDouble() * 20f;
+                var r = h * (1.25f + (float)_rng.NextDouble() * 0.4f);
+                var basePos = new Vector3(Mathf.Cos(a) * dist, -1.6f, Mathf.Sin(a) * dist);
+                b.Cylinder((int)MenuCityMaterial.Mountain, basePos, r, 0f, h, 9, cap: false);
+                // cappuccio di neve con la stessa pendenza del monte
+                const float snowFrom = 0.66f;
+                b.Cylinder((int)MenuCityMaterial.Snow, basePos + Vector3.up * (h * snowFrom - 0.05f), r * (1f - snowFrom) * 1.04f, 0f, h * (1f - snowFrom) + 0.25f, 9, cap: false);
+            }
+            CreateRenderer("Paesaggio", b, castShadows: false);
         }
 
         // ---------- elementi animati ----------
