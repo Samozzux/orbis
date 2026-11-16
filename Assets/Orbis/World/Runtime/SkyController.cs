@@ -110,7 +110,7 @@ namespace Orbis.World
                 Sun.transform.rotation = Quaternion.LookRotation(-toSun);
                 float warm = Mathf.InverseLerp(25f, 0f, (float)el);
                 Sun.color = Color.Lerp(new Color(1f, 0.96f, 0.9f), new Color(1f, 0.62f, 0.35f), warm);
-                Sun.intensity = Mathf.Lerp(0f, 1.0f, day) * dim;
+                Sun.intensity = Mathf.Lerp(0f, 1.55f, day) * dim;
             }
             else
             {
@@ -119,7 +119,7 @@ namespace Orbis.World
                 Sun.color = new Color(0.6f, 0.7f, 0.95f);
                 Sun.intensity = 0.16f * (1 - clouds * 0.7f);
             }
-            Sun.shadowStrength = Mathf.Lerp(0.35f, 0.85f, day) * (1 - clouds * 0.6f);
+            Sun.shadowStrength = Mathf.Lerp(0.4f, 0.9f, day) * (1 - clouds * 0.6f);
 
             // cielo e ambiente
             var zenithDay = Color.Lerp(new Color(0.20f, 0.45f, 0.86f), new Color(0.50f, 0.55f, 0.62f), clouds);
@@ -148,9 +148,11 @@ namespace Orbis.World
                 var sh = new SphericalHarmonicsL2();
                 var ambientSky = Color.Lerp(new Color(0.06f, 0.08f, 0.14f), Color.Lerp(sky, horizon, 0.5f), Mathf.Max(day, 0.1f));
                 var ground = Color.Lerp(new Color(0.02f, 0.02f, 0.03f), new Color(0.36f, 0.33f, 0.28f), day);
-                sh.AddAmbientLight(Color.Lerp(ambientSky, ground, 0.4f) * 0.55f);
-                sh.AddDirectionalLight(Vector3.up, ambientSky * 0.35f, 1f);
-                sh.AddDirectionalLight(Vector3.down, ground * 0.2f, 1f);
+                // luce del cielo più debole del sole (come nella realtà): le ombre restano leggibili
+                float overcast = Mathf.Lerp(1f, 1.8f, clouds); // col cielo coperto la luce è tutta diffusa
+                sh.AddAmbientLight(Color.Lerp(ambientSky, ground, 0.4f) * 0.24f * overcast);
+                sh.AddDirectionalLight(Vector3.up, ambientSky * 0.22f * overcast, 1f);
+                sh.AddDirectionalLight(Vector3.down, ground * 0.12f, 1f);
                 RenderSettings.ambientProbe = sh;
             }
 

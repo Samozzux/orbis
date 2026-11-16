@@ -13,7 +13,8 @@
         "Unity.ResourceManager",
         "Unity.InputSystem",
         "Unity.RenderPipelines.Universal.Runtime",
-        "UnityEngine.UI"
+        "UnityEngine.UI",
+        "Unity.RenderPipelines.Core.Runtime"
     ],
     "includePlatforms": [
         "Editor"

@@ -108,6 +108,11 @@ Shader "Orbis/Building"
                     float fv = frac(fl);
                     float winId = OrbisHash21(float2(bayIndex + seed * 97.0, fi + floor(len * 7.0)));
 
+                    // intonaco: macchie larghe, colature verticali e sporco verso terra
+                    float plaster = OrbisNoise(float2(u * 0.35 + seed * 57.0, v * 0.35)) * 0.6 + OrbisNoise(float2(u * 1.7, v * 1.7 + seed * 13.0)) * 0.4;
+                    float streaks = OrbisNoise(float2(u * 2.2 + seed * 7.0, v * 0.12));
+                    albedo *= 0.9 + 0.14 * plaster - 0.06 * smoothstep(0.55, 0.9, streaks);
+                    albedo *= lerp(0.82, 1.0, saturate(v / 2.2));
                     // zoccolo e fondamenta
                     if (v < 0.0) albedo *= 0.62;
                     else if (v < 0.6) albedo *= 0.86;
@@ -157,12 +162,23 @@ Shader "Orbis/Building"
                                 shutter = (Box(bu, w0 - 0.13, w0) + Box(bu, 1.0 - w0, 1.13 - w0)) * Box(fv, 0.26, 0.80);
                         }
                     }
+                    // cornici chiare attorno a finestre e porte, davanzale sotto le finestre ai piani
+                    float frameMask = 0;
+                    if (!blind && !aboveTop && v > 0.0 && category < 4.5 && fi > 0.5 && category < 1.5)
+                    {
+                        float w0f = category < 0.5 ? 0.34 : 0.22;
+                        float outer = Box(bu, w0f - 0.04, 1.0 - w0f + 0.04) * Box(fv, 0.22, 0.84);
+                        frameMask = saturate(outer - window);
+                        float sill = Box(bu, w0f - 0.07, 1.0 - w0f + 0.07) * Box(fv, 0.19, 0.24);
+                        frameMask = saturate(frameMask + sill);
+                    }
+                    albedo = lerp(albedo, baseColor * 1.15 + 0.05, frameMask * 0.75);
                     // persiane: alcune chiuse (seme della finestra)
                     half3 shutterColor = frac(seed * 13.7) < 0.55 ? _ShutterGreen.rgb : _ShutterBrown.rgb;
                     float closed = step(0.82, winId) * (category < 0.5 ? 1 : 0);
                     albedo = lerp(albedo, shutterColor, saturate(shutter + window * closed));
                     window *= 1 - closed;
-                    half3 glass = _Glass.rgb * (0.85 + 0.3 * winId);
+                    half3 glass = _Glass.rgb * (0.75 + 0.45 * winId) + half3(0.05, 0.06, 0.08) * step(0.6, fv);
                     albedo = lerp(albedo, glass, window);
                     albedo = lerp(albedo, half3(0.24, 0.17, 0.12), door);
                     spec = window * 0.6;
@@ -179,7 +195,9 @@ Shader "Orbis/Building"
                     float course = frac(y / 0.36);
                     float tile = OrbisHash21(floor(float2(x / 0.24, y / 0.36)));
                     half shade = 0.78 + 0.22 * (1.0 - channel * channel) - 0.12 * smoothstep(0.85, 1.0, course);
-                    albedo = baseColor * shade * (0.9 + 0.2 * tile);
+                    float patches = OrbisNoise(float2(x, y) * 0.18 + seed * 11.0);
+                    albedo = baseColor * shade * (0.86 + 0.26 * tile) * (0.88 + 0.2 * patches);
+                    albedo = lerp(albedo, albedo * half3(0.82, 0.8, 0.72), smoothstep(0.6, 0.85, patches) * 0.5); // coppi vecchi
                     // fuori fuoco da lontano: niente scintillio
                     float far = saturate(fwidth(x) * 4.0);
                     albedo = lerp(albedo, baseColor * 0.92, far);

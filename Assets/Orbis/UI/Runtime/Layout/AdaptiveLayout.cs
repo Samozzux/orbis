@@ -29,6 +29,9 @@ namespace Orbis.UI.Layout
 
         public ScreenMetrics Metrics { get; private set; }
 
+        /// <summary>Margini della safe area in punti: sinistra, alto, destra, basso.</summary>
+        public Vector4 SafeInsets { get; private set; }
+
         /// <summary>Da chiamare ogni frame: lavora solo se dimensioni o safe area cambiano.</summary>
         public void Update(bool force = false)
         {
@@ -56,10 +59,14 @@ namespace Orbis.UI.Layout
 
             if (_safeArea != null && w > 0 && h > 0)
             {
-                _safeArea.style.paddingLeft = safe.xMin / ppp;
-                _safeArea.style.paddingRight = (w - safe.xMax) / ppp;
-                _safeArea.style.paddingTop = (h - safe.yMax) / ppp;
-                _safeArea.style.paddingBottom = safe.yMin / ppp;
+                // le schermate sono posizionate in assoluto e ignorerebbero un padding: la safe area è il riquadro
+                // stesso che le contiene (Dynamic Island, notch, indicatore della Home)
+                _safeArea.style.position = Position.Absolute;
+                _safeArea.style.left = safe.xMin / ppp;
+                _safeArea.style.right = (w - safe.xMax) / ppp;
+                _safeArea.style.top = (h - safe.yMax) / ppp;
+                _safeArea.style.bottom = safe.yMin / ppp;
+                SafeInsets = new Vector4(safe.xMin / ppp, (h - safe.yMax) / ppp, (w - safe.xMax) / ppp, safe.yMin / ppp);
             }
         }
     }

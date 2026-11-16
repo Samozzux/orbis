@@ -35,6 +35,9 @@ namespace Orbis.Tests.PlayMode
             var dir = Environment.GetEnvironmentVariable("ORBIS_SNAPSHOT_DIR");
             if (string.IsNullOrEmpty(dir)) Assert.Ignore("ORBIS_SNAPSHOT_DIR non impostata");
             Directory.CreateDirectory(dir);
+            // ORBIS_SNAPSHOT_QUALITY=0 → profilo Mobile (come iPhone, Android e web)
+            var q = Environment.GetEnvironmentVariable("ORBIS_SNAPSHOT_QUALITY");
+            if (int.TryParse(q, out var level)) QualitySettings.SetQualityLevel(level, true);
 
             SceneManager.LoadScene("Boot");
             var deadline = Time.realtimeSinceStartup + 60f;
@@ -60,6 +63,8 @@ namespace Orbis.Tests.PlayMode
             };
             var cam = session.CameraRig.Cam;
             var list = new System.Collections.Generic.List<Shot>(shots);
+            var only = Environment.GetEnvironmentVariable("ORBIS_SNAPSHOT_ONLY");
+            if (!string.IsNullOrEmpty(only)) list.RemoveAll(x => !x.Name.Contains(only));
             for (int n = 0; n < list.Count; n++)
             {
                 var s = list[n];

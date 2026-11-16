@@ -32,7 +32,10 @@ namespace Orbis.UI.Game
         private readonly Label _speedLabel;
         private readonly OrbisIcon _viewIcon;
         private readonly OrbisIcon _northIcon;
-        private readonly Button _lots;
+        private readonly Button _layersButton;
+        private readonly VisualElement _layers;
+        private readonly VisualElement _streetsSwitch;
+        private readonly VisualElement _lotsSwitch;
         private readonly VisualElement _loading;
         private readonly Label _loadingText;
         private readonly VisualElement _details;
@@ -47,6 +50,8 @@ namespace Orbis.UI.Game
         public event Action<bool> LotsToggled;
 
         public bool LotsVisible { get; private set; }
+        public bool StreetsVisible { get; private set; }
+        private const string StreetsPref = "orbis.map.streets";
 
         public GameHud(VisualElement root, VisualElement screen, WorldSession session, IPlatformServices services)
         {
@@ -61,7 +66,10 @@ namespace Orbis.UI.Game
             _speedLabel = Req<Label>("hud-speed-label");
             _viewIcon = Req<OrbisIcon>("hud-view-icon");
             _northIcon = Req<OrbisIcon>("hud-north-icon");
-            _lots = Req<Button>("hud-lots");
+            _layersButton = Req<Button>("hud-layers");
+            _layers = Req<VisualElement>("layers");
+            _streetsSwitch = Req<VisualElement>("streets-switch");
+            _lotsSwitch = Req<VisualElement>("lots-switch");
             _loading = Req<VisualElement>("world-loading");
             _loadingText = Req<Label>("world-loading-text");
             _details = Req<VisualElement>("details");
@@ -73,12 +81,17 @@ namespace Orbis.UI.Game
             Req<Button>("hud-speed").clicked += CycleSpeed;
             Req<Button>("hud-view").clicked += () => session.CameraRig.SetTopDown(!session.CameraRig.TopDown);
             Req<Button>("hud-north").clicked += () => session.CameraRig.ResetNorth();
-            _lots.clicked += ToggleLots;
+            _layersButton.clicked += ToggleLayersPanel;
+            Req<Button>("toggle-streets").clicked += ToggleStreets;
+            Req<Button>("toggle-lots").clicked += ToggleLots;
             Req<Button>("details-close").clicked += () => session.Select(null);
             session.SelectionChanged += ShowDetails;
             session.CameraRig.ModeChanged += topDown => _viewIcon.icon = topDown ? OrbisIconKind.Cube : OrbisIconKind.Map;
             session.CameraRig.IsOverUi = IsOverUi;
             _labels = new StreetLabels(screen, session);
+            StreetsVisible = PlayerPrefs.GetInt(StreetsPref, 1) == 1;
+            _labels.Visible = StreetsVisible;
+            _streetsSwitch.EnableInClassList("switch--on", StreetsVisible);
             _details.RemoveFromClassList("details--visible");
             _loading.AddToClassList("world-loading--visible");
             _loadingText.text = Loc.Format("game.loading", "Chieti");
@@ -153,10 +166,29 @@ namespace Orbis.UI.Game
             _speedLabel.text = clock.Paused ? "‖" : clock.Speed.ToString("0", Italian) + "×";
         }
 
+        private void ToggleLayersPanel()
+        {
+            _services.Haptics.Play(HapticKind.Selection);
+            bool open = !_layers.ClassListContains("layers--visible");
+            _layers.EnableInClassList("layers--visible", open);
+            _layersButton.EnableInClassList("hud-button--on", open);
+        }
+
+        private void ToggleStreets()
+        {
+            _services.Haptics.Play(HapticKind.Selection);
+            StreetsVisible = !StreetsVisible;
+            _labels.Visible = StreetsVisible;
+            _streetsSwitch.EnableInClassList("switch--on", StreetsVisible);
+            PlayerPrefs.SetInt(StreetsPref, StreetsVisible ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+
         private void ToggleLots()
         {
+            _services.Haptics.Play(HapticKind.Selection);
             LotsVisible = !LotsVisible;
-            _lots.EnableInClassList("hud-button--on", LotsVisible);
+            _lotsSwitch.EnableInClassList("switch--on", LotsVisible);
             LotsToggled?.Invoke(LotsVisible);
         }
 
@@ -168,7 +200,7 @@ namespace Orbis.UI.Game
             var p = RuntimePanelUtils.ScreenToPanel(panel, new Vector2(screen.x, Screen.height - screen.y));
             for (var e = panel.Pick(p); e != null; e = e.parent)
             {
-                if (e is Button || e.ClassListContains("details") || e.ClassListContains("hud-clock") ||
+                if (e is Button || e.ClassListContains("details") || e.ClassListContains("hud-clock") || e.ClassListContains("layers--visible") ||
                     e.ClassListContains("sheet-layer--visible") || e is ScrollView)
                     return true;
             }

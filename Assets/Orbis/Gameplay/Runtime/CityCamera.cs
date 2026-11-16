@@ -346,7 +346,8 @@ namespace Orbis.Gameplay
                 {
                     float zoom = _prevPinch / pinch;
                     ZoomAt(mid, zoom);
-                    Yaw -= Mathf.DeltaAngle(_prevAngle, angle);
+                    // come su Mappe: la città gira insieme alle dita (dita in senso orario → città in senso orario)
+                    Yaw += Mathf.DeltaAngle(_prevAngle, angle);
                     var dm = mid - _prevMid;
                     // due dita che salgono o scendono insieme: inclinazione
                     if (Mathf.Abs(zoom - 1f) < 0.02f && Mathf.Abs(dm.y) > Mathf.Abs(dm.x) * 1.5f && !TopDown)
