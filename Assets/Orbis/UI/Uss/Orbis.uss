@@ -614,7 +614,7 @@
     top: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 8, 30, 0.45);
+    background-color: rgba(0, 8, 30, 0.62);
 }
 
 .sheet {
@@ -634,8 +634,8 @@
 
 .sheet > .glass-fill {
     border-radius: 30px;
-    --glass-tint-top: rgba(8, 30, 80, 0.70);
-    --glass-tint-bottom: rgba(8, 30, 80, 0.80);
+    --glass-tint-top: rgba(8, 30, 80, 0.84);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.90);
     --glass-lip: rgba(0, 16, 50, 0.6);
     --glass-lip-height: 6;
 }
