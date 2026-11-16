@@ -186,10 +186,12 @@ def _keep_tags(tg):
 
 
 def find_boundary(path, admin_level, match, log=print):
-    """Cerca il confine amministrativo (relazione) i cui tag contengono tutti quelli di `match`.
-    Restituisce (MultiPolygon lon/lat, tag) oppure (None, None)."""
+    """Cerca il confine amministrativo (relazione) che soddisfa `match`: un dict di tag richiesti
+    oppure una lista di alternative (basta che una corrisponda). Restituisce (MultiPolygon lon/lat, tag)
+    oppure (None, None) dopo aver elencato i confini trovati a quel livello."""
+    alternatives = match if isinstance(match, list) else [match]
     fab = osmium.geom.WKBFactory()
-    found = None
+    seen = []
     fp = osmium.FileProcessor(str(path)).with_locations().with_areas()
     for o in fp:
         if not o.is_area() or o.from_way():
@@ -197,11 +199,15 @@ def find_boundary(path, admin_level, match, log=print):
         tg = _tags(o)
         if tg.get("boundary") != "administrative" or tg.get("admin_level") != str(admin_level):
             continue
-        if all(tg.get(k) == v for k, v in match.items()):
-            found = (wkb.loads(fab.create_multipolygon(o), hex=True), tg)
+        seen.append(f"{o.orig_id()} {tg.get('name')} ref={tg.get('ref')} iso={tg.get('ISO3166-2')}")
+        if any(all(tg.get(k) == v for k, v in alt.items()) for alt in alternatives):
+            geom = wkb.loads(fab.create_multipolygon(o), hex=True)
             log(f"  confine trovato: relazione {o.orig_id()} «{tg.get('name')}»")
-            break
-    return found if found else (None, None)
+            return geom, tg
+    log(f"  confine non trovato tra {len(seen)} confini di livello {admin_level}:")
+    for line in seen[:80]:
+        log("    " + line)
+    return None, None
 
 
 def point(x, y):
