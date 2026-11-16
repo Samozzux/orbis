@@ -62,8 +62,8 @@ jobs:
 
       - name: Build Unity → progetto Xcode
         run: |
-          "$UNITY_EDITOR_PATH" -batchmode -nographics -quit -projectPath . -buildTarget iOS \
-            -executeMethod Orbis.EditorTools.Build.BuildScript.BuildIOS -logFile -
+          .github/scripts/run-unity.sh -quit -buildTarget iOS \
+            -executeMethod Orbis.EditorTools.Build.BuildScript.BuildIOS
 
       - name: Compila con Xcode (senza firma)
         run: |

@@ -68,8 +68,8 @@ jobs:
 
       - name: Build
         run: |
-          "$UNITY_EDITOR_PATH" -batchmode -nographics -quit -projectPath . -buildTarget WebGL \
-            -executeMethod Orbis.EditorTools.Build.BuildScript.BuildWeb -logFile -
+          .github/scripts/run-unity.sh -quit -buildTarget WebGL \
+            -executeMethod Orbis.EditorTools.Build.BuildScript.BuildWeb
 
       - name: Controlla dimensione (max 60 MB compressi)
         run: |

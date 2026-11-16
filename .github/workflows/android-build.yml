@@ -83,8 +83,8 @@ jobs:
           ORBIS_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ORBIS_KEY_PASS: ${{ secrets.ANDROID_KEY_PASS }}
         run: |
-          "$UNITY_EDITOR_PATH" -batchmode -nographics -quit -projectPath . -buildTarget Android \
-            -executeMethod Orbis.EditorTools.Build.BuildScript.BuildAndroid -logFile -
+          .github/scripts/run-unity.sh -quit -buildTarget Android \
+            -executeMethod Orbis.EditorTools.Build.BuildScript.BuildAndroid
           rm -f "$RUNNER_TEMP/orbis.keystore"
           test -f build/android/Orbis.apk
 

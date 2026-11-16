@@ -47,13 +47,13 @@ jobs:
 
       - name: Test EditMode
         run: |
-          "$UNITY_EDITOR_PATH" -batchmode -nographics -projectPath . -runTests -testPlatform EditMode \
-            -testResults "$PWD/test-results/editmode.xml" -logFile -
+          .github/scripts/run-unity.sh -runTests -testPlatform EditMode \
+            -testResults "$PWD/test-results/editmode.xml"
 
       - name: Test PlayMode
         run: |
-          "$UNITY_EDITOR_PATH" -batchmode -nographics -projectPath . -runTests -testPlatform PlayMode \
-            -testResults "$PWD/test-results/playmode.xml" -logFile -
+          .github/scripts/run-unity.sh -runTests -testPlatform PlayMode \
+            -testResults "$PWD/test-results/playmode.xml"
 
       - uses: actions/upload-artifact@v7
         if: always()
