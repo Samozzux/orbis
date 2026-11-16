@@ -24,13 +24,13 @@ Regole valide per tutte le milestone:
 ## M1 — Il mondo: Chieti
 - Pipeline `tools/world-pipeline` per la **provincia di Chieti** + pack globo base.
 - Caricamento tile, terreno, strade, edifici procedurali (profilo *Abruzzo*), aree verdi, acqua, alberi, POI con nomi reali.
-- Camera completa (3D/2D, tutti i gesti e comandi mouse/tastiera di `docs/04` §2), zoom continuo dal globo alla strada.
+- Camera completa (3D/2D, tutti i gesti e comandi mouse/tastiera di `docs/04` §2), zoom continuo dal globo alla strada; camera e HUD funzionano sia in verticale sia in orizzontale.
 - Selezione con pannello Dettagli (dati reali OSM).
 - Ciclo giorno/notte, cielo, meteo simulato base.
 - Primi landmark di Chieti (almeno 3, es. Cattedrale di San Giustino, Teatro Marrucino, stadio Angelini).
 - Stile **Classico**.
 
-**Completata quando**: si naviga Chieti fluidamente (≥ 30 fps su iPhone 15 Pro, Android di fascia medio-alta e desktop), si riconoscono le strade reali e i landmark, si tocca un edificio e se ne vedono i dati.
+**Completata quando**: si naviga Chieti fluidamente (≥ 30 fps su iPhone 15 Pro, Android di fascia medio-alta e desktop), in verticale e in orizzontale, si riconoscono le strade reali e i landmark, si tocca un edificio e se ne vedono i dati.
 
 ## M2 — Costruire ed economia
 - Catalogo dati (prime 150 voci tra tutte le categorie edifici/natura/decorazioni), varianti e livelli.

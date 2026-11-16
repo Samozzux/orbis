@@ -115,6 +115,7 @@ Budget indicativi: L0 fino a 2.000 agenti su iPhone 15 Pro / desktop, 500 su bro
 | `ISaveStore` | SQLite | SQLite | IndexedDB | — |
 | `IHaptics` | UIImpactFeedbackGenerator | Vibrator / HapticFeedback | Vibration API se presente | niente |
 | `INotifications` (locali) | UNUserNotificationCenter | NotificationManager (permesso POST_NOTIFICATIONS) | Notification API (con permesso) | niente |
+| `IScreenOrientation` | rotazione automatica o blocco (Screen API) | come iOS | non bloccabile: segue il dispositivo | segue il dispositivo |
 | `IDeviceProfile` | modello, RAM, stato termico | modello, RAM, GPU, stato termico | WebGPU/WebGL, memoria stimata, prestazioni misurate | profilo medio |
 
 Chiavi Info.plist necessarie: `NSFaceIDUsageDescription`, `NSAppleMusicUsageDescription`, `NSPhotoLibraryAddUsageDescription` (salvare foto della modalità foto). Il GPS non serve.
@@ -131,7 +132,8 @@ Permessi Android: `INTERNET`, `USE_BIOMETRIC`, `POST_NOTIFICATIONS`, `VIBRATE`, 
 
 ## 12. Input e UI adattiva
 - Input System con mappe: `Touch`, `MouseKeyboard`, `Gamepad` (opzionale). Ogni azione ha almeno un comando touch e uno mouse/tastiera.
-- Layout UI per classi di schermo: **compatto** (telefono orizzontale), **medio** (tablet), **ampio** (desktop: pannelli laterali fissi, più informazioni contemporaneamente). Si sceglie dalla dimensione reale in punti/pollici, non dalla piattaforma.
+- Layout UI per classi di schermo: **compatto** (telefono), **medio** (tablet), **ampio** (desktop: pannelli laterali fissi, più informazioni contemporaneamente). Si sceglie dalla dimensione reale in punti/pollici, non dalla piattaforma.
+- **Orientamento**: su telefono e tablet ogni schermata (menu, HUD, telefono nel gioco, editor) ha un layout verticale e uno orizzontale. Di default rotazione automatica e avvio in verticale; nelle Impostazioni si può bloccare verticale o orizzontale (`IScreenOrientation` in Platform). Nel browser l'orientamento segue il dispositivo.
 - Safe area rispettata su iPhone (Dynamic Island) e iPad.
 - Dimensioni minime dei bersagli touch 44 pt; tooltip al passaggio del mouse su desktop.
 
