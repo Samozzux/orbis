@@ -22,6 +22,7 @@ namespace Orbis.EditorTools
             WebTemplateConfigurator.Apply();
             UiAssetsGenerator.Generate();
             var cityMaterials = MenuAssetsGenerator.Generate();
+            WorldRenderingGenerator.Generate();
             SceneGenerator.Generate(cityMaterials);
             AssetDatabase.SaveAssets();
             Debug.Log("[Orbis] Progetto generato.");

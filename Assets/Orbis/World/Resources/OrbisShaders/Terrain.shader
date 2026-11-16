@@ -70,7 +70,8 @@ Shader "Orbis/Terrain"
                 half3 n = normalize(i.normalWS);
                 float2 w = i.positionWS.xz;
                 float grain = OrbisNoise(w * 0.9) * 0.6 + OrbisNoise(w * 0.12) * 0.4;
-                half3 albedo = area.rgb * (0.9 + 0.2 * grain);
+                float macro = OrbisNoise(w * 0.011) * 0.6 + OrbisNoise(w * 0.031) * 0.4;
+                half3 albedo = area.rgb * (0.86 + 0.2 * grain) * (0.9 + 0.18 * macro);
                 // pendii ripidi: terra e roccia
                 half steep = smoothstep(0.80, 0.62, n.y);
                 albedo = lerp(albedo, _Rock.rgb * (0.85 + 0.3 * grain), steep * 0.8);

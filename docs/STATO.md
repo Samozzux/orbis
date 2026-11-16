@@ -42,6 +42,16 @@
   - Il globo base per ora sta dentro il pack di Chieti (`globe.jpg`, generato dai Terrain Tiles); i confini e le città di Natural Earth arrivano più avanti.
   - "Nuova partita" entra direttamente a Chieti: la scelta del luogo e del ruolo è in M2.
   - L'orologio di gioco parte alle 10 del giorno attuale (prima impressione con la luce del giorno); dal M2 l'ora sarà salvata con la partita.
+- **Correzioni dopo la prova di Samuele (16/11 sera)**:
+  - HUD non più coperto dalla Dynamic Island: la safe area ora delimita davvero le schermate (prima era un padding che le schermate in posizione assoluta ignoravano).
+  - Rotazione a due dita come su Mappe: la città gira insieme alle dita.
+  - Bottone "livelli": pannello con gli interruttori "Nomi delle vie" (scelta salvata sul dispositivo) e "Lotti e griglia".
+  - Grafica più realistica:
+    - post-processing nel mondo: tonemapping ACES, bloom leggero, contrasto, vignettatura (Volume globale nella scena, così gli shader restano nelle build; spento sul web dei telefoni);
+    - luce del cielo più debole del sole, così le ombre si leggono;
+    - ombre del profilo Mobile a 2 cascate da 2048;
+    - intonaco con macchie, colature e sporco alla base; cornici e davanzali delle finestre;
+    - coppi più vari, chiome più scure alla base, terreno con variazioni ampie.
 - **Da fare per chiudere M1**: unione di `m1-mondo`, build verdi, prova su iPhone e web (fluidità ≥ 30 fps), tag `v0.1.0`.
 
 **M0 — Fondamenta: completata il 16/11/2026 (tag `v0.0.0`).** Samuele ha provato l'app iOS (tutto ok) e la versione web (dopo la correzione dei clic); `/api/health` risponde `ok`. **L'APK Android non è stato provato su un telefono** (Samuele non ha un dispositivo Android): la build è verde e firmata, la prova resta da fare quando ci sarà un Android.

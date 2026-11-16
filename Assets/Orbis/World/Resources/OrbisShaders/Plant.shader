@@ -69,7 +69,9 @@ Shader "Orbis/Plant"
                 o.positionCS = TransformWorldToHClip(o.positionWS);
                 o.normalWS = TransformObjectToWorldNormal(v.normalOS);
                 half tint = 0.85 + 0.3 * OrbisHash21(origin.xz * 0.37);
-                o.color = half4(OrbisSRGB(v.color.rgb) * lerp(1.0, tint, v.uv0.x), 1);
+                // chioma più scura verso il basso e all'interno (occlusione finta), tronco invariato
+                half ao = lerp(1.0, lerp(0.62, 1.05, saturate(v.uv0.y * 1.2)), v.uv0.x);
+                o.color = half4(OrbisSRGB(v.color.rgb) * lerp(1.0, tint, v.uv0.x) * ao, 1);
                 o.fog = ComputeFogFactor(o.positionCS.z);
                 return o;
             }
@@ -105,6 +107,19 @@ Shader "Orbis/Plant"
             HLSLPROGRAM
             #pragma vertex OrbisDepthVertex
             #pragma fragment OrbisDepthFragment
+            #pragma multi_compile_instancing
+            #include "OrbisPasses.hlsl"
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DepthNormals"
+            Tags { "LightMode" = "DepthNormals" }
+            ZWrite On Cull Back
+            HLSLPROGRAM
+            #pragma vertex OrbisDepthVertex
+            #pragma fragment OrbisDepthNormalsFragment
             #pragma multi_compile_instancing
             #include "OrbisPasses.hlsl"
             ENDHLSL

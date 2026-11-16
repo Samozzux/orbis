@@ -24,6 +24,7 @@ namespace Orbis.EditorTools
         private const string CityName = "Città del menu";
         private const string EventSystemName = "EventSystem";
         private const string AppName = "Orbis";
+        private const string VolumeName = "Post-processing";
 
         [MenuItem("Orbis/Rigenera scena di avvio")]
         public static void Regenerate() => Generate(MenuAssetsGenerator.Generate(), force: true);
@@ -88,6 +89,13 @@ namespace Orbis.EditorTools
             var glassBlur = cameraGo.AddComponent<GlassBlurCapture>();
             SetReference(glassBlur, "blurMaterial", blur);
 
+            // post-processing del mondo: peso 0 nel menu, 1 in partita (WorldSession)
+            var volumeGo = new GameObject(VolumeName);
+            var volume = volumeGo.AddComponent<UnityEngine.Rendering.Volume>();
+            volume.isGlobal = true;
+            volume.weight = 0f;
+            SetReference(volume, "sharedProfile", AssetDatabase.LoadAssetAtPath<UnityEngine.Rendering.VolumeProfile>(WorldRenderingGenerator.ProfilePath));
+
             var eventSystemGo = new GameObject(EventSystemName);
             eventSystemGo.AddComponent<EventSystem>();
             // senza azioni assegnate il modulo usa quelle predefinite (touch, mouse, tastiera, gamepad)
@@ -142,7 +150,11 @@ namespace Orbis.EditorTools
             var app = Find(AppName);
             var city = Find(CityName);
             var sun = Find(SunName);
-            if (roots.Length != 5 || camera == null || eventSystem == null || app == null || city == null || sun == null)
+            var volumeGo = Find(VolumeName);
+            if (roots.Length != 6 || camera == null || eventSystem == null || app == null || city == null || sun == null || volumeGo == null)
+                return false;
+            var volume = volumeGo.GetComponent<UnityEngine.Rendering.Volume>();
+            if (volume == null || volume.sharedProfile == null || !volume.isGlobal)
                 return false;
             var document = app.GetComponent<UIDocument>();
             var orbisApp = app.GetComponent<OrbisApp>();

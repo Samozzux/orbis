@@ -863,6 +863,18 @@ MonoBehaviour:
     m_Key: poi.power.substation
     m_Metadata:
       m_Items: []
+  - m_Id: 361206673039360
+    m_Key: game.layers.streets
+    m_Metadata:
+      m_Items: []
+  - m_Id: 361206689816576
+    m_Key: game.layers.lots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 361206689816577
+    m_Key: game.layers.lots.detail
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

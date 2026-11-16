@@ -866,6 +866,18 @@ MonoBehaviour:
     m_Localized: Sottostazione elettrica
     m_Metadata:
       m_Items: []
+  - m_Id: 361206673039360
+    m_Localized: Nomi delle vie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 361206689816576
+    m_Localized: Lotti e griglia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 361206689816577
+    m_Localized: 'Celle da 1 m: verdi libere, rosse occupate'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

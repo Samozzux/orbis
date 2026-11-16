@@ -48,6 +48,8 @@ namespace Orbis.Gameplay
         private GameObject _highlight;
         private Mesh _highlightMesh;
         private float _originalShadowDistance = -1;
+        private UniversalAdditionalCameraData _cameraData;
+        private Volume _volume;
         private UniversalRenderPipelineAsset _urp;
 
         public WorldQuality Quality { get; private set; }
@@ -90,6 +92,15 @@ namespace Orbis.Gameplay
             };
             camera.clearFlags = CameraClearFlags.Skybox;
             camera.fieldOfView = 50f;
+            // post-processing (tonemapping filmico, bloom leggero) solo nel mondo; sul web dei telefoni si risparmia
+            _cameraData = camera.GetComponent<UniversalAdditionalCameraData>();
+            _volume = FindAnyObjectByType<Volume>();
+            bool post = quality.PostProcessing && _volume != null && _cameraData != null;
+            if (post)
+            {
+                _cameraData.renderPostProcessing = true;
+                _volume.weight = 1f;
+            }
             _urp = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
             if (_urp != null) _originalShadowDistance = _urp.shadowDistance;
             StartCoroutine(Load(source));
@@ -139,6 +150,8 @@ namespace Orbis.Gameplay
 
         private void OnDestroy()
         {
+            if (_cameraData != null) _cameraData.renderPostProcessing = false;
+            if (_volume != null) _volume.weight = 0f;
             if (_urp != null && _originalShadowDistance > 0) _urp.shadowDistance = _originalShadowDistance;
             if (CameraRig != null) Destroy(CameraRig);
             WorldMaterials.SetNight(0);

@@ -31,6 +31,9 @@ namespace Orbis.UI.Game
         private readonly List<Rect> _placed = new List<Rect>();
         private float _nextPick;
 
+        /// <summary>Nomi delle vie accesi o spenti (scelta del giocatore).</summary>
+        public bool Visible = true;
+
         public StreetLabels(VisualElement screen, WorldSession session)
         {
             _session = session;
@@ -50,7 +53,7 @@ namespace Orbis.UI.Game
         public void Update()
         {
             var rig = _session.CameraRig;
-            bool show = _session.State == WorldSession.Phase.Playing && rig.enabled && rig.Distance < MaxViewDistance &&
+            bool show = Visible && _session.State == WorldSession.Phase.Playing && rig.enabled && rig.Distance < MaxViewDistance &&
                         (_session.Globe == null || !_session.Globe.Active);
             if (!show)
             {

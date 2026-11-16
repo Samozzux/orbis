@@ -852,6 +852,18 @@
     {
       "key": "poi.power.substation",
       "it": "Sottostazione elettrica"
+    },
+    {
+      "key": "game.layers.streets",
+      "it": "Nomi delle vie"
+    },
+    {
+      "key": "game.layers.lots",
+      "it": "Lotti e griglia"
+    },
+    {
+      "key": "game.layers.lots.detail",
+      "it": "Celle da 1 m: verdi libere, rosse occupate"
     }
   ]
 }

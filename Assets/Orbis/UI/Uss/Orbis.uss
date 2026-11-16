@@ -1253,3 +1253,34 @@
     margin: 0;
     padding: 0 4px;
 }
+
+/* pannello "livelli" della mappa (nomi delle vie, lotti) */
+.layers {
+    position: absolute;
+    right: 74px;
+    top: 128px;
+    width: 300px;
+    padding: 10px 12px;
+    display: none; /* nascosto non deve prendere i tocchi della mappa */
+}
+
+.layers--visible {
+    display: flex;
+}
+
+.layers > .glass-fill {
+    border-radius: 22px;
+    --glass-tint-top: rgba(8, 30, 80, 0.82);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.90);
+    --glass-lip: rgba(0, 16, 50, 0.6);
+    --glass-lip-height: 4;
+}
+
+.layers__row.unity-button {
+    margin: 2px 0;
+}
+
+.layout-compact .layers {
+    right: 64px;
+    width: 260px;
+}

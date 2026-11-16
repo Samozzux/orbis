@@ -122,11 +122,32 @@
                             <glass:GlassSurface />
                             <el:OrbisIcon name="hud-north-icon" icon="Compass" class="hud-button__icon" />
                         </ui:Button>
-                        <ui:Button name="hud-lots" class="hud-button">
+                        <ui:Button name="hud-layers" class="hud-button">
                             <glass:GlassSurface />
                             <el:OrbisIcon icon="Layers" class="hud-button__icon" />
                         </ui:Button>
                     </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="layers" class="layers">
+                    <glass:GlassSurface />
+                    <ui:Button name="toggle-streets" class="setting-row layers__row">
+                        <ui:VisualElement class="setting-row__texts" picking-mode="Ignore">
+                            <ui:Label class="setting-row__label" text="#game.layers.streets" picking-mode="Ignore" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="streets-switch" class="switch" picking-mode="Ignore">
+                            <ui:VisualElement class="switch__knob" picking-mode="Ignore" />
+                        </ui:VisualElement>
+                    </ui:Button>
+                    <ui:Button name="toggle-lots" class="setting-row layers__row">
+                        <ui:VisualElement class="setting-row__texts" picking-mode="Ignore">
+                            <ui:Label class="setting-row__label" text="#game.layers.lots" picking-mode="Ignore" />
+                            <ui:Label class="setting-row__detail" text="#game.layers.lots.detail" picking-mode="Ignore" />
+                        </ui:VisualElement>
+                        <ui:VisualElement name="lots-switch" class="switch" picking-mode="Ignore">
+                            <ui:VisualElement class="switch__knob" picking-mode="Ignore" />
+                        </ui:VisualElement>
+                    </ui:Button>
                 </ui:VisualElement>
 
                 <ui:VisualElement name="world-loading" class="world-loading" picking-mode="Ignore">
