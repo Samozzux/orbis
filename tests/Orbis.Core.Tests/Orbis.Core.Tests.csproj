@@ -18,6 +18,8 @@
   <ItemGroup>
     <Compile Include="../../Assets/Orbis/Core/**/*.cs" Link="Core/%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="**/*.cs" Exclude="bin/**;obj/**" />
+    <!-- tile di esempio scritti dalla pipeline Python (ORBIS_WRITE_FIXTURES=1 pytest) -->
+    <None Include="Fixtures/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

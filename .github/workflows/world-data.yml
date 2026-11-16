@@ -1,0 +1,169 @@
+# Pipeline del mondo (docs/02 §2): OpenStreetMap + terreno → region pack, pubblicato come GitHub Release.
+# - su PR e push: solo i test della pipeline (veloci, nessun download)
+# - a mano (Actions → World data → Run workflow): costruisce e pubblica il pack `world-<regione>-v<versione>`
+name: World data
+
+on:
+  push:
+    paths:
+      - 'tools/world-pipeline/**'
+      - 'data/landmarks/**'
+      - '.github/workflows/world-data.yml'
+  pull_request:
+    paths:
+      - 'tools/world-pipeline/**'
+      - 'data/landmarks/**'
+      - '.github/workflows/world-data.yml'
+  workflow_dispatch:
+    inputs:
+      region:
+        description: 'Regione (file in tools/world-pipeline/regions/)'
+        required: true
+        default: 'chieti'
+      version:
+        description: 'Versione del pack (numero intero, es. 1)'
+        required: true
+      publish:
+        description: 'Pubblica la Release (altrimenti solo artifact)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: pipeline-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: tools/world-pipeline
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tools/world-pipeline/requirements.txt
+
+      - name: Dipendenze
+        run: pip install -r requirements.txt
+
+      - name: Test
+        run: python -m pytest -q tests
+
+  build:
+    name: build-pack
+    if: github.event_name == 'workflow_dispatch'
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    permissions:
+      contents: write
+    env:
+      REGION: ${{ inputs.region }}
+      VERSION: ${{ inputs.version }}
+    defaults:
+      run:
+        working-directory: tools/world-pipeline
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: tools/world-pipeline/requirements.txt
+
+      - name: Dipendenze
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q osmium-tool
+          pip install -r requirements.txt
+          osmium --version | head -1
+
+      - name: Cache del terreno (Terrain Tiles)
+        uses: actions/cache@v6
+        with:
+          path: tools/world-pipeline/cache
+          key: terrain-${{ inputs.region }}-v1
+
+      - name: Scarica l'estratto OpenStreetMap (Geofabrik)
+        run: |
+          set -euo pipefail
+          url=$(python -c "import json;print(json.load(open('regions/${REGION}.json'))['geofabrik'])")
+          mkdir -p work
+          curl -fsSL --retry 5 -o work/source.osm.pbf "$url"
+          curl -fsSL --retry 5 -o work/source.osm.pbf.md5 "$url.md5"
+          (cd work && sed 's/ .*/  source.osm.pbf/' source.osm.pbf.md5 | md5sum -c -)
+          ls -lh work/source.osm.pbf
+          echo "SOURCE_NAME=$(basename "$url") ($(date -u -r work/source.osm.pbf +%Y-%m-%d))" >> "$GITHUB_ENV"
+
+      - name: Confine della regione
+        run: |
+          set -euo pipefail
+          osmium tags-filter work/source.osm.pbf r/boundary=administrative -o work/admin.pbf --overwrite
+          bbox=$(python -m orbis_world boundary --region regions/${REGION}.json --pbf work/admin.pbf --out work/boundary.geojson | tail -1)
+          echo "Riquadro da estrarre: $bbox"
+          echo "BBOX=$bbox" >> "$GITHUB_ENV"
+
+      - name: Ritaglio e filtro dei tag
+        run: |
+          set -euo pipefail
+          osmium extract -b "$BBOX" -s complete_ways work/source.osm.pbf -o work/region-all.osm.pbf --overwrite
+          osmium tags-filter work/region-all.osm.pbf \
+            nwr/building nwr/building:part w/highway w/railway w/aeroway nwr/landuse nwr/natural nwr/leisure \
+            nwr/amenity nwr/shop nwr/tourism nwr/waterway nwr/water nwr/power nwr/barrier nwr/historic \
+            nwr/man_made nwr/office nwr/craft nwr/healthcare nwr/public_transport nwr/sport nwr/place \
+            nwr/area:highway nwr/emergency \
+            -o work/region.osm.pbf --overwrite
+          ls -lh work/region-all.osm.pbf work/region.osm.pbf
+
+      - name: Costruisci il pack
+        run: |
+          python -m orbis_world build --region regions/${REGION}.json --pbf work/region.osm.pbf \
+            --boundary work/boundary.geojson --out out/${REGION} --cache cache --version ${VERSION} \
+            --source "$SOURCE_NAME"
+
+      - name: Anteprime
+        run: python -m orbis_world preview --pack out/${REGION} --out out/preview --region regions/${REGION}.json
+
+      - name: Impacchetta
+        run: |
+          set -euo pipefail
+          name="world-${REGION}-v${VERSION}"
+          (cd out/${REGION} && zip -qr "../../${name}.zip" . -x report.json)
+          cp out/${REGION}/report.json "${name}-report.json"
+          sha=$(sha256sum "${name}.zip" | cut -d' ' -f1)
+          size=$(stat -c %s "${name}.zip")
+          echo "PACK_NAME=$name" >> "$GITHUB_ENV"
+          echo "PACK_SHA=$sha" >> "$GITHUB_ENV"
+          {
+            echo "### Pack ${name}"
+            echo "- dimensione: $(( size / 1024 / 1024 )) MB"
+            echo "- sha256: \`$sha\`"
+            echo '```json'
+            python -c "import json;r=json.load(open('${name}-report.json'));print(json.dumps({k:r[k] for k in ('tiles','counts','bytes','landmarks')},ensure_ascii=False,indent=1))"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: world-${{ inputs.region }}-v${{ inputs.version }}
+          path: |
+            tools/world-pipeline/world-*.zip
+            tools/world-pipeline/world-*-report.json
+            tools/world-pipeline/out/preview/*.png
+          retention-days: 14
+
+      - name: Pubblica la Release
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "${PACK_NAME}" "${PACK_NAME}.zip" "${PACK_NAME}-report.json" out/preview/*.png \
+            --title "Mondo: ${REGION} v${VERSION}" --target "${GITHUB_SHA}" \
+            --notes "Region pack ${REGION} versione ${VERSION} (docs/02 §2). Fonte: ${SOURCE_NAME}. sha256: ${PACK_SHA}. Dati © OpenStreetMap contributors (ODbL); terreno: Terrain Tiles (Mapzen/AWS Open Data)."
