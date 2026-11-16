@@ -69,6 +69,7 @@
 4. **Riferimenti tra assembly**: `Orbis.UI` usa anche `Orbis.Platform` (per profilo del dispositivo e servizi), non solo Core e Gameplay come nella tabella di `docs/01` §2.
 
 ## Problemi aperti
+- **Unity terminato dal sistema in CI (codice 137)**: due volte (build Android del 15/11 e build web del 16/11) Unity è stato ucciso un secondo dopo l'avvio, sempre con la cartella `Library` ripristinata dalla cache; un'altra build con cache invece è andata bene, e la build web era sola in coda (non è un conflitto di licenza). Causa non ancora certa. Contromisura: `.github/scripts/run-unity.sh` (usato da tutti i job Unity) in quel caso registra memoria e messaggi del kernel, cancella `Library` e riprova una volta da zero. Se la diagnostica indicherà la causa, si correggerà alla radice. Prima prova dopo la correzione (16/11, commit `c16787b`): iOS, web e Android verdi senza bisogno del nuovo tentativo.
 - Il modulo **iOS Build Support** non è installato sul Mac: non serve (l'IPA si compila in CI), ma senza non si può provare la build iOS in locale.
 - Gli APK compilati prima del 15/11 alle 23:38 sono firmati con una chiave di debug: se ne hai installato uno, va disinstallato prima di installare quello firmato con la chiave di Orbis.
 
@@ -78,7 +79,7 @@
 - ⏳ **Provare sui dispositivi** (vedi sotto) e dire a Claude com'è andata: poi tag `v0.0.0` e si passa a M1.
 
 ## Cosa provare (fine M0)
-Le build con la grafica nuova partono da `main` dopo l'unione della PR #2 (16/11, ~06:05 UTC): web dopo circa 30 minuti, APK e IPA dopo circa un'ora (una build alla volta).
+Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su GitHub Pages (16 MB, verificata), APK 43,5 MB firmato con la chiave di Orbis, IPA 54,8 MB.
 - **Web**: aprire `https://samozzux.github.io/orbis/` da Mac, iPhone (in verticale e in orizzontale) e iPad → logo, caricamento con consigli, città 3D che gira con mare e Majella, bottoni di vetro e navbar; "Impostazioni" apre il pannello (nel browser con la nota sull'orientamento); le altre voci mostrano "In arrivo"; su Mac anche Tab/frecce + Invio, Esc chiude le Impostazioni.
 - **iPhone / iPad**: scaricare `Orbis-ipa` dall'ultima esecuzione verde di "iOS build" e installarlo con Sideloadly (istruzioni nel README) → parte in verticale e ruota col telefono; in Impostazioni → Schermo spegnere "Rotazione automatica" e provare Verticale/Orizzontale; chiudere e riaprire l'app: la scelta resta. Controllare la Dynamic Island in entrambi gli orientamenti.
 - **Android**: scaricare `Orbis-apk` dall'ultima esecuzione verde di "Android build" e installarlo (istruzioni nel README) → stesse prove dell'iPhone; anche il tasto "indietro" chiude le Impostazioni.
