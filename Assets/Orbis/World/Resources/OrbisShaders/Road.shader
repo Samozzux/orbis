@@ -76,7 +76,13 @@ Shader "Orbis/Road"
                 float width = max(i.uv0.z, 0.5);
                 float kind = i.uv1.x;
                 float oneway = i.uv1.y;
-                float markings = i.uv1.w;
+                // segnaletica: bit 0 righe, bit 1-2 strisce pedonali a inizio/fine, sopra la lunghezza in quarti di metro
+                float sig = i.uv1.w;
+                float flags = fmod(sig, 8.0);
+                float roadLen = floor(sig / 8.0) * 0.25;
+                float markings = fmod(flags, 2.0);
+                float zebraStart = fmod(floor(flags / 2.0), 2.0);
+                float zebraEnd = floor(flags / 4.0);
                 float xm = (across - 0.5) * width; // metri dal centro
                 half3 albedo = baseColor;
                 half spec = 0.05;
@@ -92,6 +98,12 @@ Shader "Orbis/Road"
                         float center = oneway > 0.5 || oneway < -0.5 ? 0 : Line(xm, 0, 0.07) * step(frac(along / 6.0), 0.5);
                         albedo = lerp(albedo, OrbisSRGB(_Marking.rgb), saturate(edge + center) * 0.9);
                     }
+                    // strisce pedonali vicino agli incroci: fasce bianche parallele alla strada, larghe 50 cm
+                    float zs = zebraStart * step(5.0, along) * step(along, 8.0);
+                    float ze = zebraEnd * step(roadLen - 8.0, along) * step(along, roadLen - 5.0);
+                    float bars = step(0.5, frac(xm / 1.0 + 0.25)) * step(abs(xm), width * 0.5 - 0.3);
+                    float wear = 0.75 + 0.25 * OrbisNoise(i.positionWS.xz * 2.3);
+                    albedo = lerp(albedo, OrbisSRGB(_Marking.rgb), saturate(zs + ze) * bars * 0.92 * wear);
                     spec = 0.08 + _OrbisWet * 0.5;
                 }
                 else if (kind < 1.5)

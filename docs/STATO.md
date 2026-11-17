@@ -62,6 +62,16 @@ Branch `m2-stile-gioco`.
 - **Prestazioni**: addobbi solo nei tile vicini, in mesh separate che si spengono oltre 300–800 m secondo il profilo (telefono via web 300 m e densità 0,4; desktop 800 m). Nel centro di Chieti pesano quanto gli edifici (112 mila triangoli contro 111 mila nei 5 tile vicini).
 - **Scelte semplici annotate**: il potenziamento degli edifici reali è immediato (niente cantiere); gli addobbi sono geometria procedurale semplice (stile Classico); i modelli "HD" più dettagliati (cornicioni, persiane in rilievo, insegne con il nome vero del locale) sono il passo successivo.
 
+### Grafica HD di edifici e strade (17/11/2026, mentre Samuele prova M2)
+Branch `m2-grafica-hd`, scelta di Samuele: "Grafica HD edifici".
+- **Insegne con il nome vero**: bar, negozi, farmacie, banche, alberghi, scuole e uffici pubblici hanno sull'insegna il nome preso da OSM. Il testo è scritto in 3D col font del gioco (Lilita One), solo sulle 48 insegne più vicine (entro 140 m); da lontano resta il pannello colorato. Testo chiaro su fondo scuro e viceversa; la sera l'insegna è accesa.
+- **Rilievi**: sui tetti a falde una gronda in coppi che sporge di mezzo metro, col sottogronda, ma solo lungo i lati di gronda (non sui timpani); sui tetti piani un cornicione sotto il parapetto.
+- **Strade**:
+  - strisce pedonali vicino agli incroci veri (almeno tre strade), disegnate dallo shader con un po' di usura;
+  - lampioni ogni 32 m a lati alterni sui marciapiedi delle vie urbane e ai bordi delle vie pedonali con nome, accesi la sera.
+- **Prestazioni**: nei 5 tile vicini al centro gli addobbi sono 193 mila triangoli, contro 111 mila degli edifici; si spengono oltre 550–800 m. Sui profili leggeri (telefono via web, telefoni con poca memoria) niente gronde, cornicioni e lampioni.
+- **Prossimi passi possibili**: persiane e balconi più dettagliati da vicino, casali e fienili in campagna, alberi lungo i viali.
+
 ### Correzioni dalla prova di Samuele (17/11/2026)
 Branch `m2-costruzione`.
 - **Edifici che entravano nel terreno**:
@@ -282,4 +292,5 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 - **Resta**: PR, build verdi, prova di Samuele, tag `v0.2.0`.
 - **Poi, sempre il 17/11**: PR #6 unita in `main` (build per la prova di M2 avviate). Su richiesta di Samuele: edifici reali in stile gioco con addobbi per tipo e livello, potenziamento degli edifici reali, città più colorata (branch `m2-stile-gioco`).
 - **Sera del 17/11**: PR #7 unita. Dalla prova di Samuele: edifici costruiti che entravano nel terreno (corretto), telecamera più vicina in modalità costruzione, terreno non più sgranato (branch `m2-costruzione`).
+- **Poi**: su scelta di Samuele, grafica HD di edifici e strade: insegne con i nomi veri, gronde e cornicioni, strisce pedonali e lampioni (branch `m2-grafica-hd`).
 

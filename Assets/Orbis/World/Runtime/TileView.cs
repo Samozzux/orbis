@@ -13,6 +13,8 @@ namespace Orbis.World
         public TileLod Lod;
         public Vector3 Origin;
         public int DecorationTriangles { get; private set; }
+        /// <summary>Insegne con il nome vero (coordinate del tile).</summary>
+        public System.Collections.Generic.List<Core.World.Meshing.SignInfo> Signs { get; private set; }
         public int BuildingTriangles { get; private set; }
         private Texture2D _landuse;
         private Texture2D _detail;
@@ -46,6 +48,7 @@ namespace Orbis.World
             }
             _decor.Clear();
             DecorationTriangles = r.DecorationTriangles;
+            Signs = r.Signs;
             BuildingTriangles = 0;
             foreach (var bb in r.Buildings)
                 if (bb != null) BuildingTriangles += bb.IndexCount / 3;

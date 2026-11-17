@@ -27,7 +27,9 @@ namespace Orbis.Core.World.Meshing
             foreach (var r in roads) Build(r, ground, mb);
         }
 
-        public void Build(RoadInfo r, GroundSampler ground, MeshBuffer mb)
+        /// <param name="zebraStart">strisce pedonali all'inizio (incrocio)</param>
+        /// <param name="zebraEnd">strisce pedonali alla fine (incrocio)</param>
+        public void Build(RoadInfo r, GroundSampler ground, MeshBuffer mb, bool zebraStart = false, bool zebraEnd = false)
         {
             if (r.HasFlag(RoadFlag.Tunnel) || r.Class == RoadClass.Abandoned || r.Points.Length < 4) return;
             var kind = KindOf(r);
@@ -38,7 +40,11 @@ namespace Orbis.Core.World.Meshing
             uint color = MeshBuffer.Rgb(ColorOf(r, kind));
             bool markings = kind == Kind.Road && r.Class <= RoadClass.Tertiary;
             float uv1z = (float)r.Class;
-            Ribbon(mb, width, 0, color, (float)kind, r.Oneway, uv1z, markings ? 1 : 0, r.Lanes);
+            // segnaletica: bit 0 righe, bit 1-2 strisce pedonali a inizio/fine; sopra, la lunghezza in quarti di metro
+            bool zebra = kind == Kind.Road && width > 4f && r.Class <= RoadClass.LivingStreet && _dist[_dist.Count - 1] > 20f;
+            int flags = (markings ? 1 : 0) | (zebra && zebraStart ? 2 : 0) | (zebra && zebraEnd ? 4 : 0);
+            float signage = flags + 8f * (float)Math.Round(_dist[_dist.Count - 1] * 4f);
+            Ribbon(mb, width, 0, color, (float)kind, r.Oneway, uv1z, signage, r.Lanes);
             if (HasSidewalks(r, kind))
                 Ribbon(mb, width + 2 * SidewalkWidth, -0.04f, MeshBuffer.Rgb(0xB7B1A6), (float)Kind.Sidewalk, 0, uv1z, 0, 0);
             if (kind != Kind.Rail && kind != Kind.Steps)
@@ -123,7 +129,7 @@ namespace Orbis.Core.World.Meshing
             }
         }
 
-        private static bool HasSidewalks(RoadInfo r, Kind k)
+        public static bool HasSidewalks(RoadInfo r, Kind k)
         {
             if (k != Kind.Road || r.HasFlag(RoadFlag.Bridge)) return false;
             if (r.HasFlag(RoadFlag.SidewalkLeft) || r.HasFlag(RoadFlag.SidewalkRight)) return true;
