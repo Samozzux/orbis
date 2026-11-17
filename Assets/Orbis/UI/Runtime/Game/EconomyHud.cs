@@ -267,11 +267,17 @@ namespace Orbis.UI.Game
                 card.EnableInClassList("catalog-card--locked", locked);
                 var name = new Label(item.Name) { pickingMode = PickingMode.Ignore };
                 name.AddToClassList("catalog-card__name");
+                // anteprima 3D dell'elemento sotto il nome (arriva dopo pochi frame la prima volta)
+                var preview = new VisualElement { pickingMode = PickingMode.Ignore };
+                preview.AddToClassList("catalog-card__preview");
+                var tex = _game.Previews != null ? _game.Previews.Get(item, t => SetPreview(preview, t)) : null;
+                if (tex != null) SetPreview(preview, tex);
                 var info = new Label(Describe(item)) { pickingMode = PickingMode.Ignore };
                 info.AddToClassList("catalog-card__info");
                 var cost = new Label(locked ? Loc.Format("build.locked", item.UnlockLevel) : Fmt.Money(Placement.CostOf(item, null))) { pickingMode = PickingMode.Ignore };
                 cost.AddToClassList("catalog-card__cost");
                 card.Add(name);
+                card.Add(preview);
                 card.Add(info);
                 card.Add(cost);
                 var it = item;
@@ -287,6 +293,13 @@ namespace Orbis.UI.Game
                 };
                 _catalogGrid.Add(card);
             }
+        }
+
+        private static void SetPreview(VisualElement e, Texture t)
+        {
+            if (t is RenderTexture rt) e.style.backgroundImage = Background.FromRenderTexture(rt);
+            else if (t is Texture2D t2) e.style.backgroundImage = Background.FromTexture2D(t2);
+            e.AddToClassList("catalog-card__preview--ready");
         }
 
         /// <summary>Sagoma e resa principale (abitanti, posti, energia, produzione…).</summary>

@@ -95,6 +95,8 @@ namespace Orbis.Gameplay
         public string SaveId { get; private set; }
         public OfflineSummary OfflineSummary { get; private set; }
         public BuildController Build { get; private set; }
+        /// <summary>Anteprime 3D del catalogo.</summary>
+        public CatalogPreviews Previews { get; private set; }
 
         /// <summary>Eventi della simulazione (cantiere finito, missione, livello…).</summary>
         public event Action<SimEvent> SimulationEvent;
@@ -122,6 +124,7 @@ namespace Orbis.Gameplay
             c.OfflineSummary = offline;
             c.View = new PlacedObjectsView(world.World, c.Content.Catalog, world.World.Content ?? world.transform);
             c.Build = BuildController.Attach(c);
+            c.Previews = CatalogPreviews.Attach(c);
             c._nextAutosave = Time.unscaledTime + AutosaveSeconds;
             world.World.TileLoaded += _ => c.View.Sync(c.State);
             world.Game = c;

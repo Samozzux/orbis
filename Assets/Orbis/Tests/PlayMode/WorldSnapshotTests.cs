@@ -262,6 +262,47 @@ namespace Orbis.Tests.PlayMode
                 Save(rig.Cam, Path.Combine(dir, "35-corso-sera.png"));
             }
 
+            // una via del centro da vicino: asfalto, mezzeria, cordoli, strisce, lampioni
+            Core.World.Tiles.RoadInfo via = null;
+            Orbis.World.TileView viaTile = null;
+            float bestVia = float.MaxValue;
+            foreach (var v in session.World.Tiles.Values)
+            {
+                if (v.Lod != Orbis.World.TileLod.Full) continue;
+                foreach (var r in v.Data.Roads)
+                {
+                    if (r.Points.Length < 6 || (r.Class != Core.World.Fb.RoadClass.Tertiary && r.Class != Core.World.Fb.RoadClass.Secondary) || string.IsNullOrEmpty(r.Name)) continue;
+                    float d2 = (v.Origin + new Vector3(r.Points[2], 0, r.Points[3])).sqrMagnitude;
+                    if (d2 < bestVia)
+                    {
+                        bestVia = d2;
+                        via = r;
+                        viaTile = v;
+                    }
+                }
+            }
+            if (via != null)
+            {
+                var a = new Vector2(via.Points[2], via.Points[3]);
+                var bb = new Vector2(via.Points[4], via.Points[5]);
+                var along = (bb - a).normalized;
+                var p0 = viaTile.Origin + new Vector3(a.x, 0, a.y);
+                p0.y = session.World.HeightAt(p0.x, p0.z);
+                rig.Target = p0;
+                rig.Yaw = Mathf.Atan2(along.x, along.y) * Mathf.Rad2Deg;
+                rig.Pitch = 32;
+                rig.Distance = 45;
+                rig.Snap();
+                yield return At(session, 11);
+                Debug.Log($"[Orbis] strada: {via.Name}");
+                Save(rig.Cam, Path.Combine(dir, "38-strada.png"));
+                rig.Distance = 220;
+                rig.Pitch = 40;
+                rig.Snap();
+                yield return At(session, 11);
+                Save(rig.Cam, Path.Combine(dir, "39-strade-media.png"));
+            }
+
             // un'insegna con il nome da vicino
             Orbis.World.TileView signTile = null;
             Core.World.Meshing.SignInfo sign = default;

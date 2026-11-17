@@ -40,10 +40,12 @@ namespace Orbis.Core.World.Meshing
             uint color = MeshBuffer.Rgb(ColorOf(r, kind));
             bool markings = kind == Kind.Road && r.Class <= RoadClass.Tertiary;
             float uv1z = (float)r.Class;
-            // segnaletica: bit 0 righe, bit 1-2 strisce pedonali a inizio/fine; sopra, la lunghezza in quarti di metro
+            // segnaletica: bit 0 righe di bordo e mezzeria, bit 1-2 strisce pedonali a inizio/fine, bit 3 solo mezzeria
+            // (vie residenziali larghe); sopra, la lunghezza in quarti di metro
             bool zebra = kind == Kind.Road && width > 4f && r.Class <= RoadClass.LivingStreet && _dist[_dist.Count - 1] > 20f;
-            int flags = (markings ? 1 : 0) | (zebra && zebraStart ? 2 : 0) | (zebra && zebraEnd ? 4 : 0);
-            float signage = flags + 8f * (float)Math.Round(_dist[_dist.Count - 1] * 4f);
+            bool centerOnly = !markings && kind == Kind.Road && width >= 5.5f && r.Class <= RoadClass.Residential && r.Oneway == 0;
+            int flags = (markings ? 1 : 0) | (zebra && zebraStart ? 2 : 0) | (zebra && zebraEnd ? 4 : 0) | (centerOnly ? 8 : 0);
+            float signage = flags + 16f * (float)Math.Round(_dist[_dist.Count - 1] * 4f);
             Ribbon(mb, width, 0, color, (float)kind, r.Oneway, uv1z, signage, r.Lanes);
             if (HasSidewalks(r, kind))
                 Ribbon(mb, width + 2 * SidewalkWidth, -0.04f, MeshBuffer.Rgb(0xB7B1A6), (float)Kind.Sidewalk, 0, uv1z, 0, 0);
@@ -121,11 +123,11 @@ namespace Orbis.Core.World.Meshing
             switch (r.Class)
             {
                 case RoadClass.Motorway:
-                case RoadClass.Trunk: return 0x5F6366;
+                case RoadClass.Trunk: return 0x4B4F54;
                 case RoadClass.Primary:
-                case RoadClass.Secondary: return 0x686B6E;
-                case RoadClass.Service: return 0x7D7E7E;
-                default: return 0x727476;
+                case RoadClass.Secondary: return 0x52565B;
+                case RoadClass.Service: return 0x67696C;
+                default: return 0x5B5E63;
             }
         }
 
