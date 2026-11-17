@@ -34,7 +34,7 @@ GitHub Pages va attivato da Samuele: **Settings → Pages → Source: GitHub Act
 |---|---|---|
 | `core-tests.yml` | ogni push e PR | `dotnet test tests/Orbis.Core.Tests` su Ubuntu (veloce, senza Unity) |
 | `backend.yml` | push su `main` che tocca `backend/**` | test PHP con MySQL in container → genera `config.php` dai segreti → deploy FTP in `/orbis/` → chiama `/orbis/api/health` per verifica |
-| `ios-build.yml` | push su `main` (Assets, Packages, ProjectSettings), manuale, tag `v*` | build Unity iOS → progetto Xcode → `xcodebuild` senza firma → **`Orbis.ipa`** come artifact (30 giorni); sui tag crea una Release con l'IPA |
+| `ios-build.yml` | push su `main` (Assets, Packages, ProjectSettings), manuale, tag `v*` | in due job: build Unity iOS → progetto Xcode **su Linux** (l'unica parte con la licenza Unity), poi `xcodebuild` senza firma **su macOS** → **`Orbis.ipa`** come artifact (30 giorni); sui tag crea una Release con l'IPA. Se GitHub tarda a dare un Mac, aspetta solo il secondo job e la licenza resta libera per test e altre build |
 | `android-build.yml` | come sopra | build Unity Android (ARM64, IL2CPP) firmata col keystore → **`Orbis.apk`** come artifact (30 giorni); sui tag allegata alla Release |
 | `web-build.yml` | come sopra | build Unity Web → deploy su **GitHub Pages** (`https://samozzux.github.io/orbis/`) |
 | `unity-tests.yml` | PR e manuale | test EditMode/PlayMode Unity |
@@ -51,7 +51,7 @@ Regole comuni:
 
 ### Licenza Unity 6 (importante)
 Con Unity 6 la licenza Personal sul Mac è in formato **XML** (`UnityEntitlementLicense.xml`), non `.ulf`. Strategia:
-1. **Prima scelta**: attivazione online con email e password, con un'azione che supporta la licenza Personal (es. `buildalon/activate-unity-license`, `license: Personal`, `username`/`password` dai segreti) e installazione di Unity con un'azione dedicata (es. `buildalon/unity-setup`, versione `6000.6.9f1`, moduli `ios`, `android` e `webgl`; le build Android e web possono girare su runner Linux, quella iOS su macOS).
+1. **Prima scelta**: attivazione online con email e password, con un'azione che supporta la licenza Personal (es. `buildalon/activate-unity-license`, `license: Personal`, `username`/`password` dai segreti) e installazione di Unity con un'azione dedicata (es. `buildalon/unity-setup`, versione `6000.6.9f1`, moduli `ios`, `android` e `webgl`; le build Android e web girano su runner Linux; per iOS l'esportazione Unity gira su Linux e solo la compilazione Xcode su macOS).
 2. **Ripiego**: GameCI (`game-ci/unity-builder`) con `UNITY_EMAIL`, `UNITY_PASSWORD`, `UNITY_LICENSE`.
 3. Verificare in M0 nomi, versioni e parametri attuali delle azioni nella loro documentazione e scegliere quella che funziona; annotare in `docs/STATO.md`.
 

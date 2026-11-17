@@ -1,4 +1,5 @@
-# Build iOS (iPhone + iPad, iOS 26) → progetto Xcode → Orbis.ipa senza firma (artifact "Orbis-ipa", si installa con Sideloadly).
+# Build iOS (iPhone + iPad, iOS 26): Unity su Linux → progetto Xcode → Xcode su macOS → Orbis.ipa senza firma
+# (artifact "Orbis-ipa", si installa con Sideloadly).
 name: iOS build
 
 on:
@@ -22,17 +23,26 @@ permissions:
 
 
 jobs:
-  build:
-    name: ios
+  # 1) Unity → progetto Xcode su Linux: è l'unica parte che usa la licenza Unity, e i runner Linux sono
+  #    subito disponibili. Prima tutto girava su macOS e, se GitHub non aveva un Mac libero, il job restava
+  #    in coda tenendo la licenza: test e altre build restavano bloccati per ore (17/11/2026).
+  export:
+    name: ios-export
     # una build Unity alla volta in tutto il repository (licenza Personal, docs/07 §2):
     # le altre aspettano in coda, nessuna viene annullata
     concurrency:
       group: unity-license
       queue: max
       cancel-in-progress: false
-    runs-on: macos-26
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
+      - name: Libera spazio su disco
+        uses: jlumbroso/free-disk-space@v2.0.0
+        with:
+          tool-cache: false
+          large-packages: false
+
       - uses: actions/checkout@v7
         with:
           fetch-tags: true
@@ -44,10 +54,10 @@ jobs:
         uses: actions/cache@v6
         with:
           path: Library
-          key: Library-iOS-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ github.sha }}
+          key: Library-iOS-linux-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-${{ github.sha }}
           restore-keys: |
-            Library-iOS-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-
-            Library-iOS-
+            Library-iOS-linux-${{ hashFiles('Packages/packages-lock.json', 'ProjectSettings/ProjectVersion.txt') }}-
+            Library-iOS-linux-
 
       - name: Installa Unity
         uses: buildalon/unity-setup@v3
@@ -71,6 +81,35 @@ jobs:
         run: |
           .github/scripts/run-unity.sh -quit -buildTarget iOS \
             -executeMethod Orbis.EditorTools.Build.BuildScript.BuildIOS
+
+      - name: Impacchetta il progetto Xcode
+        # tar conserva i permessi degli script del progetto (gli artifact da soli li perderebbero)
+        run: |
+          tar -czf ios-xcode.tar.gz -C build ios
+          echo "### Progetto Xcode: $(du -h ios-xcode.tar.gz | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ios-xcode
+          path: ios-xcode.tar.gz
+          compression-level: 0
+          retention-days: 2
+
+  # 2) Xcode → Orbis.ipa su macOS, senza licenza Unity: se il Mac tarda, nessun altro job aspetta.
+  ipa:
+    name: ios
+    needs: export
+    runs-on: macos-26
+    timeout-minutes: 90
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: ios-xcode
+
+      - name: Estrai il progetto Xcode
+        run: |
+          mkdir -p build
+          tar -xzf ios-xcode.tar.gz -C build
 
       - name: Compila con Xcode (senza firma)
         run: |
