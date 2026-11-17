@@ -230,6 +230,112 @@ namespace Orbis.Tests.PlayMode
             rig.Snap();
             yield return At(session, 11);
             Save(rig.Cam, Path.Combine(dir, "33-via-del-centro.png"));
+
+            // il corso principale: insegne con i nomi, lampioni, strisce pedonali; di giorno e di sera
+            Core.World.Tiles.RoadInfo corso = null;
+            Orbis.World.TileView corsoTile = null;
+            foreach (var v in session.World.Tiles.Values)
+                foreach (var r in v.Data.Roads)
+                    if (r.Name != null && r.Name.StartsWith("Corso Marrucino") && r.Points.Length >= 6 && (corso == null || r.Points.Length > corso.Points.Length))
+                    {
+                        corso = r;
+                        corsoTile = v;
+                    }
+            if (corso != null)
+            {
+                int m = (corso.Points.Length / 4) * 2;
+                var a = new Vector2(corso.Points[m], corso.Points[m + 1]);
+                var bb = new Vector2(corso.Points[m + 2], corso.Points[m + 3]);
+                var along = (bb - a).normalized;
+                var mid = corsoTile.Origin + new Vector3(a.x, 0, a.y);
+                mid.y = session.World.HeightAt(mid.x, mid.z) + 3f;
+                rig.Target = mid;
+                rig.Yaw = Mathf.Atan2(along.x, along.y) * Mathf.Rad2Deg;
+                rig.Pitch = 20;
+                rig.Distance = 38;
+                rig.Snap();
+                yield return At(session, 11);
+                for (int i = 0; i < 20; i++) yield return null;
+                Debug.Log($"[Orbis] corso: {session.World.Signs.Visible} insegne con il nome");
+                Save(rig.Cam, Path.Combine(dir, "34-corso.png"));
+                yield return At(session, 21);
+                Save(rig.Cam, Path.Combine(dir, "35-corso-sera.png"));
+            }
+
+            // una via del centro da vicino: asfalto, mezzeria, cordoli, strisce, lampioni
+            Core.World.Tiles.RoadInfo via = null;
+            Orbis.World.TileView viaTile = null;
+            float bestVia = float.MaxValue;
+            foreach (var v in session.World.Tiles.Values)
+            {
+                if (v.Lod != Orbis.World.TileLod.Full) continue;
+                foreach (var r in v.Data.Roads)
+                {
+                    if (r.Points.Length < 6 || (r.Class != Core.World.Fb.RoadClass.Tertiary && r.Class != Core.World.Fb.RoadClass.Secondary) || string.IsNullOrEmpty(r.Name)) continue;
+                    float d2 = (v.Origin + new Vector3(r.Points[2], 0, r.Points[3])).sqrMagnitude;
+                    if (d2 < bestVia)
+                    {
+                        bestVia = d2;
+                        via = r;
+                        viaTile = v;
+                    }
+                }
+            }
+            if (via != null)
+            {
+                var a = new Vector2(via.Points[2], via.Points[3]);
+                var bb = new Vector2(via.Points[4], via.Points[5]);
+                var along = (bb - a).normalized;
+                var p0 = viaTile.Origin + new Vector3(a.x, 0, a.y);
+                p0.y = session.World.HeightAt(p0.x, p0.z);
+                rig.Target = p0;
+                rig.Yaw = Mathf.Atan2(along.x, along.y) * Mathf.Rad2Deg;
+                rig.Pitch = 32;
+                rig.Distance = 45;
+                rig.Snap();
+                yield return At(session, 11);
+                Debug.Log($"[Orbis] strada: {via.Name}");
+                Save(rig.Cam, Path.Combine(dir, "38-strada.png"));
+                rig.Distance = 220;
+                rig.Pitch = 40;
+                rig.Snap();
+                yield return At(session, 11);
+                Save(rig.Cam, Path.Combine(dir, "39-strade-media.png"));
+            }
+
+            // un'insegna con il nome da vicino
+            Orbis.World.TileView signTile = null;
+            Core.World.Meshing.SignInfo sign = default;
+            float bestSign = float.MaxValue;
+            foreach (var v in session.World.Tiles.Values)
+            {
+                if (v.Signs == null) continue;
+                foreach (var sg in v.Signs)
+                {
+                    float d2 = (v.Origin + new Vector3(sg.X, 0, sg.Y)).sqrMagnitude;
+                    if (sg.Width > 2.5f && d2 < bestSign)
+                    {
+                        bestSign = d2;
+                        sign = sg;
+                        signTile = v;
+                    }
+                }
+            }
+            if (signTile != null)
+            {
+                rig.Target = signTile.Origin + new Vector3(sign.X, sign.Z, sign.Y);
+                rig.Yaw = Mathf.Atan2(-sign.NormalX, -sign.NormalY) * Mathf.Rad2Deg;
+                rig.Pitch = 12;
+                rig.Distance = 12;
+                rig.Snap();
+                yield return At(session, 11);
+                for (int i = 0; i < 25; i++) yield return null;
+                Debug.Log($"[Orbis] insegna: {sign.Text}");
+                Save(rig.Cam, Path.Combine(dir, "36-insegna.png"));
+                yield return At(session, 21);
+                for (int i = 0; i < 25; i++) yield return null;
+                Save(rig.Cam, Path.Combine(dir, "37-insegna-sera.png"));
+            }
             OrbisApp.Instance.EndGame();
         }
 

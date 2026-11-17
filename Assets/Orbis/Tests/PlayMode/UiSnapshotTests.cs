@@ -131,7 +131,10 @@ namespace Orbis.Tests.PlayMode
             session.Select(null);
 
             Click(root, "hud-build");
-            yield return new WaitForSecondsRealtime(0.6f);
+            // le anteprime 3D arrivano poche alla volta
+            var until = Time.realtimeSinceStartup + 20f;
+            while (game.Previews.Rendered < 12 && Time.realtimeSinceStartup < until) yield return null;
+            yield return new WaitForSecondsRealtime(0.8f);
             Shot(dir, tag, "06-catalogo", rig.Cam, ui);
             app.Panel.Close();
             Click(root, "hud-finance");

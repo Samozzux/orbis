@@ -63,6 +63,7 @@ namespace Orbis.Gameplay
         private GameObject _highlight;
         private Mesh _highlightMesh;
         private float _originalShadowDistance = -1;
+        private float _originalRenderScale = -1;
         private UniversalAdditionalCameraData _cameraData;
         private Volume _volume;
         private UniversalRenderPipelineAsset _urp;
@@ -117,7 +118,13 @@ namespace Orbis.Gameplay
                 _volume.weight = 1f;
             }
             _urp = GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
-            if (_urp != null) _originalShadowDistance = _urp.shadowDistance;
+            if (_urp != null)
+            {
+                _originalShadowDistance = _urp.shadowDistance;
+                // immagine nitida: risoluzione piena sui dispositivi capaci (prima era fissa all'80% su telefoni e web)
+                _originalRenderScale = _urp.renderScale;
+                _urp.renderScale = Quality.RenderScale;
+            }
             StartCoroutine(Load(source));
         }
 
@@ -168,6 +175,7 @@ namespace Orbis.Gameplay
             if (_cameraData != null) _cameraData.renderPostProcessing = false;
             if (_volume != null) _volume.weight = 0f;
             if (_urp != null && _originalShadowDistance > 0) _urp.shadowDistance = _originalShadowDistance;
+            if (_urp != null && _originalRenderScale > 0) _urp.renderScale = _originalRenderScale;
             if (CameraRig != null) Destroy(CameraRig);
             WorldMaterials.SetNight(0);
             WorldMaterials.SetWet(0);

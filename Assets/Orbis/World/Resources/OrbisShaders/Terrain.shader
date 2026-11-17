@@ -154,8 +154,14 @@ Shader "Orbis/Terrain"
                 }
                 else if (ground < 6.5)
                 {
-                    // città: asfalto e pietra con macchie
-                    albedo *= 0.9 + 0.14 * OrbisNoise(w * 0.25);
+                    // città: cortili lastricati e giardini a chiazze
+                    float garden = smoothstep(0.52, 0.66, OrbisNoise(w * 0.07 + 11.0));
+                    float2 tp = lp / 0.5;
+                    float2 tf = abs(frac(tp) - 0.5);
+                    float joints = smoothstep(0.42, 0.5, max(tf.x, tf.y)) * fineFade;
+                    half3 paving = area.rgb * (0.95 + 0.1 * OrbisHash21(floor(tp))) * (1.0 - 0.12 * joints);
+                    half3 lawn = half3(0.47, 0.58, 0.32) * (0.85 + 0.25 * OrbisNoise(w * 0.4));
+                    albedo = lerp(paving * (0.9 + 0.14 * OrbisNoise(w * 0.25)), lawn, garden * 0.85);
                 }
                 else
                 {

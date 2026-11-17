@@ -76,31 +76,58 @@ Shader "Orbis/Road"
                 float width = max(i.uv0.z, 0.5);
                 float kind = i.uv1.x;
                 float oneway = i.uv1.y;
-                float markings = i.uv1.w;
+                // segnaletica: bit 0 righe, bit 1-2 strisce pedonali a inizio/fine, sopra la lunghezza in quarti di metro
+                float sig = i.uv1.w;
+                float flags = fmod(sig, 16.0);
+                float roadLen = floor(sig / 16.0) * 0.25;
+                float markings = fmod(flags, 2.0);
+                float zebraStart = fmod(floor(flags / 2.0), 2.0);
+                float zebraEnd = fmod(floor(flags / 4.0), 2.0);
+                float centerOnly = floor(flags / 8.0);
                 float xm = (across - 0.5) * width; // metri dal centro
                 half3 albedo = baseColor;
                 half spec = 0.05;
-                float grain = OrbisNoise(i.positionWS.xz * 3.1) * 0.5 + OrbisNoise(i.positionWS.xz * 0.35) * 0.5;
+                // grana fine solo da vicino (da lontano sfarfallerebbe), macchie larghe sempre
+                float2 wp = i.positionWS.xz;
+                float fineFade = saturate(1.0 - fwidth(wp.x) * 2.5);
+                float grain = (OrbisNoise(wp * 3.1) - 0.5) * fineFade + OrbisNoise(wp * 0.35) * 0.5 + 0.25;
 
                 if (kind < 0.5)
                 {
-                    // asfalto
-                    albedo *= 0.92 + 0.16 * grain;
-                    if (markings > 0.5 && width > 4.5)
+                    // asfalto: inerti fini (da vicino), rattoppi, tracce delle ruote, cunette ai bordi
+                    albedo *= 0.9 + 0.2 * grain;
+                    float patch = smoothstep(0.62, 0.66, OrbisNoise(wp * 0.09 + 3.7));
+                    albedo *= 1.0 - 0.10 * patch;
+                    float lanes = max(1.0, round(width / 3.2));
+                    float lane = width / lanes;
+                    float inLane = frac((xm + width * 0.5) / lane);
+                    float tracks = Line(inLane, 0.27, 0.07) + Line(inLane, 0.73, 0.07);
+                    albedo *= 1.0 - 0.07 * saturate(tracks) * step(4.5, width);
+                    float gutter = smoothstep(width * 0.5 - 0.45, width * 0.5 - 0.1, abs(xm));
+                    albedo *= 1.0 - 0.18 * gutter;
+                    if ((markings > 0.5 || centerOnly > 0.5) && width > 4.5)
                     {
-                        float edge = Line(abs(xm), width * 0.5 - 0.35, 0.07);
-                        float center = oneway > 0.5 || oneway < -0.5 ? 0 : Line(xm, 0, 0.07) * step(frac(along / 6.0), 0.5);
+                        float edge = markings > 0.5 ? Line(abs(xm), width * 0.5 - 0.35, 0.07) : 0;
+                        float center = oneway > 0.5 || oneway < -0.5 ? 0 : Line(xm, 0, 0.06) * step(frac(along / 6.0), 0.5);
                         albedo = lerp(albedo, OrbisSRGB(_Marking.rgb), saturate(edge + center) * 0.9);
                     }
+                    // strisce pedonali vicino agli incroci: fasce bianche parallele alla strada, larghe 50 cm
+                    float zs = zebraStart * step(5.0, along) * step(along, 8.0);
+                    float ze = zebraEnd * step(roadLen - 8.0, along) * step(along, roadLen - 5.0);
+                    float bars = step(0.5, frac(xm / 1.0 + 0.25)) * step(abs(xm), width * 0.5 - 0.3);
+                    float wear = 0.75 + 0.25 * OrbisNoise(i.positionWS.xz * 2.3);
+                    albedo = lerp(albedo, OrbisSRGB(_Marking.rgb), saturate(zs + ze) * bars * 0.92 * wear);
                     spec = 0.08 + _OrbisWet * 0.5;
                 }
                 else if (kind < 1.5)
                 {
-                    // marciapiede: lastre e cordolo verso la strada
+                    // marciapiede: lastre e cordolo chiaro verso la strada (il marciapiede è largo 1,6 m per lato)
                     float2 p = float2(xm, along) / 0.6;
                     float joints = max(Line(frac(p.x), 0.0, 0.03) + Line(frac(p.x), 1.0, 0.03), Line(frac(p.y), 0.0, 0.03) + Line(frac(p.y), 1.0, 0.03));
-                    albedo *= 1.0 - 0.15 * saturate(joints);
+                    albedo *= 1.0 - 0.15 * saturate(joints) * fineFade;
                     albedo *= 0.94 + 0.1 * grain;
+                    float curb = Line(abs(xm), width * 0.5 - 1.6 + 0.09, 0.09);
+                    albedo = lerp(albedo, half3(0.82, 0.8, 0.76), curb * 0.85);
                 }
                 else if (kind < 2.5)
                 {

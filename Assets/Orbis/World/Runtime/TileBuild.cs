@@ -34,6 +34,8 @@ namespace Orbis.World
         /// <summary>Addobbi degli edifici (solo LOD pieno), separati per spegnerli da lontano.</summary>
         public MeshBuffer[] Decorations = new MeshBuffer[Chunks * Chunks];
         public int DecorationTriangles;
+        /// <summary>Insegne con il nome vero (coordinate del tile), scritte dal motore solo da vicino.</summary>
+        public List<SignInfo> Signs;
         public List<PlantInstance> Plants;
         public int BuildingCount;
     }
@@ -72,11 +74,20 @@ namespace Orbis.World
 
             r.Roads = new MeshBuffer();
             var roadMesher = new RoadMesher();
+            // incroci veri (almeno tre strade): lì lo shader disegna le strisce pedonali
+            var crossings = lod == TileLod.Far ? null : StreetFurniture.Intersections(data.Roads);
             int n = 0;
             foreach (var road in data.Roads)
             {
                 if (!Include(road, lod)) continue;
-                roadMesher.Build(road, ground, r.Roads);
+                bool zs = false, ze = false;
+                if (crossings != null && road.Points.Length >= 4)
+                {
+                    int last = road.Points.Length - 2;
+                    zs = crossings.Contains(StreetFurniture.Key(road.Points[0], road.Points[1]));
+                    ze = crossings.Contains(StreetFurniture.Key(road.Points[last], road.Points[last + 1]));
+                }
+                roadMesher.Build(road, ground, r.Roads, zs, ze);
                 if (++n % 200 == 0) yield return null;
             }
             yield return null;
@@ -92,16 +103,18 @@ namespace Orbis.World
                 bool decorate = lod == TileLod.Full && decorDensity > 0.01f;
                 BuildingDecorator decorator = null;
                 RoadIndex roads = null;
-                string[] poiCat = null;
+                string[] poiCat = null, poiName = null;
                 Orbis.Core.World.Geometry.Vec2?[] poiPos = null;
                 List<PoiInfo> fuel = null;
                 var scratch = new MeshBuffer();
                 var decoPlants = new List<PlantInstance>();
                 if (decorate)
                 {
-                    decorator = new BuildingDecorator { Density = decorDensity };
+                    r.Signs = new List<SignInfo>();
+                    decorator = new BuildingDecorator { Density = decorDensity, Signs = r.Signs };
                     roads = new RoadIndex(data.Roads);
                     poiCat = new string[data.Buildings.Length];
+                    poiName = new string[data.Buildings.Length];
                     poiPos = new Orbis.Core.World.Geometry.Vec2?[data.Buildings.Length];
                     fuel = new List<PoiInfo>();
                     foreach (var p in data.Pois)
@@ -112,6 +125,7 @@ namespace Orbis.World
                         if (poiCat[p.Building] == null || (!IsShop(poiCat[p.Building]) && IsShop(p.Category)))
                         {
                             poiCat[p.Building] = p.Category;
+                            poiName[p.Building] = p.Name;
                             poiPos[p.Building] = new Orbis.Core.World.Geometry.Vec2(p.X, p.Y);
                         }
                     }
@@ -149,11 +163,27 @@ namespace Orbis.World
                             r.BuildingCount++;
                             int level = levels != null && levels.TryGetValue(((long)b.OsmType << 60) | b.OsmId, out var lv) ? lv : 1;
                             var target = canopy ? mb : DecorAt(r, data, cx, cy);
-                            r.DecorationTriangles += decorator.Decorate(b, mesher, kind, level, poiPos[i], roads, ground, target, decoPlants);
+                            string name = !string.IsNullOrEmpty(poiName[i]) ? poiName[i] : b.Name;
+                            r.DecorationTriangles += decorator.Decorate(b, mesher, kind, level, poiPos[i], roads, ground, target, decoPlants, name);
                         }
                     }
                     else if (done || mesher.Build(b, ground, mb, shops[i], lod != TileLod.Full)) r.BuildingCount++;
                     if (i % 96 == 95) yield return null;
+                }
+                // lampioni sui marciapiedi delle vie urbane (con gli addobbi: si spengono da lontano; non sui profili leggeri)
+                if (decorate && decorDensity >= 0.6f)
+                {
+                    int k = 0;
+                    foreach (var road in data.Roads)
+                    {
+                        if (road.Points == null || road.Points.Length < 4) continue;
+                        int mid = (road.Points.Length / 4) * 2;
+                        var deco = DecorAt(r, data, road.Points[mid], road.Points[mid + 1]);
+                        int start = deco.IndexCount;
+                        StreetFurniture.Lamps(road, ground, deco);
+                        r.DecorationTriangles += (deco.IndexCount - start) / 3;
+                        if (++k % 300 == 0) yield return null;
+                    }
                 }
                 // stadi (aree con landmark): campo, tribune, copertura, torri faro
                 foreach (var a in data.Areas)

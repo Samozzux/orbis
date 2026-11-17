@@ -12,6 +12,19 @@ namespace Orbis.Core.World.Meshing
         None, Residential, FoodDrink, Shop, Pharmacy, Bank, Hotel, Fuel, Canopy, FuelCanopy, School, Hospital, Civic, Office, Industrial, Farm,
     }
 
+    /// <summary>Insegna con il nome vero del locale (il testo lo scrive il motore, solo da vicino).</summary>
+    public struct SignInfo
+    {
+        /// <summary>Centro della faccia anteriore: metri del tile (X est, Y nord) e quota Z.</summary>
+        public float X, Y, Z;
+        /// <summary>Direzione verso cui guarda l'insegna (verso la strada).</summary>
+        public float NormalX, NormalY;
+        public float Width, Height;
+        public string Text;
+        /// <summary>Colore del fondo (RGB), per scegliere un testo chiaro o scuro.</summary>
+        public uint Background;
+    }
+
     /// <summary>
     /// Addobbi "da gioco" degli edifici reali (docs/08 §3): la struttura resta quella vera, sopra si aggiungono
     /// i dettagli tipici dell'uso (tende e insegne per bar e negozi, dehors con tavolini e ombrelloni, croce della
@@ -70,7 +83,11 @@ namespace Orbis.Core.World.Meshing
         private long _id;
         private float _seed;
         private int _level;
+        private string _name;
         private readonly List<Edge> _edges = new List<Edge>(32);
+
+        /// <summary>Se impostata, riceve le insegne con il nome vero (bar, negozi, farmacie, scuole…).</summary>
+        public List<SignInfo> Signs;
 
         /// <summary>Densità degli addobbi (1 = piena; i profili di qualità bassi usano meno).</summary>
         public float Density = 1f;
@@ -151,8 +168,9 @@ namespace Orbis.Core.World.Meshing
         /// Restituisce i triangoli aggiunti. <paramref name="entrance"/> = posizione del POI (ingresso), se c'è.
         /// </summary>
         public int Decorate(BuildingInfo b, BuildingMesher m, DressKind kind, int level, Vec2? entrance, RoadIndex roads,
-            GroundSampler ground, MeshBuffer mb, List<PlantInstance> plants)
+            GroundSampler ground, MeshBuffer mb, List<PlantInstance> plants, string name = null)
         {
+            _name = string.IsNullOrWhiteSpace(name) ? null : name.Trim();
             if (kind == DressKind.None || m.LastOuter == null || m.LastOuter.Count < 3) return 0;
             _mb = mb;
             _ground = ground;
@@ -430,7 +448,13 @@ namespace Orbis.Core.World.Meshing
                     float w = Math.Min(e.Len * 0.7f, Math.Max(2.4f, e.Bay * (1.4f + 0.3f * _level)));
                     var c = Vec2.Lerp(e.P, e.Q, 0.5f) + e.Normal * 0.08f;
                     float z0 = g + top + 0.15f, z1 = z0 + 0.45f + 0.05f * _level;
-                    if (z1 < m.LastEave - 0.15f) Box(c, e.Dir, w / 2, 0.08f, z0, z1, sign, KindSign, 1);
+                    if (z1 < m.LastEave - 0.15f)
+                    {
+                        // con il nome vero il pannello resta liscio: la scritta la aggiunge il motore da vicino
+                        bool named = isFront && _name != null && Signs != null;
+                        Box(c, e.Dir, w / 2, 0.08f, z0, z1, sign, KindSign, named ? 0 : 1);
+                        if (named) AddSign(c + e.Normal * 0.08f, e.Normal, w, z0, z1, sign);
+                    }
                 }
                 if (!isFront) continue;
                 // fioriere ai lati dell'ingresso
@@ -558,7 +582,10 @@ namespace Orbis.Core.World.Meshing
             else
             {
                 float w = Math.Min(e.Len * 0.6f, 5f);
-                Box(mid + e.Normal * 0.08f, e.Dir, w / 2, 0.07f, g + floorH * 0.86f + 0.2f, g + floorH * 0.86f + 0.7f, 0x1C2E5A, KindSign, 1);
+                float z0 = g + floorH * 0.86f + 0.2f, z1 = g + floorH * 0.86f + 0.7f;
+                bool named = _name != null && Signs != null;
+                Box(mid + e.Normal * 0.08f, e.Dir, w / 2, 0.07f, z0, z1, 0x1C2E5A, KindSign, named ? 0 : 1);
+                if (named) AddSign(mid + e.Normal * 0.15f, e.Normal, w, z0, z1, 0x1C2E5A);
             }
             if (_level >= 2 && e.Free > 2f)
             {
@@ -674,6 +701,11 @@ namespace Orbis.Core.World.Meshing
         {
             var ring = m.LastOuter;
             float eave = m.LastEave;
+            bool dwelling = m.LastCategory == BuildingMesher.Category.Residential || m.LastCategory == BuildingMesher.Category.Commercial;
+            // gronde e cornicioni solo sui profili di qualità pieni (sui telefoni via web restano i volumi semplici)
+            bool relief = Density >= 0.6f;
+            if (relief && dwelling && m.LastPitched) Eaves(m);
+            if (relief && dwelling && m.LastFlatRoof && m.LastLevels >= 2) Cornice(m);
             if (m.LastFlatRoof)
             {
                 // parapetto lungo il bordo: faccia esterna, cima e faccia interna (niente testate)
@@ -727,6 +759,59 @@ namespace Orbis.Core.World.Meshing
                     float z = m.RoofTopAt(c);
                     Box(c, new Vec2(1, 0), 0.32f, 0.32f, z - 0.4f, z + 1.15f, 0xC9B79A, KindProp, 0);
                 }
+            }
+        }
+
+        /// <summary>Gronda in coppi che sporge oltre i muri lungo i lati di gronda (non sui timpani), con il sottogronda.</summary>
+        private void Eaves(BuildingMesher m)
+        {
+            var ring = m.LastOuter;
+            float eave = m.LastEave;
+            const float over = 0.5f, drop = 0.24f;
+            uint under = Darken(Lighten(m.LastWallColor, 0.1f), 0.12f);
+            for (int i = 0; i < ring.Count; i++)
+            {
+                var p = ring[i];
+                var q = ring[(i + 1) % ring.Count];
+                var d = q - p;
+                float len = d.Length;
+                if (len < 1.5f) continue;
+                // lato di gronda: la falda è alla quota di gronda per tutto il lato (sui timpani sale)
+                if (m.RoofTopAt(p) - eave > 0.08f || m.RoofTopAt(q) - eave > 0.08f || m.RoofTopAt(Vec2.Lerp(p, q, 0.5f)) - eave > 0.08f) continue;
+                var dir = d * (1f / len);
+                var n = new Vec2(dir.Y, -dir.X);
+                var p1 = p + n * over - dir * 0.05f;
+                var q1 = q + n * over + dir * 0.05f;
+                // falda prolungata (coppi, tipo 1 dello shader) e sottogronda chiaro
+                QuadKind(new V3(p, eave + 0.02f), new V3(q, eave + 0.02f), new V3(q1, eave - drop), new V3(p1, eave - drop),
+                    new V3(n.X * 0.4f, n.Y * 0.4f, 1), m.LastRoofColor, 1, len, over);
+                Quad(new V3(p, eave - 0.06f), new V3(q, eave - 0.06f), new V3(q1, eave - drop - 0.06f), new V3(p1, eave - drop - 0.06f),
+                    new V3(0, 0, -1), under, KindProp, 0, len, over, false);
+            }
+        }
+
+        /// <summary>Cornicione in rilievo sotto il parapetto dei tetti piani.</summary>
+        private void Cornice(BuildingMesher m)
+        {
+            var ring = m.LastOuter;
+            float eave = m.LastEave;
+            uint color = Lighten(m.LastWallColor, 0.14f);
+            for (int i = 0; i < ring.Count; i++)
+            {
+                var p = ring[i];
+                var q = ring[(i + 1) % ring.Count];
+                var d = q - p;
+                float len = d.Length;
+                if (len < 1.5f) continue;
+                var dir = d * (1f / len);
+                var n = new Vec2(dir.Y, -dir.X);
+                var p1 = p + n * 0.22f;
+                var q1 = q + n * 0.22f;
+                // fronte, cima (inclinata verso fuori) e sotto
+                Quad(new V3(p1, eave - 0.42f), new V3(q1, eave - 0.42f), new V3(q1, eave - 0.12f), new V3(p1, eave - 0.12f),
+                    new V3(n.X, n.Y, 0), color, KindProp, 0, len, 0.3f, false);
+                Quad(new V3(p1, eave - 0.12f), new V3(q1, eave - 0.12f), new V3(q, eave), new V3(p, eave),
+                    new V3(n.X * 0.3f, n.Y * 0.3f, 1), color, KindProp, 0, len, 0.25f, false);
             }
         }
 
@@ -860,6 +945,13 @@ namespace Orbis.Core.World.Meshing
             Box(c, new Vec2(1, 0), 0.16f, 0.16f, z + 3.2f, z + 3.6f, 0xFFE3A3, KindLight, 1);
             Box(c, new Vec2(1, 0), 0.2f, 0.2f, z + 3.6f, z + 3.7f, 0x2B2B2B, KindProp, 0);
         }
+
+        private void AddSign(Vec2 front, Vec2 n, float width, float z0, float z1, uint background) =>
+            Signs.Add(new SignInfo
+            {
+                X = front.X, Y = front.Y, Z = (z0 + z1) / 2, NormalX = n.X, NormalY = n.Y, Width = width, Height = z1 - z0,
+                Text = _name, Background = background,
+            });
 
         // ------------------------------------------------------------------ primitive
 
@@ -1040,6 +1132,24 @@ namespace Orbis.Core.World.Meshing
             int j3 = _mb.Add(d.X, d.Y, d.Z, -n.X, -n.Y, -n.Z, dark, 0, h, w, h, kind, _seed, param, 0);
             if (flip) _mb.Quad(j0, j1, j2, j3);
             else _mb.Quad(j0, j3, j2, j1);
+        }
+
+        /// <summary>Quadrilatero di un tipo di superficie qualsiasi con uv0 in metri (x lungo a→b, y lungo b→c).</summary>
+        private void QuadKind(V3 a, V3 b, V3 c, V3 d, V3 facing, uint color, float kind, float w, float h)
+        {
+            uint col = MeshBuffer.Rgb(color & 0xFFFFFF);
+            var n = V3.Cross(b - a, c - a);
+            float l = (float)Math.Sqrt(V3.Dot(n, n));
+            if (l < 1e-6f) return;
+            n = new V3(n.X / l, n.Y / l, n.Z / l);
+            bool flip = V3.Dot(n, facing) < 0;
+            if (flip) n = new V3(-n.X, -n.Y, -n.Z);
+            int i0 = _mb.Add(a.X, a.Y, a.Z, n.X, n.Y, n.Z, col, 0, 0, w, h, kind, _seed, 1, 0);
+            int i1 = _mb.Add(b.X, b.Y, b.Z, n.X, n.Y, n.Z, col, w, 0, w, h, kind, _seed, 1, 0);
+            int i2 = _mb.Add(c.X, c.Y, c.Z, n.X, n.Y, n.Z, col, w, h, w, h, kind, _seed, 1, 0);
+            int i3 = _mb.Add(d.X, d.Y, d.Z, n.X, n.Y, n.Z, col, 0, h, w, h, kind, _seed, 1, 0);
+            if (flip) _mb.Quad(i0, i3, i2, i1);
+            else _mb.Quad(i0, i1, i2, i3);
         }
 
         private static uint Darken(uint rgb, float k)

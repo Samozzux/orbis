@@ -21,6 +21,8 @@ namespace Orbis.World
         public WorldFrame Frame { get; private set; }
         public WorldMaterials Materials { get; private set; }
         public VegetationRenderer Vegetation { get; private set; }
+        /// <summary>Nomi veri sulle insegne vicine.</summary>
+        public SignLabels Signs { get; private set; }
         public string Error { get; private set; }
 
         /// <summary>Punto osservato (dove guarda la telecamera) e distanza della telecamera da esso.</summary>
@@ -95,6 +97,7 @@ namespace Orbis.World
             Content.SetParent(transform, false);
             Materials = new WorldMaterials();
             Vegetation = new VegetationRenderer(Materials.Plant);
+            Signs = new SignLabels(Content != null ? Content : transform);
             _runner = new WorkRunner();
             if (Quality != null)
             {
@@ -131,6 +134,7 @@ namespace Orbis.World
         private void OnDestroy()
         {
             _runner?.Dispose();
+            Signs?.Dispose();
             foreach (var v in _views.Values) v.Destroy();
             _views.Clear();
         }
@@ -151,6 +155,7 @@ namespace Orbis.World
                 float decor = Quality != null ? Quality.DecorDistance : 800f;
                 var pos = cam.transform.position;
                 foreach (var v in _views.Values) v.CullDecorations(pos, decor);
+                Signs?.Update(_views.Values, pos);
             }
         }
 

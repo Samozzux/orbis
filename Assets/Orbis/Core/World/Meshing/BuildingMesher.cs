@@ -58,6 +58,9 @@ namespace Orbis.Core.World.Meshing
         public bool LastShops { get; private set; }
         public bool LastFlatRoof { get; private set; }
         public uint LastWallColor { get; private set; }
+        public uint LastRoofColor { get; private set; }
+        /// <summary>Il tetto ha falde vere (non piano): ai bordi di gronda la falda parte dalla quota di gronda.</summary>
+        public bool LastPitched { get; private set; }
 
         /// <summary>Quota del tetto nel punto (ultimo edificio): gronda + falda.</summary>
         public float RoofTopAt(Vec2 p) => LastEave + RoofAt(p);
@@ -135,6 +138,8 @@ namespace Orbis.Core.World.Meshing
             LastShops = hasShops || b.HasFlag(BuildingFlag.HasShops);
             LastFlatRoof = _planes.Count == 0 && !pitchedIntent;
             LastWallColor = StylePalette.WallColor(b);
+            LastRoofColor = StylePalette.RoofColor(b, !pitchedIntent);
+            LastPitched = _planes.Count > 0;
 
             AddWalls(outer, mb, baseZ, eave, gRef, wallH, wall, seed, levels, category, simple);
             if (holes != null)

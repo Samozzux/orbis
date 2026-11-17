@@ -244,3 +244,47 @@ namespace Orbis.Core.Tests
         }
     }
 }
+
+namespace Orbis.Core.Tests
+{
+    using System.Collections.Generic;
+    using Orbis.Core.World.Fb;
+    using Orbis.Core.World.Meshing;
+    using Orbis.Core.World.Tiles;
+    using Xunit;
+
+    /// <summary>Arredo delle strade: incroci per le strisce pedonali e lampioni sui marciapiedi.</summary>
+    public class StreetFurnitureTests
+    {
+        private static RoadInfo Road(params float[] pts) => new RoadInfo { Points = pts, Class = RoadClass.Residential, Width = 6, Name = "Via Prova" };
+
+        [Fact]
+        public void IncrociDoveSiIncontranoTreStrade()
+        {
+            // via lunga est-ovest e una laterale che arriva da nord a metà (incrocio a T su un punto interno)
+            var roads = new List<RoadInfo> { Road(0, 0, 50, 0, 100, 0), Road(50, 0, 50, 60) };
+            var set = StreetFurniture.Intersections(roads);
+            Assert.Contains(StreetFurniture.Key(50, 0), set);
+            Assert.DoesNotContain(StreetFurniture.Key(0, 0), set);
+            Assert.DoesNotContain(StreetFurniture.Key(50, 60), set);
+        }
+
+        [Fact]
+        public void LampioniOgni32MetriSulMarciapiede()
+        {
+            var r = Road(0, 0, 320, 0);
+            var mb = new MeshBuffer();
+            int lamps = StreetFurniture.Lamps(r, (x, y) => 10f, mb);
+            Assert.InRange(lamps, 9, 10);
+            // sui marciapiedi (oltre il bordo della carreggiata larga 6 m), mai in mezzo alla strada
+            for (int v = 0; v < mb.VertexCount; v++)
+            {
+                float y = mb.GetFloat(v, 2);
+                Assert.True(System.Math.Abs(y) > 1.5f, $"lampione in carreggiata (y {y})");
+                Assert.True(mb.GetFloat(v, 1) <= 10f + 5.25f);
+            }
+            // una strada senza nome (vicolo di servizio) non ha marciapiedi né lampioni
+            Assert.Equal(0, StreetFurniture.Lamps(new RoadInfo { Points = new float[] { 0, 0, 100, 0 }, Class = RoadClass.Service, Width = 4 }, (x, y) => 0, new MeshBuffer()));
+        }
+    }
+}
