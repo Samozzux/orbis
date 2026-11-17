@@ -1,7 +1,9 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M2 — Costruire ed economia**: scritta e provata in locale (17/11/2026), in attesa della prova di Samuele sui dispositivi. Iniziata il 16/11/2026 (scelta di Samuele: "M2 adesso").
+**M3 — Account e cloud**: da iniziare. Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
+
+**M2 — Costruire ed economia**: completata il 17/11/2026, a conferma di Samuele dopo la prova sui dispositivi ("sì va bene", con una sola correzione: la scheda della missione toccava la barra del livello sul telefono). Tag `v0.2.0`. Iniziata il 16/11/2026 (scelta di Samuele: "M2 adesso").
 
 ### Piano di M2 (a blocchi, ognuno con PR e test)
 1. **Core del gioco** (logica pura, `Orbis.Core.Game`):
@@ -100,6 +102,10 @@ Branch `m2-costruzione`.
   - entrando (costruisci o sposta) vola verso il punto, con una distanza adatta alle misure dell'elemento (50–280 m) e un'inclinazione da tre quarti (45–58°); non si allontana mai;
   - spostando un elemento si centra su di esso;
   - uscendo torna alla distanza e all'inclinazione di prima.
+- **Scheda della missione attaccata alla barra del livello sul telefono** (ultima segnalazione prima del tag):
+  - **Causa.** La scheda aveva una posizione fissa (150 punti dall'alto), esattamente dove finisce la barra del livello.
+  - **Correzione.** Ora sta nella stessa colonna di cassa e livello, con 10 punti di distacco su telefono, tablet e desktop.
+  - **Verifica.** Controllata con le fotografie dell'interfaccia.
 
 **M1 — Il mondo: Chieti**: completata il 16/11/2026, a conferma di Samuele ("quasi perfetto" + correzioni unite con la PR #5). Tag `v0.1.0` dopo le build verdi.
 
@@ -204,6 +210,7 @@ Branch `m2-costruzione`.
 - **CORS dei download GitHub Releases dal web** (verificato il 15/11/2026): **non utilizzabili**. `github.com/.../releases/download/...` risponde 302 senza `Access-Control-Allow-Origin`; anche passando da `api.github.com` (che ha CORS) il redirect finale su `release-assets.githubusercontent.com` risponde senza header CORS. GitHub Pages invece risponde con `Access-Control-Allow-Origin: *`. → vedi "Decisioni da confermare".
 
 ## Decisioni prese
+- **Amici dopo** (Samuele, 17/11/2026): amici, visita delle città, progetti condivisi e mi piace escono da M3, che diventa "Account e cloud". Li ho messi in M9 ("Progressione e contenuti"), dove c'è anche l'editor dei progetti di edifici da condividere; si possono spostare altrove se Samuele preferisce. Fino ad allora la voce "Amici" del menu resta "In arrivo".
 - **Edifici reali in stile gioco** (Samuele, 17/11/2026): gli edifici restano quelli veri (sagoma, altezza, piani, tetto da OSM) ma sono ricostruiti "da gioco", colorati e con i dettagli tipici del loro uso: bar e ristoranti con tende, insegne e dehors; negozi con vetrine, tende e insegne; benzinai con pensilina e pompe; stadi, aeroporti, campagne, strade con i loro elementi. Ogni edificio ha **addobbi** (fioriere, balconi fioriti, ombrelloni, lucine, bandiere…) e **potenziandolo gli addobbi cambiano a ogni livello** (1→5), anche per gli edifici reali. Lo stile resta il **Classico** (3D colorato tipo Megapolis) con più dettaglio, in direzione SimCity; dettagli in `docs/08` §3.
 - Motore Unity (non Unreal) per compilare IPA, APK e web gratis su GitHub Actions.
 - Piattaforme: iOS (iPhone + iPad), Android (APK) e Web (GitHub Pages).
@@ -241,7 +248,7 @@ Branch `m2-costruzione`.
 - ✅ Fatto il 16/11: Stati Uniti aggiunti tra le nazioni FTP consentite su Altervista.
 - ✅ Fatto il 16/11: prova di M0 sui dispositivi (tag `v0.0.0`).
 - ✅ Fatto il 16/11: prova di M1 ("quasi perfetto", correzioni nella PR #5), tag `v0.1.0`.
-- ⏳ **Provare M2** (vedi "Cosa provare (M2)") e dire a Claude com'è andata: poi tag `v0.2.0` e si passa a M3.
+- ✅ Fatto il 17/11: prova di M2 ("sì va bene"; corretta la scheda della missione sul telefono), tag `v0.2.0`.
 
 ## Cosa provare (M2 — Costruire ed economia)
 Build dopo l'unione della PR di M2: web su GitHub Pages, `Orbis-ipa` e `Orbis-apk` dalle ultime esecuzioni verdi.
@@ -301,4 +308,5 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 - **Poi, sempre il 17/11**: PR #6 unita in `main` (build per la prova di M2 avviate). Su richiesta di Samuele: edifici reali in stile gioco con addobbi per tipo e livello, potenziamento degli edifici reali, città più colorata (branch `m2-stile-gioco`).
 - **Sera del 17/11**: PR #7 unita. Dalla prova di Samuele: edifici costruiti che entravano nel terreno (corretto), telecamera più vicina in modalità costruzione, terreno non più sgranato (branch `m2-costruzione`).
 - **Poi**: su scelta di Samuele, grafica HD di edifici e strade: insegne con i nomi veri, gronde e cornicioni, strisce pedonali e lampioni; strade nitide e anteprime 3D nel catalogo (branch `m2-grafica-hd`).
-
+- **Chiusura di M2 (sera del 17/11)**: PR #8, #9 e #10 unite (la #10 divide la build iOS in due job). Samuele ha provato M2 sui dispositivi: va bene. Corretta la scheda della missione che sul telefono toccava la barra del livello; tag `v0.2.0`. Su scelta di Samuele gli amici passano da M3 a M9.
+- **Prossimo passo**: M3 — Account e cloud.

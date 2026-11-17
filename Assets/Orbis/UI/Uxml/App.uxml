@@ -143,19 +143,19 @@
                             <ui:VisualElement name="hud-xp-fill" class="xp-bar__fill" picking-mode="Ignore" />
                         </ui:VisualElement>
                     </ui:VisualElement>
-                </ui:VisualElement>
-
-                <ui:Button name="mission-card" class="mission-card">
-                    <glass:GlassSurface />
-                    <el:OrbisIcon icon="Flag" class="mission-card__icon" />
-                    <ui:VisualElement class="mission-card__texts" picking-mode="Ignore">
-                        <ui:Label name="mission-title" class="mission-card__title" text="" picking-mode="Ignore" />
-                        <ui:Label name="mission-text" class="mission-card__text" text="" picking-mode="Ignore" />
-                        <ui:VisualElement class="xp-bar mission-card__bar" picking-mode="Ignore">
-                            <ui:VisualElement name="mission-fill" class="xp-bar__fill mission-card__fill" picking-mode="Ignore" />
+                    <!-- la missione sta nella stessa colonna di cassa e livello: la distanza resta sempre quella -->
+                    <ui:Button name="mission-card" class="mission-card">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Flag" class="mission-card__icon" />
+                        <ui:VisualElement class="mission-card__texts" picking-mode="Ignore">
+                            <ui:Label name="mission-title" class="mission-card__title" text="" picking-mode="Ignore" />
+                            <ui:Label name="mission-text" class="mission-card__text" text="" picking-mode="Ignore" />
+                            <ui:VisualElement class="xp-bar mission-card__bar" picking-mode="Ignore">
+                                <ui:VisualElement name="mission-fill" class="xp-bar__fill mission-card__fill" picking-mode="Ignore" />
+                            </ui:VisualElement>
                         </ui:VisualElement>
-                    </ui:VisualElement>
-                </ui:Button>
+                    </ui:Button>
+                </ui:VisualElement>
 
                 <ui:VisualElement name="hud-actions" class="hud-actions" picking-mode="Ignore">
                     <ui:Button name="hud-undo" class="hud-button">
