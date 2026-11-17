@@ -75,6 +75,7 @@ Gli schemi JSON formali di ogni tipo stanno in `data/schemas/` e sono usati sia 
 | Vegetazione | alberi dettagliati con vento | alberi low-poly | come Classico |
 | Costo | alto | medio | basso |
 
+- **Edifici reali "da gioco"** (decisione di Samuele, 17/11/2026): nello stile Classico ogni edificio OSM mantiene sagoma, altezza, piani e tetto reali, ma è ricostruito con i dettagli tipici del suo uso (dal tipo di edificio e dai POI che contiene): bar/ristoranti (tende a righe, insegna, dehors con tavolini e ombrelloni), negozi (tende, insegne, vetrine), farmacie (croce verde), benzinai (pensilina e pompe), alberghi, scuole e ospedali (insegne, bandiere), industrie (impianti sul tetto, container), case (balconi, fioriere, persiane colorate, comignoli), tetti piani con parapetto e terrazze. Gli **addobbi** dipendono dal **livello** dell'edificio (1→5): ogni potenziamento ne aggiunge o cambia, sia per gli elementi del catalogo sia per gli edifici reali. Gli addobbi sono geometria procedurale nei tile vicini (LOD pieno), con densità ridotta sui profili di qualità bassi.
 - Il cambio di stile avviene a runtime senza riavvio (cambio di set di materiali + profilo URP + volume di post-processing).
 - Nel prototipo (M1–M10) si sviluppa prima lo stile **Classico**; Realistico e Pixel completi in M11, ma l'architettura dei materiali a due set va predisposta da M1.
 
