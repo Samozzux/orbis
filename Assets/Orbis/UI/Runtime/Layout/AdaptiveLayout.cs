@@ -29,15 +29,19 @@ namespace Orbis.UI.Layout
 
         public ScreenMetrics Metrics { get; private set; }
 
+        /// <summary>Schermo virtuale (fotografie dell'interfaccia nei test): dimensioni in pixel e safe area.</summary>
+        public static Vector2Int? VirtualScreen;
+        public static Rect VirtualSafeArea;
+
         /// <summary>Margini della safe area in punti: sinistra, alto, destra, basso.</summary>
         public Vector4 SafeInsets { get; private set; }
 
         /// <summary>Da chiamare ogni frame: lavora solo se dimensioni o safe area cambiano.</summary>
         public void Update(bool force = false)
         {
-            var w = Screen.width;
-            var h = Screen.height;
-            var safe = Screen.safeArea;
+            var w = VirtualScreen?.x ?? Screen.width;
+            var h = VirtualScreen?.y ?? Screen.height;
+            var safe = VirtualScreen.HasValue ? VirtualSafeArea : Screen.safeArea;
             if (!force && w == _lastWidth && h == _lastHeight && safe == _lastSafeArea)
                 return;
             _lastWidth = w;

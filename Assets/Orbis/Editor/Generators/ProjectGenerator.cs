@@ -19,6 +19,7 @@ namespace Orbis.EditorTools
             PlayerSettingsConfigurator.Apply();
             IconGenerator.Generate();
             LocalizationGenerator.Generate();
+            ContentGenerator.Generate();
             WebTemplateConfigurator.Apply();
             UiAssetsGenerator.Generate();
             var cityMaterials = MenuAssetsGenerator.Generate();

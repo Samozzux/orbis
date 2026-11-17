@@ -71,8 +71,12 @@ namespace Orbis.Tests.PlayMode
             yield return LoadMenu();
             var root = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement;
             yield return Click(root.Q<Button>("btn-new-game"));
-            Assert.That(OrbisApp.Instance.State, Is.EqualTo(OrbisApp.AppState.Game), "Il clic su Nuova partita non ha aperto il mondo");
-            for (var i = 0; i < 10; i++) yield return null;
+            Assert.That(OrbisApp.Instance.Panel.IsOpen, Is.True, "Il clic su Nuova partita non ha aperto il pannello");
+            yield return new WaitForSecondsRealtime(0.6f); // animazione d'entrata del pannello
+            yield return Click(root.Q<Button>("newgame-start"));
+            Assert.That(OrbisApp.Instance.State, Is.EqualTo(OrbisApp.AppState.Game), "Il clic su Inizia non ha aperto il mondo");
+            // il pannello che si chiude sfuma in 0,25 s e fino ad allora copre lo schermo
+            yield return new WaitForSecondsRealtime(0.5f);
             // il pulsante Casa (mouse) riporta al menu
             yield return Click(root.Q<Button>("hud-home"));
             Assert.That(OrbisApp.Instance.State, Is.EqualTo(OrbisApp.AppState.MainMenu), "Il clic su Casa non è tornato al menu");

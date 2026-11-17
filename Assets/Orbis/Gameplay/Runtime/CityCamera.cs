@@ -26,6 +26,9 @@ namespace Orbis.Gameplay
         /// <summary>Il punto dello schermo (pixel, y in basso) è sopra un elemento dell'interfaccia?</summary>
         public Func<Vector2, bool> IsOverUi = _ => false;
 
+        /// <summary>Tastiera occupata dall'interfaccia (es. si scrive in un campo di testo): niente WASD/QE.</summary>
+        public Func<bool> KeyboardBlocked = () => false;
+
         /// <summary>Tocco o clic breve su un punto (pixel dello schermo).</summary>
         public event Action<Vector2> Tapped;
         /// <summary>Si continua ad allontanarsi oltre la distanza massima (→ globo).</summary>
@@ -103,7 +106,7 @@ namespace Orbis.Gameplay
             else
             {
                 HandleMouse(dt);
-                HandleKeyboard(dt);
+                if (!KeyboardBlocked()) HandleKeyboard(dt);
             }
 
             // inerzia dello spostamento

@@ -125,6 +125,43 @@ namespace Orbis.Core.Tests
             Assert.Equal(BuildResult.LotNotLoaded, Placement.CheckSpace(ctx, casa, new LotKey(9, 9, 1), 0, 0, 0));
         }
 
+        /// <summary>Lotto agricolo di 3×3 km: la griglia intera a 0,5 m sarebbe di 36 milioni di celle.</summary>
+        private sealed class HugeWorld : IWorldAccess
+        {
+            private readonly TileData _tile;
+
+            public HugeWorld()
+            {
+                var outer = new float[] { 0, 0, 3000, 0, 3000, 3000, 0, 3000 };
+                var b = new float[] { 100, 100, 110, 100, 110, 110, 100, 110 };
+                _tile = new TileData
+                {
+                    Size = 3000,
+                    Lots = new[] { new LotInfo { Id = 7, Outer = outer, Holes = Array.Empty<float[]>(), Bounds = Bounds2.Of(outer), Area = 9_000_000 } },
+                    Buildings = new[] { new BuildingInfo { OsmId = 5, OsmType = OsmType.Way, Outer = b, Holes = Array.Empty<float[]>(), Height = 6, Bounds = Bounds2.Of(b) } },
+                    Terrain = TerrainInfo.Flat(3000),
+                };
+            }
+
+            public TileData Tile(int x, int y) => x == 1 && y == 2 ? _tile : null;
+        }
+
+        [Fact]
+        public void LottiEnormiDellaCampagna_SiControllaSoloSottoLElemento()
+        {
+            var g = GameSession.New("Prova", new WorldConfig(), new DateTime(2026, 11, 16, 10, 0, 0), DateTime.UtcNow, 1, TestGame.Catalog(),
+                new Balance(), new HugeWorld(), Missions.Parse(TestGame.MissionsJson));
+            var ctx = g.Context;
+            var panchina = ctx.Catalog.Get("panchina");
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            Assert.Equal(BuildResult.Ok, Placement.CheckSpace(ctx, panchina, TestGame.Lot, 4000, 4000, 0));        // a 1 km dall'angolo
+            Assert.Equal(BuildResult.Occupied, Placement.CheckSpace(ctx, panchina, TestGame.Lot, 210, 210, 0));     // sull'edificio
+            Assert.Equal(BuildResult.OutsideLot, Placement.CheckSpace(ctx, panchina, TestGame.Lot, 5999, 100, 0));  // sporge oltre i 3 km
+            Assert.Equal(BuildResult.Ok, g.Do(new PlaceCommand { Item = "panchina", Lot = TestGame.Lot, HalfX = 4000, HalfY = 4000 }));
+            Assert.Equal(BuildResult.Occupied, Placement.CheckSpace(ctx, panchina, TestGame.Lot, 4000, 4000, 0));
+            Assert.True(sw.ElapsedMilliseconds < 500, "controllo lento: " + sw.ElapsedMilliseconds + " ms");
+        }
+
         [Fact]
         public void DemolireUnEdificioRealeLiberaLaSuaSagoma()
         {

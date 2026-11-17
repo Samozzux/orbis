@@ -55,7 +55,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 481288200
-    m_Localized: Riprendi l'ultima partita
+    m_Localized: Riprendi una partita salvata
     m_Metadata:
       m_Items: []
   - m_Id: 481288201
@@ -63,7 +63,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 481288202
-    m_Localized: Esplora Chieti in 3D
+    m_Localized: "Una nuova citt\xE0 a Chieti"
     m_Metadata:
       m_Items: []
   - m_Id: 481288203
@@ -876,6 +876,578 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 361206689816577
     m_Localized: 'Celle da 1 m: verdi libere, rosse occupate'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209360224256
+    m_Localized: Costruisci
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195776
+    m_Localized: Liv. {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195777
+    m_Localized: Azione annullata
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195778
+    m_Localized: Azione ripetuta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195779
+    m_Localized: '{0}: lavori finiti!'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195780
+    m_Localized: 'Missione completata: {0} (+{1} monete)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195781
+    m_Localized: Livello {0}! Nuovi elementi da costruire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195782
+    m_Localized: 'Premio: {0} monete'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195783
+    m_Localized: Costruisci
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195784
+    m_Localized: Dal livello {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195785
+    m_Localized: "{0} \xD7 {1} m"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195786
+    m_Localized: '{0} abitanti'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195787
+    m_Localized: '{0} posti di lavoro'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195788
+    m_Localized: '{0} kW'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195789
+    m_Localized: '{0}/mese'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195790
+    m_Localized: produce {0}/mese
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195791
+    m_Localized: rende felici
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195792
+    m_Localized: "Clic per costruire \xB7 R ruota \xB7 Esc annulla"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195793
+    m_Localized: "Sposta la mappa per scegliere il punto, poi \u2713"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195794
+    m_Localized: 'Cantiere aperto: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195795
+    m_Localized: "Si pu\xF2 costruire qui"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195796
+    m_Localized: "Qui non si pu\xF2: scegli un lotto libero (non su strade o piazze)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195797
+    m_Localized: "Lo spazio \xE8 occupato da un edificio o da un altro elemento"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195798
+    m_Localized: 'Non ancora sbloccato: sali di livello'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195799
+    m_Localized: Monete insufficienti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195800
+    m_Localized: Avvicinati alla zona per costruire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195801
+    m_Localized: Elemento non disponibile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195802
+    m_Localized: "Elemento non pi\xF9 presente"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195803
+    m_Localized: "Gi\xE0 al livello massimo"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195804
+    m_Localized: Aspetta la fine dei lavori
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195805
+    m_Localized: Case
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195806
+    m_Localized: Negozi e uffici
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195807
+    m_Localized: Industria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195808
+    m_Localized: Energia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195809
+    m_Localized: Agricoltura
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195810
+    m_Localized: Servizi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195811
+    m_Localized: Sport
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195812
+    m_Localized: Cultura e svago
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195813
+    m_Localized: Trasporti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195814
+    m_Localized: Natura
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195815
+    m_Localized: Arredo urbano
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195816
+    m_Localized: Finanze
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195817
+    m_Localized: "La citt\xE0 oggi"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195818
+    m_Localized: Cassa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195819
+    m_Localized: Abitanti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195820
+    m_Localized: Posti di lavoro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195821
+    m_Localized: "Felicit\xE0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195822
+    m_Localized: "Energia (produzione \u2212 consumo)"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195823
+    m_Localized: '{0} kW'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195824
+    m_Localized: Saldo previsto per oggi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195825
+    m_Localized: Aliquote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195826
+    m_Localized: "Ultimo giorno chiuso \xB7 {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195827
+    m_Localized: Ultimi 30 giorni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195828
+    m_Localized: Saldo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195829
+    m_Localized: Imposte sulle case
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195830
+    m_Localized: Imposte su negozi e uffici
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195831
+    m_Localized: Imposte sull'industria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195832
+    m_Localized: Imposte sulle case
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195833
+    m_Localized: Imposte su negozi e uffici
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195834
+    m_Localized: Imposte sull'industria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195835
+    m_Localized: Affitti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195836
+    m_Localized: Suolo pubblico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195837
+    m_Localized: Produzione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195838
+    m_Localized: Vendita di energia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195839
+    m_Localized: Premi delle missioni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195840
+    m_Localized: Premi di livello
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195841
+    m_Localized: Costruzioni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195842
+    m_Localized: Potenziamenti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195843
+    m_Localized: Demolizioni
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195844
+    m_Localized: Spostamenti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195845
+    m_Localized: Cambi di colore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195846
+    m_Localized: Manutenzione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195847
+    m_Localized: "Servizi della citt\xE0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195848
+    m_Localized: Acquisto di energia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195849
+    m_Localized: Riavvolgi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195850
+    m_Localized: "Torna a un momento passato della partita: tutto ci\xF2 che \xE8 successo dopo si perde. Ogni giorno a mezzanotte c'\xE8 un punto di ripristino (gli ultimi 30 giorni, poi uno a settimana)."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195851
+    m_Localized: "{0} monete \xB7 liv. {1}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195852
+    m_Localized: Riavvolgi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195853
+    m_Localized: Riavvolgere?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195854
+    m_Localized: "La citt\xE0 torner\xE0 com'era {0}. Quello che \xE8 successo dopo non si potr\xE0 recuperare."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195855
+    m_Localized: "Citt\xE0 riportata a {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195856
+    m_Localized: "{0} \xB7 livello {1} di {2}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195857
+    m_Localized: Stato
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195858
+    m_Localized: In funzione
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195859
+    m_Localized: Lavori in corso, pronto {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195860
+    m_Localized: Abitanti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195861
+    m_Localized: Posti di lavoro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195862
+    m_Localized: Affitto al mese
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195863
+    m_Localized: Produzione al mese
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195864
+    m_Localized: Energia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195865
+    m_Localized: Manutenzione al mese
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195866
+    m_Localized: Sagoma
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195867
+    m_Localized: Colori
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195868
+    m_Localized: "Potenzia \xB7 {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195869
+    m_Localized: 'Colori: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195870
+    m_Localized: Sposta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195871
+    m_Localized: Ruota
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195872
+    m_Localized: Demolisci
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195873
+    m_Localized: "Demolisci \xB7 {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195874
+    m_Localized: Demolire?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195875
+    m_Localized: "Demolire {0}? Riavrai una parte di ci\xF2 che hai speso (puoi sempre annullare)."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195876
+    m_Localized: L'edificio reale sparisce e il lotto si libera per costruire (puoi sempre annullare).
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195877
+    m_Localized: "Edificio demolito: il lotto \xE8 libero"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195878
+    m_Localized: Annulla
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195879
+    m_Localized: Nuova partita
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195880
+    m_Localized: Dove
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195881
+    m_Localized: "Citt\xE0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195882
+    m_Localized: "Per ora si gioca a Chieti; le altre citt\xE0 del mondo arriveranno con i prossimi aggiornamenti."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195883
+    m_Localized: Nome della partita
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195884
+    m_Localized: La mia Chieti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195885
+    m_Localized: "Difficolt\xE0"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195886
+    m_Localized: Facile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195887
+    m_Localized: Normale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195888
+    m_Localized: Difficile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195889
+    m_Localized: Cambia quanto rendono imposte, affitti e produzione.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195890
+    m_Localized: Opzioni del mondo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195891
+    m_Localized: Tempo ad app chiusa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195892
+    m_Localized: "La citt\xE0 va avanti anche quando non giochi (fino a 12 ore reali)."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195893
+    m_Localized: "Modalit\xE0 creativa"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195894
+    m_Localized: Tutto sbloccato e gratis, per costruire senza pensieri.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195895
+    m_Localized: Inizia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195896
+    m_Localized: Partite salvate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195897
+    m_Localized: "Cerco le partite\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195898
+    m_Localized: Nessuna partita salvata.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195899
+    m_Localized: "{0} \xB7 {1} monete \xB7 liv. {2}\nSalvata {3}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195900
+    m_Localized: Gioca
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195901
+    m_Localized: Elimina
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195902
+    m_Localized: Eliminare la partita?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195903
+    m_Localized: "\"{0}\" verr\xE0 eliminata per sempre da questo dispositivo."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195904
+    m_Localized: Non riesco ad aprire la partita
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195905
+    m_Localized: Mentre eri via
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195906
+    m_Localized: "Dall'ultima partita sono passati {0}: in citt\xE0 sono trascorsi {1}."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195907
+    m_Localized: Entrate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195908
+    m_Localized: Uscite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195909
+    m_Localized: Cantieri finiti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195910
+    m_Localized: Missioni completate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195911
+    m_Localized: Livelli
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195912
+    m_Localized: Ottimo!
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195913
+    m_Localized: '{0} g e {1} h'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195914
+    m_Localized: '{0} h e {1} min'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195915
+    m_Localized: '{0} min'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430700145664000
+    m_Localized: "Cerca nel catalogo\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430700158246912
+    m_Localized: Nessun elemento con questo nome.
     m_Metadata:
       m_Items: []
   references:

@@ -1207,7 +1207,7 @@
 .app .hud-attribution {
     position: absolute;
     left: 16px;
-    bottom: 6px;
+    bottom: 1px;
     font-size: 10px;
     color: rgba(255, 255, 255, 0.8);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
@@ -1284,3 +1284,404 @@
     right: 64px;
     width: 260px;
 }
+
+/* ======================================================================
+   M2: cassa, livello, missione, azioni, costruzione, pannelli
+   ====================================================================== */
+
+.hud-economy {
+    position: absolute;
+    left: 14px;
+    top: 76px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.hud-pill {
+    flex-direction: row;
+    align-items: center;
+    height: 38px;
+    padding: 0 14px 0 8px;
+    margin-bottom: 6px;
+}
+
+.hud-pill > .glass-fill,
+.mission-card > .glass-fill,
+.build-bar > .glass-fill,
+.game-toast > .glass-fill {
+    --glass-tint-top: rgba(8, 30, 80, 0.62);
+    --glass-tint-bottom: rgba(8, 30, 80, 0.76);
+    --glass-lip: rgba(0, 16, 50, 0.55);
+    --glass-lip-height: 3;
+}
+
+.hud-pill__icon {
+    width: 22px;
+    height: 22px;
+    margin-right: 6px;
+}
+
+.hud-pill__icon--coins { color: rgb(255, 205, 60); }
+.hud-pill__icon--star { color: rgb(120, 200, 255); }
+
+.hud-pill__value {
+    font-size: 18px;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(16, 52, 120);
+}
+
+.xp-bar {
+    width: 70px;
+    height: 8px;
+    margin-left: 8px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.xp-bar__fill {
+    height: 100%;
+    width: 0;
+    border-radius: 4px;
+    background-color: rgb(120, 200, 255);
+}
+
+.mission-card.unity-button,
+.mission-card.unity-button:hover,
+.mission-card.unity-button:active,
+.mission-card.unity-button:focus {
+    position: absolute;
+    left: 14px;
+    top: 164px;
+    width: 270px;
+    margin: 0;
+    padding: 10px 12px;
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.mission-card > .glass-fill { border-radius: 18px; }
+
+.mission-card__icon {
+    width: 22px;
+    height: 22px;
+    color: rgb(255, 160, 30);
+    margin-right: 8px;
+    margin-top: 2px;
+}
+
+.mission-card__texts { flex-grow: 1; flex-shrink: 1; }
+
+.mission-card__title {
+    font-size: 16px;
+    white-space: normal;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+}
+
+.app .mission-card__text {
+    display: none;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.88);
+    white-space: normal;
+    margin-top: 2px;
+}
+
+.mission-card--open .mission-card__text { display: flex; }
+.mission-card__bar { width: 100%; margin: 6px 0 0 0; }
+.mission-card__fill { background-color: rgb(255, 160, 30); }
+.mission-card--done { display: none; }
+
+.hud-actions {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 16px;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.hud-actions .hud-button.unity-button { margin: 0 5px; }
+
+.hud-build.unity-button,
+.hud-build.unity-button:hover,
+.hud-build.unity-button:active,
+.hud-build.unity-button:focus {
+    height: 64px;
+    margin: 0 8px;
+    padding: 0 22px 0 14px;
+    border-width: 0;
+    border-radius: 32px;
+    background-color: rgba(0, 0, 0, 0);
+    flex-direction: row;
+    align-items: center;
+}
+
+.hud-build { transition-property: scale; transition-duration: 0.15s; transition-timing-function: ease-out-back; }
+.hud-build:active { scale: 0.94 0.94; }
+
+.hud-build > .glass-fill {
+    --glass-tint-top: rgba(255, 200, 50, 0.95);
+    --glass-tint-bottom: rgba(255, 128, 20, 0.92);
+    --glass-lip: rgb(196, 86, 8);
+    --glass-lip-height: 5;
+}
+
+.hud-build__icon { width: 28px; height: 28px; color: rgb(255, 255, 255); margin-right: 8px; }
+
+.hud-build__label {
+    font-size: 22px;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+    -unity-text-outline-width: 1.2px;
+    -unity-text-outline-color: rgb(150, 60, 0);
+}
+
+.hud-button:disabled { opacity: 0.45; }
+
+.build-bar {
+    position: absolute;
+    left: 50%;
+    bottom: 16px;
+    translate: -50% 0;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 10px 8px 16px;
+    display: none;
+    max-width: 96%;
+}
+
+.build-bar > .glass-fill { border-radius: 36px; }
+
+.game--building .build-bar { display: flex; }
+.game--building .hud-actions { display: none; }
+.game--building .mission-card { display: none; }
+.game--details .hud-actions { display: none; }
+
+.build-bar__texts { margin-right: 10px; flex-shrink: 1; }
+
+.app .build-bar__name {
+    font-size: 17px;
+    white-space: normal;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+}
+
+.app .build-bar__info { font-size: 13px; color: rgb(170, 255, 190); white-space: normal; }
+.app .build-bar--bad .build-bar__info { color: rgb(255, 160, 150); }
+
+.round-button.unity-button,
+.round-button.unity-button:hover,
+.round-button.unity-button:active,
+.round-button.unity-button:focus {
+    width: 52px;
+    height: 52px;
+    margin: 0 4px;
+    padding: 0;
+    border-width: 2px;
+    border-bottom-width: 4px;
+    border-radius: 26px;
+    border-color: rgba(255, 255, 255, 0.85);
+    align-items: center;
+    justify-content: center;
+}
+
+.round-button { transition-property: scale; transition-duration: 0.12s; }
+.round-button:active { scale: 0.9 0.9; }
+.round-button--green.unity-button { background-color: rgb(52, 199, 89); border-bottom-color: rgb(28, 128, 54); }
+.round-button--blue.unity-button { background-color: rgb(50, 140, 255); border-bottom-color: rgb(20, 80, 180); }
+.round-button--red.unity-button { background-color: rgb(235, 72, 56); border-bottom-color: rgb(150, 40, 30); }
+.round-button:disabled { opacity: 0.4; }
+.round-button__icon { width: 24px; height: 24px; color: rgb(255, 255, 255); }
+
+.game-toast {
+    position: absolute;
+    left: 50%;
+    top: 74px;
+    translate: -50% -20px;
+    padding: 10px 18px;
+    opacity: 0;
+    transition-property: opacity, translate;
+    transition-duration: 0.25s;
+    max-width: 90%;
+}
+
+.game-toast > .glass-fill { border-radius: 22px; }
+.game-toast--visible { opacity: 1; translate: -50% 0; }
+.game-toast__text { font-size: 15px; white-space: normal; -unity-text-align: middle-center; }
+
+/* azioni nel pannello Dettagli */
+.details__actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0 0 6px 0;
+}
+
+.action-button.unity-button,
+.action-button.unity-button:hover,
+.action-button.unity-button:active,
+.action-button.unity-button:focus {
+    flex-direction: row;
+    align-items: center;
+    height: 40px;
+    margin: 0 6px 6px 0;
+    padding: 0 12px 0 8px;
+    border-width: 2px;
+    border-bottom-width: 4px;
+    border-radius: 20px;
+    border-color: rgba(255, 255, 255, 0.8);
+    background-color: rgb(50, 140, 255);
+    border-bottom-color: rgb(20, 80, 180);
+}
+
+.action-button--primary.unity-button { background-color: rgb(255, 160, 30); border-bottom-color: rgb(196, 86, 8); }
+.action-button--danger.unity-button { background-color: rgb(235, 72, 56); border-bottom-color: rgb(150, 40, 30); }
+.action-button:disabled { opacity: 0.45; }
+.action-button__icon { width: 18px; height: 18px; color: rgb(255, 255, 255); margin-right: 6px; }
+.action-button__label { font-size: 14px; -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf"); }
+
+/* pannello generico (catalogo, finanze, riavvolgi, partite) */
+.sheet--panel {
+    width: 680px;
+    height: 86%;
+    max-width: 96%;
+}
+
+.panel-tabs-scroll { flex-shrink: 0; max-height: 52px; margin-bottom: 6px; }
+.panel-tabs { flex-direction: row; }
+.panel-tabs--hidden { display: none; }
+
+.panel-tab.unity-button,
+.panel-tab.unity-button:hover,
+.panel-tab.unity-button:active,
+.panel-tab.unity-button:focus {
+    height: 38px;
+    margin: 0 6px 4px 0;
+    padding: 0 14px;
+    border-width: 0;
+    border-radius: 19px;
+    background-color: rgba(255, 255, 255, 0.12);
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+}
+
+.panel-tab--selected.unity-button { background-color: rgb(255, 160, 30); }
+.panel-tabs--wrap { flex-wrap: wrap; }
+
+.panel-scroll { flex-grow: 1; flex-shrink: 1; }
+.panel-content { padding-bottom: 8px; }
+.panel-footer { flex-direction: row; justify-content: flex-end; margin-top: 8px; flex-shrink: 0; }
+
+.app .panel-section {
+    font-size: 16px;
+    color: rgb(255, 210, 80);
+    margin: 16px 0 4px 4px;
+    -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf");
+}
+
+.app .panel-text { font-size: 14px; color: rgba(255, 255, 255, 0.88); white-space: normal; margin: 4px; }
+
+.panel-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 4px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.app .panel-row__label { font-size: 14px; color: rgba(255, 255, 255, 0.78); flex-shrink: 1; white-space: normal; }
+.app .panel-row__value { font-size: 15px; -unity-text-align: middle-right; }
+.app .panel-row__value--plus { color: rgb(140, 240, 150); }
+.app .panel-row__value--minus { color: rgb(255, 150, 140); }
+
+.panel-grid { flex-direction: row; flex-wrap: wrap; }
+
+.catalog-card.unity-button,
+.catalog-card.unity-button:hover,
+.catalog-card.unity-button:active,
+.catalog-card.unity-button:focus {
+    width: 200px;
+    min-height: 92px;
+    margin: 0 8px 8px 0;
+    padding: 8px 10px;
+    border-width: 2px;
+    border-radius: 16px;
+    border-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.09);
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.input-pointer .catalog-card.unity-button:hover { background-color: rgba(255, 255, 255, 0.18); }
+.catalog-card--locked { opacity: 0.55; }
+.catalog-card__name { font-size: 15px; white-space: normal; -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf"); }
+.app .catalog-card__info { font-size: 12px; color: rgba(255, 255, 255, 0.75); white-space: normal; }
+.app .catalog-card__cost { font-size: 14px; color: rgb(255, 214, 90); margin-top: 4px; }
+.layout-compact .catalog-card.unity-button { width: 47%; }
+
+.panel-field {
+    margin: 4px 0 10px 0;
+}
+
+.panel-field .unity-text-field__input {
+    font-size: 16px;
+    border-radius: 12px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgb(255, 255, 255);
+}
+
+.layout-compact .hud-economy { top: 68px; }
+.layout-compact .mission-card.unity-button { top: 150px; width: 230px; }
+.orientation-portrait .mission-card.unity-button { width: 220px; }
+
+/* nuova partita e partite salvate */
+.panel-choice { align-self: flex-start; margin: 4px 0 4px 0; }
+.panel-choice .segmented__item.unity-button { height: 44px; width: 104px; }
+.setting-row.panel-switch.unity-button { margin: 4px 0; padding: 10px 12px; border-radius: 14px; background-color: rgba(255, 255, 255, 0.07); }
+.save-card {
+    padding: 10px 12px;
+    margin: 0 0 10px 0;
+    border-radius: 16px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.22);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+.save-card__name { font-size: 18px; -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf"); }
+.app .save-card__info { font-size: 13px; color: rgba(255, 255, 255, 0.78); white-space: normal; margin: 2px 0 6px 0; }
+.save-card__actions { flex-direction: row; justify-content: flex-end; flex-wrap: wrap; }
+
+/* telefono: la barra in basso deve stare nei 375-393 punti di larghezza */
+.layout-compact .hud-actions .hud-button.unity-button { width: 46px; height: 46px; margin: 0 3px 10px 3px; }
+.layout-compact .hud-build.unity-button { height: 58px; margin: 0 5px; padding: 0 14px 0 10px; }
+.layout-compact .hud-build__icon { width: 22px; height: 22px; margin-right: 6px; }
+.layout-compact .hud-build__label { font-size: 18px; }
+
+/* barra di costruzione: i testi si stringono e vanno a capo, i bottoni restano interi */
+.build-bar__texts { flex-grow: 1; flex-shrink: 1; min-width: 0; overflow: hidden; }
+.build-bar .round-button { flex-shrink: 0; }
+.layout-compact .build-bar { width: 96%; }
+
+/* aliquote: valore e −/+ insieme a destra */
+.tax-controls { flex-direction: row; align-items: center; flex-shrink: 0; }
+.app .tax-controls .panel-row__value { margin-right: 8px; min-width: 56px; }
+
+/* catalogo: tre colonne su tablet e desktop, due sul telefono */
+.catalog-card.unity-button { width: 31.5%; }
+.layout-compact .catalog-card.unity-button { width: 47%; }
+
+/* barre di scorrimento sottili (le frecce di sistema non servono: si trascina o si usa la rotella) */
+.app .unity-scroller__low-button,
+.app .unity-scroller__high-button { display: none; }
+.app .unity-scroll-view__vertical-scroller { width: 6px; margin-left: 4px; }
+.app .unity-scroll-view__horizontal-scroller { height: 6px; }
+.app .unity-scroller .unity-base-slider__tracker { background-color: rgba(255, 255, 255, 0.08); border-width: 0; border-radius: 3px; }
+.app .unity-scroller .unity-base-slider__dragger { background-color: rgba(255, 255, 255, 0.45); border-width: 0; border-radius: 3px; }
+.app .unity-scroller .unity-base-slider__dragger-border { display: none; }
+.app .unity-scroller--vertical .unity-base-slider__dragger { left: 0; width: 6px; }
+.app .unity-scroller--horizontal .unity-base-slider__dragger { top: 0; height: 6px; }
+.app .unity-scroller .unity-base-slider__drag-container { margin: 0; }

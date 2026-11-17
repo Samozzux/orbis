@@ -23,9 +23,20 @@ namespace Orbis.Gameplay
 
         public void SetSpeed(int index) => SpeedIndex = Mathf.Clamp(index, 0, Speeds.Length - 1);
 
+        /// <summary>Il tempo lo fa scorrere la partita (GameController): Tick non avanza da solo.</summary>
+        public bool External { get; set; }
+
+        /// <summary>Imposta l'ora (dalla partita); avvisa se cambia l'ora.</summary>
+        public void Set(DateTime now)
+        {
+            var before = Now;
+            Now = now;
+            if (now.Hour != before.Hour || Math.Abs((now - before).TotalHours) >= 1) HourChanged?.Invoke(now);
+        }
+
         public void Tick(float realDeltaSeconds)
         {
-            if (Paused) return;
+            if (Paused || External) return;
             var before = Now;
             Now = Now.AddSeconds(realDeltaSeconds * GameSecondsPerRealSecond * Speed);
             if (Now.Hour != before.Hour || (Now - before).TotalHours >= 1) HourChanged?.Invoke(Now);

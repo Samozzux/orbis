@@ -13,6 +13,8 @@ namespace Orbis.Gameplay
     /// <summary>Elemento selezionato nel mondo (per il pannello Dettagli).</summary>
     public sealed class WorldSelection
     {
+        /// <summary>Elemento piazzato dal giocatore (0 = edificio reale OSM).</summary>
+        public int PlacedObjectId;
         public TileView Tile;
         public int BuildingIndex;
         public BuildingInfo Building;
@@ -38,6 +40,19 @@ namespace Orbis.Gameplay
         public Phase State { get; private set; } = Phase.Loading;
         public WorldSelection Selection { get; private set; }
         public GlobeController Globe { get; private set; }
+
+        /// <summary>Partita (economia, costruzione) collegata al mondo; null finché non viene creata.</summary>
+        public GameController Game
+        {
+            get => _game;
+            set
+            {
+                _game = value;
+                if (Clock != null) Clock.External = value != null;
+            }
+        }
+
+        private GameController _game;
 
         /// <summary>0..1 durante il primo caricamento (indice + tile vicini).</summary>
         public float LoadProgress { get; private set; }
@@ -162,7 +177,23 @@ namespace Orbis.Gameplay
 
         private void OnTapped(Vector2 screen)
         {
-            var hit = Picker.Raycast(CameraRig.Cam.ScreenPointToRay(screen));
+            var ray = CameraRig.Cam.ScreenPointToRay(screen);
+            if (Game != null && Game.Build.Active)
+            {
+                // con il mouse il clic piazza; col tocco si conferma con ✓
+                if (Game.Build.AimAtPointer) Game.Build.Confirm();
+                return;
+            }
+            if (Game != null)
+            {
+                int placed = Game.PickPlaced(ray);
+                if (placed != 0)
+                {
+                    SelectPlaced(placed);
+                    return;
+                }
+            }
+            var hit = Picker.Raycast(ray);
             if (!hit.Hit || hit.Building < 0)
             {
                 Select(null);
@@ -178,6 +209,14 @@ namespace Orbis.Gameplay
                 Tile = hit.Tile, BuildingIndex = hit.Building, Building = b, Pois = pois.ToArray(), Point = hit.Point,
                 Lon = lon, Lat = lat,
             });
+        }
+
+        public void SelectPlaced(int objectId)
+        {
+            if (Game == null || !Game.State.Objects.TryGetValue(objectId, out var o)) return;
+            var id = new Orbis.Core.World.Geo.TileId(World.Region.Zoom, o.Lot.TileX, o.Lot.TileY);
+            World.Tiles.TryGetValue(id, out var view);
+            Select(new WorldSelection { PlacedObjectId = objectId, Tile = view });
         }
 
         public void Select(WorldSelection s)
@@ -200,14 +239,30 @@ namespace Orbis.Gameplay
                 mr.shadowCastingMode = ShadowCastingMode.Off;
                 mr.receiveShadows = false;
             }
-            if (Selection == null || Selection.Building == null)
+            if (Selection == null || (Selection.Building == null && Selection.PlacedObjectId == 0) || Selection.Tile == null)
             {
                 _highlight.SetActive(false);
                 return;
             }
             var mb = new MeshBuffer();
             var tile = Selection.Tile;
-            new BuildingMesher().Build(Selection.Building, tile.Data.Terrain.HeightAt, mb, false, tile.Lod != TileLod.Full);
+            if (Selection.PlacedObjectId != 0 && Game != null && Game.State.Objects.TryGetValue(Selection.PlacedObjectId, out var po))
+            {
+                var item = Game.Content.Catalog.Get(po.ItemKey);
+                var lot = item != null ? Orbis.Core.Game.Placement.FindLot(tile.Data, po.Lot.LotId) : null;
+                if (lot == null)
+                {
+                    _highlight.SetActive(false);
+                    return;
+                }
+                var f = Orbis.Core.Game.Placement.Footprint(lot, item, po.HalfX, po.HalfY, po.Rotation);
+                new Orbis.Core.Game.ObjectMesher().Build(item, po.Level, po.Variant, new Orbis.Core.World.Geometry.Vec2(f[0], f[1]), lot.GridAngle,
+                    po.Rotation, tile.Data.Terrain.HeightAt, mb, null, po.Id);
+            }
+            else
+            {
+                new BuildingMesher().Build(Selection.Building, tile.Data.Terrain.HeightAt, mb, false, tile.Lod != TileLod.Full);
+            }
             if (_highlightMesh != null) Destroy(_highlightMesh);
             _highlightMesh = MeshUpload.ToMesh(mb, "Selezione");
             _highlight.GetComponent<MeshFilter>().sharedMesh = _highlightMesh;

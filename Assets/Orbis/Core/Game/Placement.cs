@@ -93,12 +93,18 @@ namespace Orbis.Core.Game
         }
 
         /// <summary>Griglia del lotto con le celle già occupate (edifici OSM non demoliti ed elementi piazzati).</summary>
-        public static LotGrid Occupancy(GameContext ctx, LotKey key, float cellSize, int ignoreObjectId = 0)
+        public static LotGrid Occupancy(GameContext ctx, LotKey key, float cellSize, int ignoreObjectId = 0) =>
+            Occupancy(ctx, key, cellSize, ignoreObjectId, null);
+
+        /// <summary>Mappa di occupazione del lotto intero o solo di una finestra di celle (x, y, larghezza, altezza).</summary>
+        public static LotGrid Occupancy(GameContext ctx, LotKey key, float cellSize, int ignoreObjectId, (int x, int y, int w, int h)? window)
         {
             var tile = ctx.World?.Tile(key.TileX, key.TileY);
             var lot = FindLot(tile, key.LotId);
             if (lot == null) return null;
-            var grid = new LotGrid(lot, cellSize);
+            var grid = window.HasValue
+                ? new LotGrid(lot, cellSize, window.Value.x, window.Value.y, window.Value.w, window.Value.h)
+                : new LotGrid(lot, cellSize);
             for (int b = 0; b < tile.Buildings.Length; b++)
             {
                 var bi = tile.Buildings[b];
@@ -122,7 +128,17 @@ namespace Orbis.Core.Game
         /// <summary>Controlla solo la geometria (lotto e celle libere).</summary>
         public static BuildResult CheckSpace(GameContext ctx, CatalogItem item, LotKey key, int halfX, int halfY, int rotation, int ignoreObjectId = 0)
         {
-            var grid = Occupancy(ctx, key, item.CellSize, ignoreObjectId);
+            // basta la finestra sotto l'elemento (con un bordo di una cella): veloce anche nei lotti enormi
+            Extent(item, rotation, out var sx, out var sy);
+            float cells = 1f / item.CellSize;
+            int cx = (int)Math.Floor(halfX * 0.5f * cells + 1e-4f), cy = (int)Math.Floor(halfY * 0.5f * cells + 1e-4f);
+            int w = (int)Math.Round(sx * cells), h = (int)Math.Round(sy * cells);
+            return CheckSpace(Occupancy(ctx, key, item.CellSize, ignoreObjectId, (cx - 1, cy - 1, w + 2, h + 2)), item, halfX, halfY, rotation);
+        }
+
+        /// <summary>Come sopra, su una mappa di occupazione già calcolata (anteprima: si ricalcola solo se cambia qualcosa).</summary>
+        public static BuildResult CheckSpace(LotGrid grid, CatalogItem item, int halfX, int halfY, int rotation)
+        {
             if (grid == null) return BuildResult.LotNotLoaded;
             Extent(item, rotation, out var sx, out var sy);
             // posizione e misure in celle della griglia dell'oggetto

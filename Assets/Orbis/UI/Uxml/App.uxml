@@ -129,6 +129,80 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
 
+                <ui:VisualElement name="hud-economy" class="hud-economy" picking-mode="Ignore">
+                    <ui:VisualElement name="hud-cash" class="hud-pill" picking-mode="Ignore">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Coins" class="hud-pill__icon hud-pill__icon--coins" />
+                        <ui:Label name="hud-cash-value" class="hud-pill__value" text="" picking-mode="Ignore" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="hud-level" class="hud-pill hud-pill--level" picking-mode="Ignore">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Star" class="hud-pill__icon hud-pill__icon--star" />
+                        <ui:Label name="hud-level-value" class="hud-pill__value" text="" picking-mode="Ignore" />
+                        <ui:VisualElement class="xp-bar" picking-mode="Ignore">
+                            <ui:VisualElement name="hud-xp-fill" class="xp-bar__fill" picking-mode="Ignore" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:Button name="mission-card" class="mission-card">
+                    <glass:GlassSurface />
+                    <el:OrbisIcon icon="Flag" class="mission-card__icon" />
+                    <ui:VisualElement class="mission-card__texts" picking-mode="Ignore">
+                        <ui:Label name="mission-title" class="mission-card__title" text="" picking-mode="Ignore" />
+                        <ui:Label name="mission-text" class="mission-card__text" text="" picking-mode="Ignore" />
+                        <ui:VisualElement class="xp-bar mission-card__bar" picking-mode="Ignore">
+                            <ui:VisualElement name="mission-fill" class="xp-bar__fill mission-card__fill" picking-mode="Ignore" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:Button>
+
+                <ui:VisualElement name="hud-actions" class="hud-actions" picking-mode="Ignore">
+                    <ui:Button name="hud-undo" class="hud-button">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Undo" class="hud-button__icon" />
+                    </ui:Button>
+                    <ui:Button name="hud-redo" class="hud-button">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Redo" class="hud-button__icon" />
+                    </ui:Button>
+                    <ui:Button name="hud-build" class="hud-build">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Building" class="hud-build__icon" />
+                        <ui:Label class="hud-build__label" text="#build.open" picking-mode="Ignore" />
+                    </ui:Button>
+                    <ui:Button name="hud-finance" class="hud-button">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Chart" class="hud-button__icon" />
+                    </ui:Button>
+                    <ui:Button name="hud-rewind" class="hud-button">
+                        <glass:GlassSurface />
+                        <el:OrbisIcon icon="Rewind" class="hud-button__icon" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="build-bar" class="build-bar">
+                    <glass:GlassSurface />
+                    <ui:VisualElement class="build-bar__texts" picking-mode="Ignore">
+                        <ui:Label name="build-name" class="build-bar__name" text="" picking-mode="Ignore" />
+                        <ui:Label name="build-info" class="build-bar__info" text="" picking-mode="Ignore" />
+                    </ui:VisualElement>
+                    <ui:Button name="build-rotate" class="round-button round-button--blue">
+                        <el:OrbisIcon icon="Rotate" class="round-button__icon" />
+                    </ui:Button>
+                    <ui:Button name="build-confirm" class="round-button round-button--green">
+                        <el:OrbisIcon icon="Check" class="round-button__icon" />
+                    </ui:Button>
+                    <ui:Button name="build-cancel" class="round-button round-button--red">
+                        <el:OrbisIcon icon="Close" class="round-button__icon" />
+                    </ui:Button>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="game-toast" class="game-toast" picking-mode="Ignore">
+                    <glass:GlassSurface />
+                    <ui:Label name="game-toast-text" class="game-toast__text" text="" picking-mode="Ignore" />
+                </ui:VisualElement>
+
                 <ui:VisualElement name="layers" class="layers">
                     <glass:GlassSurface />
                     <ui:Button name="toggle-streets" class="setting-row layers__row">
@@ -170,6 +244,7 @@
                             <el:OrbisIcon icon="Close" class="icon-button__icon" />
                         </ui:Button>
                     </ui:VisualElement>
+                    <ui:VisualElement name="details-actions" class="details__actions" />
                     <ui:ScrollView name="details-scroll" class="details__scroll">
                         <ui:VisualElement name="details-rows" class="details__rows" />
                     </ui:ScrollView>
@@ -219,6 +294,26 @@
                     </ui:VisualElement>
                     <ui:Label name="orientation-note" class="sheet__note" text="#settings.orientation.web_note" />
                     <ui:Label class="sheet__note sheet__note--muted" text="#settings.more_soon" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <ui:VisualElement name="panel" class="sheet-layer">
+                <ui:VisualElement name="panel-scrim" class="scrim" />
+                <ui:VisualElement class="sheet sheet--panel">
+                    <glass:GlassSurface />
+                    <ui:VisualElement class="sheet__header">
+                        <ui:Label name="panel-title" class="sheet__title" text="" />
+                        <ui:Button name="panel-close" class="icon-button">
+                            <el:OrbisIcon icon="Close" class="icon-button__icon" />
+                        </ui:Button>
+                    </ui:VisualElement>
+                    <ui:ScrollView name="panel-tabs-scroll" class="panel-tabs-scroll" mode="Horizontal">
+                        <ui:VisualElement name="panel-tabs" class="panel-tabs" />
+                    </ui:ScrollView>
+                    <ui:ScrollView name="panel-scroll" class="panel-scroll">
+                        <ui:VisualElement name="panel-content" class="panel-content" />
+                    </ui:ScrollView>
+                    <ui:VisualElement name="panel-footer" class="panel-footer" />
                 </ui:VisualElement>
             </ui:VisualElement>
 

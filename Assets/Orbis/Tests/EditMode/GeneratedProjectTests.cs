@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -16,7 +17,7 @@ namespace Orbis.Tests.EditMode
     public class GeneratedProjectTests
     {
         private static readonly Regex UxmlKey = new Regex("text=\"#([a-z0-9_.]+)\"");
-        private static readonly Regex CodeKey = new Regex("\"((?:app|loading|menu|web|ios|settings|game|details|weather|osm)\\.[a-z0-9_.]+)\"");
+        private static readonly Regex CodeKey = new Regex("\"((?:app|loading|menu|web|ios|settings|game|details|weather|osm|build|finance|panel|newgame|saves|rewind|mission|offline|time)\\.[a-z0-9_.]+)\"");
 
         [Test]
         public void ScenaDiAvvio_NelleBuildSettings()
@@ -53,10 +54,31 @@ namespace Orbis.Tests.EditMode
             var used = Directory.GetFiles("Assets/Orbis", "*.cs", SearchOption.AllDirectories)
                 .Where(p => !p.Replace('\\', '/').Contains("/Tests/"))
                 .SelectMany(p => CodeKey.Matches(File.ReadAllText(p)).Cast<Match>().Select(m => m.Groups[1].Value))
+                .Where(k => !k.EndsWith(".")) // prefissi completati a runtime (controllati da TestiDegliEnum)
                 .Distinct()
                 .ToList();
             var missing = used.Where(k => !keys.Contains(k)).ToList();
             Assert.That(missing, Is.Empty, "Chiavi usate nel codice ma assenti in data/localization/ui.json");
+        }
+
+        /// <summary>Chiavi composte a runtime dai valori degli enum (motivi, categorie, voci del bilancio, aliquote, difficoltà).</summary>
+        [Test]
+        public void TestiDegliEnum_EsistonoNellaSorgente()
+        {
+            var keys = LocalizationGenerator.LoadSource().entries.Select(e => e.key).ToHashSet();
+            var expected = new List<string>();
+            void Add<T>(string prefix) where T : System.Enum
+            {
+                foreach (var v in System.Enum.GetNames(typeof(T)))
+                    if (v != "Count") expected.Add(prefix + v);
+            }
+            Add<Orbis.Core.Game.BuildResult>("result.");
+            Add<Orbis.Core.Game.CatalogCategory>("category.");
+            Add<Orbis.Core.Game.LedgerCategory>("ledger.");
+            Add<Orbis.Core.Game.TaxKind>("tax.");
+            Add<Orbis.Core.Game.Difficulty>("newgame.difficulty.");
+            var missing = expected.Where(k => !keys.Contains(k)).ToList();
+            Assert.That(missing, Is.Empty, "Testi degli enum assenti in data/localization/ui.json");
         }
 
         [Test]

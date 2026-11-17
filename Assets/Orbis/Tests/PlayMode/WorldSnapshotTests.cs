@@ -43,7 +43,7 @@ namespace Orbis.Tests.PlayMode
             var deadline = Time.realtimeSinceStartup + 60f;
             while ((OrbisApp.Instance == null || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu) && Time.realtimeSinceStartup < deadline)
                 yield return null;
-            OrbisApp.Instance.StartGame();
+            OrbisApp.Instance.StartGame(new Orbis.UI.Game.GameStart { Transient = true });
             var session = OrbisApp.Instance.Session;
             deadline = Time.realtimeSinceStartup + 120f;
             while (session.State == WorldSession.Phase.Loading && Time.realtimeSinceStartup < deadline) yield return null;
@@ -111,7 +111,7 @@ namespace Orbis.Tests.PlayMode
             var deadline = Time.realtimeSinceStartup + 60f;
             while ((OrbisApp.Instance == null || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu) && Time.realtimeSinceStartup < deadline)
                 yield return null;
-            OrbisApp.Instance.StartGame();
+            OrbisApp.Instance.StartGame(new Orbis.UI.Game.GameStart { Transient = true });
             var session = OrbisApp.Instance.Session;
             while (session.State == WorldSession.Phase.Loading) yield return null;
             for (int i = 0; i < 120; i++) yield return null; // texture del globo
