@@ -161,9 +161,9 @@ def energy(key, name, w, d, h, unlock, family, kw, cost, n=3, effects=None, tags
         [], effects or {}, tags, **model)
 
 
-energy("pala_eolica", "Pala eolica", 12, 12, 95, 6, "wind", 600, 180000, tags=("energia", "wind", "pulita"),
+energy("pala_eolica", "Pala eolica", 40, 40, 70, 6, "wind", 600, 180000, tags=("energia", "wind", "pulita"),
        effects={"happiness": -0.5, "happinessRadius": 300})
-energy("parco_eolico", "Parco eolico (4 pale)", 60, 60, 95, 14, "windfarm", 2400, 680000, tags=("energia", "wind", "pulita"),
+energy("parco_eolico", "Parco eolico (4 pale)", 90, 90, 70, 14, "windfarm", 2400, 680000, tags=("energia", "wind", "pulita"),
        effects={"happiness": -1, "happinessRadius": 500})
 energy("pannelli_solari_piccoli", "Pannelli solari", 12, 8, 2, 2, "solar", 12, 9000, tags=("energia", "solar", "pulita"))
 energy("campo_fotovoltaico", "Campo fotovoltaico", 60, 40, 3, 8, "solar", 260, 95000, tags=("energia", "solar", "pulita"))
@@ -258,8 +258,8 @@ def culture(key, name, w, d, h, unlock, family, cost, happiness, rent, tags=("cu
 
 culture("museo", "Museo", 40, 30, 14, 10, "civic", 2200000, 5, 8000, kind="museum")
 culture("teatro", "Teatro", 36, 28, 18, 12, "civic", 3000000, 6, 9000, kind="theatre")
-culture("chiesa", "Chiesa", 30, 18, 16, 6, "church", 900000, 3, 0)
-culture("cappella", "Cappella", 10, 8, 8, 2, "church", 90000, 1, 0)
+culture("chiesa", "Chiesa", 30, 18, 30, 6, "church", 900000, 3, 0)
+culture("cappella", "Cappella", 10, 8, 12, 2, "church", 90000, 1, 0)
 culture("anfiteatro", "Anfiteatro all'aperto", 50, 40, 8, 14, "amphitheatre", 1200000, 5, 6000)
 culture("luna_park", "Luna park", 80, 60, 25, 16, "funfair", 1800000, 7, 22000, tags=("cultura", "svago"))
 culture("discoteca", "Discoteca", 30, 24, 8, 10, "hall", 600000, 2, 9000, tags=("cultura", "svago"))
@@ -325,7 +325,7 @@ decor("chiosco", "Chiosco delle bibite", 3, 2.5, 3, 2, "kiosk", 3500, 0.5)
 decor("parco_giochi", "Parco giochi", 12, 10, 3, 3, "playground", 12000, 2)
 decor("dehors", "Dehors con tavolini", 6, 4, 2.5, 2, "terrace", 2500, 0.6)
 decor("monumento_caduti", "Monumento ai caduti", 4, 4, 6, 6, "statue", 15000, 1.5, size="large")
-decor("bandiera", "Pennone con bandiera", 1, 1, 8, 2, "flag", 800, 0.2)
+decor("bandiera", "Pennone con bandiera", 2, 1, 8, 2, "flag", 800, 0.2)
 decor("pensilina_bici", "Rastrelliera per bici", 3, 1, 1, 2, "bikerack", 700, 0.2)
 
 

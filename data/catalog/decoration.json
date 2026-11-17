@@ -425,7 +425,7 @@
    "category": "decoration",
    "name": "Pennone con bandiera",
    "footprint": {
-    "w": 1,
+    "w": 2,
     "d": 1
    },
    "height": 8,

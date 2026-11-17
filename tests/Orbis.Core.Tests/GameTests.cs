@@ -367,3 +367,45 @@ namespace Orbis.Core.Tests
         }
     }
 }
+
+namespace Orbis.Core.Tests
+{
+    /// <summary>docs/04 §4: "il modello 3D non esce dalla sagoma; un test sugli asset lo controlla".</summary>
+    public class ObjectMesherTests
+    {
+        private static Catalog Load()
+        {
+            var root = System.IO.Path.GetFullPath(System.IO.Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+            var c = new Catalog();
+            foreach (var f in System.IO.Directory.GetFiles(System.IO.Path.Combine(root, "data", "catalog"), "*.json"))
+                c.Load(System.IO.File.ReadAllText(f));
+            return c;
+        }
+
+        [Fact]
+        public void OgniElementoStaDentroLaSuaSagoma()
+        {
+            var mesher = new ObjectMesher();
+            foreach (var item in Load().Items)
+            {
+                foreach (int rot in new[] { 0, 1 })
+                {
+                    var mb = new Orbis.Core.World.Meshing.MeshBuffer();
+                    var plants = new System.Collections.Generic.List<Orbis.Core.World.Meshing.PlantInstance>();
+                    mesher.Build(item, item.MaxLevel, null, new Orbis.Core.World.Geometry.Vec2(0, 0), 0, rot, (x, y) => 100f, mb, plants, 7);
+                    Placement.Extent(item, rot, out var sx, out var sy);
+                    Assert.True(mb.VertexCount > 0 || plants.Count > 0, item.Key + ": modello vuoto");
+                    for (int i = 0; i < mb.VertexCount; i++)
+                    {
+                        float x = mb.GetFloat(i, 0), z = mb.GetFloat(i, 1), y = mb.GetFloat(i, 2);
+                        Assert.True(x >= -0.05f && x <= sx + 0.05f && y >= -0.05f && y <= sy + 0.05f,
+                            $"{item.Key} (rot {rot}): vertice ({x:0.00}, {y:0.00}) fuori dalla sagoma {sx}×{sy}");
+                        Assert.True(z <= 100f + item.Height * 1.25f + 2f, $"{item.Key}: vertice a {z - 100f:0.0} m oltre l'altezza {item.Height}");
+                    }
+                    foreach (var p in plants)
+                        Assert.True(p.X >= 0 && p.X <= sx && p.Y >= 0 && p.Y <= sy, $"{item.Key}: pianta fuori dalla sagoma");
+                }
+            }
+        }
+    }
+}

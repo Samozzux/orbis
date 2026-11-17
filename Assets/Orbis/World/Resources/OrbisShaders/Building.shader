@@ -202,6 +202,37 @@ Shader "Orbis/Building"
                     float far = saturate(fwidth(x) * 4.0);
                     albedo = lerp(albedo, baseColor * 0.92, far);
                 }
+                else if (kind > 8.5 && kind < 9.5)
+                {
+                    // ---------------- parcheggio: asfalto con stalli
+                    float x = i.uv0.x, y = i.uv0.y;
+                    albedo = baseColor * (0.9 + 0.15 * OrbisNoise(i.positionWS.xz * 2.0));
+                    float stall = Box(frac(x / 2.6), 0.0, 0.05) * Box(frac(y / 12.0), 0.08, 0.42);
+                    albedo = lerp(albedo, half3(0.9, 0.9, 0.88), stall);
+                }
+                else if (kind > 9.5 && kind < 10.5)
+                {
+                    // ---------------- pavimentazione in pietra
+                    float2 p = i.uv0.xy / 0.4;
+                    p.x += step(0.5, frac(p.y * 0.5)) * 0.5;
+                    float2 f2 = abs(frac(p) - 0.5);
+                    albedo = baseColor * (0.88 + 0.16 * OrbisHash21(floor(p))) * (1.0 - 0.16 * smoothstep(0.4, 0.5, max(f2.x, f2.y)));
+                }
+                else if (kind > 10.5 && kind < 11.5)
+                {
+                    // ---------------- acqua (piscine, laghetti)
+                    float ripple = OrbisNoise(i.positionWS.xz * 0.8 + _Time.y * 0.4);
+                    albedo = baseColor * (0.85 + 0.25 * ripple);
+                    spec = 1.0;
+                }
+                else if (kind > 11.5)
+                {
+                    // ---------------- pannello solare: celle scure con telaio chiaro
+                    float2 cell = frac(i.uv0.xy / float2(1.0, 0.55));
+                    float frame = 1 - Box(cell.x, 0.04, 0.96) * Box(cell.y, 0.06, 0.94);
+                    albedo = lerp(baseColor, half3(0.75, 0.77, 0.8), frame * 0.8);
+                    spec = 0.9;
+                }
                 else if (kind > 7.5)
                 {
                     // ---------------- campo da calcio: strisce del prato e linee (uv0 = m nel rettangolo, lati)

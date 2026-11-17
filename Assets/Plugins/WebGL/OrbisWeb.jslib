@@ -20,5 +20,16 @@ mergeInto(LibraryManager.library, {
 
   OrbisWeb_HasWebGpu: function () {
     return (typeof navigator !== 'undefined' && navigator.gpu) ? 1 : 0;
+  },
+
+  // Salva su IndexedDB i file scritti in persistentDataPath (file system IDBFS di Unity).
+  OrbisWeb_SyncFs: function () {
+    try {
+      FS.syncfs(false, function (err) {
+        if (err) console.warn('[Orbis] salvataggio nel browser non riuscito', err);
+      });
+    } catch (e) {
+      console.warn('[Orbis] syncfs non disponibile', e);
+    }
   }
 });

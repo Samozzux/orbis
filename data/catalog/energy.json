@@ -6,10 +6,10 @@
    "category": "energy",
    "name": "Pala eolica",
    "footprint": {
-    "w": 12,
-    "d": 12
+    "w": 40,
+    "d": 40
    },
-   "height": 95,
+   "height": 70,
    "model": {
     "family": "wind"
    },
@@ -58,10 +58,10 @@
    "category": "energy",
    "name": "Parco eolico (4 pale)",
    "footprint": {
-    "w": 60,
-    "d": 60
+    "w": 90,
+    "d": 90
    },
-   "height": 95,
+   "height": 70,
    "model": {
     "family": "windfarm"
    },
