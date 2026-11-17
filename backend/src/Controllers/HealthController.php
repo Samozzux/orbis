@@ -16,16 +16,21 @@ class HealthController
 {
     const DEFAULT_CHUNK = 524288; // 512 KB
 
-    public static function health(Request $request, array $params)
+    /** Dimensione dei pezzi di upload: 512 KB, o meno se i limiti di PHP sono più bassi. */
+    public static function chunkSize()
     {
-        $database = self::database();
-        $ok = $database['connected'] && $database['migrations']['pending'] === 0;
-
         $uploadMax = self::bytes(ini_get('upload_max_filesize'));
         $postMax = self::bytes(ini_get('post_max_size'));
         $limit = min(array_filter(array($uploadMax, $postMax > 65536 ? $postMax - 65536 : $postMax), function ($v) {
             return $v > 0;
         }) ?: array(self::DEFAULT_CHUNK));
+        return (int)min(self::DEFAULT_CHUNK, $limit);
+    }
+
+    public static function health(Request $request, array $params)
+    {
+        $database = self::database();
+        $ok = $database['connected'] && $database['migrations']['pending'] === 0;
 
         Response::json($ok ? 200 : 503, array(
             'status' => $ok ? 'ok' : 'degraded',
@@ -60,7 +65,7 @@ class HealthController
                 'max_execution_time' => (int)ini_get('max_execution_time'),
             ),
             'limits' => array(
-                'chunkSizeBytes' => (int)min(self::DEFAULT_CHUNK, $limit),
+                'chunkSizeBytes' => self::chunkSize(),
             ),
             'database' => $database,
             'config' => array(

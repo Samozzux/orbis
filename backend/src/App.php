@@ -37,12 +37,21 @@ class App
             $router->add('DELETE', '/auth/sessions/{id}', array($auth, 'revokeSession'));
             $router->add('GET', '/me', array('Orbis\Api\Controllers\MeController', 'show'));
             $router->add('PATCH', '/me', array('Orbis\Api\Controllers\MeController', 'update'));
+            // salvataggi nel cloud (M3, docs/06 §5)
+            $saves = 'Orbis\Api\Controllers\SavesController';
+            $router->add('GET', '/saves', array($saves, 'index'));
+            $router->add('GET', '/saves/{uuid}', array($saves, 'show'));
+            $router->add('DELETE', '/saves/{uuid}', array($saves, 'delete'));
+            $router->add('GET', '/saves/{uuid}/download', array($saves, 'download'));
+            $router->add('POST', '/saves/{uuid}/upload/start', array($saves, 'start'));
+            $router->add('PUT', '/saves/{uuid}/upload/{uploadId}/chunk/{n}', array($saves, 'chunk'));
+            $router->add('POST', '/saves/{uuid}/upload/{uploadId}/finish', array($saves, 'finish'));
             $router->dispatch($request);
         } catch (HttpError $e) {
             foreach ($e->headers as $header) {
                 header($header);
             }
-            Response::error($e->status, $e->errorCode, $e->getMessage());
+            Response::json($e->status, array_merge(array('error' => array('code' => $e->errorCode, 'message' => $e->getMessage())), $e->extra));
         } catch (\Throwable $e) {
             error_log('[orbis] errore: ' . $e->getMessage());
             Response::error(500, 'server_error', 'Errore interno.');

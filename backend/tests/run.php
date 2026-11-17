@@ -88,7 +88,9 @@ $config = array(
     'admin_username' => 'admin',
     'cors_origins' => array('https://samozzux.github.io'),
     'cors_allow_localhost' => true,
+    'storage_dir' => $storage . '-storage',
 );
+$storageDir = $config['storage_dir'];
 file_put_contents($configFile, '<?php return ' . var_export($config, true) . ';');
 @unlink($root . '/storage/migrations.ok');
 $testPdo = null;
@@ -179,11 +181,15 @@ try {
 
     if ($hasDb) {
         require __DIR__ . '/auth.php';
+        require __DIR__ . '/saves.php';
     }
 } finally {
     proc_terminate($server);
     proc_close($server);
     @unlink($configFile);
+    if (is_dir($storageDir)) {
+        exec('rm -rf ' . escapeshellarg($storageDir));
+    }
     @unlink($root . '/storage/migrations.ok');
 }
 
