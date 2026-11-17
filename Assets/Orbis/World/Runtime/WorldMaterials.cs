@@ -9,6 +9,8 @@ namespace Orbis.World
         public static readonly int NightId = Shader.PropertyToID("_OrbisNight");
         public static readonly int WetId = Shader.PropertyToID("_OrbisWet");
         private static readonly int MainTexId = Shader.PropertyToID("_MainTex");
+        private static readonly int DetailId = Shader.PropertyToID("_Detail");
+        private static readonly int DetailSizeId = Shader.PropertyToID("_DetailSize");
 
         public readonly Material Building;
         public readonly Material Road;
@@ -44,11 +46,30 @@ namespace Orbis.World
         private static Material Create(string name) => new Material(Load(name)) { name = "Orbis " + name };
 
         /// <summary>Materiale del terreno di un tile con la sua texture delle aree.</summary>
-        public Material TerrainFor(Texture2D landuse)
+        public Material TerrainFor(Texture2D landuse, Texture2D detail)
         {
             var m = new Material(_terrain) { name = "Orbis Terrain" };
             m.SetTexture(MainTexId, landuse);
+            if (detail != null)
+            {
+                m.SetTexture(DetailId, detail);
+                m.SetFloat(DetailSizeId, detail.width);
+            }
             return m;
+        }
+
+        /// <summary>Mappa dei materiali del terreno (suolo, direzione e fase delle file): letta senza filtro né mipmap.</summary>
+        public static Texture2D DetailTexture(byte[] rgba, int size)
+        {
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false, true)
+            {
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point,
+                name = "Suolo",
+            };
+            tex.SetPixelData(rgba, 0);
+            tex.Apply(false, true);
+            return tex;
         }
 
         public static void SetNight(float night) => Shader.SetGlobalFloat(NightId, Mathf.Clamp01(night));

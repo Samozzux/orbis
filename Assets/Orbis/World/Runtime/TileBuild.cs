@@ -26,6 +26,8 @@ namespace Orbis.World
         public TileLod Lod;
         public MeshBuffer Terrain;
         public byte[] Landuse;
+        /// <summary>Mappa dei materiali del terreno (stessa risoluzione di <see cref="Landuse"/>).</summary>
+        public byte[] Detail;
         public int LanduseSize;
         public MeshBuffer Roads;
         public MeshBuffer[] Buildings = new MeshBuffer[Chunks * Chunks];
@@ -43,7 +45,7 @@ namespace Orbis.World
         /// <param name="levels">livello degli edifici OSM potenziati (assente = 1), copia per il thread</param>
         /// <param name="decorDensity">densità degli addobbi (0 = nessuno)</param>
         public static IEnumerator<object> Run(Func<byte[]> file, TileData cached, double scale, TileLod lod, TileBuildResult r,
-            HashSet<long> hidden = null, Dictionary<long, int> levels = null, float decorDensity = 1f)
+            HashSet<long> hidden = null, Dictionary<long, int> levels = null, float decorDensity = 1f, int landuseFull = 1024)
         {
             var data = cached;
             if (data == null)
@@ -59,10 +61,13 @@ namespace Orbis.World
             TerrainMesher.Build(data.Terrain, r.Terrain, lod == TileLod.Far ? 2 : 1, lod == TileLod.Full ? 15f : 40f);
             yield return null;
 
-            r.LanduseSize = lod == TileLod.Full ? 512 : (lod == TileLod.Medium ? 256 : 128);
+            // mappa delle colture: ~1,8 m per pixel nei tile vicini (prima 3,5 m: bordi a gradini)
+            r.LanduseSize = lod == TileLod.Full ? landuseFull : (lod == TileLod.Medium ? 256 : 128);
             var owner = LanduseRaster.Rasterize(data.Areas, data.Size, r.LanduseSize);
             yield return null;
             r.Landuse = LanduseRaster.Colorize(data.Areas, owner, r.LanduseSize, data.Id.X * 31 + data.Id.Y);
+            yield return null;
+            r.Detail = LanduseRaster.Detail(data.Areas, owner, r.LanduseSize);
             yield return null;
 
             r.Roads = new MeshBuffer();

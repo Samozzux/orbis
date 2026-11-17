@@ -68,6 +68,17 @@ Branch `m2-costruzione`.
   - **Due cause.** Sui pendii i modelli del catalogo si appoggiavano alla quota media o a quella più bassa della sagoma, e il lato a monte finiva sotto terra. Inoltre molti pezzi (silos, ciminiere, colonne dei portici, tende dei negozi, fioriere, cestini, siepi, aiuole, eliporto, pannelli sui tetti) avevano quote come se il terreno fosse a 0 m, mentre Chieti è a circa 300 m.
   - **Correzione.** Ogni volume sta in piano alla quota più alta del suo pezzo di sagoma, con un basamento in pietra verso valle. Campi, filari, alveari, pannelli a terra e recinzioni seguono il terreno.
   - **Test nuovi.** Nessun vertice sotto terra; su un pendio del 20% il piano terra non è mai sotto il terreno. Verificato anche con le foto.
+- **Terreno "sgranato"** (segnalazione di Samuele):
+  - **Cause.** La mappa delle colture era di 512 pixel per tile (3,5 m per pixel, bordi a gradini), con un rumore di colore diverso per ogni pixel e senza dettagli veri.
+  - **Mappa più fine.** Ora è di 1024 pixel nei tile vicini, circa 1,8 m per pixel (512 su telefono via web e sui telefoni con poca memoria), con un tono stabile per area.
+  - **Mappa dei materiali.** Una seconda mappa, letta senza filtro, dice per ogni area il tipo di suolo (prato, campo, vigneto, uliveto/frutteto, bosco, città, sabbia/roccia), la coltura del campo (grano, verde, arato, file larghe) e direzione e fase delle file.
+  - **Nuovo shader del terreno.** Disegna in metri:
+    - solchi dell'arato, file del grano con i passaggi del trattore, file di girasole e mais;
+    - nei vigneti terra sotto i filari ed erba in mezzo, allineate esattamente alle viti (test per ogni orientamento);
+    - prato a ciuffi e chiazze secche, sottobosco, città a macchie.
+  - **Bordi e lontananza.** I bordi tra le aree ondeggiano di un paio di metri: niente più gradini. Da lontano i dettagli sfumano, senza moiré.
+  - **Colori.** I campi hanno il colore della loro coltura: grano dorato, verde, arato bruno.
+  - **Memoria.** Circa 9 MB per tile vicino (prima 1,4 MB).
 - **Telecamera in modalità costruzione**:
   - entrando (costruisci o sposta) vola verso il punto, con una distanza adatta alle misure dell'elemento (50–280 m) e un'inclinazione da tre quarti (45–58°); non si allontana mai;
   - spostando un elemento si centra su di esso;
@@ -270,5 +281,5 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 - **Corretto durante le prove**: le missioni e i livelli completati da un'azione del giocatore non davano l'avviso; il controllo dello spazio costruiva la griglia dell'intero lotto e sui lotti agricoli enormi andava in errore ("lotto troppo grande") → ora controlla solo la finestra sotto l'elemento, veloce ovunque (test con un lotto di 3×3 km); WASD muoveva la camera mentre si scriveva nella ricerca; ritocchi grafici dalle fotografie dell'interfaccia.
 - **Resta**: PR, build verdi, prova di Samuele, tag `v0.2.0`.
 - **Poi, sempre il 17/11**: PR #6 unita in `main` (build per la prova di M2 avviate). Su richiesta di Samuele: edifici reali in stile gioco con addobbi per tipo e livello, potenziamento degli edifici reali, città più colorata (branch `m2-stile-gioco`).
-- **Sera del 17/11**: PR #7 unita. Dalla prova di Samuele: edifici costruiti che entravano nel terreno (corretto) e telecamera più vicina in modalità costruzione (branch `m2-costruzione`).
+- **Sera del 17/11**: PR #7 unita. Dalla prova di Samuele: edifici costruiti che entravano nel terreno (corretto), telecamera più vicina in modalità costruzione, terreno non più sgranato (branch `m2-costruzione`).
 

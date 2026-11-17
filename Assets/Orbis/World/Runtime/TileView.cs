@@ -15,6 +15,7 @@ namespace Orbis.World
         public int DecorationTriangles { get; private set; }
         public int BuildingTriangles { get; private set; }
         private Texture2D _landuse;
+        private Texture2D _detail;
         private Material _terrainMaterial;
         private readonly System.Collections.Generic.List<(GameObject go, Bounds bounds)> _decor = new System.Collections.Generic.List<(GameObject, Bounds)>();
 
@@ -34,7 +35,8 @@ namespace Orbis.World
             Data = r.Data;
             Lod = r.Lod;
             _landuse = WorldMaterials.LanduseTexture(r.Landuse, r.LanduseSize);
-            _terrainMaterial = materials.TerrainFor(_landuse);
+            _detail = r.Detail != null ? WorldMaterials.DetailTexture(r.Detail, r.LanduseSize) : null;
+            _terrainMaterial = materials.TerrainFor(_landuse, _detail);
             Add("Terreno", r.Terrain, _terrainMaterial, cast: false);
             if (r.Roads != null && !r.Roads.IsEmpty) Add("Strade", r.Roads, materials.Road, cast: false);
             for (int i = 0; i < r.Buildings.Length; i++)
@@ -90,6 +92,7 @@ namespace Orbis.World
                 Object.Destroy(child);
             }
             if (_landuse != null) Object.Destroy(_landuse);
+            if (_detail != null) Object.Destroy(_detail);
             if (_terrainMaterial != null) Object.Destroy(_terrainMaterial);
         }
 

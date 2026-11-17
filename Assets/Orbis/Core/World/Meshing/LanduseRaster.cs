@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Orbis.Core.World.Fb;
+using Orbis.Core.World.Geometry;
 using Orbis.Core.World.Tiles;
 
 namespace Orbis.Core.World.Meshing
@@ -12,12 +13,38 @@ namespace Orbis.Core.World.Meshing
     /// </summary>
     public static class LanduseRaster
     {
-        public const uint DefaultGround = 0xC4C68E;
+        // terreno senza aree mappate: prato collinare (il tono varia nello shader)
+        public const uint DefaultGround = 0xA9B373;
 
-        private static readonly uint[] FieldColors =
+        /// <summary>Tipo di suolo per i dettagli dello shader del terreno (mappa dei materiali).</summary>
+        public enum Ground : byte { Grass = 0, Meadow = 1, Crop = 2, Vineyard = 3, Orchard = 4, Forest = 5, Urban = 6, Sand = 7 }
+
+        /// <summary>Coltura di un campo (sempre la stessa per la stessa area OSM): grano, verde, arato, file larghe (girasole, mais).</summary>
+        public enum Crop : byte { Wheat = 0, Green = 1, Plowed = 2, WideRows = 3 }
+
+        private static readonly uint[] WheatColors = { 0xD9BE70, 0xCFB062, 0xE2C985, 0xC9A95E };
+        private static readonly uint[] GreenColors = { 0x93AB5C, 0x9DB467, 0x84A052, 0xA7B66B };
+        private static readonly uint[] PlowedColors = { 0x9E7B56, 0x8C6B4B, 0xAA8862, 0x957252 };
+        private static readonly uint[] RowColors = { 0xA9A657, 0x93A24E, 0xB5AC5C };
+
+        public static Crop CropOf(long id)
         {
-            0xD8C077, 0xCDB56A, 0xA8B66A, 0xB79C6F, 0x9F8763, 0xC6C88B, 0xD3B784, 0xB4BE78, 0xC9A96E, 0xA2AE6E,
-        };
+            uint h = StylePalette.Hash(id, 37) % 100;
+            return h < 40 ? Crop.Wheat : (h < 65 ? Crop.Green : (h < 85 ? Crop.Plowed : Crop.WideRows));
+        }
+
+        /// <summary>Distanza tra le file (m) per i dettagli dei campi e dei vigneti.</summary>
+        public static float RowGap(AreaKind k, Crop c)
+        {
+            if (k == AreaKind.Vineyard) return 2.6f;
+            switch (c)
+            {
+                case Crop.Plowed: return 0.9f;
+                case Crop.WideRows: return 0.75f;
+                case Crop.Green: return 0.45f;
+                default: return 0.3f;
+            }
+        }
 
         public static uint ColorOf(AreaKind k, long id)
         {
@@ -63,7 +90,17 @@ namespace Orbis.Core.World.Meshing
                 case AreaKind.Scree: return 0xC0B8AA;
                 case AreaKind.Glacier: return 0xEFF3F5;
                 case AreaKind.Cliff: return 0xA79E8F;
-                case AreaKind.Farmland: return FieldColors[StylePalette.Hash(id, 31) % (uint)FieldColors.Length];
+                case AreaKind.Farmland:
+                    {
+                        uint h = StylePalette.Hash(id, 31);
+                        switch (CropOf(id))
+                        {
+                            case Crop.Wheat: return WheatColors[h % (uint)WheatColors.Length];
+                            case Crop.Green: return GreenColors[h % (uint)GreenColors.Length];
+                            case Crop.Plowed: return PlowedColors[h % (uint)PlowedColors.Length];
+                            default: return RowColors[h % (uint)RowColors.Length];
+                        }
+                    }
                 case AreaKind.Vineyard: return 0xA29660;
                 case AreaKind.Orchard: return 0x96AC66;
                 case AreaKind.OliveGrove: return 0xB2AC80;
@@ -189,14 +226,14 @@ namespace Orbis.Core.World.Meshing
             var cache = new uint[areas.Count + 1];
             cache[0] = DefaultGround;
             for (int i = 0; i < areas.Count; i++) cache[i + 1] = ColorOf(areas[i].Kind, areas[i].OsmId);
+            var tone = new float[areas.Count + 1];
+            tone[0] = 1f;
+            for (int i = 0; i < areas.Count; i++) tone[i + 1] = IsWater(areas[i].Kind) ? 1f : 0.96f + 0.08f * StylePalette.Random01(areas[i].OsmId, 41);
             for (int p = 0; p < owner.Length; p++)
             {
                 uint c = cache[owner[p]];
-                int x = p % size, y = p / size;
-                // rumore a due scale: macchie larghe e grana fine
-                float n = (Noise(x >> 3, y >> 3, tileSeed) - 0.5f) * 0.10f + (Noise(x, y, tileSeed + 7) - 0.5f) * 0.06f;
-                if (owner[p] != 0 && IsWater(areas[owner[p] - 1].Kind)) n *= 0.3f;
-                float k = 1f + n;
+                // tono stabile per area; la grana e le macchie le disegna lo shader in metri (niente pixel visibili)
+                float k = tone[owner[p]];
                 int o = p * 4;
                 rgba[o] = Clamp(((c >> 16) & 0xFF) * k);
                 rgba[o + 1] = Clamp(((c >> 8) & 0xFF) * k);
@@ -204,6 +241,94 @@ namespace Orbis.Core.World.Meshing
                 rgba[o + 3] = owner[p] != 0 && IsWater(areas[owner[p] - 1].Kind) ? (byte)0 : (byte)255; // alfa 0 = acqua
             }
             return rgba;
+        }
+
+        public static Ground GroundOf(AreaKind k)
+        {
+            switch (k)
+            {
+                case AreaKind.Farmland: return Ground.Crop;
+                case AreaKind.Vineyard: return Ground.Vineyard;
+                case AreaKind.Orchard:
+                case AreaKind.OliveGrove:
+                case AreaKind.PlantNursery:
+                case AreaKind.Allotments: return Ground.Orchard;
+                case AreaKind.Forest:
+                case AreaKind.Scrub:
+                case AreaKind.Wetland: return Ground.Forest;
+                case AreaKind.Meadow:
+                case AreaKind.Meadowland:
+                case AreaKind.Grassland:
+                case AreaKind.Heath:
+                case AreaKind.Greenfield: return Ground.Meadow;
+                case AreaKind.Park:
+                case AreaKind.Garden:
+                case AreaKind.Grass:
+                case AreaKind.Cemetery:
+                case AreaKind.GolfCourse:
+                case AreaKind.Pitch:
+                case AreaKind.Stadium:
+                case AreaKind.SportsCentre:
+                case AreaKind.Camping:
+                case AreaKind.Zoo:
+                case AreaKind.ThemePark: return Ground.Grass;
+                case AreaKind.Beach:
+                case AreaKind.Sand:
+                case AreaKind.BareRock:
+                case AreaKind.Scree:
+                case AreaKind.Cliff:
+                case AreaKind.Quarry:
+                case AreaKind.Landfill:
+                case AreaKind.Glacier: return Ground.Sand;
+            }
+            return IsWater(k) ? Ground.Sand : Ground.Urban;
+        }
+
+        /// <summary>
+        /// Mappa dei materiali per lo shader del terreno (letta senza filtro, un valore per area):
+        /// R = suolo × 16 + coltura, G·B = direzione di attraversamento delle file (angolo su 16 bit, 0..π),
+        /// A = fase delle file (i filari dei vigneti cadono esattamente sotto le viti di VegetationScatter).
+        /// Le aree non mappate sono prato.
+        /// </summary>
+        public static byte[] Detail(IReadOnlyList<AreaInfo> areas, ushort[] owner, int size)
+        {
+            var param = new uint[areas.Count + 1];
+            param[0] = (uint)Ground.Meadow << 4 << 24;
+            for (int i = 0; i < areas.Count; i++)
+            {
+                var a = areas[i];
+                var g = GroundOf(a.Kind);
+                var crop = a.Kind == AreaKind.Farmland ? CropOf(a.OsmId) : Crop.Wheat;
+                ushort angle = 0;
+                byte phase = 0;
+                if ((g == Ground.Crop || g == Ground.Vineyard || g == Ground.Orchard) && a.Outer != null && a.Outer.Length >= 6)
+                {
+                    var box = OrientedBox.Of(Polygon2D.ToPoints(a.Outer));
+                    // asse di attraversamento delle file = V del rettangolo orientato (come i filari di VegetationScatter)
+                    double ang = Math.Atan2(box.V.Y, box.V.X);
+                    if (ang < 0) ang += Math.PI;
+                    bool flip = Math.Atan2(box.V.Y, box.V.X) < 0; // asse ribaltato: la fase si misura al contrario
+                    angle = (ushort)Math.Min(65535, Math.Round(ang / Math.PI * 65535));
+                    float gap = RowGap(a.Kind, crop);
+                    // file dove dot(p, V) = F + gap·(j + ½), con F = dot(centro, V) - HalfV; nello shader l'asse è ±V e
+                    // frac(dot(p, asse)/gap - fase) = ½ sulla fila → fase = frac(±F/gap)
+                    double f = (Vec2.Dot(box.Center, box.V) - box.HalfV) * (flip ? -1 : 1) / gap;
+                    double ph = f - Math.Floor(f);
+                    phase = (byte)(Math.Round(ph * 256) % 256);
+                }
+                param[i + 1] = ((uint)(((int)g << 4) | (int)crop) << 24) | ((uint)angle << 8) | phase;
+            }
+            var data = new byte[size * size * 4];
+            for (int p = 0; p < owner.Length; p++)
+            {
+                uint v = param[owner[p]];
+                int o = p * 4;
+                data[o] = (byte)(v >> 24);
+                data[o + 1] = (byte)(v >> 16);
+                data[o + 2] = (byte)(v >> 8);
+                data[o + 3] = (byte)v;
+            }
+            return data;
         }
 
         private static float Noise(int x, int y, int seed)

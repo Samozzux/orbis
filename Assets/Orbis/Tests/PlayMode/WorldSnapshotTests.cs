@@ -61,6 +61,9 @@ namespace Orbis.Tests.PlayMode
                 new Shot { Name = "07-campagna", Target = new Vector3(-3500, 0, -2500), Yaw = 60, Pitch = 32, Distance = 900, Hour = 15 },
                 new Shot { Name = "08-pioggia", Target = new Vector3(0, 0, 0), Yaw = 120, Pitch = 30, Distance = 450, Hour = 12, Weather = Core.World.Sky.WeatherKind.Rain },
                 new Shot { Name = "09-costa", Target = new Vector3(14000, 0, 4000), Yaw = 70, Pitch = 25, Distance = 4000, Hour = 9 },
+                new Shot { Name = "11-campi-vicino", Target = new Vector3(-3500, 0, -2500), Yaw = 60, Pitch = 38, Distance = 260, Hour = 15 },
+                new Shot { Name = "12-campi-medio", Target = new Vector3(-2600, 0, -1800), Yaw = 200, Pitch = 30, Distance = 650, Hour = 10 },
+                new Shot { Name = "13-campi-dettaglio", Target = new Vector3(-3420, 0, -2280), Yaw = 60, Pitch = 34, Distance = 90, Hour = 16 },
             };
             var cam = session.CameraRig.Cam;
             var list = new System.Collections.Generic.List<Shot>(shots);
