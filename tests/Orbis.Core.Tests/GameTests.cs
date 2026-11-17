@@ -496,11 +496,42 @@ namespace Orbis.Core.Tests
                         Assert.True(x >= -0.05f && x <= sx + 0.05f && y >= -0.05f && y <= sy + 0.05f,
                             $"{item.Key} (rot {rot}): vertice ({x:0.00}, {y:0.00}) fuori dalla sagoma {sx}×{sy}");
                         Assert.True(z <= 100f + item.Height * 1.25f + 2f, $"{item.Key}: vertice a {z - 100f:0.0} m oltre l'altezza {item.Height}");
+                        // niente sotto terra (fondazioni e basamenti scendono al massimo di un metro)
+                        Assert.True(z >= 100f - 1.05f, $"{item.Key}: vertice a {z - 100f:0.0} m sotto il terreno");
                     }
                     foreach (var p in plants)
                         Assert.True(p.X >= 0 && p.X <= sx && p.Y >= 0 && p.Y <= sy, $"{item.Key}: pianta fuori dalla sagoma");
                 }
             }
+        }
+
+        /// <summary>Sui pendii gli edifici stanno in piano alla quota più alta della sagoma: il piano terra non entra nel terreno.</summary>
+        [Fact]
+        public void SuiPendii_IlPianoTerraNonEntraNelTerreno()
+        {
+            var mesher = new ObjectMesher();
+            // pendenza del 20% lungo x e del 10% lungo y
+            Orbis.Core.World.Meshing.GroundSampler slope = (x, y) => 300f + x * 0.2f + y * 0.1f;
+            int checkedItems = 0;
+            foreach (var item in Load().Items)
+            {
+                var mb = new Orbis.Core.World.Meshing.MeshBuffer();
+                mesher.Build(item, 1, null, new Orbis.Core.World.Geometry.Vec2(0, 0), 0, 0, slope, mb, null, 7);
+                bool walls = false;
+                for (int i = 0; i < mb.VertexCount; i++)
+                {
+                    float kind = mb.GetFloat(i, 11);
+                    float cat = mb.GetFloat(i, 14);
+                    // muri degli edifici (tipo 0, seme diverso dal 0,5 dei parallelepipedi): uv0.y = quota - piano terra
+                    if (kind > 0.5f || cat >= 11.5f || Math.Abs(mb.GetFloat(i, 12) - 0.5f) < 1e-4f) continue;
+                    walls = true;
+                    float floor = mb.GetFloat(i, 1) - mb.GetFloat(i, 8);
+                    float here = slope(mb.GetFloat(i, 0), mb.GetFloat(i, 2));
+                    Assert.True(floor >= here - 0.05f, $"{item.Key}: piano terra a {floor:0.00}, il terreno lì è a {here:0.00}");
+                }
+                if (walls) checkedItems++;
+            }
+            Assert.True(checkedItems > 20, "pochi edifici controllati: " + checkedItems);
         }
     }
 }

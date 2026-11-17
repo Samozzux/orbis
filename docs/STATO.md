@@ -62,6 +62,17 @@ Branch `m2-stile-gioco`.
 - **Prestazioni**: addobbi solo nei tile vicini, in mesh separate che si spengono oltre 300–800 m secondo il profilo (telefono via web 300 m e densità 0,4; desktop 800 m). Nel centro di Chieti pesano quanto gli edifici (112 mila triangoli contro 111 mila nei 5 tile vicini).
 - **Scelte semplici annotate**: il potenziamento degli edifici reali è immediato (niente cantiere); gli addobbi sono geometria procedurale semplice (stile Classico); i modelli "HD" più dettagliati (cornicioni, persiane in rilievo, insegne con il nome vero del locale) sono il passo successivo.
 
+### Correzioni dalla prova di Samuele (17/11/2026)
+Branch `m2-costruzione`.
+- **Edifici che entravano nel terreno**:
+  - **Due cause.** Sui pendii i modelli del catalogo si appoggiavano alla quota media o a quella più bassa della sagoma, e il lato a monte finiva sotto terra. Inoltre molti pezzi (silos, ciminiere, colonne dei portici, tende dei negozi, fioriere, cestini, siepi, aiuole, eliporto, pannelli sui tetti) avevano quote come se il terreno fosse a 0 m, mentre Chieti è a circa 300 m.
+  - **Correzione.** Ogni volume sta in piano alla quota più alta del suo pezzo di sagoma, con un basamento in pietra verso valle. Campi, filari, alveari, pannelli a terra e recinzioni seguono il terreno.
+  - **Test nuovi.** Nessun vertice sotto terra; su un pendio del 20% il piano terra non è mai sotto il terreno. Verificato anche con le foto.
+- **Telecamera in modalità costruzione**:
+  - entrando (costruisci o sposta) vola verso il punto, con una distanza adatta alle misure dell'elemento (50–280 m) e un'inclinazione da tre quarti (45–58°); non si allontana mai;
+  - spostando un elemento si centra su di esso;
+  - uscendo torna alla distanza e all'inclinazione di prima.
+
 **M1 — Il mondo: Chieti**: completata il 16/11/2026, a conferma di Samuele ("quasi perfetto" + correzioni unite con la PR #5). Tag `v0.1.0` dopo le build verdi.
 
 ### Piano di M1 (a blocchi, ognuno con PR e test)
@@ -259,4 +270,5 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 - **Corretto durante le prove**: le missioni e i livelli completati da un'azione del giocatore non davano l'avviso; il controllo dello spazio costruiva la griglia dell'intero lotto e sui lotti agricoli enormi andava in errore ("lotto troppo grande") → ora controlla solo la finestra sotto l'elemento, veloce ovunque (test con un lotto di 3×3 km); WASD muoveva la camera mentre si scriveva nella ricerca; ritocchi grafici dalle fotografie dell'interfaccia.
 - **Resta**: PR, build verdi, prova di Samuele, tag `v0.2.0`.
 - **Poi, sempre il 17/11**: PR #6 unita in `main` (build per la prova di M2 avviate). Su richiesta di Samuele: edifici reali in stile gioco con addobbi per tipo e livello, potenziamento degli edifici reali, città più colorata (branch `m2-stile-gioco`).
+- **Sera del 17/11**: PR #7 unita. Dalla prova di Samuele: edifici costruiti che entravano nel terreno (corretto) e telecamera più vicina in modalità costruzione (branch `m2-costruzione`).
 

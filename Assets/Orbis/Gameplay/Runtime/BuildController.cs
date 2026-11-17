@@ -47,6 +47,9 @@ namespace Orbis.Gameplay
         private int _halfX, _halfY;
         private bool _hasPosition;
         private string _lastSignature;
+        // inquadratura prima della modalità costruzione (si ripristina all'uscita)
+        private bool _cameraSaved;
+        private float _savedDistance, _savedPitch;
 
         public bool Active => Current != Mode.None;
 
@@ -69,6 +72,7 @@ namespace Orbis.Gameplay
             Rotation = 0;
             MovingObjectId = 0;
             _lastSignature = null;
+            FocusCamera(null);
             Changed?.Invoke();
         }
 
@@ -83,7 +87,54 @@ namespace Orbis.Gameplay
             _lastSignature = null;
             var root = _game.View.RootOf(objectId);
             if (root != null) root.SetActive(false); // si vede solo il fantasma mentre lo si sposta
+            FocusCamera(ObjectCenter(o));
             Changed?.Invoke();
+        }
+
+        /// <summary>
+        /// Avvicina la telecamera all'elemento da piazzare (volo morbido): distanza in base alle sue misure,
+        /// inclinazione da tre quarti per vedere bene la griglia e i lati. Non allontana mai.
+        /// </summary>
+        private void FocusCamera(Vector3? point)
+        {
+            var rig = _world.CameraRig;
+            if (rig == null || Item == null) return;
+            if (!_cameraSaved)
+            {
+                _savedDistance = rig.Distance;
+                _savedPitch = rig.Pitch;
+                _cameraSaved = true;
+            }
+            float size = Mathf.Max(Item.Width, Item.Depth, Item.Height * 0.8f);
+            float distance = Mathf.Clamp(size * 2.4f + 35f, 50f, 280f);
+            rig.FlyTo(point ?? rig.Target, Mathf.Min(rig.Distance, distance));
+            if (!rig.TopDown) rig.Pitch = Mathf.Clamp(rig.Pitch, 45f, 58f);
+        }
+
+        /// <summary>Uscendo dalla costruzione si torna all'inquadratura di prima (sul punto dove si è costruito).</summary>
+        private void RestoreCamera()
+        {
+            if (!_cameraSaved) return;
+            _cameraSaved = false;
+            var rig = _world.CameraRig;
+            if (rig == null) return;
+            rig.Distance = Mathf.Max(rig.Distance, _savedDistance);
+            rig.Pitch = _savedPitch;
+        }
+
+        private Vector3? ObjectCenter(PlacedObject o)
+        {
+            var streamer = _world.World;
+            if (streamer.Region == null || Item == null) return null;
+            var id = new TileId(streamer.Region.Zoom, o.Lot.TileX, o.Lot.TileY);
+            if (!streamer.Tiles.TryGetValue(id, out var view) || view.Data == null) return null;
+            var lot = Placement.FindLot(view.Data, o.Lot.LotId);
+            if (lot == null) return null;
+            var c = Placement.Center(lot, Item, o.HalfX, o.HalfY, o.Rotation, out _);
+            var p = view.Origin + new Vector3(c.X, 0, c.Y);
+            float h = streamer.HeightAt(p.x, p.z);
+            p.y = float.IsNaN(h) ? 0 : h;
+            return p;
         }
 
         public void Rotate()
@@ -104,6 +155,7 @@ namespace Orbis.Gameplay
             Current = Mode.None;
             Item = null;
             if (_ghost != null) _ghost.SetActive(false);
+            RestoreCamera();
             Changed?.Invoke();
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using Orbis.Gameplay;
 using Orbis.UI.App;
@@ -226,6 +227,79 @@ namespace Orbis.Tests.PlayMode
             rig.Snap();
             yield return At(session, 11);
             Save(rig.Cam, Path.Combine(dir, "33-via-del-centro.png"));
+            OrbisApp.Instance.EndGame();
+        }
+
+        /// <summary>Elementi costruiti su un lotto in pendenza: in piano, con il basamento verso valle (niente sotto terra).</summary>
+        [UnityTest]
+        [Timeout(600000)]
+        public IEnumerator Pendio()
+        {
+            var dir = Environment.GetEnvironmentVariable("ORBIS_SNAPSHOT_DIR");
+            if (string.IsNullOrEmpty(dir)) Assert.Ignore("ORBIS_SNAPSHOT_DIR non impostata");
+            Directory.CreateDirectory(dir);
+            SceneManager.LoadScene("Boot");
+            var deadline = Time.realtimeSinceStartup + 60f;
+            while ((OrbisApp.Instance == null || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu) && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            OrbisApp.Instance.StartGame(new Orbis.UI.Game.GameStart { Transient = true, Config = new Orbis.Core.Game.WorldConfig { CreativeMode = true } });
+            var session = OrbisApp.Instance.Session;
+            deadline = Time.realtimeSinceStartup + 120f;
+            while (session.State == WorldSession.Phase.Loading && Time.realtimeSinceStartup < deadline) yield return null;
+            while (session.World.PendingBuilds > 0) yield return null;
+            var game = OrbisApp.Instance.Game;
+            var ctx = game.Session.Context;
+            var house = game.Content.Catalog.Get("casa_due_piani");
+            var silo = game.Content.Catalog.Items.First(i => i.Family == "silo");
+            // primo spazio libero dove il terreno sotto la casa sale di almeno 2,5 m
+            Vector3 focus = Vector3.zero;
+            bool found = false;
+            foreach (var v in session.World.Tiles.Values.Where(t => t.Lod == Orbis.World.TileLod.Full).OrderBy(t => t.Origin.sqrMagnitude))
+            {
+                foreach (var lot in v.Data.Lots.Where(l => l.Area > 400 && l.Bounds.Width < 300 && l.Bounds.Height < 300))
+                {
+                    var key = new Orbis.Core.Game.LotKey(v.Id.X, v.Id.Y, lot.Id);
+                    var grid = Orbis.Core.Game.Placement.Occupancy(ctx, key, 1f);
+                    if (grid == null) continue;
+                    for (int cy = grid.MinY; cy <= grid.MinY + grid.Height - 12 && !found; cy += 2)
+                    for (int cx = grid.MinX; cx <= grid.MinX + grid.Width - 12 && !found; cx += 2)
+                    {
+                        if (grid.CanPlace(cx, cy, 12, 12) != Orbis.Core.World.Lots.PlacementResult.Ok) continue;
+                        int hx = cx * 2, hy = cy * 2;
+                        var f = Orbis.Core.Game.Placement.Footprint(lot, house, hx, hy, 0);
+                        float lo = float.MaxValue, hi = float.MinValue;
+                        for (int k = 0; k < 4; k++)
+                        {
+                            float g = v.Data.Terrain.HeightAt(f[2 * k], f[2 * k + 1]);
+                            lo = Mathf.Min(lo, g);
+                            hi = Mathf.Max(hi, g);
+                        }
+                        if (hi - lo < 2.5f) continue;
+                        if (game.Do(new Orbis.Core.Game.PlaceCommand { Item = house.Key, Lot = key, HalfX = hx, HalfY = hy }) != Orbis.Core.Game.BuildResult.Ok) continue;
+                        // il silo accanto, se c'è posto
+                        game.Do(new Orbis.Core.Game.PlaceCommand { Item = silo.Key, Lot = key, HalfX = hx + 22, HalfY = hy });
+                        focus = v.Origin + new Vector3((f[0] + f[4]) / 2, 0, (f[1] + f[5]) / 2);
+                        focus.y = session.World.HeightAt(focus.x, focus.z);
+                        found = true;
+                        Debug.Log($"[Orbis] foto pendio: dislivello {hi - lo:0.0} m sotto la casa");
+                    }
+                    if (found) break;
+                }
+                if (found) break;
+            }
+            Assert.That(found, Is.True, "nessun lotto in pendenza libero");
+            game.Session.Advance(TimeSpan.FromDays(2));
+            var rig = session.CameraRig;
+            rig.Target = focus;
+            rig.Pitch = 24;
+            rig.Distance = 55;
+            for (int i = 0; i < 4; i++)
+            {
+                rig.Yaw = i * 90;
+                rig.Snap();
+                yield return At(session, 11);
+                Save(rig.Cam, Path.Combine(dir, $"40-pendio-{i}.png"));
+            }
             OrbisApp.Instance.EndGame();
         }
 
