@@ -44,10 +44,10 @@ Regole valide per tutte le milestone:
 
 **Completata quando**: si gioca una partita stile Megapolis su Chieti per un mese di gioco, guadagnando e spendendo, con annulla e riavvolgi funzionanti; chiudendo e riaprendo tutto è com'era.
 
-## M3 — Account, cloud e amici
+## M3 — Account e cloud
 - Backend: migrazioni, auth completa (token, rotazione, limiti), Face ID (iOS), sblocco biometrico (Android), passkey o ripiego (web), CORS.
 - Backup e sincronizzazione salvataggi con conflitti; stesso salvataggio su iPhone e web.
-- Amici, visita della città di un amico, progetti condivisi, mi piace.
+- Gli amici sono spostati in M9 (scelta di Samuele, 17/11/2026).
 
 **Completata quando**: Samuele crea l'account, entra con Face ID, gioca sull'iPhone e continua la stessa partita dal browser del Mac.
 
@@ -95,7 +95,7 @@ Regole valide per tutte le milestone:
 **Completata quando**: tutti gli sport hanno stagioni che avanzano da sole, si guarda una partita di Serie A in 3D allo stadio, si allena un tennista e si possiede una squadra.
 
 ## M9 — Progressione e contenuti
-Scenari e sfide, obiettivi, achievement, livelli completi, eventi casuali e macroeconomici, disastri, modalità creativa, editor modulare di edifici, terraforming completo, partita "da zero", time-lapse, catalogo esteso verso gli obiettivi di `docs/08` §2.
+Amici (username, visita della città di un amico, progetti di edifici condivisi, mi piace e classifiche; spostati qui da M3), scenari e sfide, obiettivi, achievement, livelli completi, eventi casuali e macroeconomici, disastri, modalità creativa, editor modulare di edifici, terraforming completo, partita "da zero", time-lapse, catalogo esteso verso gli obiettivi di `docs/08` §2.
 
 ## M10 — Italia e mondo
 Region pack di tutte le regioni italiane, download manager completo (background, priorità, gestione spazio), profili architettonici per aree del mondo, pack dei paesi su richiesta, landmark Italia (100) e mondo (300), aeroporti e voli, viaggi tra città, partita "storica" per Chieti.

@@ -1351,11 +1351,8 @@
 .mission-card.unity-button:hover,
 .mission-card.unity-button:active,
 .mission-card.unity-button:focus {
-    position: absolute;
-    left: 14px;
-    top: 164px;
     width: 270px;
-    margin: 0;
+    margin: 4px 0 0 0;
     padding: 10px 12px;
     border-width: 0;
     background-color: rgba(0, 0, 0, 0);
@@ -1636,7 +1633,7 @@
 }
 
 .layout-compact .hud-economy { top: 68px; }
-.layout-compact .mission-card.unity-button { top: 150px; width: 230px; }
+.layout-compact .mission-card.unity-button { width: 230px; }
 .orientation-portrait .mission-card.unity-button { width: 220px; }
 
 /* nuova partita e partite salvate */
