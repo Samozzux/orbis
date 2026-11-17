@@ -1,7 +1,28 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M3 — Account e cloud**: da iniziare. Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
+**M3 — Account e cloud**: iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
+
+### Piano di M3 (a blocchi)
+1. **Backend: account** — registrazione, accesso, token di accesso JWT da 1 ora, refresh token da 90 giorni ruotati a ogni rinnovo (riuso → sessione del dispositivo chiusa), uscita, elenco e chiusura delle sessioni, profilo, limite ai tentativi. ✅ fatto (vedi sotto).
+2. **Backend: salvataggi nel cloud** — elenco, upload a pezzi con `baseRevision` e conflitto 409, download, eliminazione.
+3. **Backend: passkey per il web** (WebAuthn ES256/RS256 con openssl); ripiego: sessione lunga col refresh token nel browser.
+4. **Core (logica pura, test .NET)**: sessione dell'account (scadenze, un solo rinnovo alla volta), piano di sincronizzazione (carica, scarica, conflitto), metadati dei salvataggi (uuid, revisione, dispositivo).
+5. **Unity: rete e piattaforme** — client delle API; refresh token protetto da Face ID nel Keychain (iOS, Swift), dall'impronta/volto con il Keystore (Android, Kotlin), passkey o IndexedDB sul web.
+6. **Interfaccia** — crea account / entra, proposta di Face ID, dispositivi collegati, esci; stato cloud nell'elenco delle partite; scelta in caso di conflitto (Tieni questo dispositivo / Tieni il cloud / Tienili entrambi); sincronizzazione alla pausa e ogni 15 minuti.
+7. **Prove, build, STATO, tag `v0.3.0`**. Criterio: Samuele crea l'account, entra con Face ID, gioca sull'iPhone e continua la stessa partita dal browser del Mac.
+
+### Avanzamento M3
+- **Backend: account** (blocco 1):
+  - migrazione `002_auth.sql` (`orb_users`, `orb_refresh_tokens`, `orb_login_attempts`);
+  - API `POST /auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `GET /auth/sessions`, `DELETE /auth/sessions/{id}`, `GET`/`PATCH /me`;
+  - password solo come hash bcrypt, refresh token e IP solo come hash, stesso errore per utente inesistente e password sbagliata (con lo stesso tempo di risposta);
+  - limiti: 10 accessi falliti per IP e nome utente ogni 15 minuti (30 per IP), 5 account nuovi per IP all'ora;
+  - test: 65 (44 nuovi), anche contro un MariaDB locale.
+- **Scelte semplici annotate**:
+  - nessun account diventa amministratore da solo (il pannello admin arriva in M12): impostare `is_admin` alla registrazione in base a `ORBIS_ADMIN_USERNAME` permetterebbe a chiunque registri per primo quel nome di diventare amministratore;
+  - una sola sessione per dispositivo: un nuovo accesso dallo stesso dispositivo chiude la precedente;
+  - due rinnovi contemporanei con lo stesso token contano come riuso, quindi l'app ne fa uno alla volta.
 
 **M2 — Costruire ed economia**: completata il 17/11/2026, a conferma di Samuele dopo la prova sui dispositivi ("sì va bene", con una sola correzione: la scheda della missione toccava la barra del livello sul telefono). Tag `v0.2.0`. Iniziata il 16/11/2026 (scelta di Samuele: "M2 adesso").
 
