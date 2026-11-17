@@ -1,10 +1,13 @@
 // Terreno dei tile: colori delle aree (campi, vigneti, uliveti, boschi, città, acqua) dalla texture
-// generata da LanduseRaster, con grana, pendii rocciosi e specchi d'acqua (alfa 0 nella texture).
+// generata da LanduseRaster; la mappa dei materiali (_Detail) dice il tipo di suolo, la direzione e la fase
+// delle file: solchi e filari disegnati in metri, allineati ai campi veri; bordi naturali senza gradini.
 Shader "Orbis/Terrain"
 {
     Properties
     {
         _MainTex ("Aree", 2D) = "white" {}
+        _Detail ("Suolo", 2D) = "black" {}
+        _DetailSize ("Lato della mappa del suolo", Float) = 512
         _Rock ("Roccia", Color) = (0.55, 0.50, 0.44, 1)
         _Water ("Acqua", Color) = (0.12, 0.32, 0.50, 1)
     }
@@ -16,8 +19,11 @@ Shader "Orbis/Terrain"
         #include "OrbisCommon.hlsl"
         TEXTURE2D(_MainTex);
         SAMPLER(sampler_MainTex);
+        TEXTURE2D(_Detail);
+        SAMPLER(sampler_point_clamp);
         CBUFFER_START(UnityPerMaterial)
             float4 _MainTex_ST;
+            float _DetailSize;
             half4 _Rock;
             half4 _Water;
         CBUFFER_END
@@ -66,15 +72,100 @@ Shader "Orbis/Terrain"
 
             half4 frag(Varyings i) : SV_Target
             {
-                half4 area = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv0.xy);
-                half3 n = normalize(i.normalWS);
+                float2 lp = i.uv0.zw;           // metri nel tile
                 float2 w = i.positionWS.xz;
-                float grain = OrbisNoise(w * 0.9) * 0.6 + OrbisNoise(w * 0.12) * 0.4;
-                float macro = OrbisNoise(w * 0.011) * 0.6 + OrbisNoise(w * 0.031) * 0.4;
-                half3 albedo = area.rgb * (0.86 + 0.2 * grain) * (0.9 + 0.18 * macro);
+                half3 n = normalize(i.normalWS);
+                // bordi naturali: vicino ai confini la lettura ondeggia di un paio di metri (niente gradini dei pixel)
+                float texel = 1.0 / max(_DetailSize, 1.0);
+                float2 wob = float2(OrbisNoise(lp * 0.21), OrbisNoise(lp * 0.21 + 31.7)) - 0.5;
+                float2 uv = i.uv0.xy + wob * texel * 1.8;
+                half4 area = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv);
+                half4 det = SAMPLE_TEXTURE2D(_Detail, sampler_point_clamp, uv);
+                float code = floor(det.r * 255.0 + 0.5);
+                float ground = floor(code / 16.0);
+                float crop = code - ground * 16.0;
+                float theta = (floor(det.g * 255.0 + 0.5) * 256.0 + floor(det.b * 255.0 + 0.5)) / 65535.0 * PI;
+                float phase = floor(det.a * 255.0 + 0.5) / 256.0;
+                float2 axis = float2(cos(theta), sin(theta));
+                float across = dot(lp, axis);
+                float mpp = max(fwidth(across), 1e-4);             // metri per pixel lungo le file
+                // macchie larghe (umidità, esposizione) e grana fine in metri, che sparisce da lontano
+                float macro = OrbisNoise(w * 0.011) * 0.6 + OrbisNoise(w * 0.037) * 0.4;
+                float fineFade = saturate(1.0 - fwidth(w.x) * 1.2);
+                float fine = OrbisNoise(w * 1.3);
+                half3 albedo = area.rgb * (0.9 + 0.16 * macro);
+                albedo *= 1.0 + (fine - 0.5) * 0.14 * fineFade;
+
+                if (ground < 1.5)
+                {
+                    // prato: ciuffi, chiazze più secche e più verdi
+                    albedo *= 0.88 + 0.22 * OrbisNoise(w * 0.35);
+                    float dry = smoothstep(0.55, 0.8, OrbisNoise(w * 0.06 + 7.0));
+                    albedo = lerp(albedo, albedo * half3(1.12, 1.04, 0.78), dry * 0.5);
+                }
+                else if (ground < 2.5)
+                {
+                    // campo coltivato a file (direzione e fase del campo vero)
+                    float gap = crop < 0.5 ? 0.3 : (crop < 1.5 ? 0.45 : (crop < 2.5 ? 0.9 : 0.75));
+                    float t = frac(across / gap - phase);
+                    float rows = 1 - abs(t - 0.5) * 2;
+                    float rowFade = saturate(1.6 - mpp / gap * 4.0);
+                    if (crop > 1.5 && crop < 2.5)
+                    {
+                        // arato: solchi scuri e zolle
+                        albedo *= lerp(1.0, 0.72 + 0.4 * smoothstep(0.35, 0.9, rows), rowFade);
+                        albedo *= 0.9 + 0.2 * OrbisNoise(w * 2.1) * fineFade;
+                    }
+                    else if (crop > 2.5)
+                    {
+                        // girasole, mais: file di piante sulla terra
+                        half3 soil = half3(0.55, 0.43, 0.30);
+                        albedo = lerp(albedo, lerp(soil, albedo * 1.08, smoothstep(0.45, 0.75, rows)), rowFade * 0.85);
+                    }
+                    else
+                    {
+                        // grano e colture fitte: file leggere, passaggi del trattore ogni 18 m, bande mosse dal vento
+                        albedo *= lerp(1.0, 0.92 + 0.12 * rows, rowFade);
+                        float tram = frac(across / 18.0 - phase * 0.17);
+                        float tramLine = saturate((1 - smoothstep(0.0, 0.012, abs(tram - 0.48))) + (1 - smoothstep(0.0, 0.012, abs(tram - 0.52))));
+                        albedo *= 1 - 0.18 * tramLine * saturate(1.6 - mpp * 8.0);
+                        albedo *= 0.94 + 0.1 * OrbisNoise(float2(across * 0.08, dot(lp, float2(-axis.y, axis.x)) * 0.02));
+                    }
+                }
+                else if (ground < 3.5)
+                {
+                    // vigneto: terra lavorata sotto i filari, erba tra un filare e l'altro
+                    float t = frac(across / 2.6 - phase);
+                    float under = 1 - smoothstep(0.12, 0.22, abs(t - 0.5));
+                    half3 soil = half3(0.58, 0.46, 0.33);
+                    half3 grass = albedo * half3(0.85, 1.05, 0.8);
+                    albedo = lerp(albedo, lerp(grass, soil, under), saturate(1.6 - mpp / 2.6 * 4.0) * 0.9);
+                }
+                else if (ground < 4.5)
+                {
+                    // uliveti e frutteti: erba rada a chiazze di terra
+                    float bare = smoothstep(0.45, 0.7, OrbisNoise(w * 0.18));
+                    albedo = lerp(albedo, albedo * half3(1.05, 0.92, 0.75), bare * 0.55);
+                }
+                else if (ground < 5.5)
+                {
+                    // bosco: sottobosco scuro a chiazze
+                    albedo *= 0.78 + 0.3 * (OrbisNoise(w * 0.5) * 0.6 + OrbisNoise(w * 2.0) * 0.4 * fineFade);
+                }
+                else if (ground < 6.5)
+                {
+                    // città: asfalto e pietra con macchie
+                    albedo *= 0.9 + 0.14 * OrbisNoise(w * 0.25);
+                }
+                else
+                {
+                    // sabbia, roccia
+                    albedo *= 0.9 + 0.18 * OrbisNoise(w * 0.8);
+                }
+
                 // pendii ripidi: terra e roccia
                 half steep = smoothstep(0.80, 0.62, n.y);
-                albedo = lerp(albedo, _Rock.rgb * (0.85 + 0.3 * grain), steep * 0.8);
+                albedo = lerp(albedo, _Rock.rgb * (0.85 + 0.3 * fine), steep * 0.8);
                 half spec = 0;
                 if (area.a < 0.5)
                 {

@@ -21,6 +21,8 @@ namespace Orbis.World
         /// <summary>Addobbi degli edifici (tende, dehors, fioriere…): densità 0..1 e distanza massima in metri.</summary>
         public float DecorDensity = 1f;
         public float DecorDistance = 800f;
+        /// <summary>Risoluzione della mappa delle colture nei tile vicini (pixel per lato, ~1,8 m a 1024).</summary>
+        public int LanduseResolution = 1024;
 
         public static WorldQuality Auto(bool touchPrimary, int systemMemoryMb)
         {
@@ -28,11 +30,11 @@ namespace Orbis.World
             bool web = p == RuntimePlatform.WebGLPlayer;
             bool mobile = p == RuntimePlatform.IPhonePlayer || p == RuntimePlatform.Android;
             if (web && touchPrimary)
-                return new WorldQuality { Name = "web-telefono", FullRadius = 550, MediumRadius = 1400, FarRadius = 4200, MaxTiles = 80, VegetationDistance = 450, PlantShadows = false, MaxShadowDistance = 400, FrameBudgetMs = 5, PostProcessing = false, DecorDensity = 0.4f, DecorDistance = 300 };
+                return new WorldQuality { Name = "web-telefono", FullRadius = 550, MediumRadius = 1400, FarRadius = 4200, MaxTiles = 80, VegetationDistance = 450, PlantShadows = false, MaxShadowDistance = 400, FrameBudgetMs = 5, PostProcessing = false, DecorDensity = 0.4f, DecorDistance = 300, LanduseResolution = 512 };
             if (web)
                 return new WorldQuality { Name = "web", FullRadius = 750, MediumRadius = 2000, FarRadius = 6000, MaxTiles = 130, VegetationDistance = 750, PlantShadows = false, MaxShadowDistance = 700, FrameBudgetMs = 7, DecorDensity = 0.7f, DecorDistance = 450 };
             if (mobile && systemMemoryMb > 0 && systemMemoryMb < 5000)
-                return new WorldQuality { Name = "mobile-basso", FullRadius = 650, MediumRadius = 1800, FarRadius = 5000, MaxTiles = 110, VegetationDistance = 600, PlantShadows = false, MaxShadowDistance = 500, PostProcessing = false, DecorDensity = 0.5f, DecorDistance = 350 };
+                return new WorldQuality { Name = "mobile-basso", FullRadius = 650, MediumRadius = 1800, FarRadius = 5000, MaxTiles = 110, VegetationDistance = 600, PlantShadows = false, MaxShadowDistance = 500, PostProcessing = false, DecorDensity = 0.5f, DecorDistance = 350, LanduseResolution = 512 };
             if (mobile)
                 return new WorldQuality { Name = "mobile", FullRadius = 900, MediumRadius = 2500, FarRadius = 7000, MaxTiles = 170, VegetationDistance = 1100, PlantShadows = true, MaxShadowDistance = 900, DecorDensity = 0.9f, DecorDistance = 550 };
             return new WorldQuality { Name = "desktop", FullRadius = 1100, MediumRadius = 3200, FarRadius = 9000, MaxTiles = 260, VegetationDistance = 1800, PlantShadows = true, MaxShadowDistance = 1400 };

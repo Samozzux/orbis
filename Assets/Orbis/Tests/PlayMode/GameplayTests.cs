@@ -65,6 +65,17 @@ namespace Orbis.Tests.PlayMode
             // 1) una casa sbloccata al livello 1, nel primo spazio libero di un lotto vero vicino al centro
             var item = game.Content.Catalog.InCategory(CatalogCategory.Residential)
                 .Where(i => i.UnlockLevel <= 1).OrderBy(i => i.Width * i.Depth).First();
+
+            // modalità costruzione: la telecamera si avvicina all'elemento e all'uscita torna com'era
+            var rig = session.CameraRig;
+            rig.Distance = 700f;
+            rig.Pitch = 30f;
+            game.Build.StartPlacing(item);
+            Assert.That(rig.Distance, Is.LessThanOrEqualTo(280f), "entrando in costruzione la telecamera non si è avvicinata");
+            Assert.That(rig.Pitch, Is.InRange(45f, 58f));
+            game.Build.Cancel();
+            Assert.That(rig.Distance, Is.EqualTo(700f).Within(0.01f), "uscendo dalla costruzione la distanza non è tornata");
+            Assert.That(rig.Pitch, Is.EqualTo(30f).Within(0.01f));
             Assert.That(FindSpot(session, ctx, item, out var lot, out var hx, out var hy), Is.True, "nessun lotto libero per " + item.Key);
             var r = game.Do(new PlaceCommand { Item = item.Key, Lot = lot, HalfX = hx, HalfY = hy, Rotation = 0 });
             Assert.That(r, Is.EqualTo(BuildResult.Ok));

@@ -258,7 +258,8 @@ namespace Orbis.World
             var hidden = HiddenBuildings.Count > 0 ? new HashSet<long>(HiddenBuildings) : null;
             var levels = BuildingLevels.Count > 0 ? new Dictionary<long, int>(BuildingLevels) : null;
             float density = Quality != null ? Quality.DecorDensity : 1f;
-            _runner.Enqueue(TileBuild.Run(() => file, cached, scale, lod, result, hidden, levels, density), priority,
+            int landuse = Quality != null ? Quality.LanduseResolution : 1024;
+            _runner.Enqueue(TileBuild.Run(() => file, cached, scale, lod, result, hidden, levels, density, landuse), priority,
                 () => Finish(id, result),
                 e =>
                 {

@@ -21,6 +21,9 @@ namespace Orbis.Core.Game
         private float _w, _d;
         private GroundSampler _ground;
         private MeshBuffer _mb;
+        // piano d'appoggio dell'elemento: quota più alta della sagoma (sui pendii niente parti sotto terra)
+        private float _z0;
+        private readonly HashSet<long> _plinths = new HashSet<long>();
         private List<PlantInstance> _plants;
         private long _seed;
 
@@ -38,6 +41,8 @@ namespace Orbis.Core.Game
             _mb = mb;
             _plants = plants;
             _seed = seed;
+            _plinths.Clear();
+            Range(0, 0, _w, _d, out _, out _z0);
             var v = item.Variant(variant);
             uint wall = v != null && v.WallColor != 0 ? v.WallColor : 0;
             uint roof = v != null && v.RoofColor != 0 ? v.RoofColor : 0;
@@ -57,10 +62,10 @@ namespace Orbis.Core.Game
                 case "windfarm":
                     for (int k = 0; k < 4; k++) WindTurbine(_w * (0.25f + 0.5f * (k & 1)), _d * (0.25f + 0.5f * (k >> 1)), item.Height, Math.Min(_w, _d) / 4);
                     break;
-                case "solar": SolarRows(0, 0, _w, _d, 0.4f); break;
+                case "solar": SolarRows(0, 0, _w, _d, float.NaN); break;
                 case "solarbuilding":
                     Building(0, 0, _w, _d, item.Height - 1.2f, RoofShape.Flat, 0x1E4DACB, 0x1A9A399, 4, BuildingUse.Apartments);
-                    SolarRows(1, 1, _w - 1, _d - 1, item.Height - 1.2f);
+                    SolarRows(1, 1, _w - 1, _d - 1, _z0 + item.Height - 1.2f);
                     break;
                 case "hydro": Hydro(item); break;
                 case "thermal": Thermal(item); break;
@@ -86,11 +91,28 @@ namespace Orbis.Core.Game
                 case "station": Building(0, 0, _w, _d, item.Height, RoofShape.Flat, 0x1E9E2D3, 0x18E8A84, 1, BuildingUse.TrainStation); break;
                 case "path": Ground(0, 0, _w, _d, 0x1D5CBB8, 0.12f, 10); break;
                 case "paving": Ground(0, 0, _w, _d, 0x1D5CBB8, 0.12f, 10); break;
-                case "helipad": Ground(0, 0, _w, _d, 0x1707275, 0.12f); Box(_w * 0.3f, _d * 0.45f, _w * 0.7f, _d * 0.55f, 0.13f, 0.16f, 0x1F2F2F2, 2); break;
+                case "helipad":
+                    {
+                        float g = Base(0, 0, _w, _d);
+                        Flat(0, 0, _w, _d, g + 0.12f, 0x1707275, 2);
+                        Box(_w * 0.3f, _d * 0.45f, _w * 0.7f, _d * 0.55f, g + 0.12f, g + 0.16f, 0x1F2F2F2, 2);
+                        break;
+                    }
                 case "tree": Plant(PlantKindOf(item.Param("kind", "broadleaf")), _w / 2, _d / 2, item.Height); break;
                 case "grove": Ground(0, 0, _w, _d, 0x18BB669, 0.06f); Scatter(PlantKind.Broadleaf, 5f); break;
-                case "hedge": Box(0, 0, _w, _d, 0, item.Height, 0x15C8949, 2); break;
-                case "flowerbed": Box(0, 0, _w, _d, 0, 0.35f, 0x1B9A27A, 2); Flowers(item.Param("color", "mixed")); break;
+                case "hedge":
+                    {
+                        Range(0, 0, _w, _d, out var lo, out var hi);
+                        Box(0, 0, _w, _d, lo - 0.2f, (lo + hi) / 2 + item.Height, 0x15C8949, 2);
+                        break;
+                    }
+                case "flowerbed":
+                    {
+                        Range(0, 0, _w, _d, out var lo, out var hi);
+                        Box(0, 0, _w, _d, lo - 0.1f, hi + 0.35f, 0x1B9A27A, 2);
+                        Flowers(item.Param("color", "mixed"));
+                        break;
+                    }
                 case "lawn": Ground(0, 0, _w, _d, 0x19CC277, 0.08f); break;
                 case "shrubs": Scatter(PlantKind.Shrub, 1.4f); break;
                 case "pond": Ground(0, 0, _w, _d, 0x1C9B87A, 0.06f); Ground(0.6f, 0.6f, _w - 0.6f, _d - 0.6f, 0x14F8FC0, 0.1f, 11); break;
@@ -98,8 +120,14 @@ namespace Orbis.Core.Game
                 case "lamp": Lamp(item.Height); break;
                 case "fountain": Fountain(item.Height); break;
                 case "statue": Statue(item.Height); break;
-                case "planter": Box(0, 0, _w, _d, 0, 0.5f, 0x1B7A58C, 0); Box(0.1f, 0.1f, _w - 0.1f, _d - 0.1f, 0.5f, 0.8f, 0x16E9C4C, 2); break;
-                case "bin": Cylinder(_w / 2, _d / 2, 0.2f, 0, 0.9f, 8, 0x1556070); break;
+                case "planter":
+                    {
+                        float g = Base(0, 0, _w, _d);
+                        Box(0, 0, _w, _d, g, g + 0.5f, 0x1B7A58C, 0);
+                        Box(0.1f, 0.1f, _w - 0.1f, _d - 0.1f, g + 0.5f, g + 0.8f, 0x16E9C4C, 2);
+                        break;
+                    }
+                case "bin": Cylinder(_w / 2, _d / 2, 0.2f, Ground(_w / 2, _d / 2) - 0.05f, Ground(_w / 2, _d / 2) + 0.9f, 8, 0x1556070); break;
                 case "gazebo": Gazebo(item.Height); break;
                 case "kiosk": Building(0, 0, _w, _d, item.Height, RoofShape.Pyramidal, 0x12F7D4F, 0x1E8C48A, 1, BuildingUse.Kiosk); break;
                 case "playground": Playground(); break;
@@ -111,8 +139,18 @@ namespace Orbis.Core.Game
                         Box(0.26f, _d / 2 - 0.03f, _w - 0.05f, _d / 2 + 0.03f, g + item.Height - 1f, g + item.Height - 0.1f, 0x12F8F3F, 0);
                         break;
                     }
-                case "bikerack": for (float x = 0.3f; x < _w; x += 0.6f) Box(x, 0.2f, x + 0.05f, _d - 0.2f, 0, 0.8f, 0x1708090, 0); break;
-                default: Box(0, 0, _w, _d, 0, item.Height, wall != 0 ? wall : 0x1D0C8B8, 0); break;
+                case "bikerack":
+                    {
+                        float g = Base(0, 0, _w, _d);
+                        for (float x = 0.3f; x < _w; x += 0.6f) Box(x, 0.2f, x + 0.05f, _d - 0.2f, g, g + 0.8f, 0x1708090, 0);
+                        break;
+                    }
+                default:
+                    {
+                        float g = Base(0, 0, _w, _d);
+                        Box(0, 0, _w, _d, g, g + item.Height, wall != 0 ? wall : 0x1D0C8B8, 0);
+                        break;
+                    }
             }
         }
 
@@ -145,7 +183,7 @@ namespace Orbis.Core.Game
             {
                 // tenda sopra la vetrina e insegna sul fronte (lato v = 0)
                 uint awning = Catalog.ParseColor(item.Param("awning", "#c8473b"));
-                Box(0.4f, 0.0f, _w - 0.4f, 0.7f, 2.9f, 3.15f, awning != 0 ? awning : 0x1C8473B, 2);
+                Box(0.4f, 0.0f, _w - 0.4f, 0.7f, _z0 + 2.9f, _z0 + 3.15f, awning != 0 ? awning : 0x1C8473B, 2);
             }
         }
 
@@ -155,9 +193,10 @@ namespace Orbis.Core.Game
             Building(0, 0, _w, _d, item.Height, RoofShape.Hipped, wall != 0 ? wall : 0x1E2D3B3, roof != 0 ? roof : 0x1B25A3C, floors, BuildingUse.Civic);
             // portico a colonne sul fronte
             int n = Math.Max(4, (int)(_w / 4));
-            for (int k = 0; k < n; k++) Cylinder(_w * (k + 0.5f) / n, 0.8f, 0.35f, 0, Math.Min(item.Height, 7f), 8, 0x1F2EDE2);
-            Cylinder(1f, 1f, 0.06f, 0, item.Height + 4f, 6, 0x1D0D4D8); // pennone
-            Box(1f, 0.97f, 2.6f, 1.03f, item.Height + 2.6f, item.Height + 3.7f, 0x12F8F3F, 0);
+            for (int k = 0; k < n; k++) Cylinder(_w * (k + 0.5f) / n, 0.8f, 0.35f, _z0, _z0 + Math.Min(item.Height, 7f), 8, 0x1F2EDE2);
+            float pole = _z0 + item.Height * 1.2f + 1.5f; // pennone appena sopra il tetto, dentro l'altezza dell'elemento
+            Cylinder(1f, 1f, 0.06f, _z0, pole, 6, 0x1D0D4D8);
+            Box(1f, 0.97f, 2.6f, 1.03f, pole - 1.1f, pole - 0.1f, 0x12F8F3F, 0);
         }
 
         private void Church(CatalogItem item, uint wall)
@@ -177,17 +216,19 @@ namespace Orbis.Core.Game
             {
                 case "plant":
                     Building(0, 0, _w * 0.6f, _d, item.Height * 0.5f, RoofShape.Flat, w, r, 3, BuildingUse.Industrial);
-                    Cylinder(_w * 0.8f, _d * 0.3f, Math.Min(_w, _d) * 0.12f, 0, item.Height, 16, 0x1B5B0A6);
-                    Cylinder(_w * 0.8f, _d * 0.75f, Math.Min(_w, _d) * 0.12f, 0, item.Height * 0.8f, 16, 0x1B5B0A6);
+                    Cylinder(_w * 0.8f, _d * 0.3f, Math.Min(_w, _d) * 0.12f, _z0 - 0.5f, _z0 + item.Height, 16, 0x1B5B0A6);
+                    Cylinder(_w * 0.8f, _d * 0.75f, Math.Min(_w, _d) * 0.12f, _z0 - 0.5f, _z0 + item.Height * 0.8f, 16, 0x1B5B0A6);
                     break;
                 case "winery":
                 case "oilmill":
                     Building(0, 0, _w, _d * 0.6f, item.Height, RoofShape.Gabled, 0x1E0CDA8, 0x1B25A3C, 2, BuildingUse.Industrial);
-                    for (int k = 0; k < 4; k++) Cylinder(_w * (k + 0.5f) / 4, _d * 0.82f, Math.Min(2f, _d * 0.12f), 0, item.Height * 0.9f, 12, 0x1C9CED4);
+                    for (int k = 0; k < 4; k++) Cylinder(_w * (k + 0.5f) / 4, _d * 0.82f, Math.Min(2f, _d * 0.12f), _z0 - 0.5f, _z0 + item.Height * 0.9f, 12, 0x1C9CED4);
                     break;
                 default:
-                    Building(0, 0, _w, _d, item.Height, kind == "workshop" ? RoofShape.Gabled : RoofShape.Flat, w, r, 2, BuildingUse.Industrial);
-                    if (kind == "factory") Cylinder(_w * 0.9f, _d * 0.85f, 1.2f, item.Height, item.Height * 2.2f, 10, 0x1A0705A);
+                    // fabbrica: la ciminiera è la parte più alta (= altezza dell'elemento), il capannone più basso
+                    bool factory = kind == "factory";
+                    Building(0, 0, _w, _d, factory ? item.Height * 0.55f : item.Height, kind == "workshop" ? RoofShape.Gabled : RoofShape.Flat, w, r, 2, BuildingUse.Industrial);
+                    if (factory) Cylinder(_w * 0.9f, _d * 0.85f, 1.2f, _z0, _z0 + item.Height, 10, 0x1A0705A);
                     break;
             }
         }
@@ -195,10 +236,11 @@ namespace Orbis.Core.Game
         private void Silos(CatalogItem item)
         {
             float r = Math.Min(_w, _d) * 0.22f;
-            Cylinder(_w * 0.28f, _d * 0.28f, r, 0, item.Height, 16, 0x1D9DCDD);
-            Cylinder(_w * 0.72f, _d * 0.72f, r, 0, item.Height * 0.85f, 16, 0x1D9DCDD);
-            Cone(_w * 0.28f, _d * 0.28f, r, item.Height, 1.5f, 0x1B8BEC2);
-            Cone(_w * 0.72f, _d * 0.72f, r, item.Height * 0.85f, 1.5f, 0x1B8BEC2);
+            float g = Base(0, 0, _w, _d);
+            Cylinder(_w * 0.28f, _d * 0.28f, r, g, g + item.Height - 1.5f, 16, 0x1D9DCDD);
+            Cylinder(_w * 0.72f, _d * 0.72f, r, g, g + item.Height * 0.85f - 1.5f, 16, 0x1D9DCDD);
+            Cone(_w * 0.28f, _d * 0.28f, r, g + item.Height - 1.5f, 1.5f, 0x1B8BEC2);
+            Cone(_w * 0.72f, _d * 0.72f, r, g + item.Height * 0.85f - 1.5f, 1.5f, 0x1B8BEC2);
         }
 
         private void Greenhouse()
@@ -245,12 +287,13 @@ namespace Orbis.Core.Game
             _mb.Triangle(a, t, b);
         }
 
+        /// <param name="z">quota del tetto su cui stanno i pannelli; NaN = a terra, seguendo il terreno</param>
         private void SolarRows(float u0, float v0, float u1, float v1, float z)
         {
-            bool onGround = z < 1f;
+            bool onGround = float.IsNaN(z);
             for (float v = v0 + 0.6f; v + 2.2f < v1; v += 3.4f)
             {
-                float g = onGround ? Base(u0, v, u1, v + 2.2f) : z;
+                float g = onGround ? Mid(u0, v, u1, v + 2.2f) : z;
                 // pannello inclinato verso sud (v crescente = nord)
                 SlopedPanel(u0 + 0.4f, v, u1 - 0.4f, v + 2.2f, g + 0.5f, g + 1.6f);
             }
@@ -287,9 +330,9 @@ namespace Orbis.Core.Game
             int chimneys = int.TryParse(item.Param("chimneys", "1"), out var c) ? c : 1;
             Building(0, 0, _w * 0.65f, _d * 0.7f, item.Height * 0.4f, RoofShape.Flat, 0x1D1CBC0, 0x1A9A399, 3, BuildingUse.Industrial);
             for (int k = 0; k < chimneys; k++)
-                Cylinder(_w * (0.78f + 0.12f * k), _d * 0.3f, 1.6f, 0, item.Height, 12, 0x1C8C2BA, 1.0f, 0.75f);
+                Cylinder(_w * (0.78f + 0.12f * k), _d * 0.3f, 1.6f, _z0 - 0.5f, _z0 + item.Height, 12, 0x1C8C2BA, 1.0f, 0.75f);
             if (item.Param("steam", "false") == "true" || chimneys == 0)
-                Cylinder(_w * 0.8f, _d * 0.75f, Math.Min(_w, _d) * 0.15f, 0, item.Height * 0.6f, 20, 0x1D8DADC, 1.0f, 0.7f);
+                Cylinder(_w * 0.8f, _d * 0.75f, Math.Min(_w, _d) * 0.15f, _z0 - 0.5f, _z0 + item.Height * 0.6f, 20, 0x1D8DADC, 1.0f, 0.7f);
             Box(_w * 0.05f, _d * 0.75f, _w * 0.6f, _d * 0.95f, Base(0, _d * 0.75f, _w * 0.6f, _d * 0.95f), Base(0, _d * 0.75f, _w * 0.6f, _d * 0.95f) + 6, 0x1B8BEC2, 6 * 2);
         }
 
@@ -297,12 +340,13 @@ namespace Orbis.Core.Game
         {
             // due torri di raffreddamento iperboliche, edificio del reattore con cupola, turbine
             float r = Math.Min(_w * 0.2f, _d * 0.32f);
-            Cylinder(_w * 0.22f, _d * 0.68f, r, 0, item.Height, 28, 0x1D9D7D2, 1.0f, 0.62f);
-            Cylinder(_w * 0.22f + 0f, _d * 0.68f, r * 0.62f, item.Height * 0.55f, item.Height, 28, 0x1D9D7D2, 0.62f / 0.62f, 0.75f / 0.62f);
-            Cylinder(_w * 0.5f, _d * 0.68f, r, 0, item.Height, 28, 0x1D9D7D2, 1.0f, 0.62f);
+            float g = Base(0, 0, _w, _d);
+            Cylinder(_w * 0.22f, _d * 0.68f, r, g, g + item.Height, 28, 0x1D9D7D2, 1.0f, 0.62f);
+            Cylinder(_w * 0.22f + 0f, _d * 0.68f, r * 0.62f, g + item.Height * 0.55f, g + item.Height, 28, 0x1D9D7D2, 0.62f / 0.62f, 0.75f / 0.62f);
+            Cylinder(_w * 0.5f, _d * 0.68f, r, g, g + item.Height, 28, 0x1D9D7D2, 1.0f, 0.62f);
             float rr = Math.Min(_w, _d) * 0.13f;
-            Cylinder(_w * 0.78f, _d * 0.35f, rr, 0, item.Height * 0.35f, 24, 0x1E8E4DC);
-            Dome(_w * 0.78f, _d * 0.35f, rr, Base(_w * 0.65f, _d * 0.22f, _w * 0.91f, _d * 0.48f) + item.Height * 0.35f, 0x1E8E4DC);
+            Cylinder(_w * 0.78f, _d * 0.35f, rr, g, g + item.Height * 0.35f, 24, 0x1E8E4DC);
+            Dome(_w * 0.78f, _d * 0.35f, rr, g + item.Height * 0.35f, 0x1E8E4DC);
             Building(_w * 0.35f, _d * 0.05f, _w * 0.65f, _d * 0.35f, 22, RoofShape.Flat, 0x1C8CCCE, 0x19A9A96, 3, BuildingUse.Industrial);
         }
 
@@ -341,20 +385,31 @@ namespace Orbis.Core.Game
             Ground(0, 0, _w, _d, soil, 0.06f);
             for (float v = 0.6f; v + 0.5f < _d; v += 1.4f)
             {
-                float g = Base(0.3f, v, _w - 0.3f, v + 0.6f);
-                Box(0.3f, v, _w - 0.3f, v + 0.6f, g, g + rowH, plant, 2);
+                float g = Mid(0.3f, v, _w - 0.3f, v + 0.6f);
+                Box(0.3f, v, _w - 0.3f, v + 0.6f, g - 0.3f, g + rowH, plant, 2);
             }
         }
 
         private void Fence()
         {
-            float g = Base(0, 0, _w, _d);
-            uint c = MeshBuffer.Rgb(0x8B7458);
-            Box(0, 0, _w, 0.1f, g, g + 1.1f, 0x18B7458, 0);
-            Box(0, _d - 0.1f, _w, _d, g, g + 1.1f, 0x18B7458, 0);
-            Box(0, 0, 0.1f, _d, g, g + 1.1f, 0x18B7458, 0);
-            Box(_w - 0.1f, 0, _w, _d, g, g + 1.1f, 0x18B7458, 0);
-            _ = c;
+            // a tratti di ~3 m che seguono il terreno
+            FenceSide(0, 0, _w, 0.1f, true);
+            FenceSide(0, _d - 0.1f, _w, _d, true);
+            FenceSide(0, 0, 0.1f, _d, false);
+            FenceSide(_w - 0.1f, 0, _w, _d, false);
+        }
+
+        private void FenceSide(float u0, float v0, float u1, float v1, bool alongU)
+        {
+            float len = alongU ? u1 - u0 : v1 - v0;
+            int n = Math.Max(1, (int)Math.Ceiling(len / 3f));
+            for (int i = 0; i < n; i++)
+            {
+                float a = i * len / n, b = (i + 1) * len / n;
+                float su0 = alongU ? u0 + a : u0, su1 = alongU ? u0 + b : u1, sv0 = alongU ? v0 : v0 + a, sv1 = alongU ? v1 : v0 + b;
+                Range(su0, sv0, su1, sv1, out var lo, out var hi);
+                Box(su0, sv0, su1, sv1, lo - 0.2f, (lo + hi) / 2 + 1.1f, 0x18B7458, 0);
+            }
         }
 
         private void Beehives()
@@ -364,8 +419,8 @@ namespace Orbis.Core.Game
             for (float u = 0.6f; u + 0.6f < _w; u += 1.4f)
                 for (float v = 0.6f; v + 0.6f < _d; v += 2.2f)
                 {
-                    float g = Base(u, v, u + 0.6f, v + 0.6f);
-                    Box(u, v, u + 0.6f, v + 0.6f, g, g + 0.7f, colors[k++ % colors.Length], 0);
+                    float g = Mid(u, v, u + 0.6f, v + 0.6f);
+                    Box(u, v, u + 0.6f, v + 0.6f, g - 0.1f, g + 0.7f, colors[k++ % colors.Length], 0);
                 }
         }
 
@@ -602,14 +657,40 @@ namespace Orbis.Core.Game
             return _ground(p.X, p.Y);
         }
 
-        /// <summary>Quota più bassa del rettangolo (per appoggiare i volumi senza farli galleggiare).</summary>
+        /// <summary>Quota minima e massima del terreno sul rettangolo (angoli, centri dei lati e centro).</summary>
+        private void Range(float u0, float v0, float u1, float v1, out float lo, out float hi)
+        {
+            lo = float.MaxValue;
+            hi = float.MinValue;
+            for (int i = 0; i <= 2; i++)
+            for (int j = 0; j <= 2; j++)
+            {
+                float g = Ground(u0 + (u1 - u0) * i / 2, v0 + (v1 - v0) * j / 2);
+                if (g < lo) lo = g;
+                if (g > hi) hi = g;
+            }
+        }
+
+        /// <summary>
+        /// Piano d'appoggio di un volume: la quota più alta del rettangolo, così sui pendii niente entra nel terreno;
+        /// sotto, verso valle, un basamento in pietra fino al terreno (come gli edifici in collina).
+        /// </summary>
         private float Base(float u0, float v0, float u1, float v1)
         {
-            float m = Ground(u0, v0);
-            m = Math.Min(m, Ground(u1, v0));
-            m = Math.Min(m, Ground(u1, v1));
-            m = Math.Min(m, Ground(u0, v1));
-            return Math.Min(m, Ground((u0 + u1) / 2, (v0 + v1) / 2));
+            Range(u0, v0, u1, v1, out var lo, out var hi);
+            if (hi - lo > 0.12f)
+            {
+                long key = ((long)Math.Round(u0 * 20) * 73856093L) ^ ((long)Math.Round(v0 * 20) * 19349663L) ^ ((long)Math.Round(u1 * 20) * 83492791L) ^ (long)Math.Round(v1 * 20);
+                if (_plinths.Add(key)) Box(u0, v0, u1, v1, lo - 0.3f, hi + 0.02f, 0x1B5AA96, 6 * 2);
+            }
+            return hi;
+        }
+
+        /// <summary>Quota media del rettangolo (oggetti bassi e lunghi che seguono il terreno: filari, pannelli a terra).</summary>
+        private float Mid(float u0, float v0, float u1, float v1)
+        {
+            Range(u0, v0, u1, v1, out var lo, out var hi);
+            return (lo + hi) / 2;
         }
 
         private static RoofShape ParseRoof(string s)
@@ -639,14 +720,16 @@ namespace Orbis.Core.Game
                 Roof = roof, Levels = levels, Use = use, WallColor = wall, RoofColor = roofColor, Bounds = Bounds2.Of(outer),
                 Flags = shops ? BuildingFlag.HasShops : 0,
             };
+            // in piano alla quota più alta della sagoma (basamento verso valle), come gli altri volumi
+            float top = Base(u0, v0, u1, v1);
+            GroundSampler level = (x, y) => top;
             if (!float.IsNaN(minZ))
             {
-                // volume sospeso (tetto di gazebo): base fissa sopra il terreno
-                float g = Ground((u0 + u1) / 2, (v0 + v1) / 2);
-                b.MinHeight = Math.Max(0.2f, minZ - g);
+                // volume sospeso (tetto di gazebo): base fissa sopra il piano
+                b.MinHeight = Math.Max(0.2f, minZ - top);
                 b.Height = b.MinHeight + height;
             }
-            _building.Build(b, _ground, _mb, shops);
+            _building.Build(b, level, _mb, shops);
         }
 
         /// <summary>Parallelepipedo tra le quote assolute z0 e z1. kind = categoria*2 per i muri (12 = senza finestre).</summary>

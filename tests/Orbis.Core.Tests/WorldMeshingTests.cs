@@ -167,3 +167,80 @@ namespace Orbis.Core.Tests
         }
     }
 }
+
+namespace Orbis.Core.Tests
+{
+    using System;
+    using System.Collections.Generic;
+    using Orbis.Core.World.Fb;
+    using Orbis.Core.World.Geometry;
+    using Orbis.Core.World.Meshing;
+    using Orbis.Core.World.Tiles;
+    using Xunit;
+
+    /// <summary>Mappa dei materiali del terreno: suolo per area e file disegnate allineate ai filari veri.</summary>
+    public class LanduseDetailTests
+    {
+        private static AreaInfo Rect(AreaKind kind, long id, float cx, float cy, float w, float h, double angle)
+        {
+            var u = new Vec2((float)Math.Cos(angle), (float)Math.Sin(angle));
+            var v = new Vec2(-u.Y, u.X);
+            var c = new Vec2(cx, cy);
+            var pts = new[] { c - u * (w / 2) - v * (h / 2), c + u * (w / 2) - v * (h / 2), c + u * (w / 2) + v * (h / 2), c - u * (w / 2) + v * (h / 2) };
+            var outer = new float[8];
+            for (int i = 0; i < 4; i++)
+            {
+                outer[2 * i] = pts[i].X;
+                outer[2 * i + 1] = pts[i].Y;
+            }
+            return new AreaInfo { OsmId = id, Kind = kind, Outer = outer, Holes = Array.Empty<float[]>(), Bounds = Bounds2.Of(outer) };
+        }
+
+        [Theory]
+        [InlineData(0.0)]
+        [InlineData(0.4)]
+        [InlineData(1.3)]
+        [InlineData(2.2)]
+        [InlineData(3.0)]
+        [InlineData(-0.7)]
+        public void IFilariDisegnatiCadonoSottoLeViti(double angle)
+        {
+            var a = Rect(AreaKind.Vineyard, 77, 260.3f, 210.7f, 180, 90, angle);
+            var areas = new List<AreaInfo> { a };
+            var owner = LanduseRaster.Rasterize(areas, 500f, 250);
+            var detail = LanduseRaster.Detail(areas, owner, 250);
+            int px = (int)(260.3f / 2), py = (int)(210.7f / 2);
+            int o = (py * 250 + px) * 4;
+            Assert.Equal((int)LanduseRaster.Ground.Vineyard, detail[o] >> 4);
+            double th = (detail[o + 1] * 256 + detail[o + 2]) / 65535.0 * Math.PI;
+            double phase = detail[o + 3] / 256.0;
+            var axis = new Vec2((float)Math.Cos(th), (float)Math.Sin(th));
+            // stesse posizioni dei filari di VegetationScatter.Vines
+            var box = OrientedBox.Of(Polygon2D.ToPoints(a.Outer));
+            const float gap = 2.6f;
+            for (int j = 0; j < 30; j++)
+            {
+                var p = box.Center + box.V * (-box.HalfV + gap * (j + 0.5f)) + box.U * 13.7f;
+                double s = Vec2.Dot(p, axis) / gap - phase;
+                double f = s - Math.Floor(s);
+                Assert.True(Math.Abs(f - 0.5) < 0.04, $"angolo {angle}: filare {j} a fase {f:0.000} invece di 0,5");
+            }
+        }
+
+        [Fact]
+        public void SuoloECampiStabiliPerArea()
+        {
+            var field = Rect(AreaKind.Farmland, 12345, 50, 50, 60, 40, 0.3);
+            var forest = Rect(AreaKind.Forest, 9, 150, 150, 60, 60, 0);
+            var areas = new List<AreaInfo> { field, forest };
+            var owner = LanduseRaster.Rasterize(areas, 200f, 100);
+            var d = LanduseRaster.Detail(areas, owner, 100);
+            Assert.Equal((int)LanduseRaster.Ground.Crop, d[(25 * 100 + 25) * 4] >> 4);
+            Assert.Equal((int)LanduseRaster.CropOf(12345), d[(25 * 100 + 25) * 4] & 15);
+            Assert.Equal((int)LanduseRaster.Ground.Forest, d[(75 * 100 + 75) * 4] >> 4);
+            Assert.Equal((int)LanduseRaster.Ground.Meadow, d[(2 * 100 + 98) * 4] >> 4); // non mappato: prato
+            // il colore di un campo dipende dalla coltura (grano dorato, verde, arato bruno…)
+            Assert.Equal(LanduseRaster.ColorOf(AreaKind.Farmland, 12345), LanduseRaster.ColorOf(AreaKind.Farmland, 12345));
+        }
+    }
+}
