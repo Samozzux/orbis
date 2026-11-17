@@ -1436,6 +1436,18 @@
     {
       "key": "build.search.none",
       "it": "Nessun elemento con questo nome."
+    },
+    {
+      "key": "details.osm.level",
+      "it": "Livello"
+    },
+    {
+      "key": "details.osm.level.value",
+      "it": "{0} di {1}"
+    },
+    {
+      "key": "details.osm.upgraded",
+      "it": "Edificio al livello {0}: nuovi addobbi!"
     }
   ]
 }

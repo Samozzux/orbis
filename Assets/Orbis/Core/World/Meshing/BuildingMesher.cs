@@ -49,6 +49,35 @@ namespace Orbis.Core.World.Meshing
         public float LastEave { get; private set; }
         public float LastBase { get; private set; }
 
+        // facciata dell'ultimo edificio costruito: servono agli addobbi (BuildingDecorator) per allinearsi a finestre e vetrine
+        public List<Vec2> LastOuter { get; private set; }
+        public float LastGroundRef { get; private set; }
+        public float LastWallHeight { get; private set; }
+        public int LastLevels { get; private set; }
+        public Category LastCategory { get; private set; }
+        public bool LastShops { get; private set; }
+        public bool LastFlatRoof { get; private set; }
+        public uint LastWallColor { get; private set; }
+
+        /// <summary>Quota del tetto nel punto (ultimo edificio): gronda + falda.</summary>
+        public float RoofTopAt(Vec2 p) => LastEave + RoofAt(p);
+
+        /// <summary>Larghezza delle campate della facciata per categoria (uguale allo shader degli edifici).</summary>
+        public static float BayWidth(Category c)
+        {
+            switch (c)
+            {
+                case Category.Residential: return 3.3f;
+                case Category.Commercial: return 3.8f;
+                case Category.Industrial: return 6.5f;
+                case Category.Religious: return 5.0f;
+                default: return 3.6f;
+            }
+        }
+
+        /// <summary>Altezza di un piano (uguale allo shader): parete divisa per i piani, tra 2,4 e 6 m.</summary>
+        public static float FloorHeight(float wallH, int levels) => Math.Max(2.4f, Math.Min(6.0f, wallH / Math.Max(1, levels)));
+
         /// <param name="simple">LOD lontano: tetto piano e niente dettagli</param>
         public bool Build(BuildingInfo b, GroundSampler ground, MeshBuffer mb, bool hasShops, bool simple = false)
         {
@@ -97,6 +126,15 @@ namespace Orbis.Core.World.Meshing
             bool pitchedIntent = b.Roof != RoofShape.Flat && b.Roof != RoofShape.Unknown;
             bool tiledFlat = _planes.Count == 0 && pitchedIntent;
             uint roofColor = MeshBuffer.Rgb(StylePalette.RoofColor(b, !pitchedIntent));
+
+            LastOuter = outer;
+            LastGroundRef = gRef;
+            LastWallHeight = wallH;
+            LastLevels = levels;
+            LastCategory = CategoryOf(b.Use);
+            LastShops = hasShops || b.HasFlag(BuildingFlag.HasShops);
+            LastFlatRoof = _planes.Count == 0 && !pitchedIntent;
+            LastWallColor = StylePalette.WallColor(b);
 
             AddWalls(outer, mb, baseZ, eave, gRef, wallH, wall, seed, levels, category, simple);
             if (holes != null)

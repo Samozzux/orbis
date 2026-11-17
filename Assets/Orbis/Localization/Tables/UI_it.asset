@@ -1450,6 +1450,18 @@ MonoBehaviour:
     m_Localized: Nessun elemento con questo nome.
     m_Metadata:
       m_Items: []
+  - m_Id: 673889733566464
+    m_Localized: Livello
+    m_Metadata:
+      m_Items: []
+  - m_Id: 673889746149376
+    m_Localized: '{0} di {1}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 673889746149377
+    m_Localized: 'Edificio al livello {0}: nuovi addobbi!'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

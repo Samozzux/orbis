@@ -300,6 +300,67 @@ namespace Orbis.Core.Game
         };
     }
 
+    /// <summary>
+    /// Potenzia un edificio reale (OSM) fino al livello 5: gli addobbi cambiano a ogni livello (docs/08 §3),
+    /// l'affitto cresce. Costo = superficie dei piani × costo al m² × livello attuale.
+    /// </summary>
+    public sealed class UpgradeOsmCommand : IGameCommand
+    {
+        public const int MaxLevel = 5;
+
+        public long OsmKey;
+        public LotKey Lot;
+        /// <summary>Superficie dei piani (impronta × piani), m².</summary>
+        public float FloorArea;
+        private long _cost;
+
+        public byte Tag => 8;
+
+        public static long CostOf(Balance b, int currentLevel, float floorArea) =>
+            (long)Math.Round(Math.Max(10f, floorArea) * b.UpgradeOsmCostPerM2 * Math.Max(1, currentLevel));
+
+        public BuildResult Execute(GameContext ctx)
+        {
+            var s = ctx.State;
+            if (s.DemolishedOsm.ContainsKey(OsmKey)) return BuildResult.UnknownObject;
+            int level = s.OsmLevel(OsmKey);
+            if (level >= MaxLevel) return BuildResult.MaxLevel;
+            _cost = s.Config.CreativeMode ? 0 : CostOf(ctx.Balance, level, FloorArea);
+            if (s.Cash < _cost) return BuildResult.NotEnoughCash;
+            if (!s.OsmUpgrades.TryGetValue(OsmKey, out var u)) s.OsmUpgrades[OsmKey] = u = new OsmUpgrade { FloorArea = FloorArea, Lot = Lot };
+            u.Level = level + 1;
+            s.Transact(LedgerCategory.Upgrades, -_cost);
+            Progression.AddXp(ctx, (long)Math.Round(_cost * ctx.Balance.XpPerCost) + 5);
+            s.AddCounter("upgraded", 1);
+            return BuildResult.Ok;
+        }
+
+        public void Undo(GameContext ctx)
+        {
+            var s = ctx.State;
+            if (s.OsmUpgrades.TryGetValue(OsmKey, out var u))
+            {
+                u.Level--;
+                if (u.Level <= 1) s.OsmUpgrades.Remove(OsmKey);
+            }
+            s.Transact(LedgerCategory.Upgrades, _cost);
+            s.AddCounter("upgraded", -1);
+        }
+
+        public void Write(BinaryWriter w)
+        {
+            w.Write(OsmKey);
+            GameState.WriteLot(w, Lot);
+            w.Write(FloorArea);
+            w.Write(_cost);
+        }
+
+        public static UpgradeOsmCommand Read(BinaryReader r) => new UpgradeOsmCommand
+        {
+            OsmKey = r.ReadInt64(), Lot = GameState.ReadLot(r), FloorArea = r.ReadSingle(), _cost = r.ReadInt64(),
+        };
+    }
+
     /// <summary>Cambia variante (colori, materiali) di un elemento.</summary>
     public sealed class VariantCommand : IGameCommand
     {
@@ -558,6 +619,7 @@ namespace Orbis.Core.Game
                 case 5: return UpgradeCommand.Read(r);
                 case 6: return VariantCommand.Read(r);
                 case 7: return SetTaxCommand.Read(r);
+                case 8: return UpgradeOsmCommand.Read(r);
                 default: throw new InvalidDataException("comando sconosciuto nel salvataggio: " + tag);
             }
         }

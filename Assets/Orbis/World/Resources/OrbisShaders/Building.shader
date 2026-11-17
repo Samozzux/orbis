@@ -225,6 +225,61 @@ Shader "Orbis/Building"
                     albedo = baseColor * (0.85 + 0.25 * ripple);
                     spec = 1.0;
                 }
+                else if (kind > 12.5)
+                {
+                    // ---------------- addobbi (BuildingDecorator): parametro in uv1.z
+                    float param = i.uv1.z;
+                    if (kind < 13.5)
+                    {
+                        // oggetto verniciato (arredo, ringhiere, tavolini, pilastri): tinta piena con leggera grana
+                        albedo = baseColor * (0.94 + 0.08 * OrbisNoise(i.positionWS.xz * 3.0 + i.positionWS.y));
+                    }
+                    else if (kind < 14.5)
+                    {
+                        // telo (tende, ombrelloni, bandiere): righe da 0,5 m se il parametro è 1
+                        float stripe = step(0.5, frac(i.uv0.x / 0.5));
+                        half3 cream = half3(0.96, 0.93, 0.86);
+                        albedo = param > 0.5 ? lerp(baseColor, cream, stripe) : baseColor;
+                        albedo *= 0.92 + 0.08 * OrbisNoise(i.uv0.xy * 4.0);
+                    }
+                    else if (kind < 15.5)
+                    {
+                        // insegna: fondo colorato, bordo chiaro, "scritta" a blocchi che la sera si accende
+                        float w = max(i.uv0.z, 0.01), h = max(i.uv0.w, 0.01);
+                        float u = i.uv0.x, v = i.uv0.y;
+                        float border = 1 - Box(u, 0.05, w - 0.05) * Box(v, 0.05, h - 0.05);
+                        float margin = 0.16 * w;
+                        float inRow = Box(v, h * 0.26, h * 0.74) * Box(u, margin, w - margin);
+                        float cell = floor(u / 0.24);
+                        float letter = step(0.22, OrbisHash21(float2(cell, seed * 31.0))) * Box(frac(u / 0.24), 0.14, 0.86);
+                        float text = inRow * letter * step(0.5, param);
+                        half3 ink = half3(0.98, 0.95, 0.86);
+                        albedo = lerp(baseColor, ink, saturate(text + border * 0.8));
+                        emission = (ink * text * 1.3 + baseColor * 0.3) * _OrbisNight;
+                    }
+                    else if (kind < 16.5)
+                    {
+                        // luce (lampadine, croci luminose): pastello di giorno, accesa di notte
+                        albedo = baseColor;
+                        emission = baseColor * (0.12 + 1.8 * _OrbisNight) * max(param, 0.3);
+                    }
+                    else
+                    {
+                        // piante e fiori: fogliame a macchie con fiori colorati (densità = parametro)
+                        float3 pw = i.positionWS * 6.0;
+                        float leaf = OrbisNoise(pw.xz + pw.y);
+                        albedo = baseColor * (0.65 + 0.5 * leaf);
+                        float hsh = OrbisHash21(floor(i.positionWS.xz * 7.0 + i.positionWS.y * 5.0));
+                        if (hsh < param * 0.75)
+                        {
+                            float pick = frac(hsh * 37.17);
+                            half3 flower = pick < 0.25 ? half3(0.86, 0.12, 0.18) : (pick < 0.45 ? half3(0.95, 0.45, 0.65) :
+                                (pick < 0.65 ? half3(0.97, 0.95, 0.9) : (pick < 0.82 ? half3(0.98, 0.8, 0.15) : half3(0.62, 0.35, 0.85))));
+                            albedo = flower;
+                        }
+                        ao = 0.85;
+                    }
+                }
                 else if (kind > 11.5)
                 {
                     // ---------------- pannello solare: celle scure con telaio chiaro
@@ -253,9 +308,15 @@ Shader "Orbis/Building"
                 }
                 else
                 {
-                    // ---------------- terrazzo
+                    // ---------------- terrazzo: piastrelle (cotto o pietra) da 45 cm con le fughe, macchie larghe
                     float g = OrbisNoise(i.positionWS.xz * 1.7);
-                    albedo = baseColor * (0.9 + 0.15 * g);
+                    float2 tp = i.uv0.xy / 0.45;
+                    float2 tf = abs(frac(tp) - 0.5);
+                    float grout = smoothstep(0.43, 0.5, max(tf.x, tf.y));
+                    float tileVar = OrbisHash21(floor(tp) + seed * 17.0);
+                    float far = saturate(fwidth(tp.x) * 1.5);
+                    half3 tiles = baseColor * (0.88 + 0.16 * tileVar) * (1.0 - 0.22 * grout);
+                    albedo = lerp(tiles, baseColor, far) * (0.92 + 0.12 * g);
                 }
 
                 half3 color = OrbisLighting(i.positionWS, n, albedo, ao, spec + _OrbisWet * 0.3);

@@ -68,6 +68,14 @@ namespace Orbis.Core.Game
         Construction, Upgrades, Demolition, Moves, Variants, Maintenance, Services, EnergyPurchase, Count,
     }
 
+    /// <summary>Edificio reale (OSM) potenziato: livello 2→5, superficie dei piani e lotto (per ridisegnare il tile).</summary>
+    public sealed class OsmUpgrade
+    {
+        public int Level = 1;
+        public float FloorArea;
+        public LotKey Lot;
+    }
+
     /// <summary>Movimenti di cassa di un giorno di gioco, per categoria (docs/03 §4).</summary>
     public sealed class LedgerDay
     {
@@ -122,7 +130,7 @@ namespace Orbis.Core.Game
     /// </summary>
     public sealed class GameState
     {
-        public const int FormatVersion = 1;
+        public const int FormatVersion = 2; // 2: edifici reali potenziati
 
         public string Name = "Chieti";
         public string Region = "chieti";
@@ -142,6 +150,12 @@ namespace Orbis.Core.Game
         public int NextObjectId = 1;
         /// <summary>Edifici OSM demoliti: chiave (tipo &lt;&lt; 60 | id) → lotto, per liberarne la sagoma.</summary>
         public readonly Dictionary<long, LotKey> DemolishedOsm = new Dictionary<long, LotKey>();
+
+        /// <summary>Edifici reali potenziati (chiave come <see cref="DemolishedOsm"/>): gli addobbi cambiano col livello.</summary>
+        public readonly Dictionary<long, OsmUpgrade> OsmUpgrades = new Dictionary<long, OsmUpgrade>();
+
+        /// <summary>Livello di un edificio reale (1 se mai potenziato).</summary>
+        public int OsmLevel(long key) => OsmUpgrades.TryGetValue(key, out var u) ? u.Level : 1;
 
         public readonly List<LedgerDay> Ledger = new List<LedgerDay>();
         public readonly CityStats Stats = new CityStats();
@@ -226,6 +240,14 @@ namespace Orbis.Core.Game
                 w.Write(kv.Key);
                 WriteLot(w, kv.Value);
             }
+            w.Write(OsmUpgrades.Count);
+            foreach (var kv in OsmUpgrades)
+            {
+                w.Write(kv.Key);
+                w.Write(kv.Value.Level);
+                w.Write(kv.Value.FloorArea);
+                WriteLot(w, kv.Value.Lot);
+            }
             w.Write(Ledger.Count);
             foreach (var d in Ledger)
             {
@@ -253,7 +275,7 @@ namespace Orbis.Core.Game
         public static GameState Read(BinaryReader r)
         {
             int version = r.ReadInt32();
-            if (version != FormatVersion) throw new InvalidDataException("versione del salvataggio non supportata: " + version);
+            if (version < 1 || version > FormatVersion) throw new InvalidDataException("versione del salvataggio non supportata: " + version);
             var s = new GameState
             {
                 Name = r.ReadString(),
@@ -292,6 +314,15 @@ namespace Orbis.Core.Game
             {
                 long k = r.ReadInt64();
                 s.DemolishedOsm[k] = ReadLot(r);
+            }
+            if (version >= 2)
+            {
+                n = r.ReadInt32();
+                for (int i = 0; i < n; i++)
+                {
+                    long k = r.ReadInt64();
+                    s.OsmUpgrades[k] = new OsmUpgrade { Level = r.ReadInt32(), FloorArea = r.ReadSingle(), Lot = ReadLot(r) };
+                }
             }
             n = r.ReadInt32();
             for (int i = 0; i < n; i++)

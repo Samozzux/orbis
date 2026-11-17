@@ -1447,6 +1447,18 @@ MonoBehaviour:
     m_Key: build.search.none
     m_Metadata:
       m_Items: []
+  - m_Id: 673889733566464
+    m_Key: details.osm.level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 673889746149376
+    m_Key: details.osm.level.value
+    m_Metadata:
+      m_Items: []
+  - m_Id: 673889746149377
+    m_Key: details.osm.upgraded
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -101,9 +101,11 @@ namespace Orbis.UI.Game
                 if (_game.State.Objects.ContainsKey(sel.PlacedObjectId)) _game.World.SelectPlaced(sel.PlacedObjectId);
                 else _hud.ClearSelection();
             }
-            else if (sel.Building != null && _game.State.DemolishedOsm.ContainsKey(GameState.OsmKey(sel.Building.OsmType, sel.Building.OsmId)))
+            else if (sel.Building != null)
             {
-                _hud.ClearSelection();
+                // edificio reale: demolito → si chiude; altrimenti si ridisegna (livello cambiato)
+                if (_game.State.DemolishedOsm.ContainsKey(GameState.OsmKey(sel.Building.OsmType, sel.Building.OsmId))) _hud.ClearSelection();
+                else _game.World.Select(sel);
             }
         }
 
@@ -455,27 +457,58 @@ namespace Orbis.UI.Game
             return true;
         }
 
-        /// <summary>Azioni sugli edifici reali OSM: demolire per liberare il lotto.</summary>
+        /// <summary>Azioni sugli edifici reali OSM: potenziare (addobbi che cambiano a ogni livello) e demolire per liberare il lotto.</summary>
         private void AddOsmActions(WorldSelection sel, VisualElement actions)
         {
             if (sel?.Building == null || sel.Tile == null) return;
             var b = sel.Building;
+            long key = GameState.OsmKey(b.OsmType, b.OsmId);
             float area = Mathf.Abs(Polygon2D.SignedArea(b.Outer));
+            int floors = b.Levels > 0 ? b.Levels : Mathf.Max(1, Mathf.RoundToInt(b.Height / 3.2f));
+            float floorArea = area * floors;
+            var lot = LotOf(sel);
+            int level = _game.State.OsmLevel(key);
+            _hud.DetailsRow(Loc.Get("details.osm.level"), Loc.Format("details.osm.level.value", level, UpgradeOsmCommand.MaxLevel));
+            if (level < UpgradeOsmCommand.MaxLevel)
+            {
+                long upCost = _game.State.Config.CreativeMode ? 0 : UpgradeOsmCommand.CostOf(_game.Content.Balance, level, floorArea);
+                GamePanel.ActionButton(actions, Loc.Format("details.action.upgrade", Fmt.Money(upCost)), OrbisIconKind.Upgrade, "primary", () =>
+                {
+                    var r = _game.Do(new UpgradeOsmCommand { OsmKey = key, Lot = lot, FloorArea = floorArea });
+                    if (r != BuildResult.Ok)
+                    {
+                        _services.Haptics.Play(HapticKind.Warning);
+                        Toast(Reason(r));
+                        return;
+                    }
+                    _services.Haptics.Play(HapticKind.Success);
+                    Toast(Loc.Format("details.osm.upgraded", _game.State.OsmLevel(key)));
+                    _game.World.Select(sel); // ridisegna i Dettagli con il nuovo livello
+                }).name = "details-upgrade-osm";
+            }
             long cost = (long)Math.Round(area * _game.Content.Balance.DemolishOsmCostPerM2);
             GamePanel.ActionButton(actions, Loc.Format("details.action.demolish_cost", Fmt.Money(cost)), OrbisIconKind.Trash, "danger", () =>
                 _panel.Confirm(Loc.Get("details.demolish.title"), Loc.Get("details.demolish.osm"), Loc.Get("details.action.demolish"), () =>
                 {
-                    float cx = (b.Bounds.MinX + b.Bounds.MaxX) / 2, cy = (b.Bounds.MinY + b.Bounds.MaxY) / 2;
-                    uint lotId = 0;
-                    foreach (var l in sel.Tile.Data.Lots)
-                        if (l.Bounds.Intersects(b.Bounds) && Polygon2D.Contains(l.Outer, l.Holes, cx, cy)) { lotId = l.Id; break; }
-                    var r = _game.Do(new DemolishOsmCommand
-                    {
-                        OsmKey = GameState.OsmKey(b.OsmType, b.OsmId), Lot = new LotKey(sel.Tile.Id.X, sel.Tile.Id.Y, lotId), AreaM2 = area,
-                    });
+                    var r = _game.Do(new DemolishOsmCommand { OsmKey = key, Lot = lot, AreaM2 = area });
                     Toast(r == BuildResult.Ok ? Loc.Get("details.demolished") : Reason(r));
                     _hud.ClearSelection();
                 }));
+        }
+
+        /// <summary>Lotto che contiene il centro dell'edificio (0 se nessuno: basta il tile per ridisegnarlo).</summary>
+        private static LotKey LotOf(WorldSelection sel)
+        {
+            var b = sel.Building;
+            float cx = (b.Bounds.MinX + b.Bounds.MaxX) / 2, cy = (b.Bounds.MinY + b.Bounds.MaxY) / 2;
+            uint lotId = 0;
+            foreach (var l in sel.Tile.Data.Lots)
+                if (l.Bounds.Intersects(b.Bounds) && Polygon2D.Contains(l.Outer, l.Holes, cx, cy))
+                {
+                    lotId = l.Id;
+                    break;
+                }
+            return new LotKey(sel.Tile.Id.X, sel.Tile.Id.Y, lotId);
         }
 
         private void Run(IGameCommand cmd, int reselect)

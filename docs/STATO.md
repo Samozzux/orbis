@@ -46,6 +46,22 @@ Tutto il piano è scritto, sul branch `m2-core` (PR in arrivo); manca la prova d
 - **Fotografie dell'interfaccia** (`UiSnapshotTests`, categoria Snapshot, non in CI): menu, nuova partita, HUD, missione, Dettagli, catalogo, finanze, riavvolgi e costruzione, su iPhone 15 Pro in verticale (con Dynamic Island) e desktop. Controllate a occhio: corretti la barra in basso troppo larga sul telefono, la scritta © OpenStreetMap sotto i bottoni, le barre di scorrimento di sistema, i nomi lunghi nella barra di costruzione, le aliquote disallineate, le colonne del catalogo su desktop.
 - **Scelte semplici annotate**: "Continua" apre l'elenco delle partite (anche con una sola); la nuova partita parte alla data reale di oggi alle 10; un'ora di gioco dura un minuto reale (×velocità dell'orologio); i comandi che completano una missione la annullano insieme a loro.
 
+### Edifici reali in stile gioco (17/11/2026, richiesta di Samuele durante la prova di M2)
+Branch `m2-stile-gioco`.
+- **Addobbi per tipo di edificio** (`BuildingDecorator`, logica pura con test). Tipo dall'uso OSM e dal POI principale dell'edificio:
+  - bar, caffè e ristoranti: tende a righe sulle vetrine, insegna che la sera si accende, dehors con tavolini (con ombrelloni dal livello 2) se il marciapiede è largo almeno 2,3 m;
+  - negozi: tende e insegne; farmacie: croce verde luminosa; banche: insegna;
+  - alberghi: pensilina, insegna verticale, bandiere; scuole, municipi, ospedali: bandiere italiana ed europea, insegne, croce rossa;
+  - benzinai: pensilina con fascia colorata e pompe; tettoie: pilastri e copertura invece di un blocco pieno;
+  - industrie: portoni di carico, fascia con insegna, pannelli solari sui tetti grandi; fattorie: balle di fieno;
+  - case: fioriere sotto le finestre, balconi con ringhiera, comignoli sui tetti a falde, parapetto e impianti sulle terrazze.
+- **Livelli 1→5**: ogni livello aggiunge addobbi (più fioriere e balconi fioriti, piante e pergolati in terrazza, fioriere ai lati dell'ingresso, lucine, festoni di bandierine, lampioncini, più tavolini).
+- **Potenzia anche gli edifici reali**: Dettagli → "Potenzia" (fino al livello 5). Costo = superficie dei piani × 25 × livello attuale; affitto in più 1,25 al mese per m² e per livello (rientro in circa 20 mesi di gioco); un po' di felicità. Si annulla come le altre azioni; il salvataggio passa alla versione 2 e legge ancora i salvataggi vecchi.
+- **Più colori**: intonaci più vivi (ocra, salmone, rosa antico, giallo paglia, terracotta, verde salvia, azzurro polvere) e terrazze in cotto con le piastrelle disegnate invece del grigio.
+- **In collina** tende e insegne seguono la quota del marciapiede davanti alla facciata; se l'edificio è incassato nel pendio, il locale ha un'insegna a totem sul marciapiede.
+- **Prestazioni**: addobbi solo nei tile vicini, in mesh separate che si spengono oltre 300–800 m secondo il profilo (telefono via web 300 m e densità 0,4; desktop 800 m). Nel centro di Chieti pesano quanto gli edifici (112 mila triangoli contro 111 mila nei 5 tile vicini).
+- **Scelte semplici annotate**: il potenziamento degli edifici reali è immediato (niente cantiere); gli addobbi sono geometria procedurale semplice (stile Classico); i modelli "HD" più dettagliati (cornicioni, persiane in rilievo, insegne con il nome vero del locale) sono il passo successivo.
+
 **M1 — Il mondo: Chieti**: completata il 16/11/2026, a conferma di Samuele ("quasi perfetto" + correzioni unite con la PR #5). Tag `v0.1.0` dopo le build verdi.
 
 ### Piano di M1 (a blocchi, ognuno con PR e test)
@@ -149,6 +165,7 @@ Tutto il piano è scritto, sul branch `m2-core` (PR in arrivo); manca la prova d
 - **CORS dei download GitHub Releases dal web** (verificato il 15/11/2026): **non utilizzabili**. `github.com/.../releases/download/...` risponde 302 senza `Access-Control-Allow-Origin`; anche passando da `api.github.com` (che ha CORS) il redirect finale su `release-assets.githubusercontent.com` risponde senza header CORS. GitHub Pages invece risponde con `Access-Control-Allow-Origin: *`. → vedi "Decisioni da confermare".
 
 ## Decisioni prese
+- **Edifici reali in stile gioco** (Samuele, 17/11/2026): gli edifici restano quelli veri (sagoma, altezza, piani, tetto da OSM) ma sono ricostruiti "da gioco", colorati e con i dettagli tipici del loro uso: bar e ristoranti con tende, insegne e dehors; negozi con vetrine, tende e insegne; benzinai con pensilina e pompe; stadi, aeroporti, campagne, strade con i loro elementi. Ogni edificio ha **addobbi** (fioriere, balconi fioriti, ombrelloni, lucine, bandiere…) e **potenziandolo gli addobbi cambiano a ogni livello** (1→5), anche per gli edifici reali. Lo stile resta il **Classico** (3D colorato tipo Megapolis) con più dettaglio, in direzione SimCity; dettagli in `docs/08` §3.
 - Motore Unity (non Unreal) per compilare IPA, APK e web gratis su GitHub Actions.
 - Piattaforme: iOS (iPhone + iPad), Android (APK) e Web (GitHub Pages).
 - Dati sportivi da fonti aperte, niente scraping vietato.
@@ -241,4 +258,5 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 - **Fatto**: core del gioco, dati, modelli procedurali, salvataggi web (commit precedenti su `m2-core`); in questa sessione interfaccia della partita (HUD economico, catalogo con ricerca, barra di costruzione, Dettagli con azioni, Finanze, Riavvolgi), Nuova partita e Continua con più salvataggi, riepilogo del tempo ad app chiusa, 143 nuovi testi italiani, test di gioco sul mondo vero.
 - **Corretto durante le prove**: le missioni e i livelli completati da un'azione del giocatore non davano l'avviso; il controllo dello spazio costruiva la griglia dell'intero lotto e sui lotti agricoli enormi andava in errore ("lotto troppo grande") → ora controlla solo la finestra sotto l'elemento, veloce ovunque (test con un lotto di 3×3 km); WASD muoveva la camera mentre si scriveva nella ricerca; ritocchi grafici dalle fotografie dell'interfaccia.
 - **Resta**: PR, build verdi, prova di Samuele, tag `v0.2.0`.
+- **Poi, sempre il 17/11**: PR #6 unita in `main` (build per la prova di M2 avviate). Su richiesta di Samuele: edifici reali in stile gioco con addobbi per tipo e livello, potenziamento degli edifici reali, città più colorata (branch `m2-stile-gioco`).
 
