@@ -1,7 +1,7 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M2 — Costruire ed economia**: in corso (iniziata il 16/11/2026, scelta di Samuele: "M2 adesso").
+**M2 — Costruire ed economia**: scritta e provata in locale (17/11/2026), in attesa della prova di Samuele sui dispositivi. Iniziata il 16/11/2026 (scelta di Samuele: "M2 adesso").
 
 ### Piano di M2 (a blocchi, ognuno con PR e test)
 1. **Core del gioco** (logica pura, `Orbis.Core.Game`):
@@ -27,6 +27,24 @@
    - nuova partita con la configurazione del mondo e più salvataggi; "Continua".
 5. **Salvataggi sul dispositivo** (app e web), salvataggio automatico, riepilogo al ritorno.
 6. **Prove, build, STATO, tag `v0.2.0`**.
+
+### Avanzamento M2 (17/11/2026)
+Tutto il piano è scritto, sul branch `m2-core` (PR in arrivo); manca la prova di Samuele sui dispositivi.
+- **Core** (blocco 1): fatto, 111 test `dotnet test` (un anno di gioco con conservazione del denaro, annulla/ripeti che non regala monete, salvataggio → caricamento identico, tempo ad app chiusa).
+- **Dati** (blocco 2): 150 voci del catalogo con sagoma esatta e 5 livelli, bilanciamento, 20 missioni; test sui file veri.
+- **Unity** (blocco 3): modelli procedurali per tutte le famiglie (test: ogni modello resta dentro la sua sagoma e la sua altezza); anteprima "fantasma" verde/rossa agganciata alla griglia del lotto, col motivo se non si può; cantiere che cresce dal suolo; demolizione degli edifici OSM che libera il lotto.
+- **Interfaccia** (blocco 4):
+  - HUD: cassa, livello con barra XP, missione corrente (tocco per i dettagli), annulla/ripeti, Costruisci, Finanze, Riavvolgi; avvisi per lavori finiti, missioni e livelli;
+  - catalogo a schede per categoria con ricerca per nome; elementi bloccati con il livello di sblocco;
+  - barra di costruzione: nome e costo, motivo in rosso, ruota, ✓ (touch), annulla; su desktop clic per piazzare, R ruota, Esc annulla;
+  - Dettagli di un elemento piazzato: stato dei lavori, abitanti/posti, affitto/produzione, energia, manutenzione, sagoma; azioni Potenzia, Colori, Sposta, Ruota, Demolisci. Edifici reali: Demolisci (con costo al m²);
+  - Finanze: abitanti, posti, felicità, energia, saldo previsto, aliquote con −/+ (annullabili), ultimo giorno chiuso e ultimi 30 giorni per voce;
+  - Riavvolgi: punti di ripristino giornalieri (30) e settimanali, con conferma;
+  - Nuova partita: nome, difficoltà, tempo ad app chiusa, modalità creativa; Continua: elenco delle partite (gioca, elimina); riepilogo "Mentre eri via".
+- **Salvataggi** (blocco 5): file binari versionati (`ISaveStore`): ogni 60 s, a fine giornata di gioco, quando l'app va in pausa o si chiude e tornando al menu; sul web in IndexedDB (sincronizzato dopo ogni scrittura).
+- **Prove** (blocco 6): EditMode 10 test (anche i testi composti dagli enum), PlayMode 9 test, tra cui una partita vera su Chieti: costruire su un lotto reale, annullare/ripetere, demolire un edificio OSM, un mese di gioco, riavvolgere, uscire e riaprire trovando tutto com'era.
+- **Fotografie dell'interfaccia** (`UiSnapshotTests`, categoria Snapshot, non in CI): menu, nuova partita, HUD, missione, Dettagli, catalogo, finanze, riavvolgi e costruzione, su iPhone 15 Pro in verticale (con Dynamic Island) e desktop. Controllate a occhio: corretti la barra in basso troppo larga sul telefono, la scritta © OpenStreetMap sotto i bottoni, le barre di scorrimento di sistema, i nomi lunghi nella barra di costruzione, le aliquote disallineate, le colonne del catalogo su desktop.
+- **Scelte semplici annotate**: "Continua" apre l'elenco delle partite (anche con una sola); la nuova partita parte alla data reale di oggi alle 10; un'ora di gioco dura un minuto reale (×velocità dell'orologio); i comandi che completano una missione la annullano insieme a loro.
 
 **M1 — Il mondo: Chieti**: completata il 16/11/2026, a conferma di Samuele ("quasi perfetto" + correzioni unite con la PR #5). Tag `v0.1.0` dopo le build verdi.
 
@@ -156,6 +174,7 @@
 4. **Riferimenti tra assembly**: `Orbis.UI` usa anche `Orbis.Platform` (per profilo del dispositivo e servizi), non solo Core e Gameplay come nella tabella di `docs/01` §2.
 
 ## Problemi aperti
+- **Lotti con griglia anomala** (visto il 17/11): almeno un lotto di Chieti (id 2476, 158×161 m) ha origine o angolo della griglia che rendono enorme la sua griglia intera. Per costruire non è un problema (si controlla solo sotto l'elemento), ma va guardato nella pipeline quando si rigenera il pack.
 - **Unity terminato dal sistema in CI (codice 137)**: due volte (build Android del 15/11 e build web del 16/11) Unity è stato ucciso un secondo dopo l'avvio, sempre con la cartella `Library` ripristinata dalla cache; un'altra build con cache invece è andata bene, e la build web era sola in coda (non è un conflitto di licenza). Causa non ancora certa. Contromisura: `.github/scripts/run-unity.sh` (usato da tutti i job Unity) in quel caso registra memoria e messaggi del kernel, cancella `Library` e riprova una volta da zero. Se la diagnostica indicherà la causa, si correggerà alla radice. Prima prova dopo la correzione (16/11, commit `c16787b`): iOS, web e Android verdi senza bisogno del nuovo tentativo.
 - Il modulo **iOS Build Support** non è installato sul Mac: non serve (l'IPA si compila in CI), ma senza non si può provare la build iOS in locale.
 - Gli APK compilati prima del 15/11 alle 23:38 sono firmati con una chiave di debug: se ne hai installato uno, va disinstallato prima di installare quello firmato con la chiave di Orbis.
@@ -164,7 +183,23 @@
 - ✅ Fatto il 15/11: script `tools/setup/configura-github.sh` (JWT, admin, keystore Android, GitHub Pages); tolta la password del database.
 - ✅ Fatto il 16/11: Stati Uniti aggiunti tra le nazioni FTP consentite su Altervista.
 - ✅ Fatto il 16/11: prova di M0 sui dispositivi (tag `v0.0.0`).
-- ⏳ **Provare M1** (vedi "Cosa provare (M1)") e dire a Claude com'è andata: poi tag `v0.1.0` e si passa a M2.
+- ✅ Fatto il 16/11: prova di M1 ("quasi perfetto", correzioni nella PR #5), tag `v0.1.0`.
+- ⏳ **Provare M2** (vedi "Cosa provare (M2)") e dire a Claude com'è andata: poi tag `v0.2.0` e si passa a M3.
+
+## Cosa provare (M2 — Costruire ed economia)
+Build dopo l'unione della PR di M2: web su GitHub Pages, `Orbis-ipa` e `Orbis-apk` dalle ultime esecuzioni verdi.
+- **Nuova partita**: menu → "Nuova partita" → nome, difficoltà, opzioni → "Inizia". In alto a sinistra cassa e livello, sotto la prima missione (toccarla per leggerla).
+- **Costruire**: bottone arancio "Costruisci" → scegliere una scheda (Case, Energia, Agricoltura…) o cercare per nome → toccare un elemento.
+  - iPhone: il fantasma sta al centro dello schermo, si sposta trascinando la mappa; verde = si può (✓ per costruire), rosso = c'è il motivo; il bottone blu ruota.
+  - Mac/PC: il fantasma segue il mouse, clic per costruire, R ruota, Esc esce.
+  - Provare una casa in un cortile, una pala eolica o un campo solare in campagna, un vigneto.
+- **Lavori**: l'edificio cresce dal suolo; quando è finito arriva l'avviso. Velocità dell'orologio (bottone arancio dell'ora) per accelerare.
+- **Annulla/ripeti**: le due frecce in basso; annullare restituisce tutto, anche i premi.
+- **Toccare un elemento costruito**: Dettagli con Potenzia, Colori, Sposta, Ruota, Demolisci. **Toccare un edificio reale**: c'è "Demolisci" e il lotto si libera.
+- **Finanze** (grafico): entrate e uscite per voce, aliquote −/+; **Riavvolgi** (freccia indietro): tornare a un giorno passato.
+- **Un mese di gioco**: lasciar correre il tempo (a 10× un giorno dura circa 2 minuti e mezzo) e guardare la cassa salire o scendere.
+- **Chiudere e riaprire**: casa → menu → "Continua" → la partita è com'era. Chiudere del tutto l'app e riaprirla dopo qualche minuto: compare "Mentre eri via" con quanto è successo.
+- **Verticale e orizzontale**, e dire se la fluidità resta buona con qualche decina di edifici costruiti.
 
 ## Cosa provare (M1 — Chieti in 3D)
 Build dopo l'unione della PR #4 (16/11): web su GitHub Pages, `Orbis-ipa` e `Orbis-apk` dalle ultime esecuzioni verdi.
@@ -201,3 +236,9 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 - **Fatto**: PR #1 unita in `main`; build Android (APK firmato), iOS e Web verdi; versione web pubblicata su GitHub Pages. Menu rifatto in stile gioco con città 3D, mare, Majella, vetro che sfoca la scena vera, font Lilita One (PR #2). CI resa più veloce: sulle PR solo test.
 - **Poi**: gioco in verticale e orizzontale con Impostazioni → Schermo (decisione di Samuele, specifica aggiornata); PR #2 unita; backend online dopo lo sblocco FTP su Altervista, `/api/health` verificato.
 - **Resta**: prova di Samuele sui dispositivi; tag `v0.0.0`; decisioni da confermare (hosting web dei dati pesanti, .NET 10, versione PHP minima, riferimenti tra assembly).
+
+### 17/11/2026 — M2 Costruire ed economia
+- **Fatto**: core del gioco, dati, modelli procedurali, salvataggi web (commit precedenti su `m2-core`); in questa sessione interfaccia della partita (HUD economico, catalogo con ricerca, barra di costruzione, Dettagli con azioni, Finanze, Riavvolgi), Nuova partita e Continua con più salvataggi, riepilogo del tempo ad app chiusa, 143 nuovi testi italiani, test di gioco sul mondo vero.
+- **Corretto durante le prove**: le missioni e i livelli completati da un'azione del giocatore non davano l'avviso; il controllo dello spazio costruiva la griglia dell'intero lotto e sui lotti agricoli enormi andava in errore ("lotto troppo grande") → ora controlla solo la finestra sotto l'elemento, veloce ovunque (test con un lotto di 3×3 km); WASD muoveva la camera mentre si scriveva nella ricerca; ritocchi grafici dalle fotografie dell'interfaccia.
+- **Resta**: PR, build verdi, prova di Samuele, tag `v0.2.0`.
+
