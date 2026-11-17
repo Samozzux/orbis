@@ -289,6 +289,64 @@ namespace Orbis.Core.Tests
         }
     }
 
+    public class OsmUpgradeTests
+    {
+        private static readonly long Key = GameState.OsmKey(OsmType.Way, 99);
+
+        private static UpgradeOsmCommand Up() => new UpgradeOsmCommand { OsmKey = Key, Lot = TestGame.Lot, FloorArea = 400 };
+
+        [Fact]
+        public void PotenziareUnEdificioReale_CostaRendeEsiAnnulla()
+        {
+            var g = TestGame.New(new Balance { StartCash = 1_000_000, XpBase = 100, XpExponent = 1f });
+            var s = g.State;
+            long cash0 = s.Cash;
+            double rent0 = Economy.Compute(g.Context).Rent;
+            Assert.Equal(1, s.OsmLevel(Key));
+            Assert.Equal(BuildResult.Ok, g.Do(Up()));
+            Assert.Equal(2, s.OsmLevel(Key));
+            Assert.Equal(-UpgradeOsmCommand.CostOf(g.Context.Balance, 1, 400), s.Today().Amounts[(int)LedgerCategory.Upgrades]);
+            Assert.Equal(BuildResult.Ok, g.Do(Up()));
+            Assert.Equal(3, s.OsmLevel(Key));
+            Assert.True(Economy.Compute(g.Context).Rent > rent0, "il potenziamento deve far salire gli affitti");
+            Assert.True(s.Counter("upgraded") == 2);
+            // annulla due volte: tutto come prima, monete comprese
+            Assert.True(g.Undo());
+            Assert.True(g.Undo());
+            Assert.Equal(1, s.OsmLevel(Key));
+            Assert.False(s.OsmUpgrades.ContainsKey(Key));
+            Assert.Equal(cash0, s.Cash);
+        }
+
+        [Fact]
+        public void LivelloMassimoCinque_EdificioDemolitoNonSiPotenzia()
+        {
+            var g = TestGame.New(new Balance { StartCash = 10_000_000 });
+            for (int i = 0; i < 4; i++) Assert.Equal(BuildResult.Ok, g.Do(Up()));
+            Assert.Equal(5, g.State.OsmLevel(Key));
+            Assert.Equal(BuildResult.MaxLevel, g.Do(Up()));
+            var other = GameState.OsmKey(OsmType.Way, 5);
+            Assert.Equal(BuildResult.Ok, g.Do(new DemolishOsmCommand { OsmKey = other, Lot = TestGame.Lot, AreaM2 = 10 }));
+            Assert.Equal(BuildResult.UnknownObject, g.Do(new UpgradeOsmCommand { OsmKey = other, Lot = TestGame.Lot, FloorArea = 100 }));
+        }
+
+        [Fact]
+        public void IlLivelloResta_DopoSalvataggioECaricamento()
+        {
+            var g = TestGame.New(new Balance { StartCash = 1_000_000 });
+            Assert.Equal(BuildResult.Ok, g.Do(Up()));
+            Assert.Equal(BuildResult.Ok, g.Do(Up()));
+            var bytes = g.Save(DateTime.UtcNow);
+            var loaded = GameSession.Load(bytes, TestGame.Catalog(), g.Context.Balance, new FakeWorld(), Missions.Parse(TestGame.MissionsJson));
+            Assert.Equal(3, loaded.State.OsmLevel(Key));
+            Assert.Equal(400f, loaded.State.OsmUpgrades[Key].FloorArea);
+            Assert.Equal(TestGame.Lot, loaded.State.OsmUpgrades[Key].Lot);
+            // anche la storia: annullare dopo il caricamento torna al livello 2
+            Assert.True(loaded.Undo());
+            Assert.Equal(2, loaded.State.OsmLevel(Key));
+        }
+    }
+
     public class SnapshotAndSaveTests
     {
         [Fact]

@@ -12,8 +12,11 @@ namespace Orbis.World
         public TileData Data;
         public TileLod Lod;
         public Vector3 Origin;
+        public int DecorationTriangles { get; private set; }
+        public int BuildingTriangles { get; private set; }
         private Texture2D _landuse;
         private Material _terrainMaterial;
+        private readonly System.Collections.Generic.List<(GameObject go, Bounds bounds)> _decor = new System.Collections.Generic.List<(GameObject, Bounds)>();
 
         public TileView(TileId id, Transform parent, Vector3 origin)
         {
@@ -39,9 +42,34 @@ namespace Orbis.World
                 var b = r.Buildings[i];
                 if (b != null && !b.IsEmpty) Add("Edifici " + i, b, materials.Building, cast: true);
             }
+            _decor.Clear();
+            DecorationTriangles = r.DecorationTriangles;
+            BuildingTriangles = 0;
+            foreach (var bb in r.Buildings)
+                if (bb != null) BuildingTriangles += bb.IndexCount / 3;
+            for (int i = 0; i < r.Decorations.Length; i++)
+            {
+                var d = r.Decorations[i];
+                if (d == null || d.IsEmpty) continue;
+                var go = Add("Addobbi " + i, d, materials.Building, cast: true);
+                var center = new Vector3((d.MinX + d.MaxX) / 2, (d.MinY + d.MaxY) / 2, (d.MinZ + d.MaxZ) / 2) + Origin;
+                _decor.Add((go, new Bounds(center, new Vector3(d.MaxX - d.MinX, d.MaxY - d.MinY, d.MaxZ - d.MinZ))));
+            }
         }
 
-        private void Add(string name, Core.World.Meshing.MeshBuffer mb, Material material, bool cast)
+        /// <summary>Accende gli addobbi solo nei blocchi entro <paramref name="maxDistance"/> m dalla telecamera.</summary>
+        public void CullDecorations(Vector3 camera, float maxDistance)
+        {
+            float max2 = maxDistance * maxDistance;
+            foreach (var (go, bounds) in _decor)
+            {
+                if (go == null) continue;
+                bool on = bounds.SqrDistance(camera) < max2;
+                if (go.activeSelf != on) go.SetActive(on);
+            }
+        }
+
+        private GameObject Add(string name, Core.World.Meshing.MeshBuffer mb, Material material, bool cast)
         {
             var go = new GameObject(name);
             go.transform.SetParent(Root.transform, false);
@@ -49,6 +77,7 @@ namespace Orbis.World
             var mr = go.AddComponent<MeshRenderer>();
             mr.sharedMaterial = material;
             WorldMaterials.Configure(mr, cast);
+            return go;
         }
 
         private void ClearChildren()

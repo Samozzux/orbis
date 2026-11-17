@@ -10,18 +10,19 @@ namespace Orbis.Core.World.Meshing
     /// </summary>
     public static class StylePalette
     {
-        // intonaci caldi del centro storico
+        // intonaci caldi del centro storico, nello stile Classico "da gioco": più vivi (ocra, salmone, rosa antico,
+        // giallo paglia, terracotta) con qualche verde salvia e azzurro polvere
         private static readonly uint[] HistoricWalls =
         {
-            0xEAD7B0, 0xE3C08A, 0xEFD9A6, 0xDDA98C, 0xE8BCA4, 0xF1E6CF, 0xD9C4A0, 0xE6B97F,
-            0xCFAF8E, 0xEFCB95, 0xE2A98A, 0xF3E3C4, 0xD7B892, 0xC9A27C,
+            0xEFD3A0, 0xF0B96E, 0xF5DC9A, 0xE8A07E, 0xEFB39A, 0xF4E6C8, 0xE2C08E, 0xF2B36B,
+            0xD9A07A, 0xF6CC86, 0xEC9F84, 0xF7E2B5, 0xE6B58A, 0xD98C5F, 0xF1B7A8, 0xCFD7A6, 0xB9D3DC,
         };
 
         // condomini e case recenti: colori più chiari
         private static readonly uint[] ModernWalls =
         {
-            0xF2EEE6, 0xE9E2D3, 0xEDE0C8, 0xF0E4CF, 0xE4DACB, 0xEAD4B8, 0xDCD6CC, 0xF4EBDB,
-            0xE6CFAE, 0xD8CDBE,
+            0xF6F1E6, 0xF1E3C6, 0xF6E0B8, 0xF4DCC8, 0xE9EFE1, 0xF3D5B0, 0xE3E8EE, 0xFAEED5,
+            0xF2C99A, 0xE8DCCB, 0xDDE9E4, 0xF5D3C2,
         };
 
         private static readonly uint[] IndustrialWalls = { 0xD9DCDD, 0xC8CCCE, 0xE3E1DB, 0xB9C3C9, 0xD1CBC0 };
@@ -29,7 +30,8 @@ namespace Orbis.Core.World.Meshing
 
         // coppi
         private static readonly uint[] RoofTiles = { 0xC0623F, 0xB25A3C, 0xCB7147, 0xA9533A, 0xBD6A4A, 0xC8784F, 0x9E4F38 };
-        private static readonly uint[] FlatRoofs = { 0xBDB6AA, 0xA9A399, 0xC7C1B5, 0x9C978F, 0xB3ABA0 };
+        // terrazze: soprattutto in cotto, qualcuna in guaina chiara
+        private static readonly uint[] FlatRoofs = { 0xC98E6B, 0xBF8463, 0xD3A07E, 0xCB9472, 0xC7C1B5, 0xB3ABA0 };
 
         public static uint Hash(long id, uint salt = 0)
         {

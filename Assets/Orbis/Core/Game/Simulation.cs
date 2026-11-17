@@ -56,6 +56,13 @@ namespace Orbis.Core.Game
                 power += spec.PowerKw;
                 happiness += item.Happiness;
             }
+            // edifici reali potenziati: affitti in più e un po' di felicità per gli addobbi
+            foreach (var kv in s.OsmUpgrades)
+            {
+                if (kv.Value.Level <= 1 || s.DemolishedOsm.ContainsKey(kv.Key)) continue;
+                rent += kv.Value.FloorArea * b.UpgradeOsmRentPerM2Month * (kv.Value.Level - 1) / 30.0;
+                happiness += 0.1 * (kv.Value.Level - 1);
+            }
             f.Population = residents;
             f.CommercialJobs = com;
             f.IndustrialJobs = ind;

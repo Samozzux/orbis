@@ -42,6 +42,10 @@ namespace Orbis.Core.Game
         public float EnergyBuyPerKwh = 0.14f;
 
         public float DemolishOsmCostPerM2 = 40f;
+        /// <summary>Potenziare un edificio reale: costo per m² di piani a ogni passo (moltiplicato per il livello attuale).</summary>
+        public float UpgradeOsmCostPerM2 = 25f;
+        /// <summary>Affitto in più al mese per m² di piani e per livello sopra l'1 (rientro in circa 20 mesi di gioco).</summary>
+        public float UpgradeOsmRentPerM2Month = 1.25f;
         public float DemolishRefundRatio = 0.2f;
         public float MoveCostRatio = 0.05f;
         public float VariantCostRatio = 0.1f;
@@ -95,6 +99,8 @@ namespace Orbis.Core.Game
             b.EnergyBuyPerKwh = j["energy"]["buyPerKwh"].AsFloat(b.EnergyBuyPerKwh);
             var a = j["actions"];
             b.DemolishOsmCostPerM2 = a["demolishOsmCostPerM2"].AsFloat(b.DemolishOsmCostPerM2);
+            b.UpgradeOsmCostPerM2 = a["upgradeOsmCostPerM2"].AsFloat(b.UpgradeOsmCostPerM2);
+            b.UpgradeOsmRentPerM2Month = a["upgradeOsmRentPerM2Month"].AsFloat(b.UpgradeOsmRentPerM2Month);
             b.DemolishRefundRatio = a["demolishRefundRatio"].AsFloat(b.DemolishRefundRatio);
             b.MoveCostRatio = a["moveCostRatio"].AsFloat(b.MoveCostRatio);
             b.VariantCostRatio = a["variantCostRatio"].AsFloat(b.VariantCostRatio);

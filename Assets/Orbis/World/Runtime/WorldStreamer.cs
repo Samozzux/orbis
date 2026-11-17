@@ -58,6 +58,9 @@ namespace Orbis.World
         /// <summary>Edifici OSM nascosti (demoliti nella partita): chiave (tipo &lt;&lt; 60 | id).</summary>
         public readonly HashSet<long> HiddenBuildings = new HashSet<long>();
 
+        /// <summary>Livello degli edifici OSM potenziati nella partita (assente = 1): cambia gli addobbi.</summary>
+        public readonly Dictionary<long, int> BuildingLevels = new Dictionary<long, int>();
+
         /// <summary>Ricostruisce un tile già caricato (es. dopo una demolizione), con gli stessi dati.</summary>
         public void Rebuild(TileId id)
         {
@@ -141,7 +144,14 @@ namespace Orbis.World
                 _nextScan = Time.unscaledTime + 0.25f;
                 Scan();
             }
-            Vegetation.Draw(ViewCamera != null ? ViewCamera : Camera.main);
+            var cam = ViewCamera != null ? ViewCamera : Camera.main;
+            Vegetation.Draw(cam);
+            if (cam != null && Time.frameCount % 10 == 0)
+            {
+                float decor = Quality != null ? Quality.DecorDistance : 800f;
+                var pos = cam.transform.position;
+                foreach (var v in _views.Values) v.CullDecorations(pos, decor);
+            }
         }
 
         /// <summary>Quota del terreno nel punto (metri del gioco); NaN se il tile non è caricato.</summary>
@@ -246,7 +256,9 @@ namespace Orbis.World
             _building[id] = lod;
             double scale = Region.Scale;
             var hidden = HiddenBuildings.Count > 0 ? new HashSet<long>(HiddenBuildings) : null;
-            _runner.Enqueue(TileBuild.Run(() => file, cached, scale, lod, result, hidden), priority,
+            var levels = BuildingLevels.Count > 0 ? new Dictionary<long, int>(BuildingLevels) : null;
+            float density = Quality != null ? Quality.DecorDensity : 1f;
+            _runner.Enqueue(TileBuild.Run(() => file, cached, scale, lod, result, hidden, levels, density), priority,
                 () => Finish(id, result),
                 e =>
                 {

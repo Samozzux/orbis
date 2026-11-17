@@ -219,6 +219,7 @@ namespace Orbis.Gameplay
         }
 
         private readonly Dictionary<long, LotKey> _lastLots = new Dictionary<long, LotKey>();
+        private readonly Dictionary<long, (int level, LotKey lot)> _lastLevels = new Dictionary<long, (int, LotKey)>();
 
         /// <summary>Edifici OSM demoliti: nascosti nella scena, ricostruendo solo i tile interessati.</summary>
         private void SyncWorld(bool rebuildAll)
@@ -237,6 +238,19 @@ namespace Orbis.Gameplay
             {
                 streamer.HiddenBuildings.Add(kv.Key);
                 _lastLots[kv.Key] = kv.Value;
+            }
+            // edifici reali potenziati: cambiano gli addobbi, si ridisegnano solo i tile toccati
+            foreach (var kv in State.OsmUpgrades)
+                if (!_lastLevels.TryGetValue(kv.Key, out var old) || old.level != kv.Value.Level)
+                    changed.Add(new TileId(z, kv.Value.Lot.TileX, kv.Value.Lot.TileY));
+            foreach (var kv in _lastLevels)
+                if (!State.OsmUpgrades.ContainsKey(kv.Key)) changed.Add(new TileId(z, kv.Value.lot.TileX, kv.Value.lot.TileY));
+            streamer.BuildingLevels.Clear();
+            _lastLevels.Clear();
+            foreach (var kv in State.OsmUpgrades)
+            {
+                streamer.BuildingLevels[kv.Key] = kv.Value.Level;
+                _lastLevels[kv.Key] = (kv.Value.Level, kv.Value.Lot);
             }
             var targets = rebuildAll ? new List<TileId>(streamer.Tiles.Keys) : new List<TileId>(changed);
             foreach (var id in targets) streamer.Rebuild(id);

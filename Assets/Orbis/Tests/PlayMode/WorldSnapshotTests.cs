@@ -127,6 +127,120 @@ namespace Orbis.Tests.PlayMode
             Assert.That(session.World.Visible, Is.True);
         }
 
+        /// <summary>Addobbi "da gioco" di un bar vero: livello 1, livello 5, livello 5 di sera, e una via del centro.</summary>
+        [UnityTest]
+        [Timeout(600000)]
+        public IEnumerator Addobbi()
+        {
+            var dir = Environment.GetEnvironmentVariable("ORBIS_SNAPSHOT_DIR");
+            if (string.IsNullOrEmpty(dir)) Assert.Ignore("ORBIS_SNAPSHOT_DIR non impostata");
+            Directory.CreateDirectory(dir);
+            SceneManager.LoadScene("Boot");
+            var deadline = Time.realtimeSinceStartup + 60f;
+            while ((OrbisApp.Instance == null || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu) && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            OrbisApp.Instance.StartGame(new Orbis.UI.Game.GameStart { Transient = true });
+            var session = OrbisApp.Instance.Session;
+            deadline = Time.realtimeSinceStartup + 120f;
+            while (session.State == WorldSession.Phase.Loading && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.That(session.State, Is.EqualTo(WorldSession.Phase.Playing));
+            while (session.World.PendingBuilds > 0) yield return null;
+            var game = OrbisApp.Instance.Game;
+            game.State.Cash += 50_000_000;
+
+            // un bar (o caffè, ristorante) dentro un edificio del centro, il più vicino all'origine
+            Orbis.World.TileView tile = null;
+            Core.World.Tiles.PoiInfo bar = null;
+            float best = float.MaxValue;
+            foreach (var v in session.World.Tiles.Values)
+            {
+                if (v.Lod != Orbis.World.TileLod.Full) continue;
+                foreach (var p in v.Data.Pois)
+                {
+                    if (p.Building < 0 || (p.Category != "amenity/bar" && p.Category != "amenity/cafe" && p.Category != "amenity/restaurant")) continue;
+                    var w = v.Origin + new Vector3(p.X, 0, p.Y);
+                    float d = w.sqrMagnitude;
+                    if (d < best)
+                    {
+                        best = d;
+                        bar = p;
+                        tile = v;
+                    }
+                }
+            }
+            Assert.That(bar, Is.Not.Null, "nessun bar nei tile vicini");
+            var b = tile.Data.Buildings[bar.Building];
+            // facciata d'ingresso: il lato più vicino al POI; la telecamera la guarda dalla strada
+            var ring = Core.World.Geometry.Polygon2D.Clean(b.Outer, true);
+            var poi = new Core.World.Geometry.Vec2(bar.X, bar.Y);
+            Core.World.Geometry.Vec2 facade = poi, normal = new Core.World.Geometry.Vec2(0, 1);
+            float bestEdge = float.MaxValue;
+            for (int i = 0; i < ring.Count; i++)
+            {
+                var a = ring[i];
+                var c = ring[(i + 1) % ring.Count];
+                var ab = c - a;
+                float len = ab.Length;
+                if (len < 2f) continue;
+                float t = Mathf.Clamp01(Core.World.Geometry.Vec2.Dot(poi - a, ab) / (len * len));
+                var q = a + ab * t;
+                float d = (poi - q).Length;
+                if (d >= bestEdge) continue;
+                bestEdge = d;
+                facade = q;
+                normal = new Core.World.Geometry.Vec2(ab.Y / len, -ab.X / len);
+            }
+            var target = tile.Origin + new Vector3(facade.X + normal.X * 2f, 0, facade.Y + normal.Y * 2f);
+            target.y = session.World.HeightAt(target.x, target.z) + 2.5f;
+            var rig = session.CameraRig;
+            rig.Target = target;
+            rig.Yaw = Mathf.Atan2(-normal.X, -normal.Y) * Mathf.Rad2Deg;
+            rig.Pitch = 58;
+            rig.Distance = 34;
+            rig.Snap();
+            Debug.Log($"[Orbis] foto addobbi: {bar.Name} ({bar.Category}), edificio {b.OsmId}");
+            int deco = 0, build = 0, full = 0;
+            foreach (var v in session.World.Tiles.Values)
+            {
+                if (v.Lod != Orbis.World.TileLod.Full) continue;
+                full++;
+                deco += v.DecorationTriangles;
+                build += v.BuildingTriangles;
+            }
+            Debug.Log($"[Orbis] addobbi: {full} tile vicini, {build} triangoli di edifici, {deco} triangoli di addobbi");
+
+            yield return At(session, 11);
+            Save(rig.Cam, Path.Combine(dir, "30-bar-livello1.png"));
+            long key = Orbis.Core.Game.GameState.OsmKey(b.OsmType, b.OsmId);
+            for (int i = 0; i < 4; i++)
+                Assert.That(game.Do(new Orbis.Core.Game.UpgradeOsmCommand { OsmKey = key, Lot = new Orbis.Core.Game.LotKey(tile.Id.X, tile.Id.Y, 0), FloorArea = 300 }),
+                    Is.EqualTo(Orbis.Core.Game.BuildResult.Ok));
+            for (int i = 0; i < 5; i++) yield return null;
+            while (session.World.PendingBuilds > 0) yield return null;
+            yield return At(session, 11);
+            Save(rig.Cam, Path.Combine(dir, "31-bar-livello5.png"));
+            yield return At(session, 21);
+            Save(rig.Cam, Path.Combine(dir, "32-bar-livello5-sera.png"));
+            rig.Distance = 160;
+            rig.Pitch = 38;
+            rig.Snap();
+            yield return At(session, 11);
+            Save(rig.Cam, Path.Combine(dir, "33-via-del-centro.png"));
+            OrbisApp.Instance.EndGame();
+        }
+
+        private static IEnumerator At(WorldSession session, int hour)
+        {
+            var now = session.Game != null ? session.Game.State.Now : session.Clock.Now;
+            var t = new DateTime(now.Year, now.Month, now.Day, hour, 0, 0);
+            if (t < now) t = t.AddDays(1);
+            if (session.Game != null) session.Game.Session.Advance(t - now);
+            else session.Clock.Advance(t - now);
+            for (int i = 0; i < 40; i++) yield return null;
+            while (session.World.PendingBuilds > 0) yield return null;
+            for (int i = 0; i < 10; i++) yield return null;
+        }
+
         private static void Save(Camera cam, string path)
         {
             var rt = new RenderTexture(1600, 900, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
