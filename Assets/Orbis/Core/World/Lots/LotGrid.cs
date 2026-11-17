@@ -33,33 +33,54 @@ namespace Orbis.Core.World.Lots
         public readonly int Width, Height;
         private readonly int[] _cells;
 
-        public LotGrid(LotInfo lot, float cellSize = 1f)
+        public LotGrid(LotInfo lot, float cellSize = 1f) : this(lot, cellSize, FullWindow(lot, cellSize))
+        {
+        }
+
+        /// <summary>
+        /// Solo una finestra di celle (minX, minY, larghezza, altezza) nel sistema della griglia del lotto:
+        /// per controllare lo spazio sotto un elemento anche nei lotti enormi della campagna.
+        /// </summary>
+        public LotGrid(LotInfo lot, float cellSize, int minX, int minY, int width, int height) : this(lot, cellSize, (minX, minY, width, height))
+        {
+        }
+
+        private LotGrid(LotInfo lot, float cellSize, (int x, int y, int w, int h) window)
         {
             Lot = lot;
             CellSize = cellSize;
             Origin = new Vec2(lot.GridOriginX, lot.GridOriginY);
             AxisX = new Vec2((float)Math.Cos(lot.GridAngle), (float)Math.Sin(lot.GridAngle));
             AxisY = new Vec2(-AxisX.Y, AxisX.X);
-            // estensione del lotto nel sistema della griglia
-            float minU = float.MaxValue, minV = float.MaxValue, maxU = float.MinValue, maxV = float.MinValue;
-            for (int i = 0; i + 1 < lot.Outer.Length; i += 2)
-            {
-                var p = new Vec2(lot.Outer[i], lot.Outer[i + 1]) - Origin;
-                float u = Vec2.Dot(p, AxisX), v = Vec2.Dot(p, AxisY);
-                minU = Math.Min(minU, u);
-                maxU = Math.Max(maxU, u);
-                minV = Math.Min(minV, v);
-                maxV = Math.Max(maxV, v);
-            }
-            MinX = (int)Math.Floor(minU / cellSize);
-            MinY = (int)Math.Floor(minV / cellSize);
-            Width = Math.Max(1, (int)Math.Ceiling(maxU / cellSize) - MinX);
-            Height = Math.Max(1, (int)Math.Ceiling(maxV / cellSize) - MinY);
+            MinX = window.x;
+            MinY = window.y;
+            Width = Math.Max(1, window.w);
+            Height = Math.Max(1, window.h);
             if ((long)Width * Height > 4_000_000) throw new ArgumentException("lotto troppo grande per una griglia unica");
             _cells = new int[Width * Height];
             for (int y = 0; y < Height; y++)
             for (int x = 0; x < Width; x++)
                 _cells[y * Width + x] = CellInside(MinX + x, MinY + y) ? Free : Outside;
+        }
+
+        /// <summary>Estensione del lotto nel sistema della griglia, in celle.</summary>
+        private static (int, int, int, int) FullWindow(LotInfo lot, float cellSize)
+        {
+            var origin = new Vec2(lot.GridOriginX, lot.GridOriginY);
+            var ax = new Vec2((float)Math.Cos(lot.GridAngle), (float)Math.Sin(lot.GridAngle));
+            var ay = new Vec2(-ax.Y, ax.X);
+            float minU = float.MaxValue, minV = float.MaxValue, maxU = float.MinValue, maxV = float.MinValue;
+            for (int i = 0; i + 1 < lot.Outer.Length; i += 2)
+            {
+                var p = new Vec2(lot.Outer[i], lot.Outer[i + 1]) - origin;
+                float u = Vec2.Dot(p, ax), v = Vec2.Dot(p, ay);
+                minU = Math.Min(minU, u);
+                maxU = Math.Max(maxU, u);
+                minV = Math.Min(minV, v);
+                maxV = Math.Max(maxV, v);
+            }
+            int minX = (int)Math.Floor(minU / cellSize), minY = (int)Math.Floor(minV / cellSize);
+            return (minX, minY, (int)Math.Ceiling(maxU / cellSize) - minX, (int)Math.Ceiling(maxV / cellSize) - minY);
         }
 
         /// <summary>Centro della cella in coordinate del tile.</summary>

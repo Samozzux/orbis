@@ -1,0 +1,574 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "pala_eolica",
+   "category": "energy",
+   "name": "Pala eolica",
+   "footprint": {
+    "w": 40,
+    "d": 40
+   },
+   "height": 70,
+   "model": {
+    "family": "wind"
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 180000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 720,
+     "powerKw": 600.0
+    },
+    {
+     "level": 2,
+     "cost": 126000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "maintenancePerMonth": 900,
+     "powerKw": 750.0
+    },
+    {
+     "level": 3,
+     "cost": 162000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "maintenancePerMonth": 1120,
+     "powerKw": 937.5
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": -0.5,
+    "happinessRadius": 300
+   },
+   "tags": [
+    "energia",
+    "wind",
+    "pulita"
+   ]
+  },
+  {
+   "key": "parco_eolico",
+   "category": "energy",
+   "name": "Parco eolico (4 pale)",
+   "footprint": {
+    "w": 90,
+    "d": 90
+   },
+   "height": 70,
+   "model": {
+    "family": "windfarm"
+   },
+   "unlock": {
+    "playerLevel": 14
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 680000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 2720,
+     "powerKw": 2400.0
+    },
+    {
+     "level": 2,
+     "cost": 476000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "maintenancePerMonth": 3400,
+     "powerKw": 3000.0
+    },
+    {
+     "level": 3,
+     "cost": 612000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "maintenancePerMonth": 4250,
+     "powerKw": 3750.0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 500
+   },
+   "tags": [
+    "energia",
+    "wind",
+    "pulita"
+   ]
+  },
+  {
+   "key": "pannelli_solari_piccoli",
+   "category": "energy",
+   "name": "Pannelli solari",
+   "footprint": {
+    "w": 12,
+    "d": 8
+   },
+   "height": 2,
+   "model": {
+    "family": "solar"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 9000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 40,
+     "powerKw": 12.0
+    },
+    {
+     "level": 2,
+     "cost": 6300,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "maintenancePerMonth": 40,
+     "powerKw": 15.0
+    },
+    {
+     "level": 3,
+     "cost": 8100,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "maintenancePerMonth": 60,
+     "powerKw": 18.8
+    }
+   ],
+   "variants": [],
+   "effects": {},
+   "tags": [
+    "energia",
+    "solar",
+    "pulita"
+   ]
+  },
+  {
+   "key": "campo_fotovoltaico",
+   "category": "energy",
+   "name": "Campo fotovoltaico",
+   "footprint": {
+    "w": 60,
+    "d": 40
+   },
+   "height": 3,
+   "model": {
+    "family": "solar"
+   },
+   "unlock": {
+    "playerLevel": 8
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 95000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 380,
+     "powerKw": 260.0
+    },
+    {
+     "level": 2,
+     "cost": 66500,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "maintenancePerMonth": 480,
+     "powerKw": 325.0
+    },
+    {
+     "level": 3,
+     "cost": 85500,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "maintenancePerMonth": 590,
+     "powerKw": 406.2
+    }
+   ],
+   "variants": [],
+   "effects": {},
+   "tags": [
+    "energia",
+    "solar",
+    "pulita"
+   ]
+  },
+  {
+   "key": "centrale_idroelettrica",
+   "category": "energy",
+   "name": "Centrale idroelettrica",
+   "footprint": {
+    "w": 40,
+    "d": 30
+   },
+   "height": 20,
+   "model": {
+    "family": "hydro"
+   },
+   "unlock": {
+    "playerLevel": 16
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 520000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 2080,
+     "powerKw": 1600.0
+    },
+    {
+     "level": 2,
+     "cost": 364000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "maintenancePerMonth": 2600,
+     "powerKw": 2000.0
+    },
+    {
+     "level": 3,
+     "cost": 468000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "maintenancePerMonth": 3250,
+     "powerKw": 2500.0
+    }
+   ],
+   "variants": [],
+   "effects": {},
+   "tags": [
+    "energia",
+    "pulita"
+   ]
+  },
+  {
+   "key": "centrale_biomasse",
+   "category": "energy",
+   "name": "Centrale a biomasse",
+   "footprint": {
+    "w": 40,
+    "d": 30
+   },
+   "height": 25,
+   "model": {
+    "family": "thermal",
+    "chimneys": 1
+   },
+   "unlock": {
+    "playerLevel": 12
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 600000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 2400,
+     "powerKw": 1800.0
+    },
+    {
+     "level": 2,
+     "cost": 420000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "maintenancePerMonth": 3000,
+     "powerKw": 2250.0
+    },
+    {
+     "level": 3,
+     "cost": 540000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "maintenancePerMonth": 3750,
+     "powerKw": 2812.5
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 300,
+    "pollution": 2
+   },
+   "tags": [
+    "energia"
+   ]
+  },
+  {
+   "key": "centrale_gas",
+   "category": "energy",
+   "name": "Centrale termoelettrica a gas",
+   "footprint": {
+    "w": 70,
+    "d": 50
+   },
+   "height": 45,
+   "model": {
+    "family": "thermal",
+    "chimneys": 2
+   },
+   "unlock": {
+    "playerLevel": 18
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 2600000,
+     "buildHours": 12.0,
+     "jobs": 9,
+     "maintenancePerMonth": 10400,
+     "powerKw": 18000.0
+    },
+    {
+     "level": 2,
+     "cost": 1820000,
+     "buildHours": 18.0,
+     "jobs": 11,
+     "maintenancePerMonth": 13000,
+     "powerKw": 22500.0
+    },
+    {
+     "level": 3,
+     "cost": 2340000,
+     "buildHours": 24.0,
+     "jobs": 14,
+     "maintenancePerMonth": 16250,
+     "powerKw": 28125.0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": -3,
+    "happinessRadius": 800,
+    "pollution": 5
+   },
+   "tags": [
+    "energia"
+   ]
+  },
+  {
+   "key": "centrale_geotermica",
+   "category": "energy",
+   "name": "Centrale geotermica",
+   "footprint": {
+    "w": 40,
+    "d": 40
+   },
+   "height": 20,
+   "model": {
+    "family": "thermal",
+    "chimneys": 0,
+    "steam": "true"
+   },
+   "unlock": {
+    "playerLevel": 20
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 950000,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 3800,
+     "powerKw": 3000.0
+    },
+    {
+     "level": 2,
+     "cost": 665000,
+     "buildHours": 18.0,
+     "jobs": 2,
+     "maintenancePerMonth": 4750,
+     "powerKw": 3750.0
+    },
+    {
+     "level": 3,
+     "cost": 855000,
+     "buildHours": 24.0,
+     "jobs": 3,
+     "maintenancePerMonth": 5940,
+     "powerKw": 4687.5
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 300
+   },
+   "tags": [
+    "energia"
+   ]
+  },
+  {
+   "key": "centrale_nucleare",
+   "category": "energy",
+   "name": "Centrale nucleare",
+   "footprint": {
+    "w": 160,
+    "d": 120
+   },
+   "height": 150,
+   "model": {
+    "family": "nuclear"
+   },
+   "unlock": {
+    "playerLevel": 30
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 25000000,
+     "buildHours": 12.0,
+     "jobs": 55,
+     "maintenancePerMonth": 100000,
+     "powerKw": 110000.0
+    },
+    {
+     "level": 2,
+     "cost": 17500000,
+     "buildHours": 18.0,
+     "jobs": 69,
+     "maintenancePerMonth": 125000,
+     "powerKw": 137500.0
+    },
+    {
+     "level": 3,
+     "cost": 22500000,
+     "buildHours": 24.0,
+     "jobs": 86,
+     "maintenancePerMonth": 156250,
+     "powerKw": 171875.0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": -6,
+    "happinessRadius": 2000,
+    "landValue": -4
+   },
+   "tags": [
+    "energia",
+    "nucleare"
+   ]
+  },
+  {
+   "key": "sottostazione",
+   "category": "energy",
+   "name": "Sottostazione elettrica",
+   "footprint": {
+    "w": 20,
+    "d": 16
+   },
+   "height": 6,
+   "model": {
+    "family": "substation"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 40000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 160,
+     "powerKw": 0.0
+    }
+   ],
+   "variants": [],
+   "effects": {},
+   "tags": [
+    "energia"
+   ]
+  },
+  {
+   "key": "traliccio",
+   "category": "energy",
+   "name": "Traliccio dell'alta tensione",
+   "footprint": {
+    "w": 6,
+    "d": 6
+   },
+   "height": 40,
+   "model": {
+    "family": "pylon"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 6000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "powerKw": 0.0
+    }
+   ],
+   "variants": [],
+   "effects": {},
+   "tags": [
+    "energia"
+   ]
+  },
+  {
+   "key": "tetto_solare",
+   "category": "energy",
+   "name": "Tetto solare (condominio)",
+   "footprint": {
+    "w": 20,
+    "d": 14
+   },
+   "height": 14,
+   "model": {
+    "family": "solarbuilding"
+   },
+   "unlock": {
+    "playerLevel": 9
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 160000,
+     "buildHours": 12.0,
+     "jobs": 1,
+     "maintenancePerMonth": 640,
+     "powerKw": 45.0
+    },
+    {
+     "level": 2,
+     "cost": 112000,
+     "buildHours": 18.0,
+     "jobs": 1,
+     "maintenancePerMonth": 800,
+     "powerKw": 56.2
+    },
+    {
+     "level": 3,
+     "cost": 144000,
+     "buildHours": 24.0,
+     "jobs": 2,
+     "maintenancePerMonth": 1000,
+     "powerKw": 70.3
+    }
+   ],
+   "variants": [],
+   "effects": {},
+   "tags": [
+    "energia",
+    "solar",
+    "pulita"
+   ]
+  }
+ ]
+}

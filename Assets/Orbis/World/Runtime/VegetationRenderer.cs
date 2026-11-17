@@ -33,6 +33,11 @@ namespace Orbis.World
 
         public int TotalInstances { get; private set; }
 
+        /// <summary>Modello di una pianta (per gli alberi piazzati dal giocatore).</summary>
+        public Mesh MeshOf(PlantKind kind) => _meshes[(int)kind];
+
+        public Material Material => _material;
+
         public VegetationRenderer(Material material)
         {
             _material = material;

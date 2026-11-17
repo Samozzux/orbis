@@ -1,0 +1,564 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "museo",
+   "category": "culture",
+   "name": "Museo",
+   "footprint": {
+    "w": 40,
+    "d": 30
+   },
+   "height": 14,
+   "model": {
+    "family": "civic",
+    "kind": "museum"
+   },
+   "unlock": {
+    "playerLevel": 10
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 2200000,
+     "buildHours": 16.0,
+     "jobs": 15,
+     "rentPerMonth": 8000,
+     "maintenancePerMonth": 11000
+    },
+    {
+     "level": 2,
+     "cost": 1540000,
+     "buildHours": 24.0,
+     "jobs": 20,
+     "rentPerMonth": 10400,
+     "maintenancePerMonth": 14300
+    },
+    {
+     "level": 3,
+     "cost": 1980000,
+     "buildHours": 32.0,
+     "jobs": 25,
+     "rentPerMonth": 13520,
+     "maintenancePerMonth": 18590
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 5,
+    "happinessRadius": 800,
+    "landValue": 3
+   },
+   "tags": [
+    "cultura"
+   ]
+  },
+  {
+   "key": "teatro",
+   "category": "culture",
+   "name": "Teatro",
+   "footprint": {
+    "w": 36,
+    "d": 28
+   },
+   "height": 18,
+   "model": {
+    "family": "civic",
+    "kind": "theatre"
+   },
+   "unlock": {
+    "playerLevel": 12
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 3000000,
+     "buildHours": 16.0,
+     "jobs": 20,
+     "rentPerMonth": 9000,
+     "maintenancePerMonth": 15000
+    },
+    {
+     "level": 2,
+     "cost": 2100000,
+     "buildHours": 24.0,
+     "jobs": 26,
+     "rentPerMonth": 11700,
+     "maintenancePerMonth": 19500
+    },
+    {
+     "level": 3,
+     "cost": 2700000,
+     "buildHours": 32.0,
+     "jobs": 34,
+     "rentPerMonth": 15210,
+     "maintenancePerMonth": 25350
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 6,
+    "happinessRadius": 800,
+    "landValue": 3
+   },
+   "tags": [
+    "cultura"
+   ]
+  },
+  {
+   "key": "chiesa",
+   "category": "culture",
+   "name": "Chiesa",
+   "footprint": {
+    "w": 30,
+    "d": 18
+   },
+   "height": 30,
+   "model": {
+    "family": "church"
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 900000,
+     "buildHours": 16.0,
+     "jobs": 6,
+     "maintenancePerMonth": 4500
+    },
+    {
+     "level": 2,
+     "cost": 630000,
+     "buildHours": 24.0,
+     "jobs": 8,
+     "maintenancePerMonth": 5850
+    },
+    {
+     "level": 3,
+     "cost": 810000,
+     "buildHours": 32.0,
+     "jobs": 10,
+     "maintenancePerMonth": 7610
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 3,
+    "happinessRadius": 800,
+    "landValue": 3
+   },
+   "tags": [
+    "cultura"
+   ]
+  },
+  {
+   "key": "cappella",
+   "category": "culture",
+   "name": "Cappella",
+   "footprint": {
+    "w": 10,
+    "d": 8
+   },
+   "height": 12,
+   "model": {
+    "family": "church"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 90000,
+     "buildHours": 16.0,
+     "jobs": 2,
+     "maintenancePerMonth": 450
+    },
+    {
+     "level": 2,
+     "cost": 63000,
+     "buildHours": 24.0,
+     "jobs": 3,
+     "maintenancePerMonth": 580
+    },
+    {
+     "level": 3,
+     "cost": 81000,
+     "buildHours": 32.0,
+     "jobs": 3,
+     "maintenancePerMonth": 760
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 800,
+    "landValue": 3
+   },
+   "tags": [
+    "cultura"
+   ]
+  },
+  {
+   "key": "anfiteatro",
+   "category": "culture",
+   "name": "Anfiteatro all'aperto",
+   "footprint": {
+    "w": 50,
+    "d": 40
+   },
+   "height": 8,
+   "model": {
+    "family": "amphitheatre"
+   },
+   "unlock": {
+    "playerLevel": 14
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1200000,
+     "buildHours": 16.0,
+     "jobs": 8,
+     "rentPerMonth": 6000,
+     "maintenancePerMonth": 6000
+    },
+    {
+     "level": 2,
+     "cost": 840000,
+     "buildHours": 24.0,
+     "jobs": 10,
+     "rentPerMonth": 7800,
+     "maintenancePerMonth": 7800
+    },
+    {
+     "level": 3,
+     "cost": 1080000,
+     "buildHours": 32.0,
+     "jobs": 14,
+     "rentPerMonth": 10140,
+     "maintenancePerMonth": 10140
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 5,
+    "happinessRadius": 800,
+    "landValue": 3
+   },
+   "tags": [
+    "cultura"
+   ]
+  },
+  {
+   "key": "luna_park",
+   "category": "culture",
+   "name": "Luna park",
+   "footprint": {
+    "w": 80,
+    "d": 60
+   },
+   "height": 25,
+   "model": {
+    "family": "funfair"
+   },
+   "unlock": {
+    "playerLevel": 16
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1800000,
+     "buildHours": 16.0,
+     "jobs": 12,
+     "rentPerMonth": 22000,
+     "maintenancePerMonth": 9000
+    },
+    {
+     "level": 2,
+     "cost": 1260000,
+     "buildHours": 24.0,
+     "jobs": 16,
+     "rentPerMonth": 28600,
+     "maintenancePerMonth": 11700
+    },
+    {
+     "level": 3,
+     "cost": 1620000,
+     "buildHours": 32.0,
+     "jobs": 20,
+     "rentPerMonth": 37180,
+     "maintenancePerMonth": 15210
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 7,
+    "happinessRadius": 800,
+    "landValue": 3
+   },
+   "tags": [
+    "cultura",
+    "svago"
+   ]
+  },
+  {
+   "key": "discoteca",
+   "category": "culture",
+   "name": "Discoteca",
+   "footprint": {
+    "w": 30,
+    "d": 24
+   },
+   "height": 8,
+   "model": {
+    "family": "hall"
+   },
+   "unlock": {
+    "playerLevel": 10
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 600000,
+     "buildHours": 16.0,
+     "jobs": 4,
+     "rentPerMonth": 9000,
+     "maintenancePerMonth": 3000
+    },
+    {
+     "level": 2,
+     "cost": 420000,
+     "buildHours": 24.0,
+     "jobs": 5,
+     "rentPerMonth": 11700,
+     "maintenancePerMonth": 3900
+    },
+    {
+     "level": 3,
+     "cost": 540000,
+     "buildHours": 32.0,
+     "jobs": 7,
+     "rentPerMonth": 15210,
+     "maintenancePerMonth": 5070
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 800,
+    "landValue": 3
+   },
+   "tags": [
+    "cultura",
+    "svago"
+   ]
+  },
+  {
+   "key": "galleria_arte",
+   "category": "culture",
+   "name": "Galleria d'arte",
+   "footprint": {
+    "w": 16,
+    "d": 12
+   },
+   "height": 7,
+   "model": {
+    "family": "shop",
+    "sign": "ARTE"
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 260000,
+     "buildHours": 16.0,
+     "jobs": 2,
+     "rentPerMonth": 2500,
+     "maintenancePerMonth": 1300
+    },
+    {
+     "level": 2,
+     "cost": 182000,
+     "buildHours": 24.0,
+     "jobs": 3,
+     "rentPerMonth": 3250,
+     "maintenancePerMonth": 1690
+    },
+    {
+     "level": 3,
+     "cost": 234000,
+     "buildHours": 32.0,
+     "jobs": 3,
+     "rentPerMonth": 4220,
+     "maintenancePerMonth": 2200
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 800,
+    "landValue": 3
+   },
+   "tags": [
+    "cultura"
+   ]
+  }
+ ]
+}

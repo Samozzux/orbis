@@ -67,7 +67,7 @@
     },
     {
       "key": "menu.continue.detail",
-      "it": "Riprendi l'ultima partita"
+      "it": "Riprendi una partita salvata"
     },
     {
       "key": "menu.new_game",
@@ -75,7 +75,7 @@
     },
     {
       "key": "menu.new_game.detail",
-      "it": "Esplora Chieti in 3D"
+      "it": "Una nuova città a Chieti"
     },
     {
       "key": "menu.friends",
@@ -864,6 +864,578 @@
     {
       "key": "game.layers.lots.detail",
       "it": "Celle da 1 m: verdi libere, rosse occupate"
+    },
+    {
+      "key": "build.open",
+      "it": "Costruisci"
+    },
+    {
+      "key": "game.level",
+      "it": "Liv. {0}"
+    },
+    {
+      "key": "game.undone",
+      "it": "Azione annullata"
+    },
+    {
+      "key": "game.redone",
+      "it": "Azione ripetuta"
+    },
+    {
+      "key": "game.event.built",
+      "it": "{0}: lavori finiti!"
+    },
+    {
+      "key": "game.event.mission",
+      "it": "Missione completata: {0} (+{1} monete)"
+    },
+    {
+      "key": "game.event.level",
+      "it": "Livello {0}! Nuovi elementi da costruire"
+    },
+    {
+      "key": "mission.reward",
+      "it": "Premio: {0} monete"
+    },
+    {
+      "key": "build.title",
+      "it": "Costruisci"
+    },
+    {
+      "key": "build.locked",
+      "it": "Dal livello {0}"
+    },
+    {
+      "key": "build.size",
+      "it": "{0} × {1} m"
+    },
+    {
+      "key": "build.residents",
+      "it": "{0} abitanti"
+    },
+    {
+      "key": "build.jobs",
+      "it": "{0} posti di lavoro"
+    },
+    {
+      "key": "build.power",
+      "it": "{0} kW"
+    },
+    {
+      "key": "build.rent",
+      "it": "{0}/mese"
+    },
+    {
+      "key": "build.production",
+      "it": "produce {0}/mese"
+    },
+    {
+      "key": "build.happy",
+      "it": "rende felici"
+    },
+    {
+      "key": "build.hint.pointer",
+      "it": "Clic per costruire · R ruota · Esc annulla"
+    },
+    {
+      "key": "build.hint.touch",
+      "it": "Sposta la mappa per scegliere il punto, poi ✓"
+    },
+    {
+      "key": "build.started",
+      "it": "Cantiere aperto: {0}"
+    },
+    {
+      "key": "result.Ok",
+      "it": "Si può costruire qui"
+    },
+    {
+      "key": "result.OutsideLot",
+      "it": "Qui non si può: scegli un lotto libero (non su strade o piazze)"
+    },
+    {
+      "key": "result.Occupied",
+      "it": "Lo spazio è occupato da un edificio o da un altro elemento"
+    },
+    {
+      "key": "result.NotUnlocked",
+      "it": "Non ancora sbloccato: sali di livello"
+    },
+    {
+      "key": "result.NotEnoughCash",
+      "it": "Monete insufficienti"
+    },
+    {
+      "key": "result.LotNotLoaded",
+      "it": "Avvicinati alla zona per costruire"
+    },
+    {
+      "key": "result.UnknownItem",
+      "it": "Elemento non disponibile"
+    },
+    {
+      "key": "result.UnknownObject",
+      "it": "Elemento non più presente"
+    },
+    {
+      "key": "result.MaxLevel",
+      "it": "Già al livello massimo"
+    },
+    {
+      "key": "result.NotReady",
+      "it": "Aspetta la fine dei lavori"
+    },
+    {
+      "key": "category.Residential",
+      "it": "Case"
+    },
+    {
+      "key": "category.Commercial",
+      "it": "Negozi e uffici"
+    },
+    {
+      "key": "category.Industrial",
+      "it": "Industria"
+    },
+    {
+      "key": "category.Energy",
+      "it": "Energia"
+    },
+    {
+      "key": "category.Agriculture",
+      "it": "Agricoltura"
+    },
+    {
+      "key": "category.Services",
+      "it": "Servizi"
+    },
+    {
+      "key": "category.Sports",
+      "it": "Sport"
+    },
+    {
+      "key": "category.Culture",
+      "it": "Cultura e svago"
+    },
+    {
+      "key": "category.Transport",
+      "it": "Trasporti"
+    },
+    {
+      "key": "category.Nature",
+      "it": "Natura"
+    },
+    {
+      "key": "category.Decoration",
+      "it": "Arredo urbano"
+    },
+    {
+      "key": "finance.title",
+      "it": "Finanze"
+    },
+    {
+      "key": "finance.city",
+      "it": "La città oggi"
+    },
+    {
+      "key": "finance.cash",
+      "it": "Cassa"
+    },
+    {
+      "key": "finance.population",
+      "it": "Abitanti"
+    },
+    {
+      "key": "finance.jobs",
+      "it": "Posti di lavoro"
+    },
+    {
+      "key": "finance.happiness",
+      "it": "Felicità"
+    },
+    {
+      "key": "finance.energy",
+      "it": "Energia (produzione − consumo)"
+    },
+    {
+      "key": "finance.kw",
+      "it": "{0} kW"
+    },
+    {
+      "key": "finance.forecast",
+      "it": "Saldo previsto per oggi"
+    },
+    {
+      "key": "finance.taxes",
+      "it": "Aliquote"
+    },
+    {
+      "key": "finance.day",
+      "it": "Ultimo giorno chiuso · {0}"
+    },
+    {
+      "key": "finance.month",
+      "it": "Ultimi 30 giorni"
+    },
+    {
+      "key": "finance.net",
+      "it": "Saldo"
+    },
+    {
+      "key": "tax.Residential",
+      "it": "Imposte sulle case"
+    },
+    {
+      "key": "tax.Commercial",
+      "it": "Imposte su negozi e uffici"
+    },
+    {
+      "key": "tax.Industrial",
+      "it": "Imposte sull'industria"
+    },
+    {
+      "key": "ledger.ResidentialTax",
+      "it": "Imposte sulle case"
+    },
+    {
+      "key": "ledger.CommercialTax",
+      "it": "Imposte su negozi e uffici"
+    },
+    {
+      "key": "ledger.IndustrialTax",
+      "it": "Imposte sull'industria"
+    },
+    {
+      "key": "ledger.Rent",
+      "it": "Affitti"
+    },
+    {
+      "key": "ledger.PublicLand",
+      "it": "Suolo pubblico"
+    },
+    {
+      "key": "ledger.Production",
+      "it": "Produzione"
+    },
+    {
+      "key": "ledger.EnergySales",
+      "it": "Vendita di energia"
+    },
+    {
+      "key": "ledger.Missions",
+      "it": "Premi delle missioni"
+    },
+    {
+      "key": "ledger.LevelRewards",
+      "it": "Premi di livello"
+    },
+    {
+      "key": "ledger.Construction",
+      "it": "Costruzioni"
+    },
+    {
+      "key": "ledger.Upgrades",
+      "it": "Potenziamenti"
+    },
+    {
+      "key": "ledger.Demolition",
+      "it": "Demolizioni"
+    },
+    {
+      "key": "ledger.Moves",
+      "it": "Spostamenti"
+    },
+    {
+      "key": "ledger.Variants",
+      "it": "Cambi di colore"
+    },
+    {
+      "key": "ledger.Maintenance",
+      "it": "Manutenzione"
+    },
+    {
+      "key": "ledger.Services",
+      "it": "Servizi della città"
+    },
+    {
+      "key": "ledger.EnergyPurchase",
+      "it": "Acquisto di energia"
+    },
+    {
+      "key": "rewind.title",
+      "it": "Riavvolgi"
+    },
+    {
+      "key": "rewind.text",
+      "it": "Torna a un momento passato della partita: tutto ciò che è successo dopo si perde. Ogni giorno a mezzanotte c'è un punto di ripristino (gli ultimi 30 giorni, poi uno a settimana)."
+    },
+    {
+      "key": "rewind.row",
+      "it": "{0} monete · liv. {1}"
+    },
+    {
+      "key": "rewind.go",
+      "it": "Riavvolgi"
+    },
+    {
+      "key": "rewind.confirm.title",
+      "it": "Riavvolgere?"
+    },
+    {
+      "key": "rewind.confirm.text",
+      "it": "La città tornerà com'era {0}. Quello che è successo dopo non si potrà recuperare."
+    },
+    {
+      "key": "rewind.done",
+      "it": "Città riportata a {0}"
+    },
+    {
+      "key": "details.placed.subtitle",
+      "it": "{0} · livello {1} di {2}"
+    },
+    {
+      "key": "details.placed.state",
+      "it": "Stato"
+    },
+    {
+      "key": "details.placed.ready",
+      "it": "In funzione"
+    },
+    {
+      "key": "details.placed.building",
+      "it": "Lavori in corso, pronto {0}"
+    },
+    {
+      "key": "details.placed.residents",
+      "it": "Abitanti"
+    },
+    {
+      "key": "details.placed.jobs",
+      "it": "Posti di lavoro"
+    },
+    {
+      "key": "details.placed.rent",
+      "it": "Affitto al mese"
+    },
+    {
+      "key": "details.placed.production",
+      "it": "Produzione al mese"
+    },
+    {
+      "key": "details.placed.power",
+      "it": "Energia"
+    },
+    {
+      "key": "details.placed.maintenance",
+      "it": "Manutenzione al mese"
+    },
+    {
+      "key": "details.placed.footprint",
+      "it": "Sagoma"
+    },
+    {
+      "key": "details.placed.variant",
+      "it": "Colori"
+    },
+    {
+      "key": "details.action.upgrade",
+      "it": "Potenzia · {0}"
+    },
+    {
+      "key": "details.action.variant",
+      "it": "Colori: {0}"
+    },
+    {
+      "key": "details.action.move",
+      "it": "Sposta"
+    },
+    {
+      "key": "details.action.rotate",
+      "it": "Ruota"
+    },
+    {
+      "key": "details.action.demolish",
+      "it": "Demolisci"
+    },
+    {
+      "key": "details.action.demolish_cost",
+      "it": "Demolisci · {0}"
+    },
+    {
+      "key": "details.demolish.title",
+      "it": "Demolire?"
+    },
+    {
+      "key": "details.demolish.text",
+      "it": "Demolire {0}? Riavrai una parte di ciò che hai speso (puoi sempre annullare)."
+    },
+    {
+      "key": "details.demolish.osm",
+      "it": "L'edificio reale sparisce e il lotto si libera per costruire (puoi sempre annullare)."
+    },
+    {
+      "key": "details.demolished",
+      "it": "Edificio demolito: il lotto è libero"
+    },
+    {
+      "key": "panel.cancel",
+      "it": "Annulla"
+    },
+    {
+      "key": "newgame.title",
+      "it": "Nuova partita"
+    },
+    {
+      "key": "newgame.place",
+      "it": "Dove"
+    },
+    {
+      "key": "newgame.city",
+      "it": "Città"
+    },
+    {
+      "key": "newgame.place.note",
+      "it": "Per ora si gioca a Chieti; le altre città del mondo arriveranno con i prossimi aggiornamenti."
+    },
+    {
+      "key": "newgame.name",
+      "it": "Nome della partita"
+    },
+    {
+      "key": "newgame.default_name",
+      "it": "La mia Chieti"
+    },
+    {
+      "key": "newgame.difficulty",
+      "it": "Difficoltà"
+    },
+    {
+      "key": "newgame.difficulty.Easy",
+      "it": "Facile"
+    },
+    {
+      "key": "newgame.difficulty.Normal",
+      "it": "Normale"
+    },
+    {
+      "key": "newgame.difficulty.Hard",
+      "it": "Difficile"
+    },
+    {
+      "key": "newgame.difficulty.note",
+      "it": "Cambia quanto rendono imposte, affitti e produzione."
+    },
+    {
+      "key": "newgame.options",
+      "it": "Opzioni del mondo"
+    },
+    {
+      "key": "newgame.offline",
+      "it": "Tempo ad app chiusa"
+    },
+    {
+      "key": "newgame.offline.note",
+      "it": "La città va avanti anche quando non giochi (fino a 12 ore reali)."
+    },
+    {
+      "key": "newgame.creative",
+      "it": "Modalità creativa"
+    },
+    {
+      "key": "newgame.creative.note",
+      "it": "Tutto sbloccato e gratis, per costruire senza pensieri."
+    },
+    {
+      "key": "newgame.start",
+      "it": "Inizia"
+    },
+    {
+      "key": "saves.title",
+      "it": "Partite salvate"
+    },
+    {
+      "key": "saves.loading",
+      "it": "Cerco le partite…"
+    },
+    {
+      "key": "saves.empty",
+      "it": "Nessuna partita salvata."
+    },
+    {
+      "key": "saves.info",
+      "it": "{0} · {1} monete · liv. {2}\nSalvata {3}"
+    },
+    {
+      "key": "saves.play",
+      "it": "Gioca"
+    },
+    {
+      "key": "saves.delete",
+      "it": "Elimina"
+    },
+    {
+      "key": "saves.delete.title",
+      "it": "Eliminare la partita?"
+    },
+    {
+      "key": "saves.delete.text",
+      "it": "\"{0}\" verrà eliminata per sempre da questo dispositivo."
+    },
+    {
+      "key": "saves.error",
+      "it": "Non riesco ad aprire la partita"
+    },
+    {
+      "key": "offline.title",
+      "it": "Mentre eri via"
+    },
+    {
+      "key": "offline.text",
+      "it": "Dall'ultima partita sono passati {0}: in città sono trascorsi {1}."
+    },
+    {
+      "key": "offline.income",
+      "it": "Entrate"
+    },
+    {
+      "key": "offline.expenses",
+      "it": "Uscite"
+    },
+    {
+      "key": "offline.built",
+      "it": "Cantieri finiti"
+    },
+    {
+      "key": "offline.missions",
+      "it": "Missioni completate"
+    },
+    {
+      "key": "offline.levels",
+      "it": "Livelli"
+    },
+    {
+      "key": "offline.ok",
+      "it": "Ottimo!"
+    },
+    {
+      "key": "time.days",
+      "it": "{0} g e {1} h"
+    },
+    {
+      "key": "time.hours",
+      "it": "{0} h e {1} min"
+    },
+    {
+      "key": "time.minutes",
+      "it": "{0} min"
+    },
+    {
+      "key": "build.search",
+      "it": "Cerca nel catalogo…"
+    },
+    {
+      "key": "build.search.none",
+      "it": "Nessun elemento con questo nome."
     }
   ]
 }

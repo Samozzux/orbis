@@ -1,0 +1,755 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "scuola_infanzia",
+   "category": "services",
+   "name": "Scuola dell'infanzia",
+   "footprint": {
+    "w": 24,
+    "d": 16
+   },
+   "height": 4.6,
+   "model": {
+    "family": "civic",
+    "kind": "school",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 300000,
+     "buildHours": 24.0,
+     "capacity": 90,
+     "jobs": 8,
+     "maintenancePerMonth": 2400,
+     "powerKw": -7.7
+    },
+    {
+     "level": 2,
+     "cost": 210000,
+     "buildHours": 36.0,
+     "capacity": 117,
+     "jobs": 10,
+     "maintenancePerMonth": 3120,
+     "powerKw": -10.0
+    },
+    {
+     "level": 3,
+     "cost": 270000,
+     "buildHours": 48.0,
+     "capacity": 152,
+     "jobs": 14,
+     "maintenancePerMonth": 4060,
+     "powerKw": -13.0
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 3,
+    "happinessRadius": 400,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "scuola_primaria",
+   "category": "services",
+   "name": "Scuola primaria",
+   "footprint": {
+    "w": 36,
+    "d": 20
+   },
+   "height": 8.2,
+   "model": {
+    "family": "civic",
+    "kind": "school",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 650000,
+     "buildHours": 24.0,
+     "capacity": 250,
+     "jobs": 21,
+     "maintenancePerMonth": 5200,
+     "powerKw": -28.8
+    },
+    {
+     "level": 2,
+     "cost": 455000,
+     "buildHours": 36.0,
+     "capacity": 325,
+     "jobs": 27,
+     "maintenancePerMonth": 6760,
+     "powerKw": -37.4
+    },
+    {
+     "level": 3,
+     "cost": 585000,
+     "buildHours": 48.0,
+     "capacity": 423,
+     "jobs": 35,
+     "maintenancePerMonth": 8790,
+     "powerKw": -48.7
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 4,
+    "happinessRadius": 600,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "scuola_superiore",
+   "category": "services",
+   "name": "Liceo",
+   "footprint": {
+    "w": 50,
+    "d": 24
+   },
+   "height": 11.8,
+   "model": {
+    "family": "civic",
+    "kind": "school",
+    "floors": 3
+   },
+   "unlock": {
+    "playerLevel": 9
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1400000,
+     "buildHours": 24.0,
+     "capacity": 600,
+     "jobs": 50,
+     "maintenancePerMonth": 11200,
+     "powerKw": -72.0
+    },
+    {
+     "level": 2,
+     "cost": 980000,
+     "buildHours": 36.0,
+     "capacity": 780,
+     "jobs": 65,
+     "maintenancePerMonth": 14560,
+     "powerKw": -93.6
+    },
+    {
+     "level": 3,
+     "cost": 1260000,
+     "buildHours": 48.0,
+     "capacity": 1014,
+     "jobs": 85,
+     "maintenancePerMonth": 18930,
+     "powerKw": -121.7
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 4,
+    "happinessRadius": 1200,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "universita",
+   "category": "services",
+   "name": "Università",
+   "footprint": {
+    "w": 90,
+    "d": 60
+   },
+   "height": 15.4,
+   "model": {
+    "family": "civic",
+    "kind": "university",
+    "floors": 4
+   },
+   "unlock": {
+    "playerLevel": 22
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 8000000,
+     "buildHours": 24.0,
+     "capacity": 3000,
+     "jobs": 250,
+     "maintenancePerMonth": 64000,
+     "powerKw": -432.0
+    },
+    {
+     "level": 2,
+     "cost": 5600000,
+     "buildHours": 36.0,
+     "capacity": 3900,
+     "jobs": 325,
+     "maintenancePerMonth": 83200,
+     "powerKw": -561.6
+    },
+    {
+     "level": 3,
+     "cost": 7200000,
+     "buildHours": 48.0,
+     "capacity": 5070,
+     "jobs": 423,
+     "maintenancePerMonth": 108160,
+     "powerKw": -730.1
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 6,
+    "happinessRadius": 3000,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "ambulatorio",
+   "category": "services",
+   "name": "Ambulatorio",
+   "footprint": {
+    "w": 16,
+    "d": 12
+   },
+   "height": 8.2,
+   "model": {
+    "family": "civic",
+    "kind": "clinic",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 220000,
+     "buildHours": 24.0,
+     "capacity": 40,
+     "jobs": 3,
+     "maintenancePerMonth": 1760,
+     "powerKw": -7.7
+    },
+    {
+     "level": 2,
+     "cost": 154000,
+     "buildHours": 36.0,
+     "capacity": 52,
+     "jobs": 4,
+     "maintenancePerMonth": 2290,
+     "powerKw": -10.0
+    },
+    {
+     "level": 3,
+     "cost": 198000,
+     "buildHours": 48.0,
+     "capacity": 68,
+     "jobs": 5,
+     "maintenancePerMonth": 2970,
+     "powerKw": -13.0
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 3,
+    "happinessRadius": 600,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "ospedale",
+   "category": "services",
+   "name": "Ospedale",
+   "footprint": {
+    "w": 100,
+    "d": 60
+   },
+   "height": 22.6,
+   "model": {
+    "family": "civic",
+    "kind": "hospital",
+    "floors": 6
+   },
+   "unlock": {
+    "playerLevel": 20
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 12000000,
+     "buildHours": 24.0,
+     "capacity": 400,
+     "jobs": 33,
+     "maintenancePerMonth": 96000,
+     "powerKw": -720.0
+    },
+    {
+     "level": 2,
+     "cost": 8400000,
+     "buildHours": 36.0,
+     "capacity": 520,
+     "jobs": 43,
+     "maintenancePerMonth": 124800,
+     "powerKw": -936.0
+    },
+    {
+     "level": 3,
+     "cost": 10800000,
+     "buildHours": 48.0,
+     "capacity": 676,
+     "jobs": 56,
+     "maintenancePerMonth": 162240,
+     "powerKw": -1216.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 8,
+    "happinessRadius": 5000,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "caserma_carabinieri",
+   "category": "services",
+   "name": "Caserma dei carabinieri",
+   "footprint": {
+    "w": 30,
+    "d": 20
+   },
+   "height": 8.2,
+   "model": {
+    "family": "civic",
+    "kind": "police",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 700000,
+     "buildHours": 24.0,
+     "capacity": 40,
+     "jobs": 3,
+     "maintenancePerMonth": 5600,
+     "powerKw": -24.0
+    },
+    {
+     "level": 2,
+     "cost": 490000,
+     "buildHours": 36.0,
+     "capacity": 52,
+     "jobs": 4,
+     "maintenancePerMonth": 7280,
+     "powerKw": -31.2
+    },
+    {
+     "level": 3,
+     "cost": 630000,
+     "buildHours": 48.0,
+     "capacity": 68,
+     "jobs": 5,
+     "maintenancePerMonth": 9460,
+     "powerKw": -40.6
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 4,
+    "happinessRadius": 1500,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "vigili_del_fuoco",
+   "category": "services",
+   "name": "Caserma dei vigili del fuoco",
+   "footprint": {
+    "w": 36,
+    "d": 24
+   },
+   "height": 8.2,
+   "model": {
+    "family": "civic",
+    "kind": "fire",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 7
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 900000,
+     "buildHours": 24.0,
+     "capacity": 30,
+     "jobs": 3,
+     "maintenancePerMonth": 7200,
+     "powerKw": -34.6
+    },
+    {
+     "level": 2,
+     "cost": 630000,
+     "buildHours": 36.0,
+     "capacity": 39,
+     "jobs": 4,
+     "maintenancePerMonth": 9360,
+     "powerKw": -44.9
+    },
+    {
+     "level": 3,
+     "cost": 810000,
+     "buildHours": 48.0,
+     "capacity": 51,
+     "jobs": 5,
+     "maintenancePerMonth": 12170,
+     "powerKw": -58.4
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 4,
+    "happinessRadius": 2000,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "ufficio_postale",
+   "category": "services",
+   "name": "Ufficio postale",
+   "footprint": {
+    "w": 16,
+    "d": 12
+   },
+   "height": 8.2,
+   "model": {
+    "family": "civic",
+    "kind": "post",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 180000,
+     "buildHours": 24.0,
+     "capacity": 12,
+     "jobs": 3,
+     "maintenancePerMonth": 1440,
+     "powerKw": -7.7
+    },
+    {
+     "level": 2,
+     "cost": 126000,
+     "buildHours": 36.0,
+     "capacity": 16,
+     "jobs": 4,
+     "maintenancePerMonth": 1870,
+     "powerKw": -10.0
+    },
+    {
+     "level": 3,
+     "cost": 162000,
+     "buildHours": 48.0,
+     "capacity": 20,
+     "jobs": 5,
+     "maintenancePerMonth": 2430,
+     "powerKw": -13.0
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 800,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  },
+  {
+   "key": "biblioteca",
+   "category": "services",
+   "name": "Biblioteca comunale",
+   "footprint": {
+    "w": 24,
+    "d": 18
+   },
+   "height": 8.2,
+   "model": {
+    "family": "civic",
+    "kind": "library",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 450000,
+     "buildHours": 24.0,
+     "capacity": 120,
+     "jobs": 10,
+     "maintenancePerMonth": 3600,
+     "powerKw": -17.3
+    },
+    {
+     "level": 2,
+     "cost": 315000,
+     "buildHours": 36.0,
+     "capacity": 156,
+     "jobs": 13,
+     "maintenancePerMonth": 4680,
+     "powerKw": -22.5
+    },
+    {
+     "level": 3,
+     "cost": 405000,
+     "buildHours": 48.0,
+     "capacity": 203,
+     "jobs": 17,
+     "maintenancePerMonth": 6080,
+     "powerKw": -29.2
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 3,
+    "happinessRadius": 800,
+    "landValue": 2
+   },
+   "tags": [
+    "servizi"
+   ]
+  }
+ ]
+}

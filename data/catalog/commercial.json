@@ -1,0 +1,2017 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "bar",
+   "category": "commercial",
+   "name": "Bar",
+   "footprint": {
+    "w": 8,
+    "d": 8
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "BAR",
+    "awning": "#c8473b",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 35840,
+     "buildHours": 6.0,
+     "jobs": 2,
+     "rentPerMonth": 2150,
+     "maintenancePerMonth": 180,
+     "powerKw": -2.7
+    },
+    {
+     "level": 2,
+     "cost": 25090,
+     "buildHours": 9.0,
+     "jobs": 3,
+     "rentPerMonth": 2800,
+     "maintenancePerMonth": 230,
+     "powerKw": -3.5
+    },
+    {
+     "level": 3,
+     "cost": 32260,
+     "buildHours": 12.0,
+     "jobs": 3,
+     "rentPerMonth": 3630,
+     "maintenancePerMonth": 300,
+     "powerKw": -4.5
+    },
+    {
+     "level": 4,
+     "cost": 43010,
+     "buildHours": 15.0,
+     "jobs": 4,
+     "rentPerMonth": 4720,
+     "maintenancePerMonth": 390,
+     "powerKw": -5.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio",
+    "bar"
+   ]
+  },
+  {
+   "key": "pizzeria",
+   "category": "commercial",
+   "name": "Pizzeria",
+   "footprint": {
+    "w": 10,
+    "d": 9
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "PIZZERIA",
+    "awning": "#2f7d4f",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 50400,
+     "buildHours": 6.0,
+     "jobs": 3,
+     "rentPerMonth": 3020,
+     "maintenancePerMonth": 250,
+     "powerKw": -4.0
+    },
+    {
+     "level": 2,
+     "cost": 35280,
+     "buildHours": 9.0,
+     "jobs": 4,
+     "rentPerMonth": 3930,
+     "maintenancePerMonth": 330,
+     "powerKw": -5.2
+    },
+    {
+     "level": 3,
+     "cost": 45360,
+     "buildHours": 12.0,
+     "jobs": 5,
+     "rentPerMonth": 5110,
+     "maintenancePerMonth": 430,
+     "powerKw": -6.8
+    },
+    {
+     "level": 4,
+     "cost": 60480,
+     "buildHours": 15.0,
+     "jobs": 7,
+     "rentPerMonth": 6640,
+     "maintenancePerMonth": 550,
+     "powerKw": -8.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "ristorante",
+   "category": "commercial",
+   "name": "Ristorante",
+   "footprint": {
+    "w": 14,
+    "d": 10
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "RISTORANTE",
+    "awning": "#7a2e26",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 78400,
+     "buildHours": 6.0,
+     "jobs": 5,
+     "rentPerMonth": 4700,
+     "maintenancePerMonth": 390,
+     "powerKw": -6.7
+    },
+    {
+     "level": 2,
+     "cost": 54880,
+     "buildHours": 9.0,
+     "jobs": 6,
+     "rentPerMonth": 6120,
+     "maintenancePerMonth": 510,
+     "powerKw": -8.7
+    },
+    {
+     "level": 3,
+     "cost": 70560,
+     "buildHours": 12.0,
+     "jobs": 8,
+     "rentPerMonth": 7950,
+     "maintenancePerMonth": 660,
+     "powerKw": -11.3
+    },
+    {
+     "level": 4,
+     "cost": 94080,
+     "buildHours": 15.0,
+     "jobs": 11,
+     "rentPerMonth": 10330,
+     "maintenancePerMonth": 860,
+     "powerKw": -14.6
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "gelateria",
+   "category": "commercial",
+   "name": "Gelateria",
+   "footprint": {
+    "w": 7,
+    "d": 7
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "GELATERIA",
+    "awning": "#e8a6b5",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 27440,
+     "buildHours": 6.0,
+     "jobs": 2,
+     "rentPerMonth": 1650,
+     "maintenancePerMonth": 140,
+     "powerKw": -2.7
+    },
+    {
+     "level": 2,
+     "cost": 19210,
+     "buildHours": 9.0,
+     "jobs": 3,
+     "rentPerMonth": 2140,
+     "maintenancePerMonth": 180,
+     "powerKw": -3.5
+    },
+    {
+     "level": 3,
+     "cost": 24700,
+     "buildHours": 12.0,
+     "jobs": 3,
+     "rentPerMonth": 2780,
+     "maintenancePerMonth": 230,
+     "powerKw": -4.5
+    },
+    {
+     "level": 4,
+     "cost": 32930,
+     "buildHours": 15.0,
+     "jobs": 4,
+     "rentPerMonth": 3620,
+     "maintenancePerMonth": 300,
+     "powerKw": -5.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "panetteria",
+   "category": "commercial",
+   "name": "Forno",
+   "footprint": {
+    "w": 8,
+    "d": 8
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "FORNO",
+    "awning": "#c58d3c",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 35840,
+     "buildHours": 6.0,
+     "jobs": 2,
+     "rentPerMonth": 2150,
+     "maintenancePerMonth": 180,
+     "powerKw": -2.7
+    },
+    {
+     "level": 2,
+     "cost": 25090,
+     "buildHours": 9.0,
+     "jobs": 3,
+     "rentPerMonth": 2800,
+     "maintenancePerMonth": 230,
+     "powerKw": -3.5
+    },
+    {
+     "level": 3,
+     "cost": 32260,
+     "buildHours": 12.0,
+     "jobs": 3,
+     "rentPerMonth": 3630,
+     "maintenancePerMonth": 300,
+     "powerKw": -4.5
+    },
+    {
+     "level": 4,
+     "cost": 43010,
+     "buildHours": 15.0,
+     "jobs": 4,
+     "rentPerMonth": 4720,
+     "maintenancePerMonth": 390,
+     "powerKw": -5.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "farmacia",
+   "category": "commercial",
+   "name": "Farmacia",
+   "footprint": {
+    "w": 9,
+    "d": 8
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "FARMACIA",
+    "awning": "#2f9e5a",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 40320,
+     "buildHours": 6.0,
+     "jobs": 3,
+     "rentPerMonth": 2420,
+     "maintenancePerMonth": 200,
+     "powerKw": -4.0
+    },
+    {
+     "level": 2,
+     "cost": 28220,
+     "buildHours": 9.0,
+     "jobs": 4,
+     "rentPerMonth": 3140,
+     "maintenancePerMonth": 260,
+     "powerKw": -5.2
+    },
+    {
+     "level": 3,
+     "cost": 36290,
+     "buildHours": 12.0,
+     "jobs": 5,
+     "rentPerMonth": 4090,
+     "maintenancePerMonth": 340,
+     "powerKw": -6.8
+    },
+    {
+     "level": 4,
+     "cost": 48380,
+     "buildHours": 15.0,
+     "jobs": 7,
+     "rentPerMonth": 5310,
+     "maintenancePerMonth": 440,
+     "powerKw": -8.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "tabaccheria",
+   "category": "commercial",
+   "name": "Tabaccheria",
+   "footprint": {
+    "w": 6,
+    "d": 6
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "TABACCHI",
+    "awning": "#3a3a3a",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 20160,
+     "buildHours": 6.0,
+     "jobs": 2,
+     "rentPerMonth": 1210,
+     "maintenancePerMonth": 100,
+     "powerKw": -2.7
+    },
+    {
+     "level": 2,
+     "cost": 14110,
+     "buildHours": 9.0,
+     "jobs": 3,
+     "rentPerMonth": 1570,
+     "maintenancePerMonth": 130,
+     "powerKw": -3.5
+    },
+    {
+     "level": 3,
+     "cost": 18140,
+     "buildHours": 12.0,
+     "jobs": 3,
+     "rentPerMonth": 2040,
+     "maintenancePerMonth": 170,
+     "powerKw": -4.5
+    },
+    {
+     "level": 4,
+     "cost": 24190,
+     "buildHours": 15.0,
+     "jobs": 4,
+     "rentPerMonth": 2660,
+     "maintenancePerMonth": 220,
+     "powerKw": -5.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "edicola_negozio",
+   "category": "commercial",
+   "name": "Libreria",
+   "footprint": {
+    "w": 8,
+    "d": 8
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "LIBRI",
+    "awning": "#3f5f8a",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 35840,
+     "buildHours": 6.0,
+     "jobs": 2,
+     "rentPerMonth": 2150,
+     "maintenancePerMonth": 180,
+     "powerKw": -2.7
+    },
+    {
+     "level": 2,
+     "cost": 25090,
+     "buildHours": 9.0,
+     "jobs": 3,
+     "rentPerMonth": 2800,
+     "maintenancePerMonth": 230,
+     "powerKw": -3.5
+    },
+    {
+     "level": 3,
+     "cost": 32260,
+     "buildHours": 12.0,
+     "jobs": 3,
+     "rentPerMonth": 3630,
+     "maintenancePerMonth": 300,
+     "powerKw": -4.5
+    },
+    {
+     "level": 4,
+     "cost": 43010,
+     "buildHours": 15.0,
+     "jobs": 4,
+     "rentPerMonth": 4720,
+     "maintenancePerMonth": 390,
+     "powerKw": -5.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "abbigliamento",
+   "category": "commercial",
+   "name": "Negozio di abbigliamento",
+   "footprint": {
+    "w": 10,
+    "d": 9
+   },
+   "height": 7.6,
+   "model": {
+    "family": "shop",
+    "sign": "MODA",
+    "awning": "#222222",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 100800,
+     "buildHours": 7.0,
+     "jobs": 6,
+     "rentPerMonth": 6050,
+     "maintenancePerMonth": 500,
+     "powerKw": -8.0
+    },
+    {
+     "level": 2,
+     "cost": 70560,
+     "buildHours": 10.5,
+     "jobs": 8,
+     "rentPerMonth": 7860,
+     "maintenancePerMonth": 660,
+     "powerKw": -10.4
+    },
+    {
+     "level": 3,
+     "cost": 90720,
+     "buildHours": 14.0,
+     "jobs": 10,
+     "rentPerMonth": 10220,
+     "maintenancePerMonth": 850,
+     "powerKw": -13.5
+    },
+    {
+     "level": 4,
+     "cost": 120960,
+     "buildHours": 17.5,
+     "jobs": 13,
+     "rentPerMonth": 13290,
+     "maintenancePerMonth": 1110,
+     "powerKw": -17.6
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "ferramenta",
+   "category": "commercial",
+   "name": "Ferramenta",
+   "footprint": {
+    "w": 10,
+    "d": 10
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "FERRAMENTA",
+    "awning": "#b5651d",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 56000,
+     "buildHours": 6.0,
+     "jobs": 4,
+     "rentPerMonth": 3360,
+     "maintenancePerMonth": 280,
+     "powerKw": -5.3
+    },
+    {
+     "level": 2,
+     "cost": 39200,
+     "buildHours": 9.0,
+     "jobs": 5,
+     "rentPerMonth": 4370,
+     "maintenancePerMonth": 360,
+     "powerKw": -6.9
+    },
+    {
+     "level": 3,
+     "cost": 50400,
+     "buildHours": 12.0,
+     "jobs": 7,
+     "rentPerMonth": 5680,
+     "maintenancePerMonth": 470,
+     "powerKw": -9.0
+    },
+    {
+     "level": 4,
+     "cost": 67200,
+     "buildHours": 15.0,
+     "jobs": 9,
+     "rentPerMonth": 7380,
+     "maintenancePerMonth": 620,
+     "powerKw": -11.7
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "alimentari",
+   "category": "commercial",
+   "name": "Alimentari",
+   "footprint": {
+    "w": 9,
+    "d": 8
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "ALIMENTARI",
+    "awning": "#4f7d2f",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 40320,
+     "buildHours": 6.0,
+     "jobs": 3,
+     "rentPerMonth": 2420,
+     "maintenancePerMonth": 200,
+     "powerKw": -4.0
+    },
+    {
+     "level": 2,
+     "cost": 28220,
+     "buildHours": 9.0,
+     "jobs": 4,
+     "rentPerMonth": 3140,
+     "maintenancePerMonth": 260,
+     "powerKw": -5.2
+    },
+    {
+     "level": 3,
+     "cost": 36290,
+     "buildHours": 12.0,
+     "jobs": 5,
+     "rentPerMonth": 4090,
+     "maintenancePerMonth": 340,
+     "powerKw": -6.8
+    },
+    {
+     "level": 4,
+     "cost": 48380,
+     "buildHours": 15.0,
+     "jobs": 7,
+     "rentPerMonth": 5310,
+     "maintenancePerMonth": 440,
+     "powerKw": -8.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "supermercato",
+   "category": "commercial",
+   "name": "Supermercato",
+   "footprint": {
+    "w": 40,
+    "d": 30
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "SUPERMERCATO",
+    "awning": "#d23c2e",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 7
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 672000,
+     "buildHours": 6.0,
+     "jobs": 43,
+     "rentPerMonth": 40320,
+     "maintenancePerMonth": 3360,
+     "powerKw": -57.3
+    },
+    {
+     "level": 2,
+     "cost": 470400,
+     "buildHours": 9.0,
+     "jobs": 56,
+     "rentPerMonth": 52420,
+     "maintenancePerMonth": 4370,
+     "powerKw": -74.5
+    },
+    {
+     "level": 3,
+     "cost": 604800,
+     "buildHours": 12.0,
+     "jobs": 73,
+     "rentPerMonth": 68140,
+     "maintenancePerMonth": 5680,
+     "powerKw": -96.9
+    },
+    {
+     "level": 4,
+     "cost": 806400,
+     "buildHours": 15.0,
+     "jobs": 94,
+     "rentPerMonth": 88580,
+     "maintenancePerMonth": 7380,
+     "powerKw": -126.0
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "centro_commerciale",
+   "category": "commercial",
+   "name": "Centro commerciale",
+   "footprint": {
+    "w": 80,
+    "d": 60
+   },
+   "height": 7.6,
+   "model": {
+    "family": "shop",
+    "sign": "CENTRO",
+    "awning": "#3c6fd2",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 18
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 5376000,
+     "buildHours": 7.0,
+     "jobs": 343,
+     "rentPerMonth": 322560,
+     "maintenancePerMonth": 26880,
+     "powerKw": -457.3
+    },
+    {
+     "level": 2,
+     "cost": 3763200,
+     "buildHours": 10.5,
+     "jobs": 446,
+     "rentPerMonth": 419330,
+     "maintenancePerMonth": 34940,
+     "powerKw": -594.5
+    },
+    {
+     "level": 3,
+     "cost": 4838400,
+     "buildHours": 14.0,
+     "jobs": 580,
+     "rentPerMonth": 545130,
+     "maintenancePerMonth": 45430,
+     "powerKw": -772.9
+    },
+    {
+     "level": 4,
+     "cost": 6451200,
+     "buildHours": 17.5,
+     "jobs": 754,
+     "rentPerMonth": 708660,
+     "maintenancePerMonth": 59060,
+     "powerKw": -1004.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "albergo",
+   "category": "commercial",
+   "name": "Albergo",
+   "footprint": {
+    "w": 20,
+    "d": 16
+   },
+   "height": 17.8,
+   "model": {
+    "family": "shop",
+    "sign": "HOTEL",
+    "awning": "#2b4a6f",
+    "floors": 5
+   },
+   "unlock": {
+    "playerLevel": 9
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 896000,
+     "buildHours": 10.0,
+     "capacity": 53,
+     "jobs": 57,
+     "rentPerMonth": 53760,
+     "maintenancePerMonth": 4480,
+     "powerKw": -76.0
+    },
+    {
+     "level": 2,
+     "cost": 627200,
+     "buildHours": 15.0,
+     "capacity": 69,
+     "jobs": 74,
+     "rentPerMonth": 69890,
+     "maintenancePerMonth": 5820,
+     "powerKw": -98.8
+    },
+    {
+     "level": 3,
+     "cost": 806400,
+     "buildHours": 20.0,
+     "capacity": 90,
+     "jobs": 96,
+     "rentPerMonth": 90850,
+     "maintenancePerMonth": 7570,
+     "powerKw": -128.4
+    },
+    {
+     "level": 4,
+     "cost": 1075200,
+     "buildHours": 25.0,
+     "capacity": 116,
+     "jobs": 125,
+     "rentPerMonth": 118110,
+     "maintenancePerMonth": 9840,
+     "powerKw": -167.0
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "bed_and_breakfast",
+   "category": "commercial",
+   "name": "Bed & breakfast",
+   "footprint": {
+    "w": 12,
+    "d": 10
+   },
+   "height": 7.6,
+   "model": {
+    "family": "shop",
+    "sign": "B&B",
+    "awning": "#8a6f4f",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 134400,
+     "buildHours": 7.0,
+     "capacity": 8,
+     "jobs": 9,
+     "rentPerMonth": 8060,
+     "maintenancePerMonth": 670,
+     "powerKw": -12.0
+    },
+    {
+     "level": 2,
+     "cost": 94080,
+     "buildHours": 10.5,
+     "capacity": 10,
+     "jobs": 12,
+     "rentPerMonth": 10480,
+     "maintenancePerMonth": 870,
+     "powerKw": -15.6
+    },
+    {
+     "level": 3,
+     "cost": 120960,
+     "buildHours": 14.0,
+     "capacity": 14,
+     "jobs": 15,
+     "rentPerMonth": 13630,
+     "maintenancePerMonth": 1140,
+     "powerKw": -20.3
+    },
+    {
+     "level": 4,
+     "cost": 161280,
+     "buildHours": 17.5,
+     "capacity": 18,
+     "jobs": 20,
+     "rentPerMonth": 17720,
+     "maintenancePerMonth": 1480,
+     "powerKw": -26.4
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "enoteca",
+   "category": "commercial",
+   "name": "Enoteca",
+   "footprint": {
+    "w": 9,
+    "d": 8
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "ENOTECA",
+    "awning": "#6e1f2f",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 40320,
+     "buildHours": 6.0,
+     "jobs": 3,
+     "rentPerMonth": 2420,
+     "maintenancePerMonth": 200,
+     "powerKw": -4.0
+    },
+    {
+     "level": 2,
+     "cost": 28220,
+     "buildHours": 9.0,
+     "jobs": 4,
+     "rentPerMonth": 3140,
+     "maintenancePerMonth": 260,
+     "powerKw": -5.2
+    },
+    {
+     "level": 3,
+     "cost": 36290,
+     "buildHours": 12.0,
+     "jobs": 5,
+     "rentPerMonth": 4090,
+     "maintenancePerMonth": 340,
+     "powerKw": -6.8
+    },
+    {
+     "level": 4,
+     "cost": 48380,
+     "buildHours": 15.0,
+     "jobs": 7,
+     "rentPerMonth": 5310,
+     "maintenancePerMonth": 440,
+     "powerKw": -8.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "pasticceria",
+   "category": "commercial",
+   "name": "Pasticceria",
+   "footprint": {
+    "w": 8,
+    "d": 8
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "PASTICCERIA",
+    "awning": "#d98fae",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 35840,
+     "buildHours": 6.0,
+     "jobs": 2,
+     "rentPerMonth": 2150,
+     "maintenancePerMonth": 180,
+     "powerKw": -2.7
+    },
+    {
+     "level": 2,
+     "cost": 25090,
+     "buildHours": 9.0,
+     "jobs": 3,
+     "rentPerMonth": 2800,
+     "maintenancePerMonth": 230,
+     "powerKw": -3.5
+    },
+    {
+     "level": 3,
+     "cost": 32260,
+     "buildHours": 12.0,
+     "jobs": 3,
+     "rentPerMonth": 3630,
+     "maintenancePerMonth": 300,
+     "powerKw": -4.5
+    },
+    {
+     "level": 4,
+     "cost": 43010,
+     "buildHours": 15.0,
+     "jobs": 4,
+     "rentPerMonth": 4720,
+     "maintenancePerMonth": 390,
+     "powerKw": -5.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "banca",
+   "category": "commercial",
+   "name": "Banca",
+   "footprint": {
+    "w": 14,
+    "d": 12
+   },
+   "height": 11.0,
+   "model": {
+    "family": "shop",
+    "sign": "BANCA",
+    "awning": "#1f3f6e",
+    "floors": 3
+   },
+   "unlock": {
+    "playerLevel": 8
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 282240,
+     "buildHours": 8.0,
+     "jobs": 18,
+     "rentPerMonth": 16930,
+     "maintenancePerMonth": 1410,
+     "powerKw": -24.0
+    },
+    {
+     "level": 2,
+     "cost": 197570,
+     "buildHours": 12.0,
+     "jobs": 23,
+     "rentPerMonth": 22010,
+     "maintenancePerMonth": 1830,
+     "powerKw": -31.2
+    },
+    {
+     "level": 3,
+     "cost": 254020,
+     "buildHours": 16.0,
+     "jobs": 30,
+     "rentPerMonth": 28620,
+     "maintenancePerMonth": 2380,
+     "powerKw": -40.6
+    },
+    {
+     "level": 4,
+     "cost": 338690,
+     "buildHours": 20.0,
+     "jobs": 40,
+     "rentPerMonth": 37200,
+     "maintenancePerMonth": 3100,
+     "powerKw": -52.7
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "uffici_piccoli",
+   "category": "commercial",
+   "name": "Uffici",
+   "footprint": {
+    "w": 16,
+    "d": 12
+   },
+   "height": 14.4,
+   "model": {
+    "family": "shop",
+    "sign": "UFFICI",
+    "awning": "#4f5f6f",
+    "floors": 4
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 430080,
+     "buildHours": 9.0,
+     "jobs": 27,
+     "rentPerMonth": 25800,
+     "maintenancePerMonth": 2150,
+     "powerKw": -36.0
+    },
+    {
+     "level": 2,
+     "cost": 301060,
+     "buildHours": 13.5,
+     "jobs": 35,
+     "rentPerMonth": 33550,
+     "maintenancePerMonth": 2800,
+     "powerKw": -46.8
+    },
+    {
+     "level": 3,
+     "cost": 387070,
+     "buildHours": 18.0,
+     "jobs": 46,
+     "rentPerMonth": 43610,
+     "maintenancePerMonth": 3630,
+     "powerKw": -60.8
+    },
+    {
+     "level": 4,
+     "cost": 516100,
+     "buildHours": 22.5,
+     "jobs": 59,
+     "rentPerMonth": 56690,
+     "maintenancePerMonth": 4720,
+     "powerKw": -79.1
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "uffici"
+   ]
+  },
+  {
+   "key": "torre_uffici",
+   "category": "commercial",
+   "name": "Torre di uffici",
+   "footprint": {
+    "w": 24,
+    "d": 24
+   },
+   "height": 41.6,
+   "model": {
+    "family": "shop",
+    "sign": "BUSINESS",
+    "awning": "#2f3f4f",
+    "floors": 12
+   },
+   "unlock": {
+    "playerLevel": 20
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 3870720,
+     "buildHours": 17.0,
+     "jobs": 247,
+     "rentPerMonth": 232240,
+     "maintenancePerMonth": 19350,
+     "powerKw": -329.3
+    },
+    {
+     "level": 2,
+     "cost": 2709500,
+     "buildHours": 25.5,
+     "jobs": 321,
+     "rentPerMonth": 301920,
+     "maintenancePerMonth": 25160,
+     "powerKw": -428.1
+    },
+    {
+     "level": 3,
+     "cost": 3483650,
+     "buildHours": 34.0,
+     "jobs": 417,
+     "rentPerMonth": 392490,
+     "maintenancePerMonth": 32710,
+     "powerKw": -556.6
+    },
+    {
+     "level": 4,
+     "cost": 4644860,
+     "buildHours": 42.5,
+     "jobs": 543,
+     "rentPerMonth": 510240,
+     "maintenancePerMonth": 42520,
+     "powerKw": -723.5
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "uffici"
+   ]
+  },
+  {
+   "key": "cinema_multisala",
+   "category": "commercial",
+   "name": "Cinema multisala",
+   "footprint": {
+    "w": 40,
+    "d": 30
+   },
+   "height": 7.6,
+   "model": {
+    "family": "shop",
+    "sign": "CINEMA",
+    "awning": "#7a1f1f",
+    "floors": 2
+   },
+   "unlock": {
+    "playerLevel": 12
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1344000,
+     "buildHours": 7.0,
+     "jobs": 86,
+     "rentPerMonth": 80640,
+     "maintenancePerMonth": 6720,
+     "powerKw": -114.7
+    },
+    {
+     "level": 2,
+     "cost": 940800,
+     "buildHours": 10.5,
+     "jobs": 112,
+     "rentPerMonth": 104830,
+     "maintenancePerMonth": 8740,
+     "powerKw": -149.1
+    },
+    {
+     "level": 3,
+     "cost": 1209600,
+     "buildHours": 14.0,
+     "jobs": 145,
+     "rentPerMonth": 136280,
+     "maintenancePerMonth": 11360,
+     "powerKw": -193.8
+    },
+    {
+     "level": 4,
+     "cost": 1612800,
+     "buildHours": 17.5,
+     "jobs": 189,
+     "rentPerMonth": 177170,
+     "maintenancePerMonth": 14760,
+     "powerKw": -251.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio"
+   ]
+  },
+  {
+   "key": "distributore",
+   "category": "commercial",
+   "name": "Distributore di carburante",
+   "footprint": {
+    "w": 20,
+    "d": 14
+   },
+   "height": 4.2,
+   "model": {
+    "family": "shop",
+    "sign": "CARBURANTE",
+    "awning": "#e0b020",
+    "floors": 1
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 156800,
+     "buildHours": 6.0,
+     "jobs": 10,
+     "rentPerMonth": 9410,
+     "maintenancePerMonth": 780,
+     "powerKw": -13.3
+    },
+    {
+     "level": 2,
+     "cost": 109760,
+     "buildHours": 9.0,
+     "jobs": 13,
+     "rentPerMonth": 12230,
+     "maintenancePerMonth": 1020,
+     "powerKw": -17.3
+    },
+    {
+     "level": 3,
+     "cost": 141120,
+     "buildHours": 12.0,
+     "jobs": 17,
+     "rentPerMonth": 15900,
+     "maintenancePerMonth": 1320,
+     "powerKw": -22.5
+    },
+    {
+     "level": 4,
+     "cost": 188160,
+     "buildHours": 15.0,
+     "jobs": 22,
+     "rentPerMonth": 20670,
+     "maintenancePerMonth": 1720,
+     "powerKw": -29.3
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    }
+   ],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 2
+   },
+   "tags": [
+    "negozio",
+    "auto"
+   ]
+  }
+ ]
+}

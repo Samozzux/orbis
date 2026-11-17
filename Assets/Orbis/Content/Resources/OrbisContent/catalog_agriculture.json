@@ -1,0 +1,922 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "campo_grano",
+   "category": "agriculture",
+   "name": "Campo di grano",
+   "footprint": {
+    "w": 50,
+    "d": 40
+   },
+   "height": 1,
+   "model": {
+    "family": "field",
+    "crop": "wheat"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 6000,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 160
+    },
+    {
+     "level": 2,
+     "cost": 4200,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 200
+    },
+    {
+     "level": 3,
+     "cost": 5400,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 30,
+     "productionPerMonth": 250
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura"
+   ]
+  },
+  {
+   "key": "campo_mais",
+   "category": "agriculture",
+   "name": "Campo di mais",
+   "footprint": {
+    "w": 50,
+    "d": 40
+   },
+   "height": 2,
+   "model": {
+    "family": "field",
+    "crop": "corn"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 6000,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 180
+    },
+    {
+     "level": 2,
+     "cost": 4200,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 220
+    },
+    {
+     "level": 3,
+     "cost": 5400,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 30,
+     "productionPerMonth": 280
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura"
+   ]
+  },
+  {
+   "key": "campo_girasoli",
+   "category": "agriculture",
+   "name": "Campo di girasoli",
+   "footprint": {
+    "w": 50,
+    "d": 40
+   },
+   "height": 2,
+   "model": {
+    "family": "field",
+    "crop": "sunflower"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 6000,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 180
+    },
+    {
+     "level": 2,
+     "cost": 4200,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 220
+    },
+    {
+     "level": 3,
+     "cost": 5400,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 30,
+     "productionPerMonth": 280
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura"
+   ]
+  },
+  {
+   "key": "orto",
+   "category": "agriculture",
+   "name": "Orto",
+   "footprint": {
+    "w": 20,
+    "d": 14
+   },
+   "height": 1,
+   "model": {
+    "family": "field",
+    "crop": "vegetables"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1400,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 0,
+     "productionPerMonth": 50
+    },
+    {
+     "level": 2,
+     "cost": 980,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 10,
+     "productionPerMonth": 60
+    },
+    {
+     "level": 3,
+     "cost": 1260,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 10,
+     "productionPerMonth": 80
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura"
+   ]
+  },
+  {
+   "key": "vigneto",
+   "category": "agriculture",
+   "name": "Vigneto (Montepulciano)",
+   "footprint": {
+    "w": 40,
+    "d": 30
+   },
+   "height": 2,
+   "model": {
+    "family": "vineyard"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 10800,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 30,
+     "productionPerMonth": 380
+    },
+    {
+     "level": 2,
+     "cost": 7560,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 40,
+     "productionPerMonth": 480
+    },
+    {
+     "level": 3,
+     "cost": 9720,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 50,
+     "productionPerMonth": 600
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "vineyard",
+    "vino"
+   ]
+  },
+  {
+   "key": "vigneto_trebbiano",
+   "category": "agriculture",
+   "name": "Vigneto (Trebbiano)",
+   "footprint": {
+    "w": 40,
+    "d": 30
+   },
+   "height": 2,
+   "model": {
+    "family": "vineyard",
+    "grape": "white"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 10800,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 30,
+     "productionPerMonth": 360
+    },
+    {
+     "level": 2,
+     "cost": 7560,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 40,
+     "productionPerMonth": 450
+    },
+    {
+     "level": 3,
+     "cost": 9720,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 50,
+     "productionPerMonth": 560
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "vineyard",
+    "vino"
+   ]
+  },
+  {
+   "key": "uliveto",
+   "category": "agriculture",
+   "name": "Uliveto",
+   "footprint": {
+    "w": 42,
+    "d": 28
+   },
+   "height": 5,
+   "model": {
+    "family": "olivegrove"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 9410,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 30,
+     "productionPerMonth": 310
+    },
+    {
+     "level": 2,
+     "cost": 6590,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 40,
+     "productionPerMonth": 380
+    },
+    {
+     "level": 3,
+     "cost": 8470,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 40,
+     "productionPerMonth": 480
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "olive",
+    "olio"
+   ]
+  },
+  {
+   "key": "frutteto",
+   "category": "agriculture",
+   "name": "Frutteto",
+   "footprint": {
+    "w": 30,
+    "d": 25
+   },
+   "height": 4,
+   "model": {
+    "family": "orchard"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 6000,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 180
+    },
+    {
+     "level": 2,
+     "cost": 4200,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 220
+    },
+    {
+     "level": 3,
+     "cost": 5400,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 30,
+     "productionPerMonth": 280
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "frutta"
+   ]
+  },
+  {
+   "key": "serra",
+   "category": "agriculture",
+   "name": "Serra",
+   "footprint": {
+    "w": 30,
+    "d": 12
+   },
+   "height": 4,
+   "model": {
+    "family": "greenhouse"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 21600,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 60,
+     "productionPerMonth": 270
+    },
+    {
+     "level": 2,
+     "cost": 15120,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 80,
+     "productionPerMonth": 340
+    },
+    {
+     "level": 3,
+     "cost": 19440,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 100,
+     "productionPerMonth": 420
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "serra"
+   ]
+  },
+  {
+   "key": "lavanda",
+   "category": "agriculture",
+   "name": "Campo di lavanda",
+   "footprint": {
+    "w": 40,
+    "d": 30
+   },
+   "height": 1,
+   "model": {
+    "family": "field",
+    "crop": "lavender"
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 6000,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 180
+    },
+    {
+     "level": 2,
+     "cost": 4200,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 220
+    },
+    {
+     "level": 3,
+     "cost": 5400,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 30,
+     "productionPerMonth": 280
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura"
+   ]
+  },
+  {
+   "key": "zafferano",
+   "category": "agriculture",
+   "name": "Zafferano dell'Aquila",
+   "footprint": {
+    "w": 20,
+    "d": 15
+   },
+   "height": 1,
+   "model": {
+    "family": "field",
+    "crop": "saffron"
+   },
+   "unlock": {
+    "playerLevel": 9
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 3600,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 10,
+     "productionPerMonth": 180
+    },
+    {
+     "level": 2,
+     "cost": 2520,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 10,
+     "productionPerMonth": 220
+    },
+    {
+     "level": 3,
+     "cost": 3240,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 280
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura"
+   ]
+  },
+  {
+   "key": "pascolo",
+   "category": "agriculture",
+   "name": "Pascolo con pecore",
+   "footprint": {
+    "w": 60,
+    "d": 40
+   },
+   "height": 1,
+   "model": {
+    "family": "pasture"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 4800,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 10,
+     "productionPerMonth": 140
+    },
+    {
+     "level": 2,
+     "cost": 3360,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 180
+    },
+    {
+     "level": 3,
+     "cost": 4320,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 20,
+     "productionPerMonth": 220
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "animali"
+   ]
+  },
+  {
+   "key": "casale",
+   "category": "agriculture",
+   "name": "Casale di campagna",
+   "footprint": {
+    "w": 16,
+    "d": 12
+   },
+   "height": 8,
+   "model": {
+    "family": "farmhouse"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 42240,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 130
+    },
+    {
+     "level": 2,
+     "cost": 29570,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 160
+    },
+    {
+     "level": 3,
+     "cost": 38020,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 200
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "casale"
+   ]
+  },
+  {
+   "key": "fienile",
+   "category": "agriculture",
+   "name": "Fienile",
+   "footprint": {
+    "w": 14,
+    "d": 10
+   },
+   "height": 8,
+   "model": {
+    "family": "barn"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 21000,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 60,
+     "productionPerMonth": 10
+    },
+    {
+     "level": 2,
+     "cost": 14700,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 80,
+     "productionPerMonth": 10
+    },
+    {
+     "level": 3,
+     "cost": 18900,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 100,
+     "productionPerMonth": 10
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura"
+   ]
+  },
+  {
+   "key": "stalla",
+   "category": "agriculture",
+   "name": "Stalla",
+   "footprint": {
+    "w": 24,
+    "d": 12
+   },
+   "height": 7,
+   "model": {
+    "family": "barn"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 46080,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 140,
+     "productionPerMonth": 70
+    },
+    {
+     "level": 2,
+     "cost": 32260,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 170,
+     "productionPerMonth": 90
+    },
+    {
+     "level": 3,
+     "cost": 41470,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 220,
+     "productionPerMonth": 110
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "animali"
+   ]
+  },
+  {
+   "key": "silos",
+   "category": "agriculture",
+   "name": "Silos",
+   "footprint": {
+    "w": 10,
+    "d": 10
+   },
+   "height": 18,
+   "model": {
+    "family": "silo"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 26000,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 80,
+     "productionPerMonth": 10
+    },
+    {
+     "level": 2,
+     "cost": 18200,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 100,
+     "productionPerMonth": 20
+    },
+    {
+     "level": 3,
+     "cost": 23400,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 120,
+     "productionPerMonth": 20
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura"
+   ]
+  },
+  {
+   "key": "apiario",
+   "category": "agriculture",
+   "name": "Apiario",
+   "footprint": {
+    "w": 8,
+    "d": 6
+   },
+   "height": 1.5,
+   "model": {
+    "family": "beehives"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1200,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 0,
+     "productionPerMonth": 40
+    },
+    {
+     "level": 2,
+     "cost": 840,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 0,
+     "productionPerMonth": 50
+    },
+    {
+     "level": 3,
+     "cost": 1080,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 10,
+     "productionPerMonth": 70
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "miele"
+   ]
+  },
+  {
+   "key": "agriturismo",
+   "category": "agriculture",
+   "name": "Agriturismo",
+   "footprint": {
+    "w": 20,
+    "d": 14
+   },
+   "height": 8,
+   "model": {
+    "family": "farmhouse"
+   },
+   "unlock": {
+    "playerLevel": 8
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 84000,
+     "buildHours": 6.0,
+     "jobs": 1,
+     "maintenancePerMonth": 250,
+     "productionPerMonth": 100
+    },
+    {
+     "level": 2,
+     "cost": 58800,
+     "buildHours": 9.0,
+     "jobs": 1,
+     "maintenancePerMonth": 320,
+     "productionPerMonth": 120
+    },
+    {
+     "level": 3,
+     "cost": 75600,
+     "buildHours": 12.0,
+     "jobs": 2,
+     "maintenancePerMonth": 390,
+     "productionPerMonth": 150
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 30
+   },
+   "tags": [
+    "agricoltura",
+    "turismo"
+   ]
+  }
+ ]
+}

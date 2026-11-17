@@ -1,0 +1,1016 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "capannone",
+   "category": "industrial",
+   "name": "Capannone",
+   "footprint": {
+    "w": 30,
+    "d": 20
+   },
+   "height": 8,
+   "model": {
+    "family": "industrial",
+    "kind": "shed"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 156000,
+     "buildHours": 8.0,
+     "jobs": 11,
+     "maintenancePerMonth": 940,
+     "productionPerMonth": 10920,
+     "powerKw": -48.0
+    },
+    {
+     "level": 2,
+     "cost": 109200,
+     "buildHours": 12.0,
+     "jobs": 14,
+     "maintenancePerMonth": 1220,
+     "productionPerMonth": 14200,
+     "powerKw": -62.4
+    },
+    {
+     "level": 3,
+     "cost": 140400,
+     "buildHours": 16.0,
+     "jobs": 19,
+     "maintenancePerMonth": 1580,
+     "productionPerMonth": 18450,
+     "powerKw": -81.1
+    },
+    {
+     "level": 4,
+     "cost": 187200,
+     "buildHours": 20.0,
+     "jobs": 24,
+     "maintenancePerMonth": 2060,
+     "productionPerMonth": 23990,
+     "powerKw": -105.5
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  },
+  {
+   "key": "magazzino",
+   "category": "industrial",
+   "name": "Magazzino logistico",
+   "footprint": {
+    "w": 50,
+    "d": 30
+   },
+   "height": 10,
+   "model": {
+    "family": "industrial",
+    "kind": "shed"
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 390000,
+     "buildHours": 8.0,
+     "jobs": 27,
+     "maintenancePerMonth": 2340,
+     "productionPerMonth": 27300,
+     "powerKw": -120.0
+    },
+    {
+     "level": 2,
+     "cost": 273000,
+     "buildHours": 12.0,
+     "jobs": 35,
+     "maintenancePerMonth": 3040,
+     "productionPerMonth": 35490,
+     "powerKw": -156.0
+    },
+    {
+     "level": 3,
+     "cost": 351000,
+     "buildHours": 16.0,
+     "jobs": 46,
+     "maintenancePerMonth": 3950,
+     "productionPerMonth": 46140,
+     "powerKw": -202.8
+    },
+    {
+     "level": 4,
+     "cost": 468000,
+     "buildHours": 20.0,
+     "jobs": 59,
+     "maintenancePerMonth": 5140,
+     "productionPerMonth": 59980,
+     "powerKw": -263.6
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  },
+  {
+   "key": "officina",
+   "category": "industrial",
+   "name": "Officina meccanica",
+   "footprint": {
+    "w": 20,
+    "d": 14
+   },
+   "height": 6,
+   "model": {
+    "family": "industrial",
+    "kind": "workshop"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 72800,
+     "buildHours": 8.0,
+     "jobs": 5,
+     "maintenancePerMonth": 440,
+     "productionPerMonth": 5100,
+     "powerKw": -22.4
+    },
+    {
+     "level": 2,
+     "cost": 50960,
+     "buildHours": 12.0,
+     "jobs": 6,
+     "maintenancePerMonth": 570,
+     "productionPerMonth": 6620,
+     "powerKw": -29.1
+    },
+    {
+     "level": 3,
+     "cost": 65520,
+     "buildHours": 16.0,
+     "jobs": 8,
+     "maintenancePerMonth": 740,
+     "productionPerMonth": 8610,
+     "powerKw": -37.9
+    },
+    {
+     "level": 4,
+     "cost": 87360,
+     "buildHours": 20.0,
+     "jobs": 11,
+     "maintenancePerMonth": 960,
+     "productionPerMonth": 11200,
+     "powerKw": -49.2
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  },
+  {
+   "key": "pastificio",
+   "category": "industrial",
+   "name": "Pastificio",
+   "footprint": {
+    "w": 40,
+    "d": 25
+   },
+   "height": 12,
+   "model": {
+    "family": "industrial",
+    "kind": "factory"
+   },
+   "unlock": {
+    "playerLevel": 9
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 260000,
+     "buildHours": 8.0,
+     "jobs": 18,
+     "maintenancePerMonth": 1560,
+     "productionPerMonth": 18200,
+     "powerKw": -80.0
+    },
+    {
+     "level": 2,
+     "cost": 182000,
+     "buildHours": 12.0,
+     "jobs": 23,
+     "maintenancePerMonth": 2030,
+     "productionPerMonth": 23660,
+     "powerKw": -104.0
+    },
+    {
+     "level": 3,
+     "cost": 234000,
+     "buildHours": 16.0,
+     "jobs": 30,
+     "maintenancePerMonth": 2640,
+     "productionPerMonth": 30760,
+     "powerKw": -135.2
+    },
+    {
+     "level": 4,
+     "cost": 312000,
+     "buildHours": 20.0,
+     "jobs": 40,
+     "maintenancePerMonth": 3430,
+     "productionPerMonth": 39990,
+     "powerKw": -175.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria",
+    "alimentare"
+   ]
+  },
+  {
+   "key": "cantina_sociale",
+   "category": "industrial",
+   "name": "Cantina sociale",
+   "footprint": {
+    "w": 36,
+    "d": 24
+   },
+   "height": 10,
+   "model": {
+    "family": "industrial",
+    "kind": "winery"
+   },
+   "unlock": {
+    "playerLevel": 8
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 224640,
+     "buildHours": 8.0,
+     "jobs": 16,
+     "maintenancePerMonth": 1350,
+     "productionPerMonth": 15720,
+     "powerKw": -69.1
+    },
+    {
+     "level": 2,
+     "cost": 157250,
+     "buildHours": 12.0,
+     "jobs": 21,
+     "maintenancePerMonth": 1750,
+     "productionPerMonth": 20440,
+     "powerKw": -89.9
+    },
+    {
+     "level": 3,
+     "cost": 202180,
+     "buildHours": 16.0,
+     "jobs": 27,
+     "maintenancePerMonth": 2280,
+     "productionPerMonth": 26570,
+     "powerKw": -116.8
+    },
+    {
+     "level": 4,
+     "cost": 269570,
+     "buildHours": 20.0,
+     "jobs": 35,
+     "maintenancePerMonth": 2960,
+     "productionPerMonth": 34550,
+     "powerKw": -151.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria",
+    "vino"
+   ]
+  },
+  {
+   "key": "frantoio",
+   "category": "industrial",
+   "name": "Frantoio",
+   "footprint": {
+    "w": 24,
+    "d": 18
+   },
+   "height": 8,
+   "model": {
+    "family": "industrial",
+    "kind": "oilmill"
+   },
+   "unlock": {
+    "playerLevel": 7
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 112320,
+     "buildHours": 8.0,
+     "jobs": 8,
+     "maintenancePerMonth": 670,
+     "productionPerMonth": 7860,
+     "powerKw": -34.6
+    },
+    {
+     "level": 2,
+     "cost": 78620,
+     "buildHours": 12.0,
+     "jobs": 10,
+     "maintenancePerMonth": 880,
+     "productionPerMonth": 10220,
+     "powerKw": -44.9
+    },
+    {
+     "level": 3,
+     "cost": 101090,
+     "buildHours": 16.0,
+     "jobs": 14,
+     "maintenancePerMonth": 1140,
+     "productionPerMonth": 13290,
+     "powerKw": -58.4
+    },
+    {
+     "level": 4,
+     "cost": 134780,
+     "buildHours": 20.0,
+     "jobs": 18,
+     "maintenancePerMonth": 1480,
+     "productionPerMonth": 17270,
+     "powerKw": -75.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria",
+    "olio"
+   ]
+  },
+  {
+   "key": "fabbrica",
+   "category": "industrial",
+   "name": "Fabbrica",
+   "footprint": {
+    "w": 60,
+    "d": 40
+   },
+   "height": 14,
+   "model": {
+    "family": "industrial",
+    "kind": "factory"
+   },
+   "unlock": {
+    "playerLevel": 12
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 624000,
+     "buildHours": 8.0,
+     "jobs": 44,
+     "maintenancePerMonth": 3740,
+     "productionPerMonth": 43680,
+     "powerKw": -192.0
+    },
+    {
+     "level": 2,
+     "cost": 436800,
+     "buildHours": 12.0,
+     "jobs": 57,
+     "maintenancePerMonth": 4870,
+     "productionPerMonth": 56780,
+     "powerKw": -249.6
+    },
+    {
+     "level": 3,
+     "cost": 561600,
+     "buildHours": 16.0,
+     "jobs": 74,
+     "maintenancePerMonth": 6330,
+     "productionPerMonth": 73820,
+     "powerKw": -324.5
+    },
+    {
+     "level": 4,
+     "cost": 748800,
+     "buildHours": 20.0,
+     "jobs": 97,
+     "maintenancePerMonth": 8230,
+     "productionPerMonth": 95960,
+     "powerKw": -421.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  },
+  {
+   "key": "fabbrica_auto",
+   "category": "industrial",
+   "name": "Stabilimento automobilistico",
+   "footprint": {
+    "w": 120,
+    "d": 80
+   },
+   "height": 18,
+   "model": {
+    "family": "industrial",
+    "kind": "factory"
+   },
+   "unlock": {
+    "playerLevel": 25
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 2496000,
+     "buildHours": 8.0,
+     "jobs": 175,
+     "maintenancePerMonth": 14980,
+     "productionPerMonth": 174720,
+     "powerKw": -768.0
+    },
+    {
+     "level": 2,
+     "cost": 1747200,
+     "buildHours": 12.0,
+     "jobs": 228,
+     "maintenancePerMonth": 19470,
+     "productionPerMonth": 227140,
+     "powerKw": -998.4
+    },
+    {
+     "level": 3,
+     "cost": 2246400,
+     "buildHours": 16.0,
+     "jobs": 296,
+     "maintenancePerMonth": 25310,
+     "productionPerMonth": 295280,
+     "powerKw": -1297.9
+    },
+    {
+     "level": 4,
+     "cost": 2995200,
+     "buildHours": 20.0,
+     "jobs": 384,
+     "maintenancePerMonth": 32900,
+     "productionPerMonth": 383860,
+     "powerKw": -1687.3
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  },
+  {
+   "key": "cementificio",
+   "category": "industrial",
+   "name": "Cementificio",
+   "footprint": {
+    "w": 60,
+    "d": 40
+   },
+   "height": 30,
+   "model": {
+    "family": "industrial",
+    "kind": "plant"
+   },
+   "unlock": {
+    "playerLevel": 16
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 624000,
+     "buildHours": 8.0,
+     "jobs": 44,
+     "maintenancePerMonth": 3740,
+     "productionPerMonth": 43680,
+     "powerKw": -192.0
+    },
+    {
+     "level": 2,
+     "cost": 436800,
+     "buildHours": 12.0,
+     "jobs": 57,
+     "maintenancePerMonth": 4870,
+     "productionPerMonth": 56780,
+     "powerKw": -249.6
+    },
+    {
+     "level": 3,
+     "cost": 561600,
+     "buildHours": 16.0,
+     "jobs": 74,
+     "maintenancePerMonth": 6330,
+     "productionPerMonth": 73820,
+     "powerKw": -324.5
+    },
+    {
+     "level": 4,
+     "cost": 748800,
+     "buildHours": 20.0,
+     "jobs": 97,
+     "maintenancePerMonth": 8230,
+     "productionPerMonth": 95960,
+     "powerKw": -421.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  },
+  {
+   "key": "falegnameria",
+   "category": "industrial",
+   "name": "Falegnameria",
+   "footprint": {
+    "w": 22,
+    "d": 14
+   },
+   "height": 7,
+   "model": {
+    "family": "industrial",
+    "kind": "workshop"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 80080,
+     "buildHours": 8.0,
+     "jobs": 6,
+     "maintenancePerMonth": 480,
+     "productionPerMonth": 5610,
+     "powerKw": -24.6
+    },
+    {
+     "level": 2,
+     "cost": 56060,
+     "buildHours": 12.0,
+     "jobs": 8,
+     "maintenancePerMonth": 620,
+     "productionPerMonth": 7290,
+     "powerKw": -32.0
+    },
+    {
+     "level": 3,
+     "cost": 72070,
+     "buildHours": 16.0,
+     "jobs": 10,
+     "maintenancePerMonth": 810,
+     "productionPerMonth": 9470,
+     "powerKw": -41.6
+    },
+    {
+     "level": 4,
+     "cost": 96100,
+     "buildHours": 20.0,
+     "jobs": 13,
+     "maintenancePerMonth": 1060,
+     "productionPerMonth": 12320,
+     "powerKw": -54.1
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  },
+  {
+   "key": "tipografia",
+   "category": "industrial",
+   "name": "Tipografia",
+   "footprint": {
+    "w": 20,
+    "d": 16
+   },
+   "height": 7,
+   "model": {
+    "family": "industrial",
+    "kind": "workshop"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 83200,
+     "buildHours": 8.0,
+     "jobs": 6,
+     "maintenancePerMonth": 500,
+     "productionPerMonth": 5820,
+     "powerKw": -25.6
+    },
+    {
+     "level": 2,
+     "cost": 58240,
+     "buildHours": 12.0,
+     "jobs": 8,
+     "maintenancePerMonth": 650,
+     "productionPerMonth": 7570,
+     "powerKw": -33.3
+    },
+    {
+     "level": 3,
+     "cost": 74880,
+     "buildHours": 16.0,
+     "jobs": 10,
+     "maintenancePerMonth": 840,
+     "productionPerMonth": 9840,
+     "powerKw": -43.3
+    },
+    {
+     "level": 4,
+     "cost": 99840,
+     "buildHours": 20.0,
+     "jobs": 13,
+     "maintenancePerMonth": 1100,
+     "productionPerMonth": 12800,
+     "powerKw": -56.2
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  },
+  {
+   "key": "centro_logistico",
+   "category": "industrial",
+   "name": "Centro logistico",
+   "footprint": {
+    "w": 80,
+    "d": 50
+   },
+   "height": 12,
+   "model": {
+    "family": "industrial",
+    "kind": "shed"
+   },
+   "unlock": {
+    "playerLevel": 18
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1040000,
+     "buildHours": 8.0,
+     "jobs": 73,
+     "maintenancePerMonth": 6240,
+     "productionPerMonth": 72800,
+     "powerKw": -320.0
+    },
+    {
+     "level": 2,
+     "cost": 728000,
+     "buildHours": 12.0,
+     "jobs": 95,
+     "maintenancePerMonth": 8110,
+     "productionPerMonth": 94640,
+     "powerKw": -416.0
+    },
+    {
+     "level": 3,
+     "cost": 936000,
+     "buildHours": 16.0,
+     "jobs": 123,
+     "maintenancePerMonth": 10550,
+     "productionPerMonth": 123030,
+     "powerKw": -540.8
+    },
+    {
+     "level": 4,
+     "cost": 1248000,
+     "buildHours": 20.0,
+     "jobs": 160,
+     "maintenancePerMonth": 13710,
+     "productionPerMonth": 159940,
+     "powerKw": -703.0
+    }
+   ],
+   "variants": [
+    {
+     "key": "grigio",
+     "name": "Grigio",
+     "wall": "#c8ccce",
+     "roof": "#9a9a96"
+    },
+    {
+     "key": "azzurro",
+     "name": "Azzurro",
+     "wall": "#b9c3c9",
+     "roof": "#8a96a0"
+    },
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#e3e1db",
+     "roof": "#a9a399"
+    }
+   ],
+   "effects": {
+    "happiness": -1,
+    "happinessRadius": 80,
+    "landValue": -2,
+    "pollution": 2
+   },
+   "tags": [
+    "industria"
+   ]
+  }
+ ]
+}

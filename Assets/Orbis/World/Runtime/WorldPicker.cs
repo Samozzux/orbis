@@ -101,7 +101,7 @@ namespace Orbis.World
             foreach (int i in list)
             {
                 var b = data.Buildings[i];
-                if (!b.Bounds.Contains(x, z) || !Polygon2D.Contains(b.Outer, b.Holes, x, z)) continue;
+                if (!b.Bounds.Contains(x, z) || !Polygon2D.Contains(b.Outer, b.Holes, x, z) || _world.IsHidden(b)) continue;
                 float g = GroundRef(view, i);
                 float bottom = b.MinHeight > 0.1f ? g + b.MinHeight : g - 3f;
                 if (y >= bottom && y <= g + Mathf.Max(2.5f, b.Height) + 0.2f) return i;

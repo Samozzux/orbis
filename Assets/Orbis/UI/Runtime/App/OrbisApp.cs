@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
+using System.Threading.Tasks;
 using Orbis.Core.Boot;
+using Orbis.Core.Game;
 using Orbis.Gameplay;
 using Orbis.Platform;
 using Orbis.UI.Game;
@@ -46,6 +49,12 @@ namespace Orbis.UI.App
         /// <summary>HUD della partita (null nel menu).</summary>
         public GameHud Hud => _hud;
 
+        /// <summary>Economia e costruzione della partita in corso (null nel menu).</summary>
+        public GameController Game => _session != null ? _session.Game : null;
+
+        /// <summary>Pannello a scheda condiviso (nuova partita, salvataggi, catalogo, finanze…).</summary>
+        public GamePanel Panel => _panel;
+
         public static OrbisApp Instance { get; private set; }
 
         public AppState State { get; private set; } = AppState.Starting;
@@ -71,7 +80,11 @@ namespace Orbis.UI.App
         private VisualElement _game;
         private WorldSession _session;
         private GameHud _hud;
+        private EconomyHud _economy;
         private LotsOverlay _lots;
+        private GamePanel _panel;
+        private GameMenus _menus;
+        private bool _starting;
 
         private void Awake()
         {
@@ -131,7 +144,7 @@ namespace Orbis.UI.App
 
             // 3) caricamento
             State = AppState.Loading;
-            MainMenuController.Require<Label>(root, "tip-text").text = Loc.Get($"tips.{Random.Range(1, TipCount + 1)}");
+            MainMenuController.Require<Label>(root, "tip-text").text = Loc.Get($"tips.{UnityEngine.Random.Range(1, TipCount + 1)}");
             _screens.Show(_loading);
             var started = Time.realtimeSinceStartup;
             var shown = 0f;
@@ -170,7 +183,13 @@ namespace Orbis.UI.App
             // 4) menu principale
             _settings = new SettingsController(root, services.ScreenOrientation, SettingsRepository.LoadDisplay());
             _mainMenu = new MainMenuController(_menu, MainMenuController.Require<VisualElement>(root, "toast"), services, _settings);
-            _mainMenu.NewGame += StartGame;
+            _panel = new GamePanel(root);
+            _panel.SetPointerLayout(!services.DeviceProfile.Info.IsTouchPrimary);
+            _menus = new GameMenus(_panel, services);
+            _menus.Start += StartGame;
+            _menus.SavesChanged += () => StartCoroutine(_mainMenu.Prepare());
+            _mainMenu.NewGame += _menus.OpenNewGame;
+            _mainMenu.Continue += _menus.OpenSaves;
             yield return _mainMenu.Prepare();
             State = AppState.MainMenu;
             _screens.Show(_menu);
@@ -182,38 +201,101 @@ namespace Orbis.UI.App
         {
             _layout?.Update();
             _hud?.Update();
+            _economy?.Update();
         }
 
-        /// <summary>Nuova partita: per ora si entra direttamente a Chieti (scelta del luogo e del ruolo in M2).</summary>
-        public void StartGame()
+        /// <summary>Nuova partita con le opzioni predefinite (test e fotografie).</summary>
+        public void StartGame() => StartGame(new GameStart());
+
+        /// <summary>Entra nel mondo: nuova partita o partita salvata (docs/03 §1, M2: solo Chieti).</summary>
+        public void StartGame(GameStart start)
         {
-            if (State == AppState.Game) return;
-            State = AppState.Game;
+            if (State == AppState.Game || _starting || start == null) return;
+            if (start.SaveId != null) StartCoroutine(LoadAndEnter(start));
+            else EnterWorld(start, null);
+        }
+
+        private IEnumerator LoadAndEnter(GameStart start)
+        {
+            _starting = true;
+            var task = SaveManager.LoadAsync(PlatformServices.Current.SaveStore, start.SaveId);
+            while (!task.IsCompleted) yield return null;
+            _starting = false;
+            if (task.Status != TaskStatus.RanToCompletion || task.Result == null)
+            {
+                Debug.LogWarning("[Orbis] partita non trovata: " + start.SaveId);
+                _mainMenu.ShowToast(Loc.Get("saves.error"));
+                yield break;
+            }
+            EnterWorld(start, task.Result);
+        }
+
+        private void EnterWorld(GameStart start, byte[] save)
+        {
+            var services = PlatformServices.Current;
+            var content = GameContent.Load();
             var camera = Camera.main;
+            var sun = RenderSettings.sun != null ? RenderSettings.sun : FindAnyObjectByType<Light>();
+            var device = services.DeviceProfile.Info;
+            var session = WorldSession.Create(camera, sun, Orbis.World.WorldQuality.Auto(device.IsTouchPrimary, device.SystemMemoryMb));
+
+            GameSession game;
+            OfflineSummary offline = null;
+            try
+            {
+                if (save != null)
+                {
+                    game = GameController.LoadSession(save, content, session);
+                    offline = game.CatchUp(DateTime.UtcNow);
+                }
+                else
+                {
+                    game = GameController.NewSession(start.Name, start.Config, content, session);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("[Orbis] partita illeggibile: " + e.Message);
+                Destroy(session.gameObject);
+                _mainMenu.ShowToast(Loc.Get("saves.error"));
+                return;
+            }
+
+            State = AppState.Game;
+            _session = session;
             if (menuCity != null) menuCity.gameObject.SetActive(false);
             var rig = camera != null ? camera.GetComponent<MenuCameraRig>() : null;
             if (rig != null) rig.enabled = false;
             if (glassBlur != null) glassBlur.Interval = 3; // il vetro sfoca il mondo, ma un frame su tre
-            var sun = RenderSettings.sun != null ? RenderSettings.sun : FindAnyObjectByType<Light>();
-            var device = PlatformServices.Current.DeviceProfile.Info;
-            _session = WorldSession.Create(camera, sun, Orbis.World.WorldQuality.Auto(device.IsTouchPrimary, device.SystemMemoryMb));
-            _hud = new GameHud(_document.rootVisualElement, _game, _session, PlatformServices.Current);
+            _hud = new GameHud(_document.rootVisualElement, _game, _session, services);
             _hud.Home += EndGame;
             _lots = new LotsOverlay(_session);
             _hud.LotsToggled += _lots.SetVisible;
+
+            var id = start.SaveId ?? SaveManager.NewId();
+            var controller = GameController.Attach(_session, game, id, start.Transient ? null : services.SaveStore, offline);
+            _economy = new EconomyHud(_game, _hud, controller, _panel, services);
+            if (save == null && !start.Transient) controller.SaveNow(); // la nuova partita compare subito in "Continua"
             _screens.Show(_game);
-            Debug.Log("[Orbis] Nuova partita: Chieti.");
+            _menus.ShowOfflineSummary(offline);
+            Debug.Log(save != null ? $"[Orbis] Partita caricata: {game.State.Name}." : $"[Orbis] Nuova partita: {game.State.Name}.");
         }
 
-        /// <summary>Torna al menu principale chiudendo il mondo.</summary>
+        /// <summary>Torna al menu principale salvando e chiudendo il mondo.</summary>
         public void EndGame()
         {
             if (State != AppState.Game) return;
+            _panel.Close();
+            var game = Game;
+            if (game != null) game.SaveNowSync();
+            _economy = null;
             _lots?.Dispose();
             _lots = null;
             if (_session != null) Destroy(_session.gameObject);
             _session = null;
             _hud = null;
+            _game.RemoveFromClassList("game--building");
+            _game.RemoveFromClassList("game--details");
             var camera = Camera.main;
             if (camera != null)
             {
@@ -225,6 +307,7 @@ namespace Orbis.UI.App
             if (glassBlur != null) glassBlur.Interval = 1;
             State = AppState.MainMenu;
             _screens.Show(_menu);
+            StartCoroutine(_mainMenu.Prepare());
             _mainMenu.OnShown();
         }
 

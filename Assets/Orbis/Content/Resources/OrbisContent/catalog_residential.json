@@ -1,0 +1,2025 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "casa_piccola",
+   "category": "residential",
+   "name": "Casetta",
+   "footprint": {
+    "w": 8,
+    "d": 7
+   },
+   "height": 4.8,
+   "model": {
+    "family": "house",
+    "roof": "hipped",
+    "floors": 1,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 23520,
+     "buildHours": 5.0,
+     "capacity": 2,
+     "rentPerMonth": 1180,
+     "maintenancePerMonth": 90,
+     "powerKw": -3.0
+    },
+    {
+     "level": 2,
+     "cost": 16460,
+     "buildHours": 7.5,
+     "capacity": 3,
+     "rentPerMonth": 1530,
+     "maintenancePerMonth": 120,
+     "powerKw": -3.9
+    },
+    {
+     "level": 3,
+     "cost": 21170,
+     "buildHours": 10.0,
+     "capacity": 3,
+     "rentPerMonth": 1990,
+     "maintenancePerMonth": 160,
+     "powerKw": -5.1
+    },
+    {
+     "level": 4,
+     "cost": 28220,
+     "buildHours": 12.5,
+     "capacity": 4,
+     "rentPerMonth": 2580,
+     "maintenancePerMonth": 210,
+     "powerKw": -6.6
+    },
+    {
+     "level": 5,
+     "cost": 37630,
+     "buildHours": 15.0,
+     "capacity": 6,
+     "rentPerMonth": 3360,
+     "maintenancePerMonth": 270,
+     "powerKw": -8.6
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "casa_due_piani",
+   "category": "residential",
+   "name": "Casa su due piani",
+   "footprint": {
+    "w": 9,
+    "d": 8
+   },
+   "height": 8.0,
+   "model": {
+    "family": "house",
+    "roof": "hipped",
+    "floors": 2,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 60480,
+     "buildHours": 6.0,
+     "capacity": 4,
+     "rentPerMonth": 3020,
+     "maintenancePerMonth": 240,
+     "powerKw": -6.0
+    },
+    {
+     "level": 2,
+     "cost": 42340,
+     "buildHours": 9.0,
+     "capacity": 5,
+     "rentPerMonth": 3930,
+     "maintenancePerMonth": 310,
+     "powerKw": -7.8
+    },
+    {
+     "level": 3,
+     "cost": 54430,
+     "buildHours": 12.0,
+     "capacity": 7,
+     "rentPerMonth": 5110,
+     "maintenancePerMonth": 410,
+     "powerKw": -10.1
+    },
+    {
+     "level": 4,
+     "cost": 72580,
+     "buildHours": 15.0,
+     "capacity": 9,
+     "rentPerMonth": 6640,
+     "maintenancePerMonth": 530,
+     "powerKw": -13.2
+    },
+    {
+     "level": 5,
+     "cost": 96770,
+     "buildHours": 18.0,
+     "capacity": 11,
+     "rentPerMonth": 8640,
+     "maintenancePerMonth": 690,
+     "powerKw": -17.1
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "villetta_abruzzese",
+   "category": "residential",
+   "name": "Villetta abruzzese",
+   "footprint": {
+    "w": 12,
+    "d": 10
+   },
+   "height": 8.0,
+   "model": {
+    "family": "house",
+    "roof": "hipped",
+    "floors": 2,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 100800,
+     "buildHours": 6.0,
+     "capacity": 6,
+     "rentPerMonth": 5040,
+     "maintenancePerMonth": 400,
+     "powerKw": -9.0
+    },
+    {
+     "level": 2,
+     "cost": 70560,
+     "buildHours": 9.0,
+     "capacity": 8,
+     "rentPerMonth": 6550,
+     "maintenancePerMonth": 520,
+     "powerKw": -11.7
+    },
+    {
+     "level": 3,
+     "cost": 90720,
+     "buildHours": 12.0,
+     "capacity": 10,
+     "rentPerMonth": 8520,
+     "maintenancePerMonth": 680,
+     "powerKw": -15.2
+    },
+    {
+     "level": 4,
+     "cost": 120960,
+     "buildHours": 15.0,
+     "capacity": 13,
+     "rentPerMonth": 11070,
+     "maintenancePerMonth": 890,
+     "powerKw": -19.8
+    },
+    {
+     "level": 5,
+     "cost": 161280,
+     "buildHours": 18.0,
+     "capacity": 17,
+     "rentPerMonth": 14390,
+     "maintenancePerMonth": 1150,
+     "powerKw": -25.7
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "bifamiliare",
+   "category": "residential",
+   "name": "Bifamiliare",
+   "footprint": {
+    "w": 16,
+    "d": 10
+   },
+   "height": 8.0,
+   "model": {
+    "family": "house",
+    "roof": "gabled",
+    "floors": 2,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 134400,
+     "buildHours": 6.0,
+     "capacity": 8,
+     "rentPerMonth": 6720,
+     "maintenancePerMonth": 540,
+     "powerKw": -12.0
+    },
+    {
+     "level": 2,
+     "cost": 94080,
+     "buildHours": 9.0,
+     "capacity": 10,
+     "rentPerMonth": 8740,
+     "maintenancePerMonth": 700,
+     "powerKw": -15.6
+    },
+    {
+     "level": 3,
+     "cost": 120960,
+     "buildHours": 12.0,
+     "capacity": 14,
+     "rentPerMonth": 11360,
+     "maintenancePerMonth": 910,
+     "powerKw": -20.3
+    },
+    {
+     "level": 4,
+     "cost": 161280,
+     "buildHours": 15.0,
+     "capacity": 18,
+     "rentPerMonth": 14760,
+     "maintenancePerMonth": 1180,
+     "powerKw": -26.4
+    },
+    {
+     "level": 5,
+     "cost": 215040,
+     "buildHours": 18.0,
+     "capacity": 23,
+     "rentPerMonth": 19190,
+     "maintenancePerMonth": 1540,
+     "powerKw": -34.3
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "casa_a_schiera",
+   "category": "residential",
+   "name": "Case a schiera",
+   "footprint": {
+    "w": 24,
+    "d": 9
+   },
+   "height": 8.0,
+   "model": {
+    "family": "house",
+    "roof": "gabled",
+    "floors": 2,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 181440,
+     "buildHours": 6.0,
+     "capacity": 11,
+     "rentPerMonth": 9070,
+     "maintenancePerMonth": 730,
+     "powerKw": -16.5
+    },
+    {
+     "level": 2,
+     "cost": 127010,
+     "buildHours": 9.0,
+     "capacity": 14,
+     "rentPerMonth": 11790,
+     "maintenancePerMonth": 940,
+     "powerKw": -21.4
+    },
+    {
+     "level": 3,
+     "cost": 163300,
+     "buildHours": 12.0,
+     "capacity": 19,
+     "rentPerMonth": 15330,
+     "maintenancePerMonth": 1230,
+     "powerKw": -27.9
+    },
+    {
+     "level": 4,
+     "cost": 217730,
+     "buildHours": 15.0,
+     "capacity": 24,
+     "rentPerMonth": 19930,
+     "maintenancePerMonth": 1590,
+     "powerKw": -36.3
+    },
+    {
+     "level": 5,
+     "cost": 290300,
+     "buildHours": 18.0,
+     "capacity": 31,
+     "rentPerMonth": 25910,
+     "maintenancePerMonth": 2070,
+     "powerKw": -47.1
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "villa",
+   "category": "residential",
+   "name": "Villa con giardino",
+   "footprint": {
+    "w": 18,
+    "d": 14
+   },
+   "height": 8.0,
+   "model": {
+    "family": "house",
+    "roof": "hipped",
+    "floors": 2,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 8
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 211680,
+     "buildHours": 6.0,
+     "capacity": 13,
+     "rentPerMonth": 10580,
+     "maintenancePerMonth": 850,
+     "powerKw": -19.5
+    },
+    {
+     "level": 2,
+     "cost": 148180,
+     "buildHours": 9.0,
+     "capacity": 17,
+     "rentPerMonth": 13760,
+     "maintenancePerMonth": 1100,
+     "powerKw": -25.4
+    },
+    {
+     "level": 3,
+     "cost": 190510,
+     "buildHours": 12.0,
+     "capacity": 22,
+     "rentPerMonth": 17890,
+     "maintenancePerMonth": 1430,
+     "powerKw": -33.0
+    },
+    {
+     "level": 4,
+     "cost": 254020,
+     "buildHours": 15.0,
+     "capacity": 29,
+     "rentPerMonth": 23250,
+     "maintenancePerMonth": 1860,
+     "powerKw": -42.8
+    },
+    {
+     "level": 5,
+     "cost": 338690,
+     "buildHours": 18.0,
+     "capacity": 37,
+     "rentPerMonth": 30230,
+     "maintenancePerMonth": 2420,
+     "powerKw": -55.7
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "casale_ristrutturato",
+   "category": "residential",
+   "name": "Casale ristrutturato",
+   "footprint": {
+    "w": 16,
+    "d": 12
+   },
+   "height": 8.0,
+   "model": {
+    "family": "house",
+    "roof": "gabled",
+    "floors": 2,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 6
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 161280,
+     "buildHours": 6.0,
+     "capacity": 10,
+     "rentPerMonth": 8060,
+     "maintenancePerMonth": 650,
+     "powerKw": -15.0
+    },
+    {
+     "level": 2,
+     "cost": 112900,
+     "buildHours": 9.0,
+     "capacity": 13,
+     "rentPerMonth": 10480,
+     "maintenancePerMonth": 840,
+     "powerKw": -19.5
+    },
+    {
+     "level": 3,
+     "cost": 145150,
+     "buildHours": 12.0,
+     "capacity": 17,
+     "rentPerMonth": 13630,
+     "maintenancePerMonth": 1090,
+     "powerKw": -25.4
+    },
+    {
+     "level": 4,
+     "cost": 193540,
+     "buildHours": 15.0,
+     "capacity": 22,
+     "rentPerMonth": 17720,
+     "maintenancePerMonth": 1420,
+     "powerKw": -33.0
+    },
+    {
+     "level": 5,
+     "cost": 258050,
+     "buildHours": 18.0,
+     "capacity": 29,
+     "rentPerMonth": 23030,
+     "maintenancePerMonth": 1840,
+     "powerKw": -42.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "palazzina_storica",
+   "category": "residential",
+   "name": "Palazzina del centro",
+   "footprint": {
+    "w": 14,
+    "d": 12
+   },
+   "height": 11.2,
+   "model": {
+    "family": "house",
+    "roof": "hipped",
+    "floors": 3,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 211680,
+     "buildHours": 7.0,
+     "capacity": 13,
+     "rentPerMonth": 10580,
+     "maintenancePerMonth": 850,
+     "powerKw": -19.5
+    },
+    {
+     "level": 2,
+     "cost": 148180,
+     "buildHours": 10.5,
+     "capacity": 17,
+     "rentPerMonth": 13760,
+     "maintenancePerMonth": 1100,
+     "powerKw": -25.4
+    },
+    {
+     "level": 3,
+     "cost": 190510,
+     "buildHours": 14.0,
+     "capacity": 22,
+     "rentPerMonth": 17890,
+     "maintenancePerMonth": 1430,
+     "powerKw": -33.0
+    },
+    {
+     "level": 4,
+     "cost": 254020,
+     "buildHours": 17.5,
+     "capacity": 29,
+     "rentPerMonth": 23250,
+     "maintenancePerMonth": 1860,
+     "powerKw": -42.8
+    },
+    {
+     "level": 5,
+     "cost": 338690,
+     "buildHours": 21.0,
+     "capacity": 37,
+     "rentPerMonth": 30230,
+     "maintenancePerMonth": 2420,
+     "powerKw": -55.7
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "palazzo_nobiliare",
+   "category": "residential",
+   "name": "Palazzo nobiliare",
+   "footprint": {
+    "w": 22,
+    "d": 18
+   },
+   "height": 14.4,
+   "model": {
+    "family": "house",
+    "roof": "hipped",
+    "floors": 4,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 12
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 665280,
+     "buildHours": 8.0,
+     "capacity": 42,
+     "rentPerMonth": 33260,
+     "maintenancePerMonth": 2660,
+     "powerKw": -63.0
+    },
+    {
+     "level": 2,
+     "cost": 465700,
+     "buildHours": 12.0,
+     "capacity": 55,
+     "rentPerMonth": 43240,
+     "maintenancePerMonth": 3460,
+     "powerKw": -81.9
+    },
+    {
+     "level": 3,
+     "cost": 598750,
+     "buildHours": 16.0,
+     "capacity": 71,
+     "rentPerMonth": 56220,
+     "maintenancePerMonth": 4500,
+     "powerKw": -106.5
+    },
+    {
+     "level": 4,
+     "cost": 798340,
+     "buildHours": 20.0,
+     "capacity": 92,
+     "rentPerMonth": 73080,
+     "maintenancePerMonth": 5850,
+     "powerKw": -138.4
+    },
+    {
+     "level": 5,
+     "cost": 1064450,
+     "buildHours": 24.0,
+     "capacity": 120,
+     "rentPerMonth": 95010,
+     "maintenancePerMonth": 7600,
+     "powerKw": -179.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "condominio_4",
+   "category": "residential",
+   "name": "Condominio 4 piani",
+   "footprint": {
+    "w": 20,
+    "d": 14
+   },
+   "height": 13.4,
+   "model": {
+    "family": "house",
+    "roof": "flat",
+    "floors": 4,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 470400,
+     "buildHours": 8.0,
+     "capacity": 29,
+     "rentPerMonth": 23520,
+     "maintenancePerMonth": 1880,
+     "powerKw": -43.5
+    },
+    {
+     "level": 2,
+     "cost": 329280,
+     "buildHours": 12.0,
+     "capacity": 38,
+     "rentPerMonth": 30580,
+     "maintenancePerMonth": 2450,
+     "powerKw": -56.6
+    },
+    {
+     "level": 3,
+     "cost": 423360,
+     "buildHours": 16.0,
+     "capacity": 49,
+     "rentPerMonth": 39750,
+     "maintenancePerMonth": 3180,
+     "powerKw": -73.5
+    },
+    {
+     "level": 4,
+     "cost": 564480,
+     "buildHours": 20.0,
+     "capacity": 64,
+     "rentPerMonth": 51670,
+     "maintenancePerMonth": 4130,
+     "powerKw": -95.6
+    },
+    {
+     "level": 5,
+     "cost": 752640,
+     "buildHours": 24.0,
+     "capacity": 83,
+     "rentPerMonth": 67180,
+     "maintenancePerMonth": 5370,
+     "powerKw": -124.2
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "condominio_6",
+   "category": "residential",
+   "name": "Condominio 6 piani",
+   "footprint": {
+    "w": 22,
+    "d": 16
+   },
+   "height": 19.8,
+   "model": {
+    "family": "house",
+    "roof": "flat",
+    "floors": 6,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 8
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 887040,
+     "buildHours": 10.0,
+     "capacity": 56,
+     "rentPerMonth": 44350,
+     "maintenancePerMonth": 3550,
+     "powerKw": -84.0
+    },
+    {
+     "level": 2,
+     "cost": 620930,
+     "buildHours": 15.0,
+     "capacity": 73,
+     "rentPerMonth": 57660,
+     "maintenancePerMonth": 4610,
+     "powerKw": -109.2
+    },
+    {
+     "level": 3,
+     "cost": 798340,
+     "buildHours": 20.0,
+     "capacity": 95,
+     "rentPerMonth": 74950,
+     "maintenancePerMonth": 6000,
+     "powerKw": -142.0
+    },
+    {
+     "level": 4,
+     "cost": 1064450,
+     "buildHours": 25.0,
+     "capacity": 123,
+     "rentPerMonth": 97440,
+     "maintenancePerMonth": 7800,
+     "powerKw": -184.5
+    },
+    {
+     "level": 5,
+     "cost": 1419260,
+     "buildHours": 30.0,
+     "capacity": 160,
+     "rentPerMonth": 126670,
+     "maintenancePerMonth": 10130,
+     "powerKw": -239.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "condominio_8",
+   "category": "residential",
+   "name": "Condominio 8 piani",
+   "footprint": {
+    "w": 24,
+    "d": 16
+   },
+   "height": 26.2,
+   "model": {
+    "family": "house",
+    "roof": "flat",
+    "floors": 8,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 12
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1290240,
+     "buildHours": 12.0,
+     "capacity": 81,
+     "rentPerMonth": 64510,
+     "maintenancePerMonth": 5160,
+     "powerKw": -121.5
+    },
+    {
+     "level": 2,
+     "cost": 903170,
+     "buildHours": 18.0,
+     "capacity": 105,
+     "rentPerMonth": 83870,
+     "maintenancePerMonth": 6710,
+     "powerKw": -158.0
+    },
+    {
+     "level": 3,
+     "cost": 1161220,
+     "buildHours": 24.0,
+     "capacity": 137,
+     "rentPerMonth": 109030,
+     "maintenancePerMonth": 8720,
+     "powerKw": -205.3
+    },
+    {
+     "level": 4,
+     "cost": 1548290,
+     "buildHours": 30.0,
+     "capacity": 178,
+     "rentPerMonth": 141730,
+     "maintenancePerMonth": 11340,
+     "powerKw": -266.9
+    },
+    {
+     "level": 5,
+     "cost": 2064380,
+     "buildHours": 36.0,
+     "capacity": 231,
+     "rentPerMonth": 184250,
+     "maintenancePerMonth": 14740,
+     "powerKw": -347.0
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "torre_residenziale",
+   "category": "residential",
+   "name": "Torre residenziale",
+   "footprint": {
+    "w": 18,
+    "d": 18
+   },
+   "height": 45.4,
+   "model": {
+    "family": "house",
+    "roof": "flat",
+    "floors": 14,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 20
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 1905120,
+     "buildHours": 18.0,
+     "capacity": 119,
+     "rentPerMonth": 95260,
+     "maintenancePerMonth": 7620,
+     "powerKw": -178.5
+    },
+    {
+     "level": 2,
+     "cost": 1333580,
+     "buildHours": 27.0,
+     "capacity": 155,
+     "rentPerMonth": 123830,
+     "maintenancePerMonth": 9910,
+     "powerKw": -232.1
+    },
+    {
+     "level": 3,
+     "cost": 1714610,
+     "buildHours": 36.0,
+     "capacity": 201,
+     "rentPerMonth": 160980,
+     "maintenancePerMonth": 12880,
+     "powerKw": -301.7
+    },
+    {
+     "level": 4,
+     "cost": 2286140,
+     "buildHours": 45.0,
+     "capacity": 261,
+     "rentPerMonth": 209280,
+     "maintenancePerMonth": 16740,
+     "powerKw": -392.2
+    },
+    {
+     "level": 5,
+     "cost": 3048190,
+     "buildHours": 54.0,
+     "capacity": 340,
+     "rentPerMonth": 272060,
+     "maintenancePerMonth": 21760,
+     "powerKw": -509.8
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "casa_moderna",
+   "category": "residential",
+   "name": "Casa moderna",
+   "footprint": {
+    "w": 12,
+    "d": 10
+   },
+   "height": 7.0,
+   "model": {
+    "family": "house",
+    "roof": "flat",
+    "floors": 2,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 100800,
+     "buildHours": 6.0,
+     "capacity": 6,
+     "rentPerMonth": 5040,
+     "maintenancePerMonth": 400,
+     "powerKw": -9.0
+    },
+    {
+     "level": 2,
+     "cost": 70560,
+     "buildHours": 9.0,
+     "capacity": 8,
+     "rentPerMonth": 6550,
+     "maintenancePerMonth": 520,
+     "powerKw": -11.7
+    },
+    {
+     "level": 3,
+     "cost": 90720,
+     "buildHours": 12.0,
+     "capacity": 10,
+     "rentPerMonth": 8520,
+     "maintenancePerMonth": 680,
+     "powerKw": -15.2
+    },
+    {
+     "level": 4,
+     "cost": 120960,
+     "buildHours": 15.0,
+     "capacity": 13,
+     "rentPerMonth": 11070,
+     "maintenancePerMonth": 890,
+     "powerKw": -19.8
+    },
+    {
+     "level": 5,
+     "cost": 161280,
+     "buildHours": 18.0,
+     "capacity": 17,
+     "rentPerMonth": 14390,
+     "maintenancePerMonth": 1150,
+     "powerKw": -25.7
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "casa_con_portico",
+   "category": "residential",
+   "name": "Casa con portico",
+   "footprint": {
+    "w": 13,
+    "d": 10
+   },
+   "height": 8.0,
+   "model": {
+    "family": "house",
+    "roof": "hipped",
+    "floors": 2,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 109200,
+     "buildHours": 6.0,
+     "capacity": 7,
+     "rentPerMonth": 5460,
+     "maintenancePerMonth": 440,
+     "powerKw": -10.5
+    },
+    {
+     "level": 2,
+     "cost": 76440,
+     "buildHours": 9.0,
+     "capacity": 9,
+     "rentPerMonth": 7100,
+     "maintenancePerMonth": 570,
+     "powerKw": -13.7
+    },
+    {
+     "level": 3,
+     "cost": 98280,
+     "buildHours": 12.0,
+     "capacity": 12,
+     "rentPerMonth": 9230,
+     "maintenancePerMonth": 740,
+     "powerKw": -17.7
+    },
+    {
+     "level": 4,
+     "cost": 131040,
+     "buildHours": 15.0,
+     "capacity": 15,
+     "rentPerMonth": 12000,
+     "maintenancePerMonth": 960,
+     "powerKw": -23.1
+    },
+    {
+     "level": 5,
+     "cost": 174720,
+     "buildHours": 18.0,
+     "capacity": 20,
+     "rentPerMonth": 15590,
+     "maintenancePerMonth": 1250,
+     "powerKw": -30.0
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "loft",
+   "category": "residential",
+   "name": "Loft in ex fabbrica",
+   "footprint": {
+    "w": 20,
+    "d": 14
+   },
+   "height": 10.2,
+   "model": {
+    "family": "house",
+    "roof": "flat",
+    "floors": 3,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 10
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 352800,
+     "buildHours": 7.0,
+     "capacity": 22,
+     "rentPerMonth": 17640,
+     "maintenancePerMonth": 1410,
+     "powerKw": -33.0
+    },
+    {
+     "level": 2,
+     "cost": 246960,
+     "buildHours": 10.5,
+     "capacity": 29,
+     "rentPerMonth": 22930,
+     "maintenancePerMonth": 1830,
+     "powerKw": -42.9
+    },
+    {
+     "level": 3,
+     "cost": 317520,
+     "buildHours": 14.0,
+     "capacity": 37,
+     "rentPerMonth": 29810,
+     "maintenancePerMonth": 2380,
+     "powerKw": -55.8
+    },
+    {
+     "level": 4,
+     "cost": 423360,
+     "buildHours": 17.5,
+     "capacity": 48,
+     "rentPerMonth": 38760,
+     "maintenancePerMonth": 3100,
+     "powerKw": -72.5
+    },
+    {
+     "level": 5,
+     "cost": 564480,
+     "buildHours": 21.0,
+     "capacity": 63,
+     "rentPerMonth": 50380,
+     "maintenancePerMonth": 4030,
+     "powerKw": -94.3
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "residence",
+   "category": "residential",
+   "name": "Residence",
+   "footprint": {
+    "w": 30,
+    "d": 16
+   },
+   "height": 13.4,
+   "model": {
+    "family": "house",
+    "roof": "flat",
+    "floors": 4,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 14
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 806400,
+     "buildHours": 8.0,
+     "capacity": 51,
+     "rentPerMonth": 40320,
+     "maintenancePerMonth": 3230,
+     "powerKw": -76.5
+    },
+    {
+     "level": 2,
+     "cost": 564480,
+     "buildHours": 12.0,
+     "capacity": 66,
+     "rentPerMonth": 52420,
+     "maintenancePerMonth": 4190,
+     "powerKw": -99.5
+    },
+    {
+     "level": 3,
+     "cost": 725760,
+     "buildHours": 16.0,
+     "capacity": 86,
+     "rentPerMonth": 68140,
+     "maintenancePerMonth": 5450,
+     "powerKw": -129.3
+    },
+    {
+     "level": 4,
+     "cost": 967680,
+     "buildHours": 20.0,
+     "capacity": 112,
+     "rentPerMonth": 88580,
+     "maintenancePerMonth": 7090,
+     "powerKw": -168.1
+    },
+    {
+     "level": 5,
+     "cost": 1290240,
+     "buildHours": 24.0,
+     "capacity": 146,
+     "rentPerMonth": 115160,
+     "maintenancePerMonth": 9210,
+     "powerKw": -218.5
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "casetta_borgo",
+   "category": "residential",
+   "name": "Casetta del borgo",
+   "footprint": {
+    "w": 7,
+    "d": 7
+   },
+   "height": 8.0,
+   "model": {
+    "family": "house",
+    "roof": "gabled",
+    "floors": 2,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 41160,
+     "buildHours": 6.0,
+     "capacity": 3,
+     "rentPerMonth": 2060,
+     "maintenancePerMonth": 160,
+     "powerKw": -4.5
+    },
+    {
+     "level": 2,
+     "cost": 28810,
+     "buildHours": 9.0,
+     "capacity": 4,
+     "rentPerMonth": 2680,
+     "maintenancePerMonth": 210,
+     "powerKw": -5.9
+    },
+    {
+     "level": 3,
+     "cost": 37040,
+     "buildHours": 12.0,
+     "capacity": 5,
+     "rentPerMonth": 3480,
+     "maintenancePerMonth": 280,
+     "powerKw": -7.6
+    },
+    {
+     "level": 4,
+     "cost": 49390,
+     "buildHours": 15.0,
+     "capacity": 7,
+     "rentPerMonth": 4520,
+     "maintenancePerMonth": 360,
+     "powerKw": -9.9
+    },
+    {
+     "level": 5,
+     "cost": 65860,
+     "buildHours": 18.0,
+     "capacity": 9,
+     "rentPerMonth": 5880,
+     "maintenancePerMonth": 470,
+     "powerKw": -12.9
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "villa_liberty",
+   "category": "residential",
+   "name": "Villa liberty",
+   "footprint": {
+    "w": 16,
+    "d": 14
+   },
+   "height": 11.2,
+   "model": {
+    "family": "house",
+    "roof": "hipped",
+    "floors": 3,
+    "style": "historic"
+   },
+   "unlock": {
+    "playerLevel": 15
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 282240,
+     "buildHours": 7.0,
+     "capacity": 18,
+     "rentPerMonth": 14110,
+     "maintenancePerMonth": 1130,
+     "powerKw": -27.0
+    },
+    {
+     "level": 2,
+     "cost": 197570,
+     "buildHours": 10.5,
+     "capacity": 23,
+     "rentPerMonth": 18350,
+     "maintenancePerMonth": 1470,
+     "powerKw": -35.1
+    },
+    {
+     "level": 3,
+     "cost": 254020,
+     "buildHours": 14.0,
+     "capacity": 30,
+     "rentPerMonth": 23850,
+     "maintenancePerMonth": 1910,
+     "powerKw": -45.6
+    },
+    {
+     "level": 4,
+     "cost": 338690,
+     "buildHours": 17.5,
+     "capacity": 40,
+     "rentPerMonth": 31000,
+     "maintenancePerMonth": 2480,
+     "powerKw": -59.3
+    },
+    {
+     "level": 5,
+     "cost": 451580,
+     "buildHours": 21.0,
+     "capacity": 51,
+     "rentPerMonth": 40310,
+     "maintenancePerMonth": 3220,
+     "powerKw": -77.1
+    }
+   ],
+   "variants": [
+    {
+     "key": "ocra",
+     "name": "Intonaco ocra",
+     "wall": "#e3c08a",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "rosa",
+     "name": "Rosa antico",
+     "wall": "#e8bca4",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "crema",
+     "name": "Crema",
+     "wall": "#f1e6cf",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "pietra",
+     "name": "Pietra della Majella",
+     "wall": "#cdbb9a",
+     "roof": "#c0623f",
+     "costMultiplier": 1.15
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  },
+  {
+   "key": "grattacielo",
+   "category": "residential",
+   "name": "Grattacielo",
+   "footprint": {
+    "w": 28,
+    "d": 28
+   },
+   "height": 80.6,
+   "model": {
+    "family": "house",
+    "roof": "flat",
+    "floors": 25,
+    "style": "modern"
+   },
+   "unlock": {
+    "playerLevel": 28
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 8232000,
+     "buildHours": 29.0,
+     "capacity": 516,
+     "rentPerMonth": 411600,
+     "maintenancePerMonth": 32930,
+     "powerKw": -774.0
+    },
+    {
+     "level": 2,
+     "cost": 5762400,
+     "buildHours": 43.5,
+     "capacity": 671,
+     "rentPerMonth": 535080,
+     "maintenancePerMonth": 42810,
+     "powerKw": -1006.2
+    },
+    {
+     "level": 3,
+     "cost": 7408800,
+     "buildHours": 58.0,
+     "capacity": 872,
+     "rentPerMonth": 695600,
+     "maintenancePerMonth": 55650,
+     "powerKw": -1308.1
+    },
+    {
+     "level": 4,
+     "cost": 9878400,
+     "buildHours": 72.5,
+     "capacity": 1134,
+     "rentPerMonth": 904290,
+     "maintenancePerMonth": 72340,
+     "powerKw": -1700.5
+    },
+    {
+     "level": 5,
+     "cost": 13171200,
+     "buildHours": 87.0,
+     "capacity": 1474,
+     "rentPerMonth": 1175570,
+     "maintenancePerMonth": 94050,
+     "powerKw": -2210.6
+    }
+   ],
+   "variants": [
+    {
+     "key": "bianco",
+     "name": "Bianco",
+     "wall": "#f2eee6",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "sabbia",
+     "name": "Sabbia",
+     "wall": "#e6cfae",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "grigio",
+     "name": "Grigio perla",
+     "wall": "#dcd6cc",
+     "roof": "#c0623f"
+    },
+    {
+     "key": "mattoni",
+     "name": "Mattoni a vista",
+     "wall": "#b4704f",
+     "roof": "#c0623f",
+     "costMultiplier": 1.1
+    }
+   ],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 20,
+    "landValue": 1
+   },
+   "tags": [
+    "casa"
+   ]
+  }
+ ]
+}

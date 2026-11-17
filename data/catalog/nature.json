@@ -1,0 +1,518 @@
+{
+ "_info": "Generato da tools/catalog/genera_catalogo.py: modificare lo script, non questo file.",
+ "items": [
+  {
+   "key": "olivo",
+   "category": "nature",
+   "name": "Olivo",
+   "footprint": {
+    "w": 3,
+    "d": 3
+   },
+   "height": 5,
+   "model": {
+    "family": "tree",
+    "kind": "olive"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 250,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.3,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "pino_domestico",
+   "category": "nature",
+   "name": "Pino domestico",
+   "footprint": {
+    "w": 5,
+    "d": 5
+   },
+   "height": 13,
+   "model": {
+    "family": "tree",
+    "kind": "stonepine"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 400,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.4,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "cipresso",
+   "category": "nature",
+   "name": "Cipresso",
+   "footprint": {
+    "w": 2,
+    "d": 2
+   },
+   "height": 13,
+   "model": {
+    "family": "tree",
+    "kind": "cypress"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 300,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.3,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "quercia",
+   "category": "nature",
+   "name": "Quercia",
+   "footprint": {
+    "w": 6,
+    "d": 6
+   },
+   "height": 12,
+   "model": {
+    "family": "tree",
+    "kind": "broadleaf"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 450,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "tiglio",
+   "category": "nature",
+   "name": "Tiglio",
+   "footprint": {
+    "w": 5,
+    "d": 5
+   },
+   "height": 11,
+   "model": {
+    "family": "tree",
+    "kind": "broadleaf"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 380,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.4,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "palma",
+   "category": "nature",
+   "name": "Palma",
+   "footprint": {
+    "w": 3,
+    "d": 3
+   },
+   "height": 9,
+   "model": {
+    "family": "tree",
+    "kind": "palm"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 600,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 10
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.4,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "abete",
+   "category": "nature",
+   "name": "Abete",
+   "footprint": {
+    "w": 4,
+    "d": 4
+   },
+   "height": 14,
+   "model": {
+    "family": "tree",
+    "kind": "conifer"
+   },
+   "unlock": {
+    "playerLevel": 3
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 350,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.3,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "ciliegio",
+   "category": "nature",
+   "name": "Ciliegio",
+   "footprint": {
+    "w": 4,
+    "d": 4
+   },
+   "height": 5,
+   "model": {
+    "family": "tree",
+    "kind": "fruit"
+   },
+   "unlock": {
+    "playerLevel": 2
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 320,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.5,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "siepe",
+   "category": "nature",
+   "name": "Siepe",
+   "footprint": {
+    "w": 6,
+    "d": 1
+   },
+   "height": 1.5,
+   "model": {
+    "family": "hedge"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 120,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.1,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura"
+   ]
+  },
+  {
+   "key": "aiuola",
+   "category": "nature",
+   "name": "Aiuola fiorita",
+   "footprint": {
+    "w": 4,
+    "d": 4
+   },
+   "height": 0.5,
+   "model": {
+    "family": "flowerbed"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 180,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.3,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura"
+   ]
+  },
+  {
+   "key": "prato",
+   "category": "nature",
+   "name": "Prato",
+   "footprint": {
+    "w": 10,
+    "d": 10
+   },
+   "height": 0.1,
+   "model": {
+    "family": "lawn"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 150,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.2,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura"
+   ]
+  },
+  {
+   "key": "cespugli",
+   "category": "nature",
+   "name": "Cespugli",
+   "footprint": {
+    "w": 3,
+    "d": 2
+   },
+   "height": 1.5,
+   "model": {
+    "family": "shrubs"
+   },
+   "unlock": {
+    "playerLevel": 1
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 90,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 0
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 0.1,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura"
+   ]
+  },
+  {
+   "key": "laghetto",
+   "category": "nature",
+   "name": "Laghetto",
+   "footprint": {
+    "w": 12,
+    "d": 8
+   },
+   "height": 0.5,
+   "model": {
+    "family": "pond"
+   },
+   "unlock": {
+    "playerLevel": 5
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 3500,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 40
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 1.5,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura"
+   ]
+  },
+  {
+   "key": "bosco_piccolo",
+   "category": "nature",
+   "name": "Boschetto",
+   "footprint": {
+    "w": 20,
+    "d": 20
+   },
+   "height": 12,
+   "model": {
+    "family": "grove"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 6000,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 60
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 2,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura",
+    "tree"
+   ]
+  },
+  {
+   "key": "giardino_rose",
+   "category": "nature",
+   "name": "Roseto",
+   "footprint": {
+    "w": 8,
+    "d": 6
+   },
+   "height": 1,
+   "model": {
+    "family": "flowerbed",
+    "color": "rose"
+   },
+   "unlock": {
+    "playerLevel": 4
+   },
+   "levels": [
+    {
+     "level": 1,
+     "cost": 900,
+     "buildHours": 1.0,
+     "maintenancePerMonth": 10
+    }
+   ],
+   "variants": [],
+   "effects": {
+    "happiness": 1,
+    "happinessRadius": 40,
+    "landValue": 0.5
+   },
+   "tags": [
+    "natura"
+   ]
+  }
+ ]
+}

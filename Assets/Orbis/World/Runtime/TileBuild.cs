@@ -36,7 +36,9 @@ namespace Orbis.World
     /// <summary>Costruzione di un tile a passi (vedi <see cref="WorkRunner"/>): nessuna chiamata a Unity qui dentro.</summary>
     public static class TileBuild
     {
-        public static IEnumerator<object> Run(Func<byte[]> file, TileData cached, double scale, TileLod lod, TileBuildResult r)
+        /// <param name="hidden">edifici OSM da non disegnare (demoliti dal giocatore): chiavi GameState.OsmKey, copia per il thread</param>
+        public static IEnumerator<object> Run(Func<byte[]> file, TileData cached, double scale, TileLod lod, TileBuildResult r,
+            HashSet<long> hidden = null)
         {
             var data = cached;
             if (data == null)
@@ -91,6 +93,7 @@ namespace Orbis.World
                 {
                     var b = data.Buildings[i];
                     if (b.HasFlag(BuildingFlag.Underground)) continue;
+                    if (hidden != null && hidden.Contains(((long)b.OsmType << 60) | b.OsmId)) continue;
                     var mb = ChunkAt((b.Bounds.MinX + b.Bounds.MaxX) / 2, (b.Bounds.MinY + b.Bounds.MaxY) / 2);
                     bool done = !string.IsNullOrEmpty(b.Landmark) && lod == TileLod.Full &&
                                 landmarks.BuildBuilding(b, ground, mb, tallest.TryGetValue(b.Landmark, out var th) && b.Height >= th);

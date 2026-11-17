@@ -55,6 +55,18 @@ namespace Orbis.World
             if (Content != null) Content.gameObject.SetActive(visible);
         }
 
+        /// <summary>Edifici OSM nascosti (demoliti nella partita): chiave (tipo &lt;&lt; 60 | id).</summary>
+        public readonly HashSet<long> HiddenBuildings = new HashSet<long>();
+
+        /// <summary>Ricostruisce un tile già caricato (es. dopo una demolizione), con gli stessi dati.</summary>
+        public void Rebuild(TileId id)
+        {
+            if (!_views.TryGetValue(id, out var v) || v.Data == null || _building.ContainsKey(id)) return;
+            StartBuild(id, null, v.Data, v.Lod, 0);
+        }
+
+        public bool IsHidden(Orbis.Core.World.Tiles.BuildingInfo b) => HiddenBuildings.Count > 0 && HiddenBuildings.Contains(((long)b.OsmType << 60) | b.OsmId);
+
         public event Action<TileView> TileLoaded;
         public event Action<TileId> TileUnloaded;
 
@@ -233,7 +245,8 @@ namespace Orbis.World
             var result = new TileBuildResult();
             _building[id] = lod;
             double scale = Region.Scale;
-            _runner.Enqueue(TileBuild.Run(() => file, cached, scale, lod, result), priority,
+            var hidden = HiddenBuildings.Count > 0 ? new HashSet<long>(HiddenBuildings) : null;
+            _runner.Enqueue(TileBuild.Run(() => file, cached, scale, lod, result, hidden), priority,
                 () => Finish(id, result),
                 e =>
                 {

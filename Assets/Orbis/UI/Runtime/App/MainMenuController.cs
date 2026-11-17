@@ -11,7 +11,7 @@ namespace Orbis.UI.App
 {
     /// <summary>
     /// Menu principale (docs/04 §1): Continua, Nuova partita e navbar con Amici, Impostazioni, Crediti.
-    /// Nuova partita entra nel mondo (Chieti), Impostazioni apre il pannello; le altre voci mostrano "in arrivo".
+    /// Nuova partita e Continua aprono i loro pannelli, Impostazioni il suo; le altre voci mostrano "in arrivo".
     /// </summary>
     public sealed class MainMenuController
     {
@@ -41,7 +41,11 @@ namespace Orbis.UI.App
                 services.Haptics.Play(HapticKind.Selection);
                 NewGame?.Invoke();
             };
-            _continue.clicked += ComingSoon;
+            _continue.clicked += () =>
+            {
+                services.Haptics.Play(HapticKind.Selection);
+                Continue?.Invoke();
+            };
             foreach (var id in new[] { "nav-friends", "nav-credits" })
                 Require<Button>(menu, id).clicked += ComingSoon;
             Require<Button>(menu, "nav-settings").clicked += settings.Open;
@@ -79,10 +83,19 @@ namespace Orbis.UI.App
         /// <summary>"Nuova partita" premuto.</summary>
         public event Action NewGame;
 
+        /// <summary>"Continua" premuto (partite salvate).</summary>
+        public event Action Continue;
+
         private void ComingSoon()
         {
             _services.Haptics.Play(HapticKind.Selection);
-            _toastText.text = Loc.Get("menu.coming_soon");
+            ShowToast(Loc.Get("menu.coming_soon"));
+        }
+
+        /// <summary>Avviso a capsula sopra tutte le schermate.</summary>
+        public void ShowToast(string text)
+        {
+            _toastText.text = text;
             _toast.AddToClassList("toast--visible");
             _toastHide?.Pause();
             _toastHide = _toast.schedule.Execute(() => _toast.RemoveFromClassList("toast--visible")).StartingIn(ToastMs);

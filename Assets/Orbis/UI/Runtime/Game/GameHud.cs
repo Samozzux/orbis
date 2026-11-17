@@ -42,12 +42,22 @@ namespace Orbis.UI.Game
         private readonly Label _detailsTitle;
         private readonly Label _detailsSubtitle;
         private readonly VisualElement _rows;
+        private readonly VisualElement _actions;
         private readonly StreetLabels _labels;
         private WeatherKind _shownWeather = (WeatherKind)(-1);
         private string _shownTime;
 
         public event Action Home;
         public event Action<bool> LotsToggled;
+
+        /// <summary>Dettagli personalizzati (elementi piazzati): true se gestiti.</summary>
+        public Func<WorldSelection, bool> CustomDetails;
+
+        /// <summary>Azioni aggiuntive per gli edifici reali (es. demolisci).</summary>
+        public Action<WorldSelection, VisualElement> ExtraActions;
+
+        /// <summary>Contenitore dei pulsanti d'azione del pannello Dettagli.</summary>
+        public VisualElement DetailsActions => _actions;
 
         public bool LotsVisible { get; private set; }
         public bool StreetsVisible { get; private set; }
@@ -76,6 +86,7 @@ namespace Orbis.UI.Game
             _detailsTitle = Req<Label>("details-title");
             _detailsSubtitle = Req<Label>("details-subtitle");
             _rows = Req<VisualElement>("details-rows");
+            _actions = Req<VisualElement>("details-actions");
 
             Req<Button>("hud-home").clicked += () => Home?.Invoke();
             Req<Button>("hud-speed").clicked += CycleSpeed;
@@ -88,6 +99,7 @@ namespace Orbis.UI.Game
             session.SelectionChanged += ShowDetails;
             session.CameraRig.ModeChanged += topDown => _viewIcon.icon = topDown ? OrbisIconKind.Cube : OrbisIconKind.Map;
             session.CameraRig.IsOverUi = IsOverUi;
+            session.CameraRig.KeyboardBlocked = IsTyping;
             _labels = new StreetLabels(screen, session);
             StreetsVisible = PlayerPrefs.GetInt(StreetsPref, 1) == 1;
             _labels.Visible = StreetsVisible;
@@ -192,6 +204,13 @@ namespace Orbis.UI.Game
             LotsToggled?.Invoke(LotsVisible);
         }
 
+        /// <summary>Il fuoco è in un campo di testo (ricerca del catalogo, nome della partita)?</summary>
+        public bool IsTyping()
+        {
+            var focused = _root.panel?.focusController?.focusedElement as VisualElement;
+            return focused != null && (focused is TextField || focused.GetFirstAncestorOfType<TextField>() != null);
+        }
+
         /// <summary>Il punto (pixel, y in basso) è sopra un controllo dell'interfaccia?</summary>
         public bool IsOverUi(Vector2 screen)
         {
@@ -201,7 +220,7 @@ namespace Orbis.UI.Game
             for (var e = panel.Pick(p); e != null; e = e.parent)
             {
                 if (e is Button || e.ClassListContains("details") || e.ClassListContains("hud-clock") || e.ClassListContains("layers--visible") ||
-                    e.ClassListContains("sheet-layer--visible") || e is ScrollView)
+                    e.ClassListContains("sheet-layer--visible") || e.ClassListContains("build-bar") || e is ScrollView)
                     return true;
             }
             return false;
@@ -209,21 +228,53 @@ namespace Orbis.UI.Game
 
         // ------------------------------------------------------------------ dettagli
 
+        public void ClearSelection() => _session.Select(null);
+
+        /// <summary>Apre il pannello Dettagli vuoto con titolo e sottotitolo (le righe si aggiungono con <see cref="DetailsRow"/>).</summary>
+        public void ShowDetailsPanel(string title, string subtitle, bool landmark)
+        {
+            _detailsTitle.text = title;
+            _detailsSubtitle.text = subtitle ?? "";
+            _details.EnableInClassList("details--landmark", landmark);
+            _rows.Clear();
+            _actions.Clear();
+            _details.AddToClassList("details--visible");
+            _screen.AddToClassList("game--details");
+        }
+
+        public void DetailsRow(string label, string value)
+        {
+            var row = new VisualElement();
+            row.AddToClassList("details__row");
+            var l = new Label(label);
+            l.AddToClassList("details__label");
+            var v = new Label(value);
+            v.AddToClassList("details__value");
+            row.Add(l);
+            row.Add(v);
+            _rows.Add(row);
+        }
+
         private void ShowDetails(WorldSelection s)
         {
+            if (s != null && s.PlacedObjectId != 0 && CustomDetails != null)
+            {
+                _services.Haptics.Play(HapticKind.Selection);
+                if (CustomDetails(s)) return;
+            }
             if (s == null || s.Building == null)
             {
                 _details.RemoveFromClassList("details--visible");
+                _screen.RemoveFromClassList("game--details");
+                _actions.Clear();
                 return;
             }
             _services.Haptics.Play(HapticKind.Selection);
             var b = s.Building;
             string use = Loc.Get("use." + b.Use);
             string title = !string.IsNullOrEmpty(b.Name) ? b.Name : FirstNamedPoi(s) ?? use;
-            _detailsTitle.text = title;
-            _detailsSubtitle.text = title == use ? (b.Address ?? "") : use;
-            _details.EnableInClassList("details--landmark", !string.IsNullOrEmpty(b.Landmark));
-            _rows.Clear();
+            ShowDetailsPanel(title, title == use ? (b.Address ?? "") : use, !string.IsNullOrEmpty(b.Landmark));
+            ExtraActions?.Invoke(s, _actions);
             if (!string.IsNullOrEmpty(b.Landmark)) Row("details.landmark", Loc.Get("use." + b.Use));
             if (!string.IsNullOrEmpty(b.Address)) Row("details.address", b.Address);
             Row("details.use", use);
@@ -242,7 +293,6 @@ namespace Orbis.UI.Game
             }
             Row("details.position", string.Format(Italian, "{0:0.00000}°N  {1:0.00000}°E", s.Lat, s.Lon));
             Row("details.source", Loc.Format("details.source.value", Loc.Get("osm." + OsmKind(b.OsmType)), b.OsmId));
-            _details.AddToClassList("details--visible");
         }
 
         private static string OsmKind(OsmType t) => t == OsmType.Relation ? "relation" : (t == OsmType.Node ? "node" : "way");
@@ -264,17 +314,6 @@ namespace Orbis.UI.Game
             return v.Length > 0 ? char.ToUpperInvariant(v[0]) + v.Substring(1) : v;
         }
 
-        private void Row(string labelKey, string value)
-        {
-            var row = new VisualElement();
-            row.AddToClassList("details__row");
-            var l = new Label(Loc.Get(labelKey));
-            l.AddToClassList("details__label");
-            var v = new Label(value);
-            v.AddToClassList("details__value");
-            row.Add(l);
-            row.Add(v);
-            _rows.Add(row);
-        }
+        private void Row(string labelKey, string value) => DetailsRow(Loc.Get(labelKey), value);
     }
 }

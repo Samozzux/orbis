@@ -875,6 +875,578 @@ MonoBehaviour:
     m_Key: game.layers.lots.detail
     m_Metadata:
       m_Items: []
+  - m_Id: 422209360224256
+    m_Key: build.open
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195776
+    m_Key: game.level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195777
+    m_Key: game.undone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195778
+    m_Key: game.redone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195779
+    m_Key: game.event.built
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195780
+    m_Key: game.event.mission
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195781
+    m_Key: game.event.level
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195782
+    m_Key: mission.reward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195783
+    m_Key: build.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195784
+    m_Key: build.locked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195785
+    m_Key: build.size
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195786
+    m_Key: build.residents
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195787
+    m_Key: build.jobs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195788
+    m_Key: build.power
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195789
+    m_Key: build.rent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195790
+    m_Key: build.production
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195791
+    m_Key: build.happy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195792
+    m_Key: build.hint.pointer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195793
+    m_Key: build.hint.touch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195794
+    m_Key: build.started
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195795
+    m_Key: result.Ok
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195796
+    m_Key: result.OutsideLot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195797
+    m_Key: result.Occupied
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195798
+    m_Key: result.NotUnlocked
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195799
+    m_Key: result.NotEnoughCash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195800
+    m_Key: result.LotNotLoaded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195801
+    m_Key: result.UnknownItem
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195802
+    m_Key: result.UnknownObject
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195803
+    m_Key: result.MaxLevel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195804
+    m_Key: result.NotReady
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195805
+    m_Key: category.Residential
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195806
+    m_Key: category.Commercial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195807
+    m_Key: category.Industrial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195808
+    m_Key: category.Energy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195809
+    m_Key: category.Agriculture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195810
+    m_Key: category.Services
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195811
+    m_Key: category.Sports
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195812
+    m_Key: category.Culture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195813
+    m_Key: category.Transport
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195814
+    m_Key: category.Nature
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195815
+    m_Key: category.Decoration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195816
+    m_Key: finance.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195817
+    m_Key: finance.city
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195818
+    m_Key: finance.cash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195819
+    m_Key: finance.population
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195820
+    m_Key: finance.jobs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195821
+    m_Key: finance.happiness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195822
+    m_Key: finance.energy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195823
+    m_Key: finance.kw
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195824
+    m_Key: finance.forecast
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195825
+    m_Key: finance.taxes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195826
+    m_Key: finance.day
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195827
+    m_Key: finance.month
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195828
+    m_Key: finance.net
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195829
+    m_Key: tax.Residential
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195830
+    m_Key: tax.Commercial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195831
+    m_Key: tax.Industrial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195832
+    m_Key: ledger.ResidentialTax
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195833
+    m_Key: ledger.CommercialTax
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195834
+    m_Key: ledger.IndustrialTax
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195835
+    m_Key: ledger.Rent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195836
+    m_Key: ledger.PublicLand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195837
+    m_Key: ledger.Production
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195838
+    m_Key: ledger.EnergySales
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195839
+    m_Key: ledger.Missions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195840
+    m_Key: ledger.LevelRewards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195841
+    m_Key: ledger.Construction
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195842
+    m_Key: ledger.Upgrades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195843
+    m_Key: ledger.Demolition
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195844
+    m_Key: ledger.Moves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195845
+    m_Key: ledger.Variants
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195846
+    m_Key: ledger.Maintenance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195847
+    m_Key: ledger.Services
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195848
+    m_Key: ledger.EnergyPurchase
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195849
+    m_Key: rewind.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195850
+    m_Key: rewind.text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195851
+    m_Key: rewind.row
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195852
+    m_Key: rewind.go
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195853
+    m_Key: rewind.confirm.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195854
+    m_Key: rewind.confirm.text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195855
+    m_Key: rewind.done
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195856
+    m_Key: details.placed.subtitle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195857
+    m_Key: details.placed.state
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195858
+    m_Key: details.placed.ready
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195859
+    m_Key: details.placed.building
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195860
+    m_Key: details.placed.residents
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195861
+    m_Key: details.placed.jobs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195862
+    m_Key: details.placed.rent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195863
+    m_Key: details.placed.production
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195864
+    m_Key: details.placed.power
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195865
+    m_Key: details.placed.maintenance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195866
+    m_Key: details.placed.footprint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195867
+    m_Key: details.placed.variant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195868
+    m_Key: details.action.upgrade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195869
+    m_Key: details.action.variant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195870
+    m_Key: details.action.move
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195871
+    m_Key: details.action.rotate
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195872
+    m_Key: details.action.demolish
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195873
+    m_Key: details.action.demolish_cost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195874
+    m_Key: details.demolish.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195875
+    m_Key: details.demolish.text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195876
+    m_Key: details.demolish.osm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195877
+    m_Key: details.demolished
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195878
+    m_Key: panel.cancel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195879
+    m_Key: newgame.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195880
+    m_Key: newgame.place
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195881
+    m_Key: newgame.city
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195882
+    m_Key: newgame.place.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195883
+    m_Key: newgame.name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195884
+    m_Key: newgame.default_name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195885
+    m_Key: newgame.difficulty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195886
+    m_Key: newgame.difficulty.Easy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195887
+    m_Key: newgame.difficulty.Normal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195888
+    m_Key: newgame.difficulty.Hard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195889
+    m_Key: newgame.difficulty.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195890
+    m_Key: newgame.options
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195891
+    m_Key: newgame.offline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195892
+    m_Key: newgame.offline.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195893
+    m_Key: newgame.creative
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195894
+    m_Key: newgame.creative.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195895
+    m_Key: newgame.start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195896
+    m_Key: saves.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195897
+    m_Key: saves.loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195898
+    m_Key: saves.empty
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195899
+    m_Key: saves.info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195900
+    m_Key: saves.play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195901
+    m_Key: saves.delete
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195902
+    m_Key: saves.delete.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195903
+    m_Key: saves.delete.text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195904
+    m_Key: saves.error
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195905
+    m_Key: offline.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195906
+    m_Key: offline.text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195907
+    m_Key: offline.income
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195908
+    m_Key: offline.expenses
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195909
+    m_Key: offline.built
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195910
+    m_Key: offline.missions
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195911
+    m_Key: offline.levels
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195912
+    m_Key: offline.ok
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195913
+    m_Key: time.days
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195914
+    m_Key: time.hours
+    m_Metadata:
+      m_Items: []
+  - m_Id: 422209381195915
+    m_Key: time.minutes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430700145664000
+    m_Key: build.search
+    m_Metadata:
+      m_Items: []
+  - m_Id: 430700158246912
+    m_Key: build.search.none
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

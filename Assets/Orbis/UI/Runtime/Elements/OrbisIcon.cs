@@ -29,6 +29,20 @@ namespace Orbis.UI.Elements
         Pin,
         Map,
         Cube,
+        Coins,
+        Undo,
+        Redo,
+        Rewind,
+        Rotate,
+        Check,
+        Star,
+        Lock,
+        Trash,
+        Upgrade,
+        Palette,
+        Move,
+        Chart,
+        Flag,
     }
 
     /// <summary>Icone lineari disegnate in vettoriale (niente file esterni), nel colore del testo (USS "color").</summary>
@@ -280,6 +294,131 @@ namespace Orbis.UI.Elements
                     p.MoveTo(P(0.16f, 0.32f)); p.LineTo(P(0.5f, 0.5f)); p.LineTo(P(0.84f, 0.32f));
                     p.MoveTo(P(0.5f, 0.5f)); p.LineTo(P(0.5f, 0.88f));
                     p.Stroke();
+                    break;
+
+                case OrbisIconKind.Coins:
+                    Circle(p, P(0.42f, 0.42f), s * 0.24f);
+                    Arc(p, P(0.6f, 0.6f), s * 0.24f, -60f, 150f);
+                    p.BeginPath();
+                    p.MoveTo(P(0.42f, 0.32f)); p.LineTo(P(0.42f, 0.52f));
+                    p.Stroke();
+                    break;
+
+                case OrbisIconKind.Undo:
+                case OrbisIconKind.Redo:
+                    {
+                        bool undo = _icon == OrbisIconKind.Undo;
+                        float sx = undo ? 1 : -1;
+                        Vector2 Q(float x, float y) => P(0.5f + (x - 0.5f) * sx, y);
+                        p.BeginPath();
+                        p.MoveTo(Q(0.22f, 0.42f));
+                        p.LineTo(Q(0.62f, 0.42f));
+                        p.ArcTo(Q(0.84f, 0.42f), Q(0.84f, 0.64f), s * 0.2f);
+                        p.ArcTo(Q(0.84f, 0.84f), Q(0.62f, 0.84f), s * 0.2f);
+                        p.LineTo(Q(0.4f, 0.84f));
+                        p.Stroke();
+                        p.BeginPath();
+                        p.MoveTo(Q(0.38f, 0.26f)); p.LineTo(Q(0.22f, 0.42f)); p.LineTo(Q(0.38f, 0.58f));
+                        p.Stroke();
+                        break;
+                    }
+
+                case OrbisIconKind.Rewind:
+                    for (var i = 0; i < 2; i++)
+                    {
+                        var dx = i * 0.3f;
+                        p.BeginPath();
+                        p.MoveTo(P(0.84f - dx, 0.26f)); p.LineTo(P(0.5f - dx, 0.5f)); p.LineTo(P(0.84f - dx, 0.74f));
+                        p.ClosePath();
+                        p.Fill();
+                    }
+                    break;
+
+                case OrbisIconKind.Rotate:
+                    Arc(p, P(0.5f, 0.5f), s * 0.3f, 210f, 480f);
+                    p.BeginPath();
+                    p.MoveTo(P(0.24f, 0.3f)); p.LineTo(P(0.24f, 0.5f)); p.LineTo(P(0.44f, 0.5f));
+                    p.Stroke();
+                    break;
+
+                case OrbisIconKind.Check:
+                    p.BeginPath();
+                    p.MoveTo(P(0.2f, 0.52f)); p.LineTo(P(0.42f, 0.74f)); p.LineTo(P(0.82f, 0.28f));
+                    p.Stroke();
+                    break;
+
+                case OrbisIconKind.Star:
+                    p.BeginPath();
+                    for (var i = 0; i < 10; i++)
+                    {
+                        var a = -Mathf.PI / 2 + i * Mathf.PI / 5;
+                        var r = i % 2 == 0 ? 0.4f : 0.17f;
+                        var pt = P(0.5f + Mathf.Cos(a) * r, 0.53f + Mathf.Sin(a) * r);
+                        if (i == 0) p.MoveTo(pt); else p.LineTo(pt);
+                    }
+                    p.ClosePath();
+                    p.Fill();
+                    break;
+
+                case OrbisIconKind.Lock:
+                    RoundedRect(p, P(0.24f, 0.46f), P(0.76f, 0.86f), s * 0.06f);
+                    Arc(p, P(0.5f, 0.46f), s * 0.17f, 180f, 360f);
+                    break;
+
+                case OrbisIconKind.Trash:
+                    p.BeginPath();
+                    p.MoveTo(P(0.18f, 0.28f)); p.LineTo(P(0.82f, 0.28f));
+                    p.MoveTo(P(0.4f, 0.28f)); p.LineTo(P(0.42f, 0.16f)); p.LineTo(P(0.58f, 0.16f)); p.LineTo(P(0.6f, 0.28f));
+                    p.MoveTo(P(0.26f, 0.3f)); p.LineTo(P(0.3f, 0.86f)); p.LineTo(P(0.7f, 0.86f)); p.LineTo(P(0.74f, 0.3f));
+                    p.Stroke();
+                    break;
+
+                case OrbisIconKind.Upgrade:
+                    p.BeginPath();
+                    p.MoveTo(P(0.5f, 0.16f)); p.LineTo(P(0.84f, 0.52f)); p.LineTo(P(0.62f, 0.52f)); p.LineTo(P(0.62f, 0.84f));
+                    p.LineTo(P(0.38f, 0.84f)); p.LineTo(P(0.38f, 0.52f)); p.LineTo(P(0.16f, 0.52f));
+                    p.ClosePath();
+                    p.Fill();
+                    break;
+
+                case OrbisIconKind.Palette:
+                    Circle(p, P(0.5f, 0.5f), s * 0.36f);
+                    for (var i = 0; i < 4; i++)
+                    {
+                        var a = i * Mathf.PI / 2 + 0.6f;
+                        p.BeginPath();
+                        p.Arc(P(0.5f + Mathf.Cos(a) * 0.2f, 0.5f + Mathf.Sin(a) * 0.2f), s * 0.06f, Angle.Degrees(0f), Angle.Degrees(360f));
+                        p.Fill();
+                    }
+                    break;
+
+                case OrbisIconKind.Move:
+                    p.BeginPath();
+                    p.MoveTo(P(0.5f, 0.14f)); p.LineTo(P(0.5f, 0.86f));
+                    p.MoveTo(P(0.14f, 0.5f)); p.LineTo(P(0.86f, 0.5f));
+                    p.MoveTo(P(0.4f, 0.24f)); p.LineTo(P(0.5f, 0.14f)); p.LineTo(P(0.6f, 0.24f));
+                    p.MoveTo(P(0.4f, 0.76f)); p.LineTo(P(0.5f, 0.86f)); p.LineTo(P(0.6f, 0.76f));
+                    p.MoveTo(P(0.24f, 0.4f)); p.LineTo(P(0.14f, 0.5f)); p.LineTo(P(0.24f, 0.6f));
+                    p.MoveTo(P(0.76f, 0.4f)); p.LineTo(P(0.86f, 0.5f)); p.LineTo(P(0.76f, 0.6f));
+                    p.Stroke();
+                    break;
+
+                case OrbisIconKind.Chart:
+                    for (var i = 0; i < 3; i++)
+                    {
+                        var h = new[] { 0.3f, 0.5f, 0.68f }[i];
+                        RoundedRect(p, P(0.18f + i * 0.24f, 0.84f - h), P(0.34f + i * 0.24f, 0.84f), s * 0.03f);
+                    }
+                    break;
+
+                case OrbisIconKind.Flag:
+                    p.BeginPath();
+                    p.MoveTo(P(0.26f, 0.88f)); p.LineTo(P(0.26f, 0.14f));
+                    p.Stroke();
+                    p.BeginPath();
+                    p.MoveTo(P(0.28f, 0.16f)); p.LineTo(P(0.78f, 0.28f)); p.LineTo(P(0.28f, 0.46f));
+                    p.ClosePath();
+                    p.Fill();
                     break;
             }
         }
