@@ -392,7 +392,7 @@ Branch `m2-costruzione`.
 4. **Riferimenti tra assembly**: `Orbis.UI` usa anche `Orbis.Platform` (per profilo del dispositivo e servizi), non solo Core e Gameplay come nella tabella di `docs/01` §2.
 
 ## Problemi aperti
-- **Test PlayMode dei clic sul menu (solo in locale)** (visto il 18/11): con il pack del mondo presente, `PointerClickTests` (Amici, Impostazioni, Nuova partita) fallisce se gira dopo `GameplayTests`; da solo passa (4/4). Succede anche su `main`, quindi non dipende dai ritocchi. In CI passa. Probabile stato lasciato dalla partita di prova (isolamento tra i test): da sistemare.
+- **Test PlayMode dei clic sul menu (solo in locale)** (visto il 18/11, risolto il 18/11): non era un problema del gioco. I test dei clic col mouse vanno lanciati con `-nographics`, come in CI e come dice il loro commento: con la GPU del Mac il mouse vero si mescola a quello del test e, dopo altri test, i clic si perdono. Con `-nographics` l'intera suite PlayMode passa anche in locale, compresa la partita vera di `GameplayTests` col pack. Ora con la GPU quei test si saltano da soli, con la spiegazione, invece di fallire.
 - **Build iOS in coda** (17/11, risolto su richiesta di Samuele): la build iOS di `main` aspettava da ore un runner `macos-26` di GitHub tenendo occupata la licenza Unity condivisa (`concurrency: unity-license`), e test e altre build restavano bloccati. Ora `ios-build.yml` ha due job: l'esportazione Unity → progetto Xcode gira su Linux (con la licenza, runner subito disponibili), la compilazione Xcode → IPA su macOS senza licenza. Se il Mac tarda, aspetta solo l'IPA.
 - **Lotti con griglia anomala** (visto il 17/11): almeno un lotto di Chieti (id 2476, 158×161 m) ha origine o angolo della griglia che rendono enorme la sua griglia intera. Per costruire non è un problema (si controlla solo sotto l'elemento), ma va guardato nella pipeline quando si rigenera il pack.
 - **Unity terminato dal sistema in CI (codice 137)**: due volte (build Android del 15/11 e build web del 16/11) Unity è stato ucciso un secondo dopo l'avvio, sempre con la cartella `Library` ripristinata dalla cache; un'altra build con cache invece è andata bene, e la build web era sola in coda (non è un conflitto di licenza). Causa non ancora certa. Contromisura: `.github/scripts/run-unity.sh` (usato da tutti i job Unity) in quel caso registra memoria e messaggi del kernel, cancella `Library` e riprova una volta da zero. Se la diagnostica indicherà la causa, si correggerà alla radice. Prima prova dopo la correzione (16/11, commit `c16787b`): iOS, web e Android verdi senza bisogno del nuovo tentativo.
@@ -405,6 +405,26 @@ Branch `m2-costruzione`.
 - ✅ Fatto il 16/11: prova di M0 sui dispositivi (tag `v0.0.0`).
 - ✅ Fatto il 16/11: prova di M1 ("quasi perfetto", correzioni nella PR #5), tag `v0.1.0`.
 - ✅ Fatto il 17/11: prova di M2 ("sì va bene"; corretta la scheda della missione sul telefono), tag `v0.2.0`.
+
+## Cosa provare (M3 — Account e cloud)
+Build dopo l'unione delle PR #14 e #15: web su GitHub Pages, `Orbis-ipa` e `Orbis-apk` dalle ultime esecuzioni verdi di `main`.
+- **iPhone, primo avvio**: dopo il caricamento si apre "Account".
+  - "Crea account" → nome utente (3–20 caratteri), nome da mostrare, password (almeno 8) → "Crea l'account".
+  - Alla domanda "Entrare con Face ID?" → "Sì, attiva".
+- **iPhone, riavvio**: chiudere del tutto l'app e riaprirla. Compare Face ID e poi "Bentornato"; in basso nella barra c'è il tuo nome.
+- **Giocare**: "Nuova partita", costruire qualcosa, tornare al menu con la casetta. In Account → "Partite nel cloud" deve dire "Tutto sincronizzato alle …", e in "Continua" la partita deve risultare "Nel cloud".
+- **Mac, browser** (Safari o Chrome sulla pagina del gioco):
+  1. Account → "Entra" con nome utente e password.
+  2. Alla domanda "Creare una passkey?" → "Crea la passkey", con Touch ID o il telefono.
+  3. In "Continua" c'è la partita dell'iPhone, con lo stesso livello e la stessa cassa: giocarla un po' e tornare al menu.
+- **Ritorno sull'iPhone**: riaprire l'app; dopo il menu la partita si aggiorna con quello che hai fatto sul Mac.
+- **Passkey**: nel browser Account → Esci, poi "Entra con una passkey", senza password.
+- **Conflitto** (facoltativo):
+  1. Giocare la stessa partita offline sull'iPhone (modalità aereo) e intanto sul Mac.
+  2. Riattivare la rete e tornare al menu dell'iPhone.
+  3. Compare "Partita giocata in due posti" con le tre scelte: provare "Tienili entrambi".
+- **Android**: come sull'iPhone, con l'impronta o il volto al posto di Face ID.
+- **Dispositivi collegati**: Account → l'elenco mostra iPhone, Mac e Android; "Scollega" su uno dei tre lo fa uscire.
 
 ## Cosa provare (M2 — Costruire ed economia)
 Build dopo l'unione della PR di M2: web su GitHub Pages, `Orbis-ipa` e `Orbis-apk` dalle ultime esecuzioni verdi.
