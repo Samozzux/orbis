@@ -103,10 +103,32 @@
   - test: 99 in tutto (34 nuovi).
 - **In `main` e online (18/11, PR #12)**: test verdi anche su PHP 7.0 e MySQL 5.7; deploy su Altervista riuscito. Verificato dal vivo senza creare account: `apiVersion` 0.3.0 e migrazioni applicate fino a `003_saves.sql`; l'intestazione `Authorization` arriva al PHP (un token finto dà `invalid_token`, non `unauthorized`); il preflight CORS di un PUT dal web risponde 204 con gli header esposti.
 - **Release `v0.2.0`**: IPA e APK allegati, build web pubblicata.
+- **Core: account e sincronizzazione** (blocco 4, 18/11, branch `m3-client`), in `Orbis.Core.Online`, logica pura:
+  - **Rete.** `IHttpTransport`: lo implementa la piattaforma (UnityWebRequest), nei test un backend finto con le regole di quello PHP. `ApiClient` copre tutte le API dell'account e dei salvataggi:
+    - upload a pezzi con ogni pezzo riprovato tre volte se cade la rete;
+    - download con il controllo del checksum;
+    - errori come `ApiException`, che distingue rete assente, sessione chiusa e conflitto 409 con la versione cloud.
+  - **Sessione dell'account.** `AccountSession`:
+    - token di accesso in memoria, rinnovato un minuto prima della scadenza o dopo un 401;
+    - un solo rinnovo alla volta: le chiamate concorrenti aspettano lo stesso;
+    - refresh token in un `IRefreshTokenStore` (Keychain con Face ID, Keystore, IndexedDB nel blocco 5);
+    - profilo in cache per entrare anche offline;
+    - rinnovo rifiutato (scaduto, revocato, riusato) → sessione chiusa con il motivo;
+    - identità del dispositivo creata al primo avvio (`device/id`).
+  - **Sincronizzazione.** `SyncPlanner` (pura decisione) e `CloudSync` (esecuzione sull'archivio locale). Il legame col cloud sta in `saves/<id>/cloud` (uuid, revisione, checksum all'ultima sincronizzazione). Le regole:
+    - giocata solo qui → carica;
+    - solo altrove → scarica;
+    - in entrambi → conflitto con le tre scelte (Tieni questo dispositivo, Tieni il cloud, Tienili entrambi: la copia locale diventa una partita nuova col nome del dispositivo);
+    - solo nel cloud → scaricata come partita nuova;
+    - la partita aperta non si sovrascrive mentre si gioca, aspetta il menu.
+  - **Test.** 23 nuovi (168 in tutto), anche lo scenario di M3 "inizio sull'iPhone, continuo sul Mac".
 - **Scelte semplici annotate**:
   - nessun account diventa amministratore da solo (il pannello admin arriva in M12): impostare `is_admin` alla registrazione in base a `ORBIS_ADMIN_USERNAME` permetterebbe a chiunque registri per primo quel nome di diventare amministratore;
   - una sola sessione per dispositivo: un nuovo accesso dallo stesso dispositivo chiude la precedente;
   - due rinnovi contemporanei con lo stesso token contano come riuso, quindi l'app ne fa uno alla volta.
+  - una partita eliminata su un dispositivo viene tolta anche dal cloud, alla prossima sincronizzazione se si è offline. Gli altri dispositivi la tengono solo in locale, senza legame, invece di cancellarla.
+  - il legame col cloud si scrive prima dell'upload: un upload interrotto riparte con lo stesso uuid e non crea doppioni.
+  - **Rischio noto.** Se la risposta di un rinnovo va persa dopo che il server ha già ruotato il token, il rinnovo successivo conta come riuso e serve un nuovo accesso con la password. È raro e dipende dalla rotazione obbligatoria.
 
 **M2 — Costruire ed economia**: completata il 17/11/2026, a conferma di Samuele dopo la prova sui dispositivi ("sì va bene", con una sola correzione: la scheda della missione toccava la barra del livello sul telefono). Tag `v0.2.0`. Iniziata il 16/11/2026 (scelta di Samuele: "M2 adesso").
 
