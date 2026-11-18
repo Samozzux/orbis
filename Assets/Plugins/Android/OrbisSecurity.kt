@@ -107,8 +107,9 @@ object OrbisSecurity {
             builder.build().authenticate(BiometricPrompt.CryptoObject(cipher), CancellationSignal(), executor,
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        // il cifrario sbloccato arriva col risultato (le API lo dichiarano nullable)
                         val text = try {
-                            String(result.cryptoObject.cipher.doFinal(data), Charsets.UTF_8)
+                            result.cryptoObject?.cipher?.doFinal(data)?.let { String(it, Charsets.UTF_8) }
                         } catch (e: Exception) {
                             null
                         }
