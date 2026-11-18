@@ -106,5 +106,12 @@ namespace Orbis.Core.World.Meshing
         }
 
         private static uint Pick(uint[] list, uint h) => list[h % (uint)list.Length];
+
+        /// <summary>Colore dei sedili di una tribuna (blu, verde, rosso, arancio, grigio cemento dei vecchi gradoni).</summary>
+        public static uint SeatColor(long osmId)
+        {
+            uint[] colors = { 0x2F6DB5, 0x3E8E4A, 0xB8433A, 0xE08A2E, 0x9C9A94, 0x2F6DB5, 0x3A3F4A };
+            return colors[(int)(Random01(osmId, 71) * colors.Length) % colors.Length];
+        }
     }
 }

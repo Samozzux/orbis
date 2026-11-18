@@ -481,6 +481,8 @@ namespace Orbis.Core.Tests
         public void OgniElementoStaDentroLaSuaSagoma()
         {
             var mesher = new ObjectMesher();
+            // un errore per elemento, tutti insieme: si vede subito quali modelli escono
+            var errors = new System.Collections.Generic.List<string>();
             foreach (var item in Load().Items)
             {
                 foreach (int rot in new[] { 0, 1 })
@@ -489,20 +491,27 @@ namespace Orbis.Core.Tests
                     var plants = new System.Collections.Generic.List<Orbis.Core.World.Meshing.PlantInstance>();
                     mesher.Build(item, item.MaxLevel, null, new Orbis.Core.World.Geometry.Vec2(0, 0), 0, rot, (x, y) => 100f, mb, plants, 7);
                     Placement.Extent(item, rot, out var sx, out var sy);
-                    Assert.True(mb.VertexCount > 0 || plants.Count > 0, item.Key + ": modello vuoto");
-                    for (int i = 0; i < mb.VertexCount; i++)
+                    string error = null;
+                    if (mb.VertexCount == 0 && plants.Count == 0) error = item.Key + ": modello vuoto";
+                    for (int i = 0; i < mb.VertexCount && error == null; i++)
                     {
                         float x = mb.GetFloat(i, 0), z = mb.GetFloat(i, 1), y = mb.GetFloat(i, 2);
-                        Assert.True(x >= -0.05f && x <= sx + 0.05f && y >= -0.05f && y <= sy + 0.05f,
-                            $"{item.Key} (rot {rot}): vertice ({x:0.00}, {y:0.00}) fuori dalla sagoma {sx}×{sy}");
-                        Assert.True(z <= 100f + item.Height * 1.25f + 2f, $"{item.Key}: vertice a {z - 100f:0.0} m oltre l'altezza {item.Height}");
+                        if (!(x >= -0.05f && x <= sx + 0.05f && y >= -0.05f && y <= sy + 0.05f))
+                            error = $"{item.Key} (rot {rot}): vertice ({x:0.00}, {y:0.00}, {z - 100f:0.0}) fuori dalla sagoma {sx}×{sy}";
+                        else if (z > 100f + item.Height * 1.25f + 2f) error = $"{item.Key}: vertice a {z - 100f:0.0} m oltre l'altezza {item.Height}";
                         // niente sotto terra (fondazioni e basamenti scendono al massimo di un metro)
-                        Assert.True(z >= 100f - 1.05f, $"{item.Key}: vertice a {z - 100f:0.0} m sotto il terreno");
+                        else if (z < 100f - 1.05f) error = $"{item.Key}: vertice a {z - 100f:0.0} m sotto il terreno";
                     }
                     foreach (var p in plants)
-                        Assert.True(p.X >= 0 && p.X <= sx && p.Y >= 0 && p.Y <= sy, $"{item.Key}: pianta fuori dalla sagoma");
+                        if (error == null && !(p.X >= 0 && p.X <= sx && p.Y >= 0 && p.Y <= sy)) error = $"{item.Key}: pianta fuori dalla sagoma ({p.X:0.0}, {p.Y:0.0})";
+                    if (error != null)
+                    {
+                        errors.Add(error);
+                        break;
+                    }
                 }
             }
+            Assert.True(errors.Count == 0, string.Join("\n", errors));
         }
 
         /// <summary>Sui pendii gli edifici stanno in piano alla quota più alta della sagoma: il piano terra non entra nel terreno.</summary>
@@ -513,6 +522,7 @@ namespace Orbis.Core.Tests
             // pendenza del 20% lungo x e del 10% lungo y
             Orbis.Core.World.Meshing.GroundSampler slope = (x, y) => 300f + x * 0.2f + y * 0.1f;
             int checkedItems = 0;
+            var errors = new System.Collections.Generic.List<string>();
             foreach (var item in Load().Items)
             {
                 var mb = new Orbis.Core.World.Meshing.MeshBuffer();
@@ -527,10 +537,15 @@ namespace Orbis.Core.Tests
                     walls = true;
                     float floor = mb.GetFloat(i, 1) - mb.GetFloat(i, 8);
                     float here = slope(mb.GetFloat(i, 0), mb.GetFloat(i, 2));
-                    Assert.True(floor >= here - 0.05f, $"{item.Key}: piano terra a {floor:0.00}, il terreno lì è a {here:0.00}");
+                    if (floor < here - 0.05f)
+                    {
+                        errors.Add($"{item.Key}: piano terra a {floor:0.00}, il terreno lì è a {here:0.00}");
+                        break;
+                    }
                 }
                 if (walls) checkedItems++;
             }
+            Assert.True(errors.Count == 0, string.Join("\n", errors));
             Assert.True(checkedItems > 20, "pochi edifici controllati: " + checkedItems);
         }
     }

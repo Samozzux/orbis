@@ -142,10 +142,22 @@ namespace Orbis.World
                     int ix = Clamp((int)(x / chunk)), iy = Clamp((int)(y / chunk));
                     return r.Buildings[iy * TileBuildResult.Chunks + ix] ?? (r.Buildings[iy * TileBuildResult.Chunks + ix] = new MeshBuffer());
                 }
+                // campi vicino alle tribune (prato o pista; altrimenti il centro dell'area dello stadio)
+                var fields = new List<AreaInfo>();
+                var stadiumAreas = new List<AreaInfo>();
+                foreach (var a in data.Areas)
+                {
+                    if (a.Kind == AreaKind.Pitch || a.Kind == AreaKind.Track) fields.Add(a);
+                    else if (a.Kind == AreaKind.Stadium) stadiumAreas.Add(a);
+                }
                 for (int i = 0; i < data.Buildings.Length; i++)
                 {
                     var b = data.Buildings[i];
                     if (b.HasFlag(BuildingFlag.Underground)) continue;
+                    // tribune: building=grandstand/stadium o edifici del landmark di uno stadio (es. "Stadio Guido Angelini")
+                    bool stand = b.Use == BuildingUse.Stadium || LandmarkMesher.GeneratorFor(b.Landmark) == "stadium" ||
+                                 (b.Use == BuildingUse.Unknown && InsideStadium(stadiumAreas, b));
+                    mesher.FieldCenter = stand ? MainField(fields, stadiumAreas, b) : null;
                     if (hidden != null && hidden.Contains(((long)b.OsmType << 60) | b.OsmId)) continue;
                     float cx = (b.Bounds.MinX + b.Bounds.MaxX) / 2, cy = (b.Bounds.MinY + b.Bounds.MaxY) / 2;
                     var mb = ChunkAt(cx, cy);
@@ -189,16 +201,38 @@ namespace Orbis.World
                 foreach (var a in data.Areas)
                 {
                     if (a.Kind != AreaKind.Stadium || LandmarkMesher.GeneratorFor(a.Landmark) != "stadium") continue;
+                    // il campo principale: il prato più grande dentro l'area (non il campetto di allenamento)
                     AreaInfo pitch = null;
+                    float pitchSize = 0;
                     foreach (var p in data.Areas)
-                        if (p.Kind == AreaKind.Pitch && a.Bounds.Contains((p.Bounds.MinX + p.Bounds.MaxX) / 2, (p.Bounds.MinY + p.Bounds.MaxY) / 2))
+                    {
+                        if (p.Kind != AreaKind.Pitch || !a.Bounds.Contains((p.Bounds.MinX + p.Bounds.MaxX) / 2, (p.Bounds.MinY + p.Bounds.MaxY) / 2)) continue;
+                        float size = (p.Bounds.MaxX - p.Bounds.MinX) * (p.Bounds.MaxY - p.Bounds.MinY);
+                        if (size > pitchSize)
+                        {
+                            pitchSize = size;
                             pitch = p;
+                        }
+                    }
                     bool mappedStands = false;
                     foreach (var b in data.Buildings)
                         if (a.Bounds.Contains((b.Bounds.MinX + b.Bounds.MaxX) / 2, (b.Bounds.MinY + b.Bounds.MaxY) / 2) &&
                             Orbis.Core.World.Geometry.Polygon2D.Contains(a.Outer, a.Holes, (b.Bounds.MinX + b.Bounds.MaxX) / 2, (b.Bounds.MinY + b.Bounds.MaxY) / 2))
                             mappedStands = true;
-                    landmarks.Stadium(a, pitch, ground, ChunkAt((a.Bounds.MinX + a.Bounds.MaxX) / 2, (a.Bounds.MinY + a.Bounds.MaxY) / 2), !mappedStands);
+                    // pista d'atletica attorno al campo, se mappata
+                    AreaInfo track = null;
+                    float trackSize = 0;
+                    foreach (var t in data.Areas)
+                    {
+                        if (t.Kind != AreaKind.Track || !a.Bounds.Contains((t.Bounds.MinX + t.Bounds.MaxX) / 2, (t.Bounds.MinY + t.Bounds.MaxY) / 2)) continue;
+                        float size = (t.Bounds.MaxX - t.Bounds.MinX) * (t.Bounds.MaxY - t.Bounds.MinY);
+                        if (size > trackSize)
+                        {
+                            trackSize = size;
+                            track = t;
+                        }
+                    }
+                    landmarks.Stadium(a, pitch, ground, ChunkAt((a.Bounds.MinX + a.Bounds.MaxX) / 2, (a.Bounds.MinY + a.Bounds.MaxY) / 2), !mappedStands, track);
                 }
             }
 
@@ -215,6 +249,46 @@ namespace Orbis.World
             int ix = Clamp((int)(x / chunk)), iy = Clamp((int)(y / chunk));
             int k = iy * TileBuildResult.Chunks + ix;
             return r.Decorations[k] ?? (r.Decorations[k] = new MeshBuffer());
+        }
+
+        /// <summary>
+        /// Edificio generico (building=yes) dentro l'area di uno stadio e lungo almeno 20 m: in OSM le tribune sono spesso
+        /// mappate così (es. Stadio Guido Angelini). Le pensiline (roof) e gli impianti sportivi restano come sono.
+        /// </summary>
+        private static bool InsideStadium(List<AreaInfo> stadiums, BuildingInfo b)
+        {
+            if (stadiums.Count == 0 || Math.Max(b.Bounds.MaxX - b.Bounds.MinX, b.Bounds.MaxY - b.Bounds.MinY) < 20f) return false;
+            float cx = (b.Bounds.MinX + b.Bounds.MaxX) / 2, cy = (b.Bounds.MinY + b.Bounds.MaxY) / 2;
+            foreach (var a in stadiums)
+                if (a.Bounds.Contains(cx, cy) && Orbis.Core.World.Geometry.Polygon2D.Contains(a.Outer, a.Holes, cx, cy)) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Centro del campo principale per una tribuna: tra prati e piste entro 200 m il più grande (la pista di atletica
+        /// o il campo regolamentare, non il campetto vicino); altrimenti il centro dell'area dello stadio; null se non c'è.
+        /// </summary>
+        private static Orbis.Core.World.Geometry.Vec2? MainField(List<AreaInfo> fields, List<AreaInfo> stadiums, BuildingInfo b)
+        {
+            float cx = (b.Bounds.MinX + b.Bounds.MaxX) / 2, cy = (b.Bounds.MinY + b.Bounds.MaxY) / 2;
+            foreach (var list in new[] { fields, stadiums })
+            {
+                AreaInfo best = null;
+                float bestSize = 0;
+                foreach (var a in list)
+                {
+                    float ax = (a.Bounds.MinX + a.Bounds.MaxX) / 2, ay = (a.Bounds.MinY + a.Bounds.MaxY) / 2;
+                    if ((ax - cx) * (ax - cx) + (ay - cy) * (ay - cy) > 200f * 200f) continue;
+                    float size = (a.Bounds.MaxX - a.Bounds.MinX) * (a.Bounds.MaxY - a.Bounds.MinY);
+                    if (size > bestSize)
+                    {
+                        bestSize = size;
+                        best = a;
+                    }
+                }
+                if (best != null) return new Orbis.Core.World.Geometry.Vec2((best.Bounds.MinX + best.Bounds.MaxX) / 2, (best.Bounds.MinY + best.Bounds.MaxY) / 2);
+            }
+            return null;
         }
 
         private static bool NearFuel(List<PoiInfo> fuel, float x, float y)

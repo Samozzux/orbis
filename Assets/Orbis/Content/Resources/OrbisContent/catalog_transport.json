@@ -9,7 +9,7 @@
     "w": 25,
     "d": 20
    },
-   "height": 0.2,
+   "height": 6.0,
    "model": {
     "family": "parking"
    },
@@ -50,7 +50,7 @@
     "w": 50,
     "d": 40
    },
-   "height": 0.2,
+   "height": 6.0,
    "model": {
     "family": "parking"
    },
@@ -255,7 +255,7 @@
     "w": 30,
     "d": 30
    },
-   "height": 0.1,
+   "height": 4.5,
    "model": {
     "family": "paving"
    },
@@ -295,7 +295,7 @@
     "w": 30,
     "d": 30
    },
-   "height": 1,
+   "height": 4.0,
    "model": {
     "family": "helipad"
    },

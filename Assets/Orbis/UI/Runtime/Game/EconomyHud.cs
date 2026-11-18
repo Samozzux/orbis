@@ -381,8 +381,12 @@ namespace Orbis.UI.Game
             controls.AddToClassList("tax-controls");
             row.Remove(valueLabel);
             controls.Add(valueLabel);
-            GamePanel.ActionButton(controls, "-", OrbisIconKind.None, "", () => SetTax(kind, value - 0.5f)).SetEnabled(value > range.Min + 1e-3f);
-            GamePanel.ActionButton(controls, "+", OrbisIconKind.None, "", () => SetTax(kind, value + 0.5f)).SetEnabled(value < range.Max - 1e-3f);
+            var minus = GamePanel.ActionButton(controls, "", OrbisIconKind.Minus, "", () => SetTax(kind, value - 0.5f));
+            minus.name = "tax-" + kind + "-minus";
+            minus.SetEnabled(value > range.Min + 1e-3f);
+            var plus = GamePanel.ActionButton(controls, "", OrbisIconKind.Plus, "", () => SetTax(kind, value + 0.5f));
+            plus.name = "tax-" + kind + "-plus";
+            plus.SetEnabled(value < range.Max - 1e-3f);
             row.Add(controls);
         }
 

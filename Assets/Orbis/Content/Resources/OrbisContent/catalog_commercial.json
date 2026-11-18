@@ -9,12 +9,13 @@
     "w": 8,
     "d": 8
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "BAR",
     "awning": "#c8473b",
-    "floors": 1
+    "floors": 2,
+    "dress": "food"
    },
    "unlock": {
     "playerLevel": 1
@@ -101,12 +102,13 @@
     "w": 10,
     "d": 9
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "PIZZERIA",
     "awning": "#2f7d4f",
-    "floors": 1
+    "floors": 2,
+    "dress": "food"
    },
    "unlock": {
     "playerLevel": 2
@@ -192,12 +194,13 @@
     "w": 14,
     "d": 10
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "RISTORANTE",
     "awning": "#7a2e26",
-    "floors": 1
+    "floors": 2,
+    "dress": "food"
    },
    "unlock": {
     "playerLevel": 4
@@ -283,12 +286,13 @@
     "w": 7,
     "d": 7
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "GELATERIA",
     "awning": "#e8a6b5",
-    "floors": 1
+    "floors": 2,
+    "dress": "food"
    },
    "unlock": {
     "playerLevel": 2
@@ -374,12 +378,13 @@
     "w": 8,
     "d": 8
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "FORNO",
     "awning": "#c58d3c",
-    "floors": 1
+    "floors": 2,
+    "dress": "food"
    },
    "unlock": {
     "playerLevel": 1
@@ -465,12 +470,13 @@
     "w": 9,
     "d": 8
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "FARMACIA",
     "awning": "#2f9e5a",
-    "floors": 1
+    "floors": 2,
+    "dress": "pharmacy"
    },
    "unlock": {
     "playerLevel": 3
@@ -556,12 +562,13 @@
     "w": 6,
     "d": 6
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "TABACCHI",
     "awning": "#3a3a3a",
-    "floors": 1
+    "floors": 2,
+    "dress": "shop"
    },
    "unlock": {
     "playerLevel": 1
@@ -647,12 +654,13 @@
     "w": 8,
     "d": 8
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "LIBRI",
     "awning": "#3f5f8a",
-    "floors": 1
+    "floors": 2,
+    "dress": "shop"
    },
    "unlock": {
     "playerLevel": 3
@@ -743,7 +751,8 @@
     "family": "shop",
     "sign": "MODA",
     "awning": "#222222",
-    "floors": 2
+    "floors": 2,
+    "dress": "shop"
    },
    "unlock": {
     "playerLevel": 5
@@ -829,12 +838,13 @@
     "w": 10,
     "d": 10
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "FERRAMENTA",
     "awning": "#b5651d",
-    "floors": 1
+    "floors": 2,
+    "dress": "shop"
    },
    "unlock": {
     "playerLevel": 4
@@ -920,12 +930,13 @@
     "w": 9,
     "d": 8
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "ALIMENTARI",
     "awning": "#4f7d2f",
-    "floors": 1
+    "floors": 2,
+    "dress": "shop"
    },
    "unlock": {
     "playerLevel": 2
@@ -1011,12 +1022,13 @@
     "w": 40,
     "d": 30
    },
-   "height": 4.2,
+   "height": 7.0,
    "model": {
     "family": "shop",
     "sign": "SUPERMERCATO",
     "awning": "#d23c2e",
-    "floors": 1
+    "floors": 1,
+    "type": "supermarket"
    },
    "unlock": {
     "playerLevel": 7
@@ -1102,12 +1114,13 @@
     "w": 80,
     "d": 60
    },
-   "height": 7.6,
+   "height": 14.0,
    "model": {
     "family": "shop",
     "sign": "CENTRO",
     "awning": "#3c6fd2",
-    "floors": 2
+    "floors": 2,
+    "type": "mall"
    },
    "unlock": {
     "playerLevel": 18
@@ -1198,7 +1211,8 @@
     "family": "shop",
     "sign": "HOTEL",
     "awning": "#2b4a6f",
-    "floors": 5
+    "floors": 5,
+    "type": "hotel"
    },
    "unlock": {
     "playerLevel": 9
@@ -1293,7 +1307,8 @@
     "family": "shop",
     "sign": "B&B",
     "awning": "#8a6f4f",
-    "floors": 2
+    "floors": 2,
+    "dress": "hotel"
    },
    "unlock": {
     "playerLevel": 4
@@ -1383,12 +1398,13 @@
     "w": 9,
     "d": 8
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "ENOTECA",
     "awning": "#6e1f2f",
-    "floors": 1
+    "floors": 2,
+    "dress": "food"
    },
    "unlock": {
     "playerLevel": 6
@@ -1474,12 +1490,13 @@
     "w": 8,
     "d": 8
    },
-   "height": 4.2,
+   "height": 7.6,
    "model": {
     "family": "shop",
     "sign": "PASTICCERIA",
     "awning": "#d98fae",
-    "floors": 1
+    "floors": 2,
+    "dress": "food"
    },
    "unlock": {
     "playerLevel": 3
@@ -1570,7 +1587,8 @@
     "family": "shop",
     "sign": "BANCA",
     "awning": "#1f3f6e",
-    "floors": 3
+    "floors": 3,
+    "dress": "bank"
    },
    "unlock": {
     "playerLevel": 8
@@ -1661,7 +1679,8 @@
     "family": "shop",
     "sign": "UFFICI",
     "awning": "#4f5f6f",
-    "floors": 4
+    "floors": 4,
+    "type": "office"
    },
    "unlock": {
     "playerLevel": 6
@@ -1752,7 +1771,8 @@
     "family": "shop",
     "sign": "BUSINESS",
     "awning": "#2f3f4f",
-    "floors": 12
+    "floors": 12,
+    "type": "glasstower"
    },
    "unlock": {
     "playerLevel": 20
@@ -1838,12 +1858,13 @@
     "w": 40,
     "d": 30
    },
-   "height": 7.6,
+   "height": 13.0,
    "model": {
     "family": "shop",
     "sign": "CINEMA",
     "awning": "#7a1f1f",
-    "floors": 2
+    "floors": 2,
+    "type": "cinema"
    },
    "unlock": {
     "playerLevel": 12
@@ -1929,12 +1950,13 @@
     "w": 20,
     "d": 14
    },
-   "height": 4.2,
+   "height": 6.5,
    "model": {
     "family": "shop",
     "sign": "CARBURANTE",
     "awning": "#e0b020",
-    "floors": 1
+    "floors": 1,
+    "type": "fuel"
    },
    "unlock": {
     "playerLevel": 5

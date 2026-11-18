@@ -220,7 +220,8 @@
    },
    "height": 12,
    "model": {
-    "family": "church"
+    "family": "church",
+    "size": "small"
    },
    "unlock": {
     "playerLevel": 2
@@ -428,7 +429,8 @@
    },
    "height": 8,
    "model": {
-    "family": "hall"
+    "family": "hall",
+    "kind": "club"
    },
    "unlock": {
     "playerLevel": 10
@@ -497,10 +499,12 @@
     "w": 16,
     "d": 12
    },
-   "height": 7,
+   "height": 7.6,
    "model": {
     "family": "shop",
-    "sign": "ARTE"
+    "sign": "ARTE",
+    "dress": "shop",
+    "floors": 2
    },
    "unlock": {
     "playerLevel": 6

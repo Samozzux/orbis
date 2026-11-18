@@ -317,7 +317,8 @@
     "family": "house",
     "roof": "gabled",
     "floors": 2,
-    "style": "historic"
+    "style": "historic",
+    "type": "semi"
    },
    "unlock": {
     "playerLevel": 3
@@ -418,7 +419,8 @@
     "family": "house",
     "roof": "gabled",
     "floors": 2,
-    "style": "historic"
+    "style": "historic",
+    "type": "row"
    },
    "unlock": {
     "playerLevel": 4
@@ -517,9 +519,10 @@
    "height": 8.0,
    "model": {
     "family": "house",
-    "roof": "hipped",
+    "roof": "flat",
     "floors": 2,
-    "style": "modern"
+    "style": "modern",
+    "type": "modernvilla"
    },
    "unlock": {
     "playerLevel": 8
@@ -620,7 +623,8 @@
     "family": "house",
     "roof": "gabled",
     "floors": 2,
-    "style": "historic"
+    "style": "historic",
+    "type": "casale"
    },
    "unlock": {
     "playerLevel": 6
@@ -822,7 +826,8 @@
     "family": "house",
     "roof": "hipped",
     "floors": 4,
-    "style": "historic"
+    "style": "historic",
+    "type": "courtyard"
    },
    "unlock": {
     "playerLevel": 12
@@ -923,7 +928,8 @@
     "family": "house",
     "roof": "flat",
     "floors": 4,
-    "style": "modern"
+    "style": "modern",
+    "type": "condo"
    },
    "unlock": {
     "playerLevel": 5
@@ -1024,7 +1030,8 @@
     "family": "house",
     "roof": "flat",
     "floors": 6,
-    "style": "modern"
+    "style": "modern",
+    "type": "condo"
    },
    "unlock": {
     "playerLevel": 8
@@ -1125,7 +1132,8 @@
     "family": "house",
     "roof": "flat",
     "floors": 8,
-    "style": "modern"
+    "style": "modern",
+    "type": "condo"
    },
    "unlock": {
     "playerLevel": 12
@@ -1226,7 +1234,8 @@
     "family": "house",
     "roof": "flat",
     "floors": 14,
-    "style": "modern"
+    "style": "modern",
+    "type": "tower"
    },
    "unlock": {
     "playerLevel": 20
@@ -1327,7 +1336,8 @@
     "family": "house",
     "roof": "flat",
     "floors": 2,
-    "style": "modern"
+    "style": "modern",
+    "type": "modern"
    },
    "unlock": {
     "playerLevel": 5
@@ -1428,7 +1438,8 @@
     "family": "house",
     "roof": "hipped",
     "floors": 2,
-    "style": "historic"
+    "style": "historic",
+    "type": "portico"
    },
    "unlock": {
     "playerLevel": 4
@@ -1529,7 +1540,8 @@
     "family": "house",
     "roof": "flat",
     "floors": 3,
-    "style": "modern"
+    "style": "modern",
+    "type": "loft"
    },
    "unlock": {
     "playerLevel": 10
@@ -1630,7 +1642,8 @@
     "family": "house",
     "roof": "flat",
     "floors": 4,
-    "style": "modern"
+    "style": "modern",
+    "type": "condo"
    },
    "unlock": {
     "playerLevel": 14
@@ -1731,7 +1744,8 @@
     "family": "house",
     "roof": "gabled",
     "floors": 2,
-    "style": "historic"
+    "style": "historic",
+    "type": "borgo"
    },
    "unlock": {
     "playerLevel": 1
@@ -1832,7 +1846,8 @@
     "family": "house",
     "roof": "hipped",
     "floors": 3,
-    "style": "historic"
+    "style": "historic",
+    "type": "liberty"
    },
    "unlock": {
     "playerLevel": 15
@@ -1933,7 +1948,8 @@
     "family": "house",
     "roof": "flat",
     "floors": 25,
-    "style": "modern"
+    "style": "modern",
+    "type": "skyscraper"
    },
    "unlock": {
     "playerLevel": 28

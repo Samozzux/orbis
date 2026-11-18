@@ -3,6 +3,80 @@
 ## Milestone attuale
 **M3 — Account e cloud**: iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 
+### Ritocchi chiesti da Samuele dopo M2 (18/11/2026, branch `ritocchi-bottoni-edifici`)
+- **Bottoni del gioco** ("il + e il − delle aliquote non sono centrati e tutte quelle cose lì"):
+  - **Difetti.** Il contenuto era spostato a sinistra perché lo spazio interno era asimmetrico, pensato per un'icona; il − era un trattino minuscolo; l'anello bianco si interrompeva agli angoli in basso, dove inizia il bordino scuro.
+  - **Correzione.** Ora ogni bottone "caramella" ha un anello bianco uniforme e dentro una faccia colorata, con il bordino scuro e il contenuto sempre centrato. Vale per i bottoni d'azione dei pannelli, i tondi della costruzione, i "chiudi", la velocità dell'orologio e i badge del menu e dei Dettagli.
+  - **Aliquote.** + e − sono icone disegnate in bottoni quadrati.
+  - **Verifica.** Controllato con le fotografie dell'interfaccia (telefono e desktop).
+- **Stadi veri** ("lo stadio è un ammasso di elementi"):
+  - **Causa.** Le tribune dello Stadio Guido Angelini in OSM sono edifici generici dentro l'area dello stadio e venivano disegnate come palazzi con le finestre.
+  - **Tribune.** Gli edifici di tipo tribuna/stadio, quelli del landmark dello stadio e quelli generici lunghi almeno 20 m dentro un'area stadio diventano gradinate. Salgono dal campo con la pendenza di una tribuna vera (circa 35°), hanno le file di sedili colorati disegnate dallo shader (nuovo tipo di superficie 18) e muri in cemento senza finestre. Gli edifici messi "di punta" verso il campo restano edifici.
+  - **Pista e campo.** La pista d'atletica è un vero anello con rettilinei e curve, in tartan con le corsie (tipo 19), con il prato all'interno. Il campo con le linee è quello principale (il prato più grande), non il campetto vicino.
+  - **Torri faro.** La sera si accendono.
+- **Stadio del catalogo** (rifatto):
+  - campo regolamentare con le porte e quattro tribune a gradinata con i colori della squadra, scale e muri;
+  - copertura a sbalzo sulla tribuna principale (distinti dal livello 2, curve al livello 3);
+  - torri faro accese la sera, cartelloni a bordo campo, panchine e tabellone;
+  - altezza a 34 m (le torri faro).
+- **Centrale nucleare** (rifatta come quelle vere):
+  - due torri di raffreddamento a iperboloide, vuote dentro, con i pilastri alla base;
+  - edificio del reattore con la cupola, sala turbine e edificio ausiliario;
+  - camino a bande bianche e rosse, stazione elettrica tra le torri, piazzale, strada e recinzione.
+- **Tutti gli edifici del catalogo come quelli veri.** Richiesta di Samuele: "tutti gli edifici esistenti e da poter aggiungere devono essere reali"; la regola è ora in `docs/08` §2. Tutti i 150 elementi del catalogo hanno un modello del loro tipo; il generatore è diviso in `ObjectMesher.Town/Public/Industry/Leisure.cs`.
+  - **Case.** Lotto con giardino, vialetto, muretto e cancello. Gronde, comignoli, fioriere e balconi sono gli stessi addobbi degli edifici di Chieti, con il fronte sul lato v = 0. Ci sono poi:
+    - case a schiera e bifamiliari a più colori;
+    - villa moderna con la piscina, casa con il portico, casale con la scala esterna e la loggia;
+    - palazzo nobiliare a quattro ali con il cortile, il portone e il balcone;
+    - villa liberty con la torretta;
+    - loft in mattoni con la ciminiera;
+    - condomini con i balconi continui e le tende da sole;
+    - grattacielo di vetro con podio, rastremazione e antenna.
+  - **Negozi.** Sono al piano terra di una palazzina a due piani con le case sopra (altezze del catalogo aggiornate). Hanno vetrine, tende, insegna e dehors con tavolini e ombrelloni; la farmacia ha la croce verde. Poi:
+    - supermercato e centro commerciale con i parcheggi pieni di auto;
+    - cinema col foyer e le locandine accese;
+    - distributore con pensilina, pompe e totem;
+    - albergo, uffici e torre di vetro.
+  - **Servizi pubblici.**
+    - Scuole con pensilina, bandiere e cortile (giochi all'infanzia, basket al liceo) e università a chiostro.
+    - Ospedale con eliporto, pronto soccorso e ambulanze.
+    - Caserma dei carabinieri con le gazzelle, vigili del fuoco con portoni rossi, torre e autopompe.
+    - Poste con l'insegna gialla, biblioteca con il portico.
+  - **Cultura e spettacolo.**
+    - Museo con il pronao, teatro con la torre scenica e la loggia.
+    - Chiesa con facciata a timpano, rosone, portale, abside e campanile; cappella con il campanile a vela.
+    - Anfiteatro a gradoni, luna park con ruota panoramica, giostra, torre e autoscontri, discoteca.
+  - **Industria.**
+    - Capannoni con baie di carico e camion.
+    - Stabilimenti col tetto a shed; allo stabilimento automobilistico le auto nuove in fila.
+    - Cantina con le vasche inox, frantoio, cementificio con torre dei cicloni, forno rotante e silos.
+  - **Campagna.**
+    - Campi veri: grano con le carreggiate, mais, girasoli, lavanda, orto con capanno.
+    - Pascolo con le pecore, stalla con le vacche, fienile aperto con le balle.
+    - Serre a tunnel, silos, apiario.
+  - **Energia.** Traliccio a traliccio con isolatori, sottostazione con trasformatori e portali, diga idroelettrica con bacino e condotte, centrali a gas, a biomasse e geotermica.
+  - **Sport.**
+    - Linee regolamentari di tennis, basket e calcetto disegnate dallo shader (parametro sport del tipo 8).
+    - Reti trasparenti col telo basso, porte con le reti, torri faro.
+    - Piscina con corsie, blocchi e spogliatoi; palazzetto ellittico con la cupola; pista d'atletica vera con il campo dentro.
+  - **Trasporti.**
+    - Parcheggi con le auto e multipiano a piani aperti con la "P".
+    - Pensilina del bus, autostazione con gli autobus.
+    - Piazza con rosone, lampioni e alberi; eliporto con la "H" e la manica a vento.
+  - **Arredo e natura.**
+    - Statue con figure umane, monumento ai caduti con la Vittoria alata, fontane a bacile.
+    - Chiosco col bancone, parco giochi, rastrelliera con le bici.
+    - Siepi e aiuole con fiori tondi, laghetto con i sassi.
+  - **Corretto per strada.**
+    - Alcuni parallelepipedi (file dei campi, siepi, aiuole) usavano per errore il muro con le finestre.
+    - Il traliccio era fatto di pezzi staccati.
+    - Il chiosco era un cubo verde.
+  - **Prove e controlli.**
+    - Il test "ogni elemento sta dentro la sua sagoma" ora elenca tutti gli elementi che sbagliano, non solo il primo.
+    - Nuova fotografia `WorldSnapshotTests.Catalogo`: un foglio per categoria, con le piante, anche di sera con `ORBIS_MODELS_HOUR=21`.
+- **Aeroporto e "molte altre cose"** (domanda di Samuele): come da specifica, l'aeroporto arriva con aeroporti e voli in M10 e il catalogo esteso in M9. Si può anticipare un aeroporto "statico" se Samuele lo vuole.
+- **Prove.** 145 test .NET (8 nuovi: tribune dritte, ad anello, strette, di punta, pista). Nuova foto di controllo `WorldSnapshotTests.Modelli` (modelli del catalogo di giorno e di sera, stadio di Chieti). EditMode 10/10.
+
 ### Piano di M3 (a blocchi)
 1. **Backend: account** — registrazione, accesso, token di accesso JWT da 1 ora, refresh token da 90 giorni ruotati a ogni rinnovo (riuso → sessione del dispositivo chiusa), uscita, elenco e chiusura delle sessioni, profilo, limite ai tentativi. ✅ fatto (vedi sotto).
 2. **Backend: salvataggi nel cloud** — elenco, upload a pezzi con `baseRevision` e conflitto 409, download, eliminazione. ✅ fatto (vedi sotto).
@@ -27,6 +101,8 @@
   - limiti: 64 MB per partita, 30 partite per utente; resta solo l'ultima revisione;
   - verificato che Altervista lasci arrivare PUT, PATCH e DELETE al PHP;
   - test: 99 in tutto (34 nuovi).
+- **In `main` e online (18/11, PR #12)**: test verdi anche su PHP 7.0 e MySQL 5.7; deploy su Altervista riuscito. Verificato dal vivo senza creare account: `apiVersion` 0.3.0 e migrazioni applicate fino a `003_saves.sql`; l'intestazione `Authorization` arriva al PHP (un token finto dà `invalid_token`, non `unauthorized`); il preflight CORS di un PUT dal web risponde 204 con gli header esposti.
+- **Release `v0.2.0`**: IPA e APK allegati, build web pubblicata.
 - **Scelte semplici annotate**:
   - nessun account diventa amministratore da solo (il pannello admin arriva in M12): impostare `is_admin` alla registrazione in base a `ORBIS_ADMIN_USERNAME` permetterebbe a chiunque registri per primo quel nome di diventare amministratore;
   - una sola sessione per dispositivo: un nuovo accesso dallo stesso dispositivo chiude la precedente;
@@ -266,6 +342,7 @@ Branch `m2-costruzione`.
 4. **Riferimenti tra assembly**: `Orbis.UI` usa anche `Orbis.Platform` (per profilo del dispositivo e servizi), non solo Core e Gameplay come nella tabella di `docs/01` §2.
 
 ## Problemi aperti
+- **Test PlayMode dei clic sul menu (solo in locale)** (visto il 18/11): con il pack del mondo presente, `PointerClickTests` (Amici, Impostazioni, Nuova partita) fallisce se gira dopo `GameplayTests`; da solo passa (4/4). Succede anche su `main`, quindi non dipende dai ritocchi. In CI passa. Probabile stato lasciato dalla partita di prova (isolamento tra i test): da sistemare.
 - **Build iOS in coda** (17/11, risolto su richiesta di Samuele): la build iOS di `main` aspettava da ore un runner `macos-26` di GitHub tenendo occupata la licenza Unity condivisa (`concurrency: unity-license`), e test e altre build restavano bloccati. Ora `ios-build.yml` ha due job: l'esportazione Unity → progetto Xcode gira su Linux (con la licenza, runner subito disponibili), la compilazione Xcode → IPA su macOS senza licenza. Se il Mac tarda, aspetta solo l'IPA.
 - **Lotti con griglia anomala** (visto il 17/11): almeno un lotto di Chieti (id 2476, 158×161 m) ha origine o angolo della griglia che rendono enorme la sua griglia intera. Per costruire non è un problema (si controlla solo sotto l'elemento), ma va guardato nella pipeline quando si rigenera il pack.
 - **Unity terminato dal sistema in CI (codice 137)**: due volte (build Android del 15/11 e build web del 16/11) Unity è stato ucciso un secondo dopo l'avvio, sempre con la cartella `Library` ripristinata dalla cache; un'altra build con cache invece è andata bene, e la build web era sola in coda (non è un conflitto di licenza). Causa non ancora certa. Contromisura: `.github/scripts/run-unity.sh` (usato da tutti i job Unity) in quel caso registra memoria e messaggi del kernel, cancella `Library` e riprova una volta da zero. Se la diagnostica indicherà la causa, si correggerà alla radice. Prima prova dopo la correzione (16/11, commit `c16787b`): iOS, web e Android verdi senza bisogno del nuovo tentativo.
@@ -339,3 +416,7 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 - **Poi**: su scelta di Samuele, grafica HD di edifici e strade: insegne con i nomi veri, gronde e cornicioni, strisce pedonali e lampioni; strade nitide e anteprime 3D nel catalogo (branch `m2-grafica-hd`).
 - **Chiusura di M2 (sera del 17/11)**: PR #8, #9 e #10 unite (la #10 divide la build iOS in due job). Samuele ha provato M2 sui dispositivi: va bene. Corretta la scheda della missione che sul telefono toccava la barra del livello; tag `v0.2.0`. Su scelta di Samuele gli amici passano da M3 a M9.
 - **Prossimo passo**: M3 — Account e cloud.
+
+### 18/11/2026 — Ritocchi dopo la prova di M2
+- **Fatto**: su richiesta di Samuele bottoni del gioco rifatti (centrati, anello uniforme), stadi veri con gradinate, pista e fari, stadio del catalogo e centrale nucleare come quelli veri (branch `ritocchi-bottoni-edifici`). Il lato gioco di M3 (account e sincronizzazione) è in pausa e riprende subito dopo.
+- **Poi**: Samuele chiede che tutti gli edifici, quelli che ci sono e quelli da aggiungere, siano come quelli veri. Rifatti tutti i 150 modelli del catalogo (stessa PR #13); regola scritta in `docs/08` §2.

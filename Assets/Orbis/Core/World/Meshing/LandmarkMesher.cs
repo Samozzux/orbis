@@ -130,7 +130,7 @@ namespace Orbis.Core.World.Meshing
 
         /// <summary>Stadio dall'area OSM (leisure=stadium): tutto dentro il rettangolo orientato dell'area.</summary>
         /// <param name="stands">false se in OSM le tribune sono già mappate come edifici</param>
-        public bool Stadium(AreaInfo area, AreaInfo pitch, GroundSampler ground, MeshBuffer mb, bool stands = true)
+        public bool Stadium(AreaInfo area, AreaInfo pitch, GroundSampler ground, MeshBuffer mb, bool stands = true, AreaInfo track = null)
         {
             var outer = Polygon2D.Clean(area.Outer, true);
             if (outer.Count < 3) return false;
@@ -155,6 +155,7 @@ namespace Orbis.Core.World.Meshing
                 var corner = field.Center + field.U * ((k & 1) == 0 ? field.HalfU : -field.HalfU) + field.V * ((k & 2) == 0 ? field.HalfV : -field.HalfV);
                 g = Math.Max(g, ground(corner.X, corner.Y));
             }
+            if (track != null) AthleticsTrack(track, ground, mb);
             // prato con le linee (tipo "campo" del materiale strade: uv1.x = 8)
             Quad(mb, field.Center, field.U, field.V, field.HalfU + 3f, field.HalfV + 3f, g + 0.25f, MeshBuffer.Rgb(0x5FA24C), 8f);
 
@@ -200,10 +201,101 @@ namespace Orbis.Core.World.Meshing
                 var corner = box.Center + box.U * ((k & 1) == 0 ? box.HalfU - 3f : -box.HalfU + 3f) + box.V * ((k & 2) == 0 ? box.HalfV - 3f : -box.HalfV + 3f);
                 Column(mb, corner, g, g + 34f, 0.55f, MeshBuffer.Rgb(0xA9AEB4));
                 var towardCenter = (box.Center - corner).Normalized;
-                Block(mb, corner + towardCenter * 0.8f, new Vec2(-towardCenter.Y, towardCenter.X), towardCenter, 2.4f, 0.3f, g + 33f, g + 36f,
-                    MeshBuffer.Rgb(0xFFF6D8));
+                var side = new Vec2(-towardCenter.Y, towardCenter.X);
+                Block(mb, corner + towardCenter * 0.6f, side, towardCenter, 2.6f, 0.25f, g + 32.8f, g + 36.2f, MeshBuffer.Rgb(0x4A4F55));
+                // fari: pannello luminoso rivolto verso il campo, acceso la sera
+                var fc = corner + towardCenter * 0.88f;
+                var a = fc - side * 2.4f;
+                var b = fc + side * 2.4f;
+                uint lamp = MeshBuffer.Rgb(0xFFF2D2);
+                int i0 = mb.Add(a.X, a.Y, g + 33f, towardCenter.X, towardCenter.Y, 0, lamp, 0, 0, 4.8f, 3f, BuildingDecorator.KindLight, 0.5f, 1, 0);
+                int i1 = mb.Add(b.X, b.Y, g + 33f, towardCenter.X, towardCenter.Y, 0, lamp, 4.8f, 0, 4.8f, 3f, BuildingDecorator.KindLight, 0.5f, 1, 0);
+                int i2 = mb.Add(b.X, b.Y, g + 36f, towardCenter.X, towardCenter.Y, 0, lamp, 4.8f, 3f, 4.8f, 3f, BuildingDecorator.KindLight, 0.5f, 1, 0);
+                int i3 = mb.Add(a.X, a.Y, g + 36f, towardCenter.X, towardCenter.Y, 0, lamp, 0, 3f, 4.8f, 3f, BuildingDecorator.KindLight, 0.5f, 1, 0);
+                // antiorario visto dal campo: da a verso b con la normale verso il centro
+                if (Vec2.Cross(b - a, towardCenter) < 0) mb.Quad(i0, i1, i2, i3);
+                else mb.Quad(i1, i0, i3, i2);
             }
             return true;
+        }
+
+        /// <summary>
+        /// Pista d'atletica dall'area OSM (leisure=track): anello a forma di stadio (due rettilinei e due curve) largo
+        /// fino a 8 corsie, in tartan con le righe (tipo 19), e il prato all'interno. Segue il terreno.
+        /// </summary>
+        public static void AthleticsTrack(AreaInfo track, GroundSampler ground, MeshBuffer mb)
+        {
+            var outer = Polygon2D.Clean(track.Outer, true);
+            if (outer.Count < 3) return;
+            var box = OrientedBox.Of(outer);
+            if (box.HalfV > box.HalfU)
+            {
+                // asse lungo su U
+                var t = box.U;
+                box.U = box.V;
+                box.V = t;
+                float h = box.HalfU;
+                box.HalfU = box.HalfV;
+                box.HalfV = h;
+            }
+            float r = box.HalfV, half = Math.Max(0, box.HalfU - box.HalfV);
+            if (r < 15f) return;
+            float w = Math.Min(9.76f, r * 0.3f);
+            const int arc = 16;
+            var dirs = new List<Vec2>(2 * (arc + 1));
+            var centers = new List<Vec2>(2 * (arc + 1));
+            for (int side = 0; side < 2; side++)
+            {
+                var c = box.Center + box.U * (side == 0 ? half : -half);
+                for (int k = 0; k <= arc; k++)
+                {
+                    double a = (side == 0 ? -Math.PI / 2 : Math.PI / 2) + Math.PI * k / arc;
+                    dirs.Add(box.U * (float)Math.Cos(a) + box.V * (float)Math.Sin(a));
+                    centers.Add(c);
+                }
+            }
+            int n = dirs.Count;
+            // verso antiorario visto dall'alto?
+            float area = 0;
+            for (int i = 0; i < n; i++)
+            {
+                var p = centers[i] + dirs[i] * r;
+                var q = centers[(i + 1) % n] + dirs[(i + 1) % n] * r;
+                area += p.X * q.Y - q.X * p.Y;
+            }
+            bool ccw = area > 0;
+            uint tartan = MeshBuffer.Rgb(0xB4553E), grass = MeshBuffer.Rgb(0x5E9E4A);
+            float along = 0;
+            int start = mb.VertexCount;
+            for (int i = 0; i < n; i++)
+            {
+                var pin = centers[i] + dirs[i] * (r - w);
+                var pout = centers[i] + dirs[i] * r;
+                if (i > 0) along += (pin - (centers[i - 1] + dirs[i - 1] * (r - w))).Length;
+                mb.Add(pin.X, pin.Y, ground(pin.X, pin.Y) + 0.22f, 0, 0, 1, tartan, along, 0, w, 0, BuildingDecorator.KindTrack, 0.5f, 0, 0);
+                mb.Add(pout.X, pout.Y, ground(pout.X, pout.Y) + 0.22f, 0, 0, 1, tartan, along, w, w, 0, BuildingDecorator.KindTrack, 0.5f, 0, 0);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                int a = start + 2 * i, b = start + 2 * ((i + 1) % n);
+                // interno, esterno, esterno dopo, interno dopo
+                if (ccw) mb.Quad(a, a + 1, b + 1, b);
+                else mb.Quad(a, b, b + 1, a + 1);
+            }
+            // prato interno (ventaglio dal centro)
+            int center = mb.Add(box.Center.X, box.Center.Y, ground(box.Center.X, box.Center.Y) + 0.2f, 0, 0, 1, grass, 0, 0, 0, 0, BuildingDecorator.KindProp, 0.5f, 0, 0);
+            int first = mb.VertexCount;
+            for (int i = 0; i < n; i++)
+            {
+                var pin = centers[i] + dirs[i] * (r - w);
+                mb.Add(pin.X, pin.Y, ground(pin.X, pin.Y) + 0.2f, 0, 0, 1, grass, 0, 0, 0, 0, BuildingDecorator.KindProp, 0.5f, 0, 0);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                int a = first + i, b = first + (i + 1) % n;
+                if (ccw) mb.Triangle(center, a, b);
+                else mb.Triangle(center, b, a);
+            }
         }
 
         // ------------------------------------------------------------------ primitive
