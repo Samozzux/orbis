@@ -27,6 +27,8 @@
   - limiti: 64 MB per partita, 30 partite per utente; resta solo l'ultima revisione;
   - verificato che Altervista lasci arrivare PUT, PATCH e DELETE al PHP;
   - test: 99 in tutto (34 nuovi).
+- **In `main` e online (18/11, PR #12)**: test verdi anche su PHP 7.0 e MySQL 5.7; deploy su Altervista riuscito. Verificato dal vivo senza creare account: `apiVersion` 0.3.0 e migrazioni applicate fino a `003_saves.sql`; l'intestazione `Authorization` arriva al PHP (un token finto dà `invalid_token`, non `unauthorized`); il preflight CORS di un PUT dal web risponde 204 con gli header esposti.
+- **Release `v0.2.0`**: IPA e APK allegati, build web pubblicata.
 - **Scelte semplici annotate**:
   - nessun account diventa amministratore da solo (il pannello admin arriva in M12): impostare `is_admin` alla registrazione in base a `ORBIS_ADMIN_USERNAME` permetterebbe a chiunque registri per primo quel nome di diventare amministratore;
   - una sola sessione per dispositivo: un nuovo accesso dallo stesso dispositivo chiude la precedente;
