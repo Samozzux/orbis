@@ -65,6 +65,48 @@ namespace Orbis.Core.Online
         public Task RevokeSessionAsync(long id, CancellationToken ct = default) =>
             SendAsync("DELETE", "/api/auth/sessions/" + id.ToString(CultureInfo.InvariantCulture), null, null, null, true, ct);
 
+        // ------------------------------------------------------------------ passkey (versione web)
+
+        /// <summary>Opzioni per creare una passkey (serve l'accesso): {challengeId, publicKey} da passare al browser.</summary>
+        public Task<JsonValue> PasskeyRegisterOptionsAsync(CancellationToken ct = default) =>
+            JsonAsync("POST", "/api/auth/passkey/register/options", new JsonObject(), true, ct);
+
+        /// <summary>Registra la passkey creata dal browser (credentialId, clientDataJSON, attestationObject in base64url).</summary>
+        public async Task<PasskeyInfo> PasskeyRegisterVerifyAsync(string challengeId, JsonValue credential, string name, CancellationToken ct = default)
+        {
+            var body = new JsonObject
+            {
+                ["challengeId"] = challengeId, ["credentialId"] = credential["credentialId"].AsString(""),
+                ["clientDataJSON"] = credential["clientDataJSON"].AsString(""), ["attestationObject"] = credential["attestationObject"].AsString(""),
+                ["name"] = name ?? "",
+            };
+            return PasskeyInfo.From((await JsonAsync("POST", "/api/auth/passkey/register/verify", body, true, ct))["passkey"]);
+        }
+
+        /// <summary>Opzioni per entrare con una passkey (senza nome utente: passkey "discoverable").</summary>
+        public Task<JsonValue> PasskeyLoginOptionsAsync(CancellationToken ct = default) =>
+            JsonAsync("POST", "/api/auth/passkey/login/options", new JsonObject(), false, ct);
+
+        /// <summary>Entra con la firma della passkey (credentialId, clientDataJSON, authenticatorData, signature, userHandle).</summary>
+        public async Task<TokenSet> PasskeyLoginVerifyAsync(string challengeId, JsonValue assertion, DeviceIdentity device, CancellationToken ct = default)
+        {
+            var body = new JsonObject { ["challengeId"] = challengeId };
+            foreach (var key in new[] { "credentialId", "clientDataJSON", "authenticatorData", "signature", "userHandle" })
+                body[key] = assertion[key].AsString("");
+            device.AddTo(body);
+            return TokenSet.From(await JsonAsync("POST", "/api/auth/passkey/login/verify", body, false, ct));
+        }
+
+        public async Task<List<PasskeyInfo>> PasskeysAsync(CancellationToken ct = default)
+        {
+            var list = new List<PasskeyInfo>();
+            foreach (var p in (await JsonAsync("GET", "/api/auth/passkeys", null, true, ct))["passkeys"].Items) list.Add(PasskeyInfo.From(p));
+            return list;
+        }
+
+        public Task DeletePasskeyAsync(long id, CancellationToken ct = default) =>
+            SendAsync("DELETE", "/api/auth/passkeys/" + id.ToString(CultureInfo.InvariantCulture), null, null, null, true, ct);
+
         // ------------------------------------------------------------------ salvataggi
 
         public async Task<List<CloudSave>> ListSavesAsync(CancellationToken ct = default)

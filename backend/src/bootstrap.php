@@ -2,7 +2,7 @@
 // Avvio comune: autoload delle classi Orbis\Api\* da src/ e costanti.
 // Vincoli Altervista (CLAUDE.md): PHP 7.x, niente fn(), match, ?->, proprietà tipizzate.
 
-define('ORBIS_API_VERSION', '0.3.0');
+define('ORBIS_API_VERSION', '0.4.0');
 define('ORBIS_ROOT', dirname(__DIR__));
 
 spl_autoload_register(function ($class) {

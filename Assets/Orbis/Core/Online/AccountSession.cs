@@ -110,6 +110,10 @@ namespace Orbis.Core.Online
         public async Task LoginAsync(string username, string password, CancellationToken ct = default) =>
             await ApplyAsync(await _api.LoginAsync(username, password, Device, ct), ct);
 
+        /// <summary>Entra con la firma di una passkey (versione web): stessi token dell'accesso con la password.</summary>
+        public async Task LoginWithPasskeyAsync(string challengeId, JsonValue assertion, CancellationToken ct = default) =>
+            await ApplyAsync(await _api.PasskeyLoginVerifyAsync(challengeId, assertion, Device, ct), ct);
+
         /// <summary>Esce: chiude subito la sessione locale, poi prova a revocarla sul server (offline scadrà da sola).</summary>
         public async Task LogoutAsync(CancellationToken ct = default)
         {

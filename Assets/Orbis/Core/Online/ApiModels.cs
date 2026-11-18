@@ -92,6 +92,23 @@ namespace Orbis.Core.Online
         };
     }
 
+    /// <summary>Passkey registrata per entrare dalla versione web.</summary>
+    public sealed class PasskeyInfo
+    {
+        public long Id;
+        public string Name = "";
+        public DateTime CreatedAt;
+        public DateTime LastUsedAt;
+
+        public static PasskeyInfo From(JsonValue j) => new PasskeyInfo
+        {
+            Id = j["id"].AsLong(),
+            Name = j["name"].AsString(""),
+            CreatedAt = ApiTime.Parse(j["createdAt"].AsString()),
+            LastUsedAt = ApiTime.Parse(j["lastUsedAt"].AsString()),
+        };
+    }
+
     /// <summary>Metadati di un salvataggio nel cloud.</summary>
     public sealed class CloudSave
     {

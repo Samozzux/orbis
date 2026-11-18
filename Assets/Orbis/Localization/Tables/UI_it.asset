@@ -1762,6 +1762,90 @@ MonoBehaviour:
     m_Localized: Solo su questo dispositivo
     m_Metadata:
       m_Items: []
+  - m_Id: 991442913714176
+    m_Localized: Entra con una passkey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297088
+    m_Localized: 'oppure con nome utente e password:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297089
+    m_Localized: Passkey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297090
+    m_Localized: Entra da questo browser senza password, con Face ID, Touch ID, Windows Hello o il telefono.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297091
+    m_Localized: Crea una passkey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297092
+    m_Localized: 'Passkey creata: la prossima volta entri senza password.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297093
+    m_Localized: Creare una passkey?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297094
+    m_Localized: Con una passkey entri da questo browser con Face ID, Touch ID o Windows Hello, senza scrivere la password.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297095
+    m_Localized: Crea la passkey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297096
+    m_Localized: Nessuna passkey per ora.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297097
+    m_Localized: Usata {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297098
+    m_Localized: Non ancora usata
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297099
+    m_Localized: Elimina
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297100
+    m_Localized: Eliminare la passkey?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297101
+    m_Localized: "\xAB{0}\xBB non servir\xE0 pi\xF9 per entrare. Puoi sempre entrare con la password."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297102
+    m_Localized: Passkey annullata.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297103
+    m_Localized: Tocca di nuovo il pulsante per usare la passkey.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297104
+    m_Localized: "Su questo dispositivo c'\xE8 gi\xE0 una passkey per Orbis."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297105
+    m_Localized: "Questa passkey non \xE8 collegata a un account: entra con la password e creane una nuova."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297106
+    m_Localized: 'La passkey non ha funzionato: riprova o entra con la password.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 991442926297107
+    m_Localized: "Preparo la passkey\u2026"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

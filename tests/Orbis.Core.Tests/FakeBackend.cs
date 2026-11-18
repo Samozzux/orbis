@@ -135,6 +135,15 @@ namespace Orbis.Core.Tests
                         var u = _users.Values.First(x => x.Id == rt.UserId);
                         return Json(200, Tokens(u, rt.DeviceId));
                     }
+                case "POST /api/auth/passkey/login/options":
+                    return Json(200, new JsonObject { ["challengeId"] = "c" + _next++, ["publicKey"] = new JsonObject { ["challenge"] = "sfida", ["rpId"] = "samozzux.github.io" } });
+                case "POST /api/auth/passkey/login/verify":
+                    {
+                        // nel finto basta che il browser abbia "firmato" la sfida per un utente registrato
+                        var u = _users.Values.FirstOrDefault(x => "cred-" + x.Username == body["credentialId"].AsString(""));
+                        if (u == null || body["signature"].AsString("") != "firma") throw new Fail(401, "invalid_passkey");
+                        return Json(200, Tokens(u, body["deviceId"].AsString("")));
+                    }
                 case "POST /api/auth/logout":
                     if (_refresh.TryGetValue(body["refreshToken"].AsString(""), out var lt)) lt.Revoked = true;
                     return new ApiResponse { Status = 204 };

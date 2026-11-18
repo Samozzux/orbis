@@ -112,6 +112,22 @@ namespace Orbis.UI.Game
                 Notice(Loc.Get(ended == "refresh_reused" ? "account.ended.refresh_reused" : ended == "refresh_expired" ? "account.ended.refresh_expired" : "account.ended.generic"));
             else _panel.Text(Loc.Get("account.intro"));
 
+            if (!register && PasskeysHere)
+            {
+                var status = _panel.Text("");
+                status.AddToClassList("panel-text--error");
+                status.style.display = DisplayStyle.None;
+                var row = new VisualElement();
+                row.AddToClassList("panel-actions");
+                _panel.Content.Add(row);
+                PasskeyButton(row, Loc.Get("account.passkey.login"), "primary", false, () => _hub.Api.PasskeyLoginOptionsAsync(), async (challengeId, credential) =>
+                {
+                    await _hub.Account.LoginWithPasskeyAsync(challengeId, credential);
+                    await SignedInAsync(false);
+                }, status).name = "account-passkey-login";
+                _panel.Text(Loc.Get("account.passkey.or"));
+            }
+
             _panel.Section(Loc.Get("account.username"));
             var user = Field("account-username", 20, false);
             if (register) _panel.Text(Loc.Get("account.username.note"));
@@ -149,12 +165,7 @@ namespace Orbis.UI.Game
                 {
                     if (register) await _hub.Account.RegisterAsync(u, p, d.Length > 0 ? d : u);
                     else await _hub.Account.LoginAsync(u, p);
-                    PlayerPrefs.DeleteKey(OfflinePref);
-                    _services.Haptics.Play(HapticKind.Success);
-                    Toast?.Invoke(Loc.Format("account.welcome", _hub.Account.User.DisplayName));
-                    _ = _hub.SyncNowAsync();
-                    if (_hub.Tokens.BiometricsAvailable && !await _hub.Tokens.BiometricsEnabledAsync()) OfferBiometrics();
-                    else OpenProfile();
+                    await SignedInAsync(true);
                 }
                 catch (ApiException e)
                 {
@@ -166,6 +177,18 @@ namespace Orbis.UI.Game
                     _busy = false;
                 }
             }).name = register ? "account-register" : "account-login";
+        }
+
+        /// <summary>Dopo l'accesso: benvenuto, sincronizzazione, proposta di Face ID / impronta (app) o di una passkey (web).</summary>
+        private async Task SignedInAsync(bool withPassword)
+        {
+            PlayerPrefs.DeleteKey(OfflinePref);
+            _services.Haptics.Play(HapticKind.Success);
+            Toast?.Invoke(Loc.Format("account.welcome", _hub.Account.User.DisplayName));
+            _ = _hub.SyncNowAsync();
+            if (_hub.Tokens.BiometricsAvailable && !await _hub.Tokens.BiometricsEnabledAsync()) OfferBiometrics();
+            else if (withPassword && PasskeysHere && !await HasPasskeysAsync()) OfferPasskey();
+            else OpenProfile();
         }
 
         private TextField Field(string name, int maxLength, bool password)
@@ -192,6 +215,11 @@ namespace Orbis.UI.Game
                 case "invalid_username": return Loc.Get("account.error.username");
                 case "invalid_password": return Loc.Get("account.error.password");
                 case "too_many_attempts": return Loc.Get("account.error.too_many");
+                case "unknown_passkey": return Loc.Get("account.passkey.unknown");
+                case "invalid_passkey":
+                case "passkey_cloned":
+                case "invalid_challenge": return Loc.Get("account.passkey.error");
+                case "passkey_exists": return Loc.Get("account.passkey.exists");
                 default: return Loc.Get("account.error.generic");
             }
         }
@@ -245,6 +273,8 @@ namespace Orbis.UI.Game
                 string os = IsIos ? "ios" : "android";
                 Switch(Loc.Get("account.biometric." + os), Loc.Get("account.biometric.note"), on, async v => await SetBiometricsAsync(v));
             }
+
+            if (PasskeysHere) PasskeySection();
 
             _panel.Section(Loc.Get("account.devices"));
             var list = new VisualElement();
@@ -343,6 +373,192 @@ namespace Orbis.UI.Game
                 changed(value);
             };
             _panel.Content.Add(row);
+        }
+
+        // ------------------------------------------------------------------ passkey (versione web)
+
+        /// <summary>Le passkey si usano solo nella versione web (sulle app c'è Face ID / l'impronta).</summary>
+        private bool PasskeysHere => _services.Kind == PlatformKind.Web && WebPasskeys.Supported;
+
+        private async Task<bool> HasPasskeysAsync()
+        {
+            try
+            {
+                return (await _hub.Api.PasskeysAsync()).Count > 0;
+            }
+            catch (ApiException)
+            {
+                return true; // nel dubbio non si propone
+            }
+        }
+
+        /// <summary>
+        /// Pulsante che crea o usa una passkey. Le opzioni del server si preparano subito; la richiesta al browser si
+        /// prepara quando il dito o il mouse preme il pulsante e parte al rilascio (Safari la vuole dentro un gesto).
+        /// </summary>
+        private Button PasskeyButton(VisualElement parent, string label, string style, bool create, Func<Task<JsonValue>> options,
+            Func<string, JsonValue, Task> onCredential, Label status)
+        {
+            Task<JsonValue> prepared = options();
+            Task<string> pending = null;
+            int armed = 0;
+            string challengeId = null;
+            Button b = null;
+
+            void Arm()
+            {
+                if (pending != null || prepared == null || prepared.Status != TaskStatus.RanToCompletion) return;
+                challengeId = prepared.Result["challengeId"].AsString("");
+                armed = WebPasskeys.Arm(create, JsonText.Of(prepared.Result), out pending);
+            }
+
+            void Show(string text)
+            {
+                status.text = text;
+                status.style.display = string.IsNullOrEmpty(text) ? DisplayStyle.None : DisplayStyle.Flex;
+            }
+
+            b = GamePanel.ActionButton(parent, label, OrbisIconKind.Lock, style, async () =>
+            {
+                if (_busy) return;
+                if (prepared != null && !prepared.IsCompleted)
+                {
+                    Show(Loc.Get("account.passkey.loading"));
+                    try
+                    {
+                        await prepared;
+                    }
+                    catch (ApiException)
+                    {
+                        // gestito qui sotto
+                    }
+                }
+                if (prepared == null || prepared.Status != TaskStatus.RanToCompletion)
+                {
+                    var e = prepared?.Exception?.GetBaseException() as ApiException;
+                    Show(e != null ? ErrorText(e) : Loc.Get("account.passkey.error"));
+                    prepared = options();
+                    return;
+                }
+                Arm();
+                WebPasskeys.RunNow(armed);
+                var task = pending;
+                var challenge = challengeId;
+                pending = null;
+                // la sfida si usa una volta: la prossima prova ne chiede una nuova
+                prepared = options();
+                _busy = true;
+                try
+                {
+                    var result = Json.Parse(await task);
+                    if (!result["ok"].AsBool())
+                    {
+                        string err = result["error"].AsString("");
+                        Show(Loc.Get(err == "NotAllowedError" || err == "AbortError" ? "account.passkey.cancelled"
+                            : err == "Timeout" ? "account.passkey.tap_again" : err == "InvalidStateError" ? "account.passkey.exists" : "account.passkey.error"));
+                        return;
+                    }
+                    Show(Loc.Get("account.working"));
+                    await onCredential(challenge, result["credential"]);
+                }
+                catch (ApiException e)
+                {
+                    _services.Haptics.Play(HapticKind.Warning);
+                    Show(ErrorText(e));
+                }
+                catch (JsonException)
+                {
+                    Show(Loc.Get("account.passkey.error"));
+                }
+                finally
+                {
+                    _busy = false;
+                }
+            });
+            // il gesto: la richiesta parte al rilascio del dito o del tasto
+            b.RegisterCallback<PointerDownEvent>(_ => Arm(), TrickleDown.TrickleDown);
+            b.RegisterCallback<KeyDownEvent>(_ => Arm(), TrickleDown.TrickleDown);
+            return b;
+        }
+
+        private void OfferPasskey()
+        {
+            _panel.Open(Loc.Get("account.passkey.offer.title"));
+            _panel.Text(Loc.Get("account.passkey.offer.text"));
+            var status = _panel.Text("");
+            status.AddToClassList("panel-text--error");
+            status.style.display = DisplayStyle.None;
+            _panel.Footer(Loc.Get("account.biometric.no"), OrbisIconKind.Close, "", OpenProfile).name = "account-passkey-no";
+            var footer = new VisualElement();
+            footer.AddToClassList("panel-actions");
+            _panel.Content.Add(footer);
+            PasskeyButton(footer, Loc.Get("account.passkey.offer.yes"), "primary", true, () => _hub.Api.PasskeyRegisterOptionsAsync(), CreatedAsync, status)
+                .name = "account-passkey-create";
+        }
+
+        private async Task CreatedAsync(string challengeId, JsonValue credential)
+        {
+            await _hub.Api.PasskeyRegisterVerifyAsync(challengeId, credential, _hub.Device.Name);
+            _services.Haptics.Play(HapticKind.Success);
+            Toast?.Invoke(Loc.Get("account.passkey.created"));
+            OpenProfile();
+        }
+
+        /// <summary>Profilo sul web: passkey registrate (con Elimina) e "Crea una passkey".</summary>
+        private async void PasskeySection()
+        {
+            _panel.Section(Loc.Get("account.passkey.section"));
+            _panel.Text(Loc.Get("account.passkey.note"));
+            var list = new VisualElement();
+            _panel.Content.Add(list);
+            var status = _panel.Text("");
+            status.AddToClassList("panel-text--error");
+            status.style.display = DisplayStyle.None;
+            var row = new VisualElement();
+            row.AddToClassList("panel-actions");
+            _panel.Content.Add(row);
+            PasskeyButton(row, Loc.Get("account.passkey.create"), "", true, () => _hub.Api.PasskeyRegisterOptionsAsync(), CreatedAsync, status)
+                .name = "account-passkey-create";
+            List<PasskeyInfo> passkeys;
+            try
+            {
+                passkeys = await _hub.Api.PasskeysAsync();
+            }
+            catch (ApiException)
+            {
+                return;
+            }
+            if (!_panel.IsOpen) return;
+            if (passkeys.Count == 0) _panel.Text(Loc.Get("account.passkey.none"), list);
+            foreach (var p in passkeys)
+            {
+                var card = new VisualElement();
+                card.AddToClassList("save-card");
+                var title = new Label(p.Name);
+                title.AddToClassList("save-card__name");
+                var info = new Label(p.LastUsedAt > DateTime.MinValue ? Loc.Format("account.passkey.used", Fmt.DateTime(p.LastUsedAt.ToLocalTime())) : Loc.Get("account.passkey.never_used"));
+                info.AddToClassList("save-card__info");
+                var actions = new VisualElement();
+                actions.AddToClassList("save-card__actions");
+                var passkey = p;
+                GamePanel.ActionButton(actions, Loc.Get("account.passkey.remove"), OrbisIconKind.Trash, "danger", () =>
+                    _panel.Confirm(Loc.Get("account.passkey.remove.title"), Loc.Format("account.passkey.remove.text", passkey.Name), Loc.Get("account.passkey.remove"), async () =>
+                    {
+                        try
+                        {
+                            await _hub.Api.DeletePasskeyAsync(passkey.Id);
+                        }
+                        catch (ApiException e)
+                        {
+                            Toast?.Invoke(ErrorText(e));
+                        }
+                        OpenProfile();
+                    }));
+                card.Add(title);
+                card.Add(info);
+                card.Add(actions);
+                list.Add(card);
+            }
         }
 
         // ------------------------------------------------------------------ conflitti
