@@ -10,8 +10,9 @@ using UnityEngine.UIElements;
 namespace Orbis.UI.App
 {
     /// <summary>
-    /// Menu principale (docs/04 §1): Continua, Nuova partita e navbar con Amici, Impostazioni, Crediti.
-    /// Nuova partita e Continua aprono i loro pannelli, Impostazioni il suo; le altre voci mostrano "in arrivo".
+    /// Menu principale (docs/04 §1): Continua, Nuova partita e navbar con Account, Impostazioni, Crediti.
+    /// Nuova partita, Continua e Account aprono i loro pannelli, Impostazioni il suo; Crediti mostra "in arrivo".
+    /// Gli amici sono spostati in M9: per ora al loro posto c'è l'account (M3).
     /// </summary>
     public sealed class MainMenuController
     {
@@ -24,6 +25,13 @@ namespace Orbis.UI.App
         private readonly VisualElement _toast;
         private readonly Label _toastText;
         private IVisualElementScheduledItem _toastHide;
+        private readonly Label _accountLabel;
+
+        /// <summary>Il giocatore ha toccato Account nella barra.</summary>
+        public event Action Account;
+
+        /// <summary>Nome mostrato sotto l'icona dell'account (vuoto = "Account").</summary>
+        public void SetAccountName(string name) => _accountLabel.text = string.IsNullOrWhiteSpace(name) ? Loc.Get("menu.account") : name;
 
         /// <param name="menu">schermata del menu</param>
         /// <param name="toast">avviso a capsula (sta fuori dal menu, sopra tutte le schermate)</param>
@@ -46,8 +54,13 @@ namespace Orbis.UI.App
                 services.Haptics.Play(HapticKind.Selection);
                 Continue?.Invoke();
             };
-            foreach (var id in new[] { "nav-friends", "nav-credits" })
-                Require<Button>(menu, id).clicked += ComingSoon;
+            Require<Button>(menu, "nav-credits").clicked += ComingSoon;
+            Require<Button>(menu, "nav-account").clicked += () =>
+            {
+                services.Haptics.Play(HapticKind.Selection);
+                Account?.Invoke();
+            };
+            _accountLabel = Require<Label>(menu, "nav-account-label");
             Require<Button>(menu, "nav-settings").clicked += settings.Open;
 
             var build = BuildInfo.Load();

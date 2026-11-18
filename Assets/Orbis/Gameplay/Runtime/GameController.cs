@@ -71,6 +71,8 @@ namespace Orbis.Gameplay
 
         public static async Task DeleteAsync(ISaveStore store, string id)
         {
+            // se era nel cloud, viene eliminata anche da lì alla prossima sincronizzazione
+            await Orbis.Core.Online.CloudSync.MarkDeletedAsync(store, id);
             await store.DeleteAsync("saves/" + id + "/game");
             await store.DeleteAsync("saves/" + id + "/meta");
         }

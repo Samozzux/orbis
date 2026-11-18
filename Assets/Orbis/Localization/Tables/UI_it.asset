@@ -1462,6 +1462,306 @@ MonoBehaviour:
     m_Localized: 'Edificio al livello {0}: nuovi addobbi!'
     m_Metadata:
       m_Items: []
+  - m_Id: 954717621444608
+    m_Localized: Account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027520
+    m_Localized: iPhone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027521
+    m_Localized: iPad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027522
+    m_Localized: Telefono Android
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027523
+    m_Localized: Browser
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027524
+    m_Localized: Browser su {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027525
+    m_Localized: Editor di Unity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027526
+    m_Localized: Account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027527
+    m_Localized: 'Con un account le partite si salvano anche nel cloud: inizi sull''iPhone e continui dal browser o da Android.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027528
+    m_Localized: Entra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027529
+    m_Localized: Crea account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027530
+    m_Localized: Nome utente
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027531
+    m_Localized: 'Da 3 a 20 caratteri: lettere, numeri, punto e trattino basso.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027532
+    m_Localized: Nome da mostrare
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027533
+    m_Localized: Password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027534
+    m_Localized: Almeno 8 caratteri.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027535
+    m_Localized: Entra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027536
+    m_Localized: Crea l'account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027537
+    m_Localized: Gioca offline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027538
+    m_Localized: Puoi entrare o creare l'account quando vuoi da Account, nel menu.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027539
+    m_Localized: "Un momento\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027540
+    m_Localized: Ciao {0}! Le tue partite ora vanno nel cloud.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027541
+    m_Localized: Bentornato, {0}.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027542
+    m_Localized: Sei uscito dall'account.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027543
+    m_Localized: Nome utente o password sbagliati.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027544
+    m_Localized: "Questo nome utente \xE8 gi\xE0 preso: scegline un altro."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027545
+    m_Localized: Il nome utente deve avere da 3 a 20 caratteri tra lettere, numeri, punto e trattino basso.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027546
+    m_Localized: La password deve avere almeno 8 caratteri.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027547
+    m_Localized: 'Troppi tentativi: riprova tra qualche minuto.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027548
+    m_Localized: "Non c'\xE8 connessione: riprova quando torna la rete."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027549
+    m_Localized: 'Qualcosa non ha funzionato: riprova.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027550
+    m_Localized: "Per sicurezza la sessione \xE8 stata chiusa: entra di nuovo con la password."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027551
+    m_Localized: "La sessione \xE8 scaduta: entra di nuovo con la password."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027552
+    m_Localized: Serve un nuovo accesso all'account.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027553
+    m_Localized: '@{0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027554
+    m_Localized: Partite nel cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027555
+    m_Localized: Tutto sincronizzato alle {0}.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027556
+    m_Localized: Non ancora sincronizzato.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027557
+    m_Localized: "Sincronizzo le partite\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027558
+    m_Localized: 'Sei offline: le partite si caricano appena torna la rete.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027559
+    m_Localized: "Alcune partite non si sono sincronizzate: riprovo pi\xF9 tardi."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027560
+    m_Localized: Sincronizza adesso
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027561
+    m_Localized: Entra con Face ID
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027562
+    m_Localized: Entra con l'impronta o il volto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027563
+    m_Localized: 'All''avvio niente password: basta lo sblocco del telefono.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027564
+    m_Localized: Entra in Orbis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027565
+    m_Localized: Entrare con Face ID?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027566
+    m_Localized: Entrare con l'impronta?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027567
+    m_Localized: Dalla prossima volta Orbis ti riconosce con Face ID, senza scrivere la password.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027568
+    m_Localized: Dalla prossima volta Orbis ti riconosce con l'impronta o il volto, senza scrivere la password.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027569
+    m_Localized: "S\xEC, attiva"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027570
+    m_Localized: Non ora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027571
+    m_Localized: Dispositivi collegati
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027572
+    m_Localized: "Carico i dispositivi\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027573
+    m_Localized: Questo dispositivo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027574
+    m_Localized: Ultimo accesso {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027575
+    m_Localized: Scollega
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027576
+    m_Localized: Scollegare il dispositivo?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027577
+    m_Localized: "\xAB{0}\xBB dovr\xE0 entrare di nuovo con la password."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027578
+    m_Localized: Elenco dei dispositivi non disponibile adesso.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027579
+    m_Localized: Esci
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027580
+    m_Localized: Uscire dall'account?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027581
+    m_Localized: Le partite restano su questo dispositivo; quelle nel cloud ti aspettano al prossimo accesso.
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027582
+    m_Localized: Partita giocata in due posti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027583
+    m_Localized: "\xAB{0}\xBB \xE8 stata giocata sia qui sia su \xAB{1}\xBB. Quale versione vuoi tenere?"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027584
+    m_Localized: Su questo dispositivo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027585
+    m_Localized: Nel cloud (da {0})
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027586
+    m_Localized: "Livello {0} \xB7 {1} \u20AC \xB7 salvata {2}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027587
+    m_Localized: "Con \xABTienili entrambi\xBB la versione di questo dispositivo diventa una partita a parte."
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027588
+    m_Localized: Tieni questo dispositivo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027589
+    m_Localized: Tieni il cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717638221824
+    m_Localized: Tienili entrambi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717638221825
+    m_Localized: 'Non sono riuscito a risolvere il conflitto: riprovo alla prossima sincronizzazione.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717638221826
+    m_Localized: Nel cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717638221827
+    m_Localized: Solo su questo dispositivo
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

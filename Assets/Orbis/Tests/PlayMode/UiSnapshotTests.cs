@@ -82,6 +82,15 @@ namespace Orbis.Tests.PlayMode
             app.Panel.Close();
             yield return new WaitForSecondsRealtime(0.4f);
 
+            // account (M3): schermata di accesso e scheda "Crea account"
+            var ready = Time.realtimeSinceStartup + 10f;
+            while (app.Account == null && Time.realtimeSinceStartup < ready) yield return null;
+            Click(root, "nav-account");
+            yield return new WaitForSecondsRealtime(0.6f);
+            Shot(dir, tag, "02b-account", Camera.main, ui);
+            app.Panel.Close();
+            yield return new WaitForSecondsRealtime(0.4f);
+
             app.StartGame(new GameStart { Name = "Foto", Transient = true });
             var session = app.Session;
             deadline = Time.realtimeSinceStartup + 120f;

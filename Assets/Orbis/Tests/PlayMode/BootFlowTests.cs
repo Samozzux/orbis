@@ -71,7 +71,7 @@ namespace Orbis.Tests.PlayMode
             Assert.That(root.Q<Label>("version").text, Does.Contain("0."));
 
             // le voci non ancora pronte (via tastiera/gamepad: evento di conferma) mostrano l'avviso "in arrivo"
-            var friends = root.Q<Button>("nav-friends");
+            var friends = root.Q<Button>("nav-credits");
             using (var submit = NavigationSubmitEvent.GetPooled())
             {
                 submit.target = friends;

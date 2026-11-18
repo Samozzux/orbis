@@ -1448,6 +1448,306 @@
     {
       "key": "details.osm.upgraded",
       "it": "Edificio al livello {0}: nuovi addobbi!"
+    },
+    {
+      "key": "menu.account",
+      "it": "Account"
+    },
+    {
+      "key": "device.iphone",
+      "it": "iPhone"
+    },
+    {
+      "key": "device.ipad",
+      "it": "iPad"
+    },
+    {
+      "key": "device.android",
+      "it": "Telefono Android"
+    },
+    {
+      "key": "device.browser",
+      "it": "Browser"
+    },
+    {
+      "key": "device.browser_on",
+      "it": "Browser su {0}"
+    },
+    {
+      "key": "device.editor",
+      "it": "Editor di Unity"
+    },
+    {
+      "key": "account.title",
+      "it": "Account"
+    },
+    {
+      "key": "account.intro",
+      "it": "Con un account le partite si salvano anche nel cloud: inizi sull'iPhone e continui dal browser o da Android."
+    },
+    {
+      "key": "account.tab.login",
+      "it": "Entra"
+    },
+    {
+      "key": "account.tab.register",
+      "it": "Crea account"
+    },
+    {
+      "key": "account.username",
+      "it": "Nome utente"
+    },
+    {
+      "key": "account.username.note",
+      "it": "Da 3 a 20 caratteri: lettere, numeri, punto e trattino basso."
+    },
+    {
+      "key": "account.display_name",
+      "it": "Nome da mostrare"
+    },
+    {
+      "key": "account.password",
+      "it": "Password"
+    },
+    {
+      "key": "account.password.note",
+      "it": "Almeno 8 caratteri."
+    },
+    {
+      "key": "account.login",
+      "it": "Entra"
+    },
+    {
+      "key": "account.register",
+      "it": "Crea l'account"
+    },
+    {
+      "key": "account.offline",
+      "it": "Gioca offline"
+    },
+    {
+      "key": "account.offline.note",
+      "it": "Puoi entrare o creare l'account quando vuoi da Account, nel menu."
+    },
+    {
+      "key": "account.working",
+      "it": "Un momento…"
+    },
+    {
+      "key": "account.welcome",
+      "it": "Ciao {0}! Le tue partite ora vanno nel cloud."
+    },
+    {
+      "key": "account.welcome_back",
+      "it": "Bentornato, {0}."
+    },
+    {
+      "key": "account.logged_out",
+      "it": "Sei uscito dall'account."
+    },
+    {
+      "key": "account.error.credentials",
+      "it": "Nome utente o password sbagliati."
+    },
+    {
+      "key": "account.error.username_taken",
+      "it": "Questo nome utente è già preso: scegline un altro."
+    },
+    {
+      "key": "account.error.username",
+      "it": "Il nome utente deve avere da 3 a 20 caratteri tra lettere, numeri, punto e trattino basso."
+    },
+    {
+      "key": "account.error.password",
+      "it": "La password deve avere almeno 8 caratteri."
+    },
+    {
+      "key": "account.error.too_many",
+      "it": "Troppi tentativi: riprova tra qualche minuto."
+    },
+    {
+      "key": "account.error.offline",
+      "it": "Non c'è connessione: riprova quando torna la rete."
+    },
+    {
+      "key": "account.error.generic",
+      "it": "Qualcosa non ha funzionato: riprova."
+    },
+    {
+      "key": "account.ended.refresh_reused",
+      "it": "Per sicurezza la sessione è stata chiusa: entra di nuovo con la password."
+    },
+    {
+      "key": "account.ended.refresh_expired",
+      "it": "La sessione è scaduta: entra di nuovo con la password."
+    },
+    {
+      "key": "account.ended.generic",
+      "it": "Serve un nuovo accesso all'account."
+    },
+    {
+      "key": "account.username_line",
+      "it": "@{0}"
+    },
+    {
+      "key": "account.cloud",
+      "it": "Partite nel cloud"
+    },
+    {
+      "key": "account.cloud.synced",
+      "it": "Tutto sincronizzato alle {0}."
+    },
+    {
+      "key": "account.cloud.never",
+      "it": "Non ancora sincronizzato."
+    },
+    {
+      "key": "account.cloud.syncing",
+      "it": "Sincronizzo le partite…"
+    },
+    {
+      "key": "account.cloud.offline",
+      "it": "Sei offline: le partite si caricano appena torna la rete."
+    },
+    {
+      "key": "account.cloud.failed",
+      "it": "Alcune partite non si sono sincronizzate: riprovo più tardi."
+    },
+    {
+      "key": "account.sync_now",
+      "it": "Sincronizza adesso"
+    },
+    {
+      "key": "account.biometric.ios",
+      "it": "Entra con Face ID"
+    },
+    {
+      "key": "account.biometric.android",
+      "it": "Entra con l'impronta o il volto"
+    },
+    {
+      "key": "account.biometric.note",
+      "it": "All'avvio niente password: basta lo sblocco del telefono."
+    },
+    {
+      "key": "account.biometric.reason",
+      "it": "Entra in Orbis"
+    },
+    {
+      "key": "account.biometric.offer.title.ios",
+      "it": "Entrare con Face ID?"
+    },
+    {
+      "key": "account.biometric.offer.title.android",
+      "it": "Entrare con l'impronta?"
+    },
+    {
+      "key": "account.biometric.offer.text.ios",
+      "it": "Dalla prossima volta Orbis ti riconosce con Face ID, senza scrivere la password."
+    },
+    {
+      "key": "account.biometric.offer.text.android",
+      "it": "Dalla prossima volta Orbis ti riconosce con l'impronta o il volto, senza scrivere la password."
+    },
+    {
+      "key": "account.biometric.yes",
+      "it": "Sì, attiva"
+    },
+    {
+      "key": "account.biometric.no",
+      "it": "Non ora"
+    },
+    {
+      "key": "account.devices",
+      "it": "Dispositivi collegati"
+    },
+    {
+      "key": "account.devices.loading",
+      "it": "Carico i dispositivi…"
+    },
+    {
+      "key": "account.devices.this",
+      "it": "Questo dispositivo"
+    },
+    {
+      "key": "account.devices.last",
+      "it": "Ultimo accesso {0}"
+    },
+    {
+      "key": "account.devices.remove",
+      "it": "Scollega"
+    },
+    {
+      "key": "account.devices.remove.title",
+      "it": "Scollegare il dispositivo?"
+    },
+    {
+      "key": "account.devices.remove.text",
+      "it": "«{0}» dovrà entrare di nuovo con la password."
+    },
+    {
+      "key": "account.devices.error",
+      "it": "Elenco dei dispositivi non disponibile adesso."
+    },
+    {
+      "key": "account.logout",
+      "it": "Esci"
+    },
+    {
+      "key": "account.logout.title",
+      "it": "Uscire dall'account?"
+    },
+    {
+      "key": "account.logout.text",
+      "it": "Le partite restano su questo dispositivo; quelle nel cloud ti aspettano al prossimo accesso."
+    },
+    {
+      "key": "conflict.title",
+      "it": "Partita giocata in due posti"
+    },
+    {
+      "key": "conflict.text",
+      "it": "«{0}» è stata giocata sia qui sia su «{1}». Quale versione vuoi tenere?"
+    },
+    {
+      "key": "conflict.local",
+      "it": "Su questo dispositivo"
+    },
+    {
+      "key": "conflict.cloud",
+      "it": "Nel cloud (da {0})"
+    },
+    {
+      "key": "conflict.info",
+      "it": "Livello {0} · {1} € · salvata {2}"
+    },
+    {
+      "key": "conflict.both.note",
+      "it": "Con «Tienili entrambi» la versione di questo dispositivo diventa una partita a parte."
+    },
+    {
+      "key": "conflict.keep_device",
+      "it": "Tieni questo dispositivo"
+    },
+    {
+      "key": "conflict.keep_cloud",
+      "it": "Tieni il cloud"
+    },
+    {
+      "key": "conflict.keep_both",
+      "it": "Tienili entrambi"
+    },
+    {
+      "key": "conflict.error",
+      "it": "Non sono riuscito a risolvere il conflitto: riprovo alla prossima sincronizzazione."
+    },
+    {
+      "key": "saves.cloud.synced",
+      "it": "Nel cloud"
+    },
+    {
+      "key": "saves.cloud.local",
+      "it": "Solo su questo dispositivo"
     }
   ]
 }

@@ -127,6 +127,14 @@ namespace Orbis.Core.Online
             }
         }
 
+        /// <summary>Risalva il refresh token attuale (es. dopo aver attivato o spento Face ID: cambia l'archivio).</summary>
+        public Task PersistTokenAsync(CancellationToken ct = default)
+        {
+            string token;
+            lock (_lock) token = _refresh;
+            return string.IsNullOrEmpty(token) ? Task.CompletedTask : _tokens.SaveAsync(token, ct);
+        }
+
         /// <summary>Token di accesso valido (rinnovato se manca o scade entro un minuto, o se <paramref name="force"/>).</summary>
         public Task<string> GetAccessTokenAsync(bool force, CancellationToken ct)
         {

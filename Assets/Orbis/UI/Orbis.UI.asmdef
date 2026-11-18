@@ -5,6 +5,7 @@
         "Orbis.Core",
         "Orbis.Gameplay",
         "Orbis.World",
+        "Orbis.Net",
         "Orbis.Platform",
         "Unity.Localization",
         "Unity.ResourceManager",

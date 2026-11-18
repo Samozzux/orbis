@@ -54,15 +54,29 @@ namespace Orbis.Tests.PlayMode
         }
 
         [UnityTest]
-        public IEnumerator ClicMouse_SuAmici_MostraLAvviso()
+        public IEnumerator ClicMouse_SuCrediti_MostraLAvviso()
         {
             yield return LoadMenu();
             var root = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement;
-            var button = root.Q<Button>("nav-friends");
+            var button = root.Q<Button>("nav-credits");
             var picked = button.panel.Pick(button.worldBound.center);
             yield return Click(button);
             Assert.That(OrbisApp.Instance.MainMenu.IsToastVisible, Is.True,
-                $"Il clic col mouse su Amici non ha mostrato l'avviso (sotto il puntatore: {Describe(picked)})");
+                $"Il clic col mouse su Crediti non ha mostrato l'avviso (sotto il puntatore: {Describe(picked)})");
+        }
+
+        [UnityTest]
+        public IEnumerator ClicMouse_SuAccount_ApreLAccesso()
+        {
+            yield return LoadMenu();
+            var deadline = Time.realtimeSinceStartup + 10f;
+            while (OrbisApp.Instance.Account == null && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.That(OrbisApp.Instance.Account, Is.Not.Null, "Account non pronto");
+            var root = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement;
+            yield return Click(root.Q<Button>("nav-account"));
+            Assert.That(OrbisApp.Instance.Panel.IsOpen, Is.True, "Il clic su Account non ha aperto il pannello");
+            Assert.That(root.Q<TextField>("account-username"), Is.Not.Null, "Manca il campo del nome utente");
+            Assert.That(root.Q<Button>("account-login"), Is.Not.Null, "Manca il pulsante Entra");
         }
 
         [UnityTest]
