@@ -33,7 +33,8 @@ class Cors
         }
         header('Access-Control-Allow-Origin: ' . $origin);
         header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Authorization, Content-Type');
+        header('Access-Control-Allow-Headers: Authorization, Content-Type, Range');
+        header('Access-Control-Expose-Headers: ETag, Content-Range, Retry-After, X-Orbis-Revision');
         header('Access-Control-Max-Age: 86400');
         return true;
     }

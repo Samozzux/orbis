@@ -23,15 +23,19 @@ function check($name, $condition, $detail = '')
     }
 }
 
-function request($method, $path, $headers = array())
+function request($method, $path, $headers = array(), $body = null)
 {
     global $base;
-    $context = stream_context_create(array('http' => array(
+    $http = array(
         'method' => $method,
         'header' => implode("\r\n", $headers),
         'ignore_errors' => true,
         'timeout' => 10,
-    )));
+    );
+    if ($body !== null) {
+        $http['content'] = $body;
+    }
+    $context = stream_context_create(array('http' => $http));
     $body = @file_get_contents($base . $path, false, $context);
     $status = 0;
     $out = array();
@@ -50,6 +54,24 @@ function request($method, $path, $headers = array())
     return array('status' => $status, 'headers' => $out, 'body' => $body, 'json' => json_decode((string)$body, true));
 }
 
+/** Chiamata JSON alle API, con token di accesso facoltativo. */
+function api($method, $path, $data = null, $token = null)
+{
+    $headers = array('Origin: https://samozzux.github.io');
+    if ($data !== null) {
+        $headers[] = 'Content-Type: application/json';
+    }
+    if ($token !== null) {
+        $headers[] = 'Authorization: Bearer ' . $token;
+    }
+    return request($method, $path, $headers, $data !== null ? json_encode($data) : null);
+}
+
+function errorCode($r)
+{
+    return isset($r['json']['error']['code']) ? $r['json']['error']['code'] : '(nessuno: ' . $r['status'] . ' ' . substr((string)$r['body'], 0, 200) . ')';
+}
+
 // configurazione temporanea
 $storage = sys_get_temp_dir() . '/orbis-test-' . getmypid();
 $configFile = $storage . '-config.php';
@@ -66,9 +88,21 @@ $config = array(
     'admin_username' => 'admin',
     'cors_origins' => array('https://samozzux.github.io'),
     'cors_allow_localhost' => true,
+    'storage_dir' => $storage . '-storage',
 );
+$storageDir = $config['storage_dir'];
 file_put_contents($configFile, '<?php return ' . var_export($config, true) . ';');
 @unlink($root . '/storage/migrations.ok');
+$testPdo = null;
+if ($hasDb) {
+    // si riparte da zero (anche per provare le migrazioni dall'inizio): solo tabelle orb_ del database di test
+    $db = $config['db'];
+    $testPdo = new PDO('mysql:host=' . $db['host'] . ';port=' . $db['port'] . ';dbname=' . $db['name'], $db['user'], $db['password'],
+        array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC));
+    foreach ($testPdo->query("SHOW TABLES LIKE 'orb\\_%'")->fetchAll(PDO::FETCH_COLUMN) as $table) {
+        $testPdo->exec('DROP TABLE `' . $table . '`');
+    }
+}
 
 $port = 18000 + (getmypid() % 1000);
 $base = "http://127.0.0.1:$port";
@@ -131,10 +165,31 @@ try {
     require_once $root . '/src/bootstrap.php';
     $parts = \Orbis\Api\Migrator::splitStatements("-- commento\nCREATE TABLE orb_a (x INT);\n\nINSERT INTO orb_a VALUES (1);\n");
     check('split delle istruzioni SQL', count($parts) === 2 && strpos($parts[0], 'CREATE TABLE orb_a') === 0);
+
+    // --- JWT ---
+    $secret = str_repeat('a', 64);
+    $tok = \Orbis\Api\Auth\Jwt::encode(array('sub' => '7', 'exp' => time() + 60), $secret);
+    $claims = \Orbis\Api\Auth\Jwt::decode($tok, $secret);
+    check('JWT: firma e lettura', is_array($claims) && $claims['sub'] === '7');
+    check('JWT: segreto sbagliato rifiutato', \Orbis\Api\Auth\Jwt::decode($tok, str_repeat('b', 64)) === null);
+    check('JWT: scaduto rifiutato', \Orbis\Api\Auth\Jwt::decode(\Orbis\Api\Auth\Jwt::encode(array('sub' => '7', 'exp' => time() - 1), $secret), $secret) === null);
+    $parts = explode('.', $tok);
+    $none = \Orbis\Api\Auth\Jwt::b64(json_encode(array('alg' => 'none', 'typ' => 'JWT'))) . '.' . $parts[1] . '.';
+    check('JWT: alg none rifiutato', \Orbis\Api\Auth\Jwt::decode($none, $secret) === null);
+    $forged = $parts[0] . '.' . \Orbis\Api\Auth\Jwt::b64(json_encode(array('sub' => '1', 'exp' => time() + 60))) . '.' . $parts[2];
+    check('JWT: contenuto alterato rifiutato', \Orbis\Api\Auth\Jwt::decode($forged, $secret) === null);
+
+    if ($hasDb) {
+        require __DIR__ . '/auth.php';
+        require __DIR__ . '/saves.php';
+    }
 } finally {
     proc_terminate($server);
     proc_close($server);
     @unlink($configFile);
+    if (is_dir($storageDir)) {
+        exec('rm -rf ' . escapeshellarg($storageDir));
+    }
     @unlink($root . '/storage/migrations.ok');
 }
 
