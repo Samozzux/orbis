@@ -42,6 +42,20 @@ Tutto è dati (`data/catalog/*.json` → content pack "catalog"). Obiettivi di q
 
 Ogni elemento ha una **sagoma esatta** (impronta a terra + altezza) e si piazza su griglia dentro lotti delimitati (`docs/04` §4): nello schema `footprint` è l'impronta in metri (eventualmente un poligono `shape` in coordinate locali), e il modello non deve uscirne.
 
+**Realismo (scelta di Samuele, 18/11/2026: "tutti gli edifici esistenti e da poter aggiungere devono essere reali").** Ogni elemento del catalogo, quelli di oggi e quelli che si aggiungeranno, deve somigliare a un edificio vero del suo tipo, con le parti che lo fanno riconoscere. Una scatola con il tetto non basta. Esempi:
+- **Edifici e lotti.**
+  - Le case stanno nel loro lotto con il giardino, il vialetto e il muretto.
+  - I negozi sono al piano terra di una palazzina, con vetrine, tende, insegna e dehors.
+  - I condomini hanno i balconi e le tende da sole.
+- **Grandi strutture.**
+  - Il supermercato ha il parcheggio con le auto.
+  - La centrale nucleare ha le torri a iperboloide.
+  - La chiesa ha il rosone, il campanile e l'abside.
+  - Il traliccio è a traliccio.
+- **Campi sportivi.** Hanno le linee regolamentari del loro sport.
+
+Ogni elemento nuovo si controlla nel foglio delle fotografie del catalogo (`WorldSnapshotTests.Catalogo`) prima di entrare in `main`.
+
 ### Schema di un elemento (esempio)
 ```json
 {

@@ -675,7 +675,8 @@
    },
    "height": 8,
    "model": {
-    "family": "barn"
+    "family": "barn",
+    "kind": "hay"
    },
    "unlock": {
     "playerLevel": 2
@@ -725,7 +726,8 @@
    },
    "height": 7,
    "model": {
-    "family": "barn"
+    "family": "barn",
+    "kind": "stable"
    },
    "unlock": {
     "playerLevel": 4
@@ -877,7 +879,8 @@
    },
    "height": 8,
    "model": {
-    "family": "farmhouse"
+    "family": "farmhouse",
+    "kind": "agriturismo"
    },
    "unlock": {
     "playerLevel": 8

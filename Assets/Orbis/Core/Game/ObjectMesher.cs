@@ -8,13 +8,17 @@ using Orbis.Core.World.Tiles;
 namespace Orbis.Core.Game
 {
     /// <summary>
-    /// Modelli procedurali degli elementi del catalogo, per famiglia (docs/08: niente asset esterni in M2).
-    /// Tutto resta dentro la sagoma esatta dell'elemento (docs/04 §4). Coordinate del tile (est, nord, quota);
-    /// le piante (alberi, uliveti, vigneti…) escono come istanze da disegnare con i modelli delle piante.
+    /// Modelli procedurali degli elementi del catalogo, per famiglia, fatti come quelli veri (docs/08 §3: ogni edificio
+    /// del catalogo deve somigliare a un edificio reale del suo tipo, con le sue parti tipiche). Tutto resta dentro la
+    /// sagoma esatta dell'elemento (docs/04 §4). Coordinate del tile (est, nord, quota); il fronte è il lato v = 0.
+    /// Le piante (alberi, uliveti, vigneti…) escono come istanze da disegnare con i modelli delle piante.
+    /// File divisi per gruppi: Town (case e negozi), Public (servizi e cultura), Industry (industria, campagna,
+    /// energia), Leisure (sport, trasporti, arredo e natura).
     /// </summary>
-    public sealed class ObjectMesher
+    public sealed partial class ObjectMesher
     {
         private readonly BuildingMesher _building = new BuildingMesher();
+        private readonly BuildingDecorator _decor = new BuildingDecorator();
 
         // telaio dell'oggetto: origine nell'angolo (0,0) della sagoma ruotata, assi U (larghezza) e V (profondità)
         private Vec2 _o, _u, _v;
@@ -26,6 +30,12 @@ namespace Orbis.Core.Game
         private readonly HashSet<long> _plinths = new HashSet<long>();
         private List<PlantInstance> _plants;
         private long _seed;
+        // livello 1…5 (gli addobbi crescono col livello)
+        private int _level;
+        // muri in comune (case a schiera): ascisse U dove due unità si toccano, lì niente addobbi
+        private float[] _party;
+
+        private static readonly uint[] CarColors = { 0xF2F2F0, 0xB8BCC0, 0x6D7278, 0x2A2D31, 0xB3261E, 0x1F4E8C, 0x2F5D3A, 0xE0D6C2, 0x8C1C2C };
 
         /// <summary>Costruisce il modello. <paramref name="corner"/> è l'angolo della sagoma, <paramref name="angle"/> la direzione di U.</summary>
         public void Build(CatalogItem item, int level, string variant, Vec2 corner, float angle, int rotation, GroundSampler ground,
@@ -41,6 +51,8 @@ namespace Orbis.Core.Game
             _mb = mb;
             _plants = plants;
             _seed = seed;
+            _level = Math.Max(1, Math.Min(5, level));
+            _party = null;
             _plinths.Clear();
             Range(0, 0, _w, _d, out _, out _z0);
             var v = item.Variant(variant);
@@ -49,106 +61,70 @@ namespace Orbis.Core.Game
             float lv = Math.Max(0, level - 1);
             switch (item.Family)
             {
-                case "house": House(item, wall, roof, lv, false); break;
-                case "shop": House(item, wall, roof, lv, true); break;
+                case "house": House(item, wall, roof, lv); break;
+                case "shop": Shop(item, wall, roof, lv); break;
                 case "civic": Civic(item, wall, roof); break;
                 case "church": Church(item, wall); break;
                 case "industrial": Industrial(item, wall, roof); break;
-                case "farmhouse": Building(0, 0, _w, _d, item.Height, RoofShape.Gabled, wall != 0 ? wall : 0x1D8C7A8, 0x1B25A3C, 2, BuildingUse.Farm); break;
-                case "barn": Building(0, 0, _w, _d, item.Height, RoofShape.Gabled, 0x1A0703F, 0x18E8A84, 1, BuildingUse.Barn); break;
+                case "farmhouse": Farmhouse(item, wall, roof); break;
+                case "barn": Barn(item, wall); break;
                 case "silo": Silos(item); break;
                 case "greenhouse": Greenhouse(); break;
                 case "wind": WindTurbine(_w / 2, _d / 2, item.Height, Math.Min(_w, _d) / 2); break;
                 case "windfarm":
+                    Ground(0, 0, _w, _d, 0x19CB46E, 0.05f, BuildingDecorator.KindPlants, 0.0f);
                     for (int k = 0; k < 4; k++) WindTurbine(_w * (0.25f + 0.5f * (k & 1)), _d * (0.25f + 0.5f * (k >> 1)), item.Height, Math.Min(_w, _d) / 4);
                     break;
-                case "solar": SolarRows(0, 0, _w, _d, float.NaN); break;
-                case "solarbuilding":
-                    Building(0, 0, _w, _d, item.Height - 1.2f, RoofShape.Flat, 0x1E4DACB, 0x1A9A399, 4, BuildingUse.Apartments);
-                    SolarRows(1, 1, _w - 1, _d - 1, _z0 + item.Height - 1.2f);
-                    break;
+                case "solar": SolarField(); break;
+                case "solarbuilding": SolarCondo(item, wall); break;
                 case "hydro": Hydro(item); break;
                 case "thermal": Thermal(item); break;
                 case "nuclear": Nuclear(item, lv); break;
                 case "substation": Substation(); break;
                 case "pylon": Pylon(item.Height); break;
                 case "field": Field(item.Param("crop", "wheat")); break;
-                case "pasture": Ground(0, 0, _w, _d, 0x19CC277, 0.1f); Fence(); break;
-                case "vineyard": Ground(0, 0, _w, _d, 0x1A29660, 0.08f); Rows(PlantKind.VineRow, 2.6f, 0); break;
-                case "olivegrove": Ground(0, 0, _w, _d, 0x1B2AC80, 0.08f); Grid(PlantKind.Olive, 7f); break;
-                case "orchard": Ground(0, 0, _w, _d, 0x196AC66, 0.08f); Grid(PlantKind.Fruit, 5.5f); break;
-                case "beehives": Ground(0, 0, _w, _d, 0x1B5C47C, 0.06f); Beehives(); break;
+                case "pasture": Pasture(); break;
+                case "vineyard": Vineyard(); break;
+                case "olivegrove": Ground(0, 0, _w, _d, 0x1B2AC80, 0.06f, BuildingDecorator.KindPlants, 0.02f); Grid(PlantKind.Olive, 7f); break;
+                case "orchard": Ground(0, 0, _w, _d, 0x196AC66, 0.06f, BuildingDecorator.KindPlants, 0.04f); Grid(PlantKind.Fruit, 5.5f); break;
+                case "beehives": Beehives(); break;
                 case "pitch": Pitch(item.Param("sport", "football")); break;
                 case "pool": Pool(); break;
-                case "hall": Building(0, 0, _w, _d, item.Height, RoofShape.Round, wall != 0 ? wall : 0x1D9DCDD, 0x1B8BEC2, 2, BuildingUse.Sports); break;
+                case "hall": Hall(item, wall); break;
                 case "track": Track(); break;
                 case "stadium": Stadium(item, lv); break;
-                case "amphitheatre": Amphitheatre(); break;
+                case "amphitheatre": Amphitheatre(item); break;
                 case "funfair": Funfair(item); break;
-                case "parking": Ground(0, 0, _w, _d, 0x19C9D9D, 0.12f, 9); break;
-                case "parkinggarage": Building(0, 0, _w, _d, item.Height, RoofShape.Flat, 0x1BDBAB3, 0x1A9A399, 4, BuildingUse.Parking); break;
+                case "parking": Parking(); break;
+                case "parkinggarage": ParkingGarage(item); break;
                 case "busstop": BusStop(); break;
-                case "station": Building(0, 0, _w, _d, item.Height, RoofShape.Flat, 0x1E9E2D3, 0x18E8A84, 1, BuildingUse.TrainStation); break;
-                case "path": Ground(0, 0, _w, _d, 0x1D5CBB8, 0.12f, 10); break;
-                case "paving": Ground(0, 0, _w, _d, 0x1D5CBB8, 0.12f, 10); break;
-                case "helipad":
-                    {
-                        float g = Base(0, 0, _w, _d);
-                        Flat(0, 0, _w, _d, g + 0.12f, 0x1707275, 2);
-                        Box(_w * 0.3f, _d * 0.45f, _w * 0.7f, _d * 0.55f, g + 0.12f, g + 0.16f, 0x1F2F2F2, 2);
-                        break;
-                    }
+                case "station": BusStation(item); break;
+                case "path": Footpath(); break;
+                case "paving": Piazza(); break;
+                case "helipad": Helipad(); break;
                 case "tree": Plant(PlantKindOf(item.Param("kind", "broadleaf")), _w / 2, _d / 2, item.Height); break;
-                case "grove": Ground(0, 0, _w, _d, 0x18BB669, 0.06f); Scatter(PlantKind.Broadleaf, 5f); break;
-                case "hedge":
-                    {
-                        Range(0, 0, _w, _d, out var lo, out var hi);
-                        Box(0, 0, _w, _d, lo - 0.2f, (lo + hi) / 2 + item.Height, 0x15C8949, 2);
-                        break;
-                    }
-                case "flowerbed":
-                    {
-                        Range(0, 0, _w, _d, out var lo, out var hi);
-                        Box(0, 0, _w, _d, lo - 0.1f, hi + 0.35f, 0x1B9A27A, 2);
-                        Flowers(item.Param("color", "mixed"));
-                        break;
-                    }
-                case "lawn": Ground(0, 0, _w, _d, 0x19CC277, 0.08f); break;
+                case "grove": Ground(0, 0, _w, _d, 0x18BB669, 0.05f, BuildingDecorator.KindPlants, 0.05f); Scatter(PlantKind.Broadleaf, 5f); break;
+                case "hedge": Hedge(item.Height); break;
+                case "flowerbed": Flowerbed(item.Param("color", "mixed")); break;
+                case "lawn": Lawn(0, 0, _w, _d); break;
                 case "shrubs": Scatter(PlantKind.Shrub, 1.4f); break;
-                case "pond": Ground(0, 0, _w, _d, 0x1C9B87A, 0.06f); Ground(0.6f, 0.6f, _w - 0.6f, _d - 0.6f, 0x14F8FC0, 0.1f, 11); break;
-                case "bench": Bench(); break;
-                case "lamp": Lamp(item.Height); break;
-                case "fountain": Fountain(item.Height); break;
-                case "statue": Statue(item.Height); break;
-                case "planter":
-                    {
-                        float g = Base(0, 0, _w, _d);
-                        Box(0, 0, _w, _d, g, g + 0.5f, 0x1B7A58C, 0);
-                        Box(0.1f, 0.1f, _w - 0.1f, _d - 0.1f, g + 0.5f, g + 0.8f, 0x16E9C4C, 2);
-                        break;
-                    }
-                case "bin": Cylinder(_w / 2, _d / 2, 0.2f, Ground(_w / 2, _d / 2) - 0.05f, Ground(_w / 2, _d / 2) + 0.9f, 8, 0x1556070); break;
+                case "pond": Pond(); break;
+                case "bench": Bench(0, 0, _w, _d); break;
+                case "lamp": StreetLamp(_w / 2, _d / 2, item.Height, item.Param("style", "modern") == "historic"); break;
+                case "fountain": Fountain(item.Height, item.Param("size", "small") == "large"); break;
+                case "statue": Statue(item.Height, item.Param("size", "small") == "large"); break;
+                case "planter": Planter(); break;
+                case "bin": Bin(_w / 2, _d / 2); break;
                 case "gazebo": Gazebo(item.Height); break;
-                case "kiosk": Building(0, 0, _w, _d, item.Height, RoofShape.Pyramidal, 0x12F7D4F, 0x1E8C48A, 1, BuildingUse.Kiosk); break;
+                case "kiosk": Kiosk(item.Height); break;
                 case "playground": Playground(); break;
                 case "terrace": Terrace(); break;
-                case "flag":
-                    {
-                        float g = Ground(0.2f, _d / 2);
-                        Cylinder(0.2f, _d / 2, 0.06f, g, g + item.Height, 6, 0x1D0D4D8);
-                        Box(0.26f, _d / 2 - 0.03f, _w - 0.05f, _d / 2 + 0.03f, g + item.Height - 1f, g + item.Height - 0.1f, 0x12F8F3F, 0);
-                        break;
-                    }
-                case "bikerack":
-                    {
-                        float g = Base(0, 0, _w, _d);
-                        for (float x = 0.3f; x < _w; x += 0.6f) Box(x, 0.2f, x + 0.05f, _d - 0.2f, g, g + 0.8f, 0x1708090, 0);
-                        break;
-                    }
+                case "flag": FlagPole(0.25f, _d / 2, item.Height, Math.Min(_w - 0.4f, 1.8f)); break;
+                case "bikerack": BikeRack(); break;
                 default:
                     {
                         float g = Base(0, 0, _w, _d);
-                        Box(0, 0, _w, _d, g, g + item.Height, wall != 0 ? wall : 0x1D0C8B8, 0);
+                        Box(0, 0, _w, _d, g, g + item.Height, wall != 0 ? wall : 0x1D0C8B8u, 0);
                         break;
                     }
             }
@@ -169,664 +145,7 @@ namespace Orbis.Core.Game
             }
         }
 
-        // ------------------------------------------------------------------ famiglie
-
-        private void House(CatalogItem item, uint wall, uint roof, float lv, bool shops)
-        {
-            int floors = int.TryParse(item.Param("floors", "1"), out var f) ? f : 1;
-            var shape = ParseRoof(item.Param("roof", "hipped"));
-            var use = shops ? BuildingUse.Retail : (floors >= 4 ? BuildingUse.Apartments : BuildingUse.House);
-            // potenziamento: un po' più alto ai livelli successivi (sempre dentro la sagoma)
-            float h = item.Height * (1 + 0.06f * lv);
-            Building(0, 0, _w, _d, h, shape, wall, roof, Math.Max(1, floors + (int)Math.Round(lv * 0.5f)), use, shops);
-            if (shops)
-            {
-                // tenda sopra la vetrina e insegna sul fronte (lato v = 0)
-                uint awning = Catalog.ParseColor(item.Param("awning", "#c8473b"));
-                Box(0.4f, 0.0f, _w - 0.4f, 0.7f, _z0 + 2.9f, _z0 + 3.15f, awning != 0 ? awning : 0x1C8473B, 2);
-            }
-        }
-
-        private void Civic(CatalogItem item, uint wall, uint roof)
-        {
-            int floors = int.TryParse(item.Param("floors", "2"), out var f) ? f : 2;
-            Building(0, 0, _w, _d, item.Height, RoofShape.Hipped, wall != 0 ? wall : 0x1E2D3B3, roof != 0 ? roof : 0x1B25A3C, floors, BuildingUse.Civic);
-            // portico a colonne sul fronte
-            int n = Math.Max(4, (int)(_w / 4));
-            for (int k = 0; k < n; k++) Cylinder(_w * (k + 0.5f) / n, 0.8f, 0.35f, _z0, _z0 + Math.Min(item.Height, 7f), 8, 0x1F2EDE2);
-            float pole = _z0 + item.Height * 1.2f + 1.5f; // pennone appena sopra il tetto, dentro l'altezza dell'elemento
-            Cylinder(1f, 1f, 0.06f, _z0, pole, 6, 0x1D0D4D8);
-            Box(1f, 0.97f, 2.6f, 1.03f, pole - 1.1f, pole - 0.1f, 0x12F8F3F, 0);
-        }
-
-        private void Church(CatalogItem item, uint wall)
-        {
-            uint stone = wall != 0 ? wall : 0x1D9C9A8;
-            float tower = Math.Min(_w, _d) * 0.3f;
-            // l'altezza dell'elemento è quella del campanile; la navata è più bassa
-            Building(0, 0, _w - tower, _d, item.Height * 0.55f, RoofShape.Gabled, stone, 0x1B8664A, 2, BuildingUse.Church);
-            Building(_w - tower, 0, _w, tower, item.Height, RoofShape.Pyramidal, stone, 0x1B8664A, 6, BuildingUse.Tower);
-        }
-
-        private void Industrial(CatalogItem item, uint wall, uint roof)
-        {
-            string kind = item.Param("kind", "shed");
-            uint w = wall != 0 ? wall : 0x1C8CCCE, r = roof != 0 ? roof : 0x19A9A96;
-            switch (kind)
-            {
-                case "plant":
-                    Building(0, 0, _w * 0.6f, _d, item.Height * 0.5f, RoofShape.Flat, w, r, 3, BuildingUse.Industrial);
-                    Cylinder(_w * 0.8f, _d * 0.3f, Math.Min(_w, _d) * 0.12f, _z0 - 0.5f, _z0 + item.Height, 16, 0x1B5B0A6);
-                    Cylinder(_w * 0.8f, _d * 0.75f, Math.Min(_w, _d) * 0.12f, _z0 - 0.5f, _z0 + item.Height * 0.8f, 16, 0x1B5B0A6);
-                    break;
-                case "winery":
-                case "oilmill":
-                    Building(0, 0, _w, _d * 0.6f, item.Height, RoofShape.Gabled, 0x1E0CDA8, 0x1B25A3C, 2, BuildingUse.Industrial);
-                    for (int k = 0; k < 4; k++) Cylinder(_w * (k + 0.5f) / 4, _d * 0.82f, Math.Min(2f, _d * 0.12f), _z0 - 0.5f, _z0 + item.Height * 0.9f, 12, 0x1C9CED4);
-                    break;
-                default:
-                    // fabbrica: la ciminiera è la parte più alta (= altezza dell'elemento), il capannone più basso
-                    bool factory = kind == "factory";
-                    Building(0, 0, _w, _d, factory ? item.Height * 0.55f : item.Height, kind == "workshop" ? RoofShape.Gabled : RoofShape.Flat, w, r, 2, BuildingUse.Industrial);
-                    if (factory) Cylinder(_w * 0.9f, _d * 0.85f, 1.2f, _z0, _z0 + item.Height, 10, 0x1A0705A);
-                    break;
-            }
-        }
-
-        private void Silos(CatalogItem item)
-        {
-            float r = Math.Min(_w, _d) * 0.22f;
-            float g = Base(0, 0, _w, _d);
-            Cylinder(_w * 0.28f, _d * 0.28f, r, g, g + item.Height - 1.5f, 16, 0x1D9DCDD);
-            Cylinder(_w * 0.72f, _d * 0.72f, r, g, g + item.Height * 0.85f - 1.5f, 16, 0x1D9DCDD);
-            Cone(_w * 0.28f, _d * 0.28f, r, g + item.Height - 1.5f, 1.5f, 0x1B8BEC2);
-            Cone(_w * 0.72f, _d * 0.72f, r, g + item.Height * 0.85f - 1.5f, 1.5f, 0x1B8BEC2);
-        }
-
-        private void Greenhouse()
-        {
-            float g = Base(0, 0, _w, _d);
-            Box(0, 0, _w, _d, g - 0.3f, g + 2.4f, 0x1DDE8E4, 5 * 2);
-            Building(0, 0, _w, _d, 3.6f, RoofShape.Gabled, 0x1DDE8E4, 0x1E6EFEC, 1, BuildingUse.Greenhouse);
-        }
-
-        /// <summary>Pala eolica: il rotore sta dentro la sagoma (raggio ≤ metà lato), la punta all'altezza dell'elemento.</summary>
-        private void WindTurbine(float cu, float cv, float height, float halfSide)
-        {
-            float g = Ground(cu, cv);
-            float blade = Math.Max(2f, Math.Min(height * 0.3f, halfSide - 1f));
-            float hubZ = height - blade;
-            Cylinder(cu, cv, 1.6f, g - 0.5f, g + hubZ, 12, 0x1F2F4F5, 1.0f, 0.55f);
-            // navicella e tre pale fisse (la rotazione arriverà con l'animazione)
-            Box(cu - 1.2f, cv - 3f, cu + 1.2f, cv + 2f, g + hubZ - 1.2f, g + hubZ + 1.2f, 0x1F2F4F5, 0);
-            var hub = new Vec2(cu, cv - 3.2f);
-            for (int k = 0; k < 3; k++)
-            {
-                double a = Math.PI / 2 + k * 2 * Math.PI / 3;
-                var dir = new Vec2((float)Math.Cos(a), (float)Math.Sin(a));
-                // pala nel piano verticale U-quota davanti alla navicella
-                Blade(hub, dir, g + hubZ, blade);
-            }
-        }
-
-        private void Blade(Vec2 hub, Vec2 dir, float hz, float len)
-        {
-            uint c = MeshBuffer.Rgb(0xF5F6F7);
-            var p0 = World(hub.X, hub.Y);
-            var right = _u;
-            // dir.X lungo U, dir.Y in quota
-            var tip = p0 + right * (dir.X * len);
-            float tipZ = hz + dir.Y * len;
-            var side = right * (-dir.Y * 0.9f);
-            float sideZ = dir.X * 0.9f;
-            var n = _v * -1f;
-            int a = _mb.Add(p0.X - side.X * 0.5f, p0.Y - side.Y * 0.5f, hz - sideZ * 0.5f, n.X, n.Y, 0, c, 0, 0, 1, 1, 2, 0, 1, 0);
-            int b = _mb.Add(p0.X + side.X * 0.5f, p0.Y + side.Y * 0.5f, hz + sideZ * 0.5f, n.X, n.Y, 0, c, 0, 0, 1, 1, 2, 0, 1, 0);
-            int t = _mb.Add(tip.X, tip.Y, tipZ, n.X, n.Y, 0, c, 0, 0, 1, 1, 2, 0, 1, 0);
-            _mb.Triangle(a, b, t);
-            _mb.Triangle(a, t, b);
-        }
-
-        /// <param name="z">quota del tetto su cui stanno i pannelli; NaN = a terra, seguendo il terreno</param>
-        private void SolarRows(float u0, float v0, float u1, float v1, float z)
-        {
-            bool onGround = float.IsNaN(z);
-            for (float v = v0 + 0.6f; v + 2.2f < v1; v += 3.4f)
-            {
-                float g = onGround ? Mid(u0, v, u1, v + 2.2f) : z;
-                // pannello inclinato verso sud (v crescente = nord)
-                SlopedPanel(u0 + 0.4f, v, u1 - 0.4f, v + 2.2f, g + 0.5f, g + 1.6f);
-            }
-        }
-
-        private void SlopedPanel(float u0, float v0, float u1, float v1, float zLow, float zHigh)
-        {
-            uint c = MeshBuffer.Rgb(0x2B3A5A);
-            var p00 = World(u0, v0);
-            var p10 = World(u1, v0);
-            var p11 = World(u1, v1);
-            var p01 = World(u0, v1);
-            float dz = zHigh - zLow, dv = v1 - v0;
-            var nn = _v * (-dz) + new Vec2(0, 0);
-            float nl = (float)Math.Sqrt(dz * dz + dv * dv);
-            // tipo 12 = pannello solare (celle disegnate dallo shader)
-            int a = _mb.Add(p00.X, p00.Y, zLow, nn.X / nl, nn.Y / nl, dv / nl, c, u0, v0, 0, 0, 12, 0.5f, 1, 0);
-            int b = _mb.Add(p10.X, p10.Y, zLow, nn.X / nl, nn.Y / nl, dv / nl, c, u1, v0, 0, 0, 12, 0.5f, 1, 0);
-            int d = _mb.Add(p11.X, p11.Y, zHigh, nn.X / nl, nn.Y / nl, dv / nl, c, u1, v1, 0, 0, 12, 0.5f, 1, 0);
-            int e = _mb.Add(p01.X, p01.Y, zHigh, nn.X / nl, nn.Y / nl, dv / nl, c, u0, v1, 0, 0, 12, 0.5f, 1, 0);
-            _mb.Quad(a, b, d, e);
-            _mb.Quad(a, e, d, b); // retro
-        }
-
-        private void Hydro(CatalogItem item)
-        {
-            Building(0, 0, _w, _d * 0.5f, item.Height * 0.5f, RoofShape.Flat, 0x1C9C6BF, 0x1A9A399, 2, BuildingUse.Industrial);
-            Box(0, _d * 0.5f, _w, _d, Base(0, _d * 0.5f, _w, _d) - 1, Base(0, _d * 0.5f, _w, _d) + item.Height, 0x1B9B4AA, 6 * 2);
-            Ground(0, _d * 0.55f, _w, _d, 0x14F8FC0, 0.2f, 11);
-        }
-
-        private void Thermal(CatalogItem item)
-        {
-            int chimneys = int.TryParse(item.Param("chimneys", "1"), out var c) ? c : 1;
-            Building(0, 0, _w * 0.65f, _d * 0.7f, item.Height * 0.4f, RoofShape.Flat, 0x1D1CBC0, 0x1A9A399, 3, BuildingUse.Industrial);
-            for (int k = 0; k < chimneys; k++)
-                Cylinder(_w * (0.78f + 0.12f * k), _d * 0.3f, 1.6f, _z0 - 0.5f, _z0 + item.Height, 12, 0x1C8C2BA, 1.0f, 0.75f);
-            if (item.Param("steam", "false") == "true" || chimneys == 0)
-                Cylinder(_w * 0.8f, _d * 0.75f, Math.Min(_w, _d) * 0.15f, _z0 - 0.5f, _z0 + item.Height * 0.6f, 20, 0x1D8DADC, 1.0f, 0.7f);
-            Box(_w * 0.05f, _d * 0.75f, _w * 0.6f, _d * 0.95f, Base(0, _d * 0.75f, _w * 0.6f, _d * 0.95f), Base(0, _d * 0.75f, _w * 0.6f, _d * 0.95f) + 6, 0x1B8BEC2, 6 * 2);
-        }
-
-        /// <summary>
-        /// Centrale nucleare come quelle vere: due torri di raffreddamento a iperboloide (vuote, con i pilastri alla base),
-        /// edificio di contenimento del reattore con cupola, sala turbine, edificio ausiliario con il camino a bande
-        /// bianche e rosse, stazione elettrica tra le torri, piazzale, strade e recinzione.
-        /// </summary>
-        private void Nuclear(CatalogItem item, float lv)
-        {
-            float H = item.Height;
-            Ground(0, 0, _w, _d, 0x1BDB9B0, 0.08f, 13);
-            // strade interne
-            Ground(_w * 0.02f, _d * 0.31f, _w * 0.98f, _d * 0.37f, 0x1707274, 0.12f, 13);
-            // torri di raffreddamento
-            float r0 = Math.Min(_w * 0.19f, _d * 0.25f);
-            float ht = Math.Min(H * 0.78f, r0 * 3.9f);
-            CoolingTower(_w * 0.25f, _d * 0.65f, r0, ht);
-            CoolingTower(_w * 0.75f, _d * 0.65f, r0, ht);
-            // stazione elettrica tra le torri: trasformatori e portali
-            float su0 = _w * 0.45f, su1 = _w * 0.55f;
-            float sg = Base(su0, _d * 0.4f, su1, _d * 0.95f);
-            for (int k = 0; k < 4; k++)
-            {
-                float v = _d * (0.45f + k * 0.12f);
-                PaintedBox(su0 + 1.5f, v, su1 - 1.5f, v + 4f, sg, sg + 3.2f, 0x18E9196);
-                Cylinder(su0 + 1f, v + 2f, 0.25f, sg, sg + 9f, 6, 0x1A9AEB4);
-                Cylinder(su1 - 1f, v + 2f, 0.25f, sg, sg + 9f, 6, 0x1A9AEB4);
-                PaintedBox(su0 + 0.8f, v + 1.8f, su1 - 0.8f, v + 2.2f, sg + 8.6f, sg + 9.2f, 0x1A9AEB4);
-            }
-            // edificio del reattore: cilindro di cemento con la cupola
-            float rr = Math.Min(_w, _d) * 0.11f;
-            float rg = Base(_w * 0.19f - rr, _d * 0.18f - rr, _w * 0.19f + rr, _d * 0.18f + rr);
-            float rh = Math.Min(H * 0.24f, 36f);
-            Cylinder(_w * 0.19f, _d * 0.18f, rr, rg - 0.5f, rg + rh, 32, 0x1DEDAD2);
-            Cylinder(_w * 0.19f, _d * 0.18f, rr * 1.01f, rg + rh - 3f, rg + rh - 2.2f, 32, 0x1A5A29B);
-            Dome(_w * 0.19f, _d * 0.18f, rr, rg + rh, 0x1E6E2DA, 13);
-            // sala turbine (rivestimento metallico azzurro) e edificio ausiliario
-            Building(_w * 0.3f, _d * 0.05f, _w * 0.72f, _d * 0.28f, Math.Min(26f, H * 0.18f), RoofShape.Flat, 0x1849BB2, 0x19A9A96, 3, BuildingUse.Industrial);
-            Building(_w * 0.75f, _d * 0.05f, _w * 0.95f, _d * 0.26f, Math.Min(16f, H * 0.11f), RoofShape.Flat, 0x1CFCBC2, 0x19A9A96, 3, BuildingUse.Industrial);
-            // camino di ventilazione: fusto chiaro, ultime bande bianche e rosse
-            float cu = _w * 0.87f, cv = _d * 0.15f;
-            float cg = Ground(cu, cv);
-            float top = _z0 + H;
-            float bands = Math.Min(20f, (top - cg) * 0.15f);
-            Cylinder(cu, cv, 2.8f, cg - 0.5f, top - bands, 16, 0x1D6D3CC, 1f, 0.78f);
-            for (int k = 0; k < 4; k++)
-            {
-                float z0 = top - bands + bands * k / 4, z1 = top - bands + bands * (k + 1) / 4;
-                float s0 = 0.78f - 0.08f * k / 4, s1 = 0.78f - 0.08f * (k + 1) / 4;
-                Cylinder(cu, cv, 2.8f, z0, z1, 16, k % 2 == 0 ? 0x1C8382Eu : 0x1F2F0EBu, s0, s1);
-            }
-            Fence();
-        }
-
-        /// <summary>Torre di raffreddamento a iperboloide (vuota): base larga con i pilastri, strozzatura, bocca larga in cima.</summary>
-        private void CoolingTower(float cu, float cv, float r0, float height)
-        {
-            float g = Base(cu - r0, cv - r0, cu + r0, cv + r0);
-            var c = World(cu, cv);
-            const int sides = 32, rings = 12;
-            float zt = height * 0.78f, rt = r0 * 0.6f;
-            float k = zt / (float)Math.Sqrt((r0 / rt) * (r0 / rt) - 1);
-            float R(float z) => rt * (float)Math.Sqrt(1 + ((z - zt) / k) * ((z - zt) / k));
-            float legs = Math.Min(6f, height * 0.05f);
-            uint shell = MeshBuffer.Rgb(0xD2CFC8), inner = MeshBuffer.Rgb(0x8D8A84), stain = MeshBuffer.Rgb(0xB4B0A8), dark = MeshBuffer.Rgb(0x3B3A37);
-            for (int j = 0; j < rings; j++)
-            {
-                float z0 = legs + (height - legs) * j / rings, z1 = legs + (height - legs) * (j + 1) / rings;
-                float ra = R(z0), rb = R(z1);
-                float slope = (rb - ra) / (z1 - z0);
-                uint col = j == rings - 1 ? stain : shell;
-                for (int i = 0; i < sides; i++)
-                {
-                    double a0 = 2 * Math.PI * i / sides, a1 = 2 * Math.PI * (i + 1) / sides, am = (a0 + a1) / 2;
-                    var d0 = new Vec2((float)Math.Cos(a0), (float)Math.Sin(a0));
-                    var d1 = new Vec2((float)Math.Cos(a1), (float)Math.Sin(a1));
-                    float nl = (float)Math.Sqrt(1 + slope * slope);
-                    float nx = (float)Math.Cos(am) / nl, ny = (float)Math.Sin(am) / nl, nz = -slope / nl;
-                    var p0 = c + d0 * ra;
-                    var p1 = c + d1 * ra;
-                    var p2 = c + d1 * rb;
-                    var p3 = c + d0 * rb;
-                    float len = (p1 - p0).Length;
-                    int i0 = _mb.Add(p0.X, p0.Y, g + z0, nx, ny, nz, col, 0, 0, len, z1 - z0, 13, 0.5f, 0, 0);
-                    int i1 = _mb.Add(p1.X, p1.Y, g + z0, nx, ny, nz, col, len, 0, len, z1 - z0, 13, 0.5f, 0, 0);
-                    int i2 = _mb.Add(p2.X, p2.Y, g + z1, nx, ny, nz, col, len, z1 - z0, len, z1 - z0, 13, 0.5f, 0, 0);
-                    int i3 = _mb.Add(p3.X, p3.Y, g + z1, nx, ny, nz, col, 0, z1 - z0, len, z1 - z0, 13, 0.5f, 0, 0);
-                    _mb.Quad(i0, i1, i2, i3);
-                    // interno (si vede dall'alto): stesso guscio, girato verso il centro
-                    var q0 = c + d0 * (ra - 0.4f);
-                    var q1 = c + d1 * (ra - 0.4f);
-                    var q2 = c + d1 * (rb - 0.4f);
-                    var q3 = c + d0 * (rb - 0.4f);
-                    int j0 = _mb.Add(q0.X, q0.Y, g + z0, -nx, -ny, -nz, inner, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                    int j1 = _mb.Add(q1.X, q1.Y, g + z0, -nx, -ny, -nz, inner, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                    int j2 = _mb.Add(q2.X, q2.Y, g + z1, -nx, -ny, -nz, inner, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                    int j3 = _mb.Add(q3.X, q3.Y, g + z1, -nx, -ny, -nz, inner, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                    _mb.Quad(j0, j3, j2, j1);
-                }
-            }
-            // bordo in cima e pilastri alla base (tra i pilastri il buio dell'ingresso dell'aria)
-            float rtop = R(height);
-            for (int i = 0; i < sides; i++)
-            {
-                double a0 = 2 * Math.PI * i / sides, a1 = 2 * Math.PI * (i + 1) / sides, am = (a0 + a1) / 2;
-                var d0 = new Vec2((float)Math.Cos(a0), (float)Math.Sin(a0));
-                var d1 = new Vec2((float)Math.Cos(a1), (float)Math.Sin(a1));
-                var o0 = c + d0 * rtop;
-                var o1 = c + d1 * rtop;
-                var n0 = c + d0 * (rtop - 0.4f);
-                var n1 = c + d1 * (rtop - 0.4f);
-                int t0 = _mb.Add(o0.X, o0.Y, g + height, 0, 0, 1, stain, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                int t1 = _mb.Add(o1.X, o1.Y, g + height, 0, 0, 1, stain, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                int t2 = _mb.Add(n1.X, n1.Y, g + height, 0, 0, 1, stain, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                int t3 = _mb.Add(n0.X, n0.Y, g + height, 0, 0, 1, stain, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                _mb.Quad(t0, t1, t2, t3);
-                var b0 = c + d0 * r0;
-                var b1 = c + d1 * r0;
-                var l0 = c + d0 * R(legs);
-                var l1 = c + d1 * R(legs);
-                uint col = i % 2 == 0 ? shell : dark;
-                float nx = (float)Math.Cos(am), ny = (float)Math.Sin(am);
-                int k0 = _mb.Add(b0.X, b0.Y, g - 0.5f, nx, ny, 0, col, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                int k1 = _mb.Add(b1.X, b1.Y, g - 0.5f, nx, ny, 0, col, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                int k2 = _mb.Add(l1.X, l1.Y, g + legs, nx, ny, 0, col, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                int k3 = _mb.Add(l0.X, l0.Y, g + legs, nx, ny, 0, col, 0, 0, 0, 0, 13, 0.5f, 0, 0);
-                _mb.Quad(k0, k1, k2, k3);
-            }
-            // fondo scuro della vasca (si vede dall'alto, dentro la torre)
-            Flat(cu - R(legs) * 0.7f, cv - R(legs) * 0.7f, cu + R(legs) * 0.7f, cv + R(legs) * 0.7f, g + 0.3f, 0x14A5E66, 11);
-        }
-
-        private void Substation()
-        {
-            Ground(0, 0, _w, _d, 0x1A9A399, 0.1f, 10);
-            for (int k = 0; k < 3; k++) Box(2 + k * (_w - 4) / 3, 3, 2 + k * (_w - 4) / 3 + 3, 7, Base(0, 0, _w, _d), Base(0, 0, _w, _d) + 4, 0x1B8BEC2, 0);
-            Fence();
-        }
-
-        private void Pylon(float h)
-        {
-            float g = Base(0, 0, _w, _d);
-            for (int k = 0; k < 4; k++)
-            {
-                float cu = (k & 1) == 0 ? 0.6f : _w - 0.6f, cv = (k & 2) == 0 ? 0.6f : _d - 0.6f;
-                Box(cu - 0.2f, cv - 0.2f, cu + 0.2f, cv + 0.2f, g, g + h * 0.3f, 0x18A9098, 0);
-            }
-            Box(_w / 2 - 0.6f, _d / 2 - 0.6f, _w / 2 + 0.6f, _d / 2 + 0.6f, g + h * 0.3f, g + h, 0x18A9098, 0);
-            Box(0, _d / 2 - 0.15f, _w, _d / 2 + 0.15f, g + h * 0.8f, g + h * 0.84f, 0x18A9098, 0);
-        }
-
-        private void Field(string crop)
-        {
-            uint soil = 0x1B59A6E, plant;
-            float rowH = 0.6f;
-            switch (crop)
-            {
-                case "corn": plant = 0x18AA84A; rowH = 1.8f; break;
-                case "sunflower": plant = 0x1E8C030; rowH = 1.6f; break;
-                case "vegetables": plant = 0x16E9C4C; rowH = 0.4f; break;
-                case "lavender": plant = 0x19A86C8; rowH = 0.6f; break;
-                case "saffron": plant = 0x1A98ACD; rowH = 0.2f; break;
-                default: plant = 0x1D8C077; rowH = 0.8f; break;
-            }
-            Ground(0, 0, _w, _d, soil, 0.06f);
-            for (float v = 0.6f; v + 0.5f < _d; v += 1.4f)
-            {
-                float g = Mid(0.3f, v, _w - 0.3f, v + 0.6f);
-                Box(0.3f, v, _w - 0.3f, v + 0.6f, g - 0.3f, g + rowH, plant, 2);
-            }
-        }
-
-        private void Fence()
-        {
-            // a tratti di ~3 m che seguono il terreno
-            FenceSide(0, 0, _w, 0.1f, true);
-            FenceSide(0, _d - 0.1f, _w, _d, true);
-            FenceSide(0, 0, 0.1f, _d, false);
-            FenceSide(_w - 0.1f, 0, _w, _d, false);
-        }
-
-        private void FenceSide(float u0, float v0, float u1, float v1, bool alongU)
-        {
-            float len = alongU ? u1 - u0 : v1 - v0;
-            int n = Math.Max(1, (int)Math.Ceiling(len / 3f));
-            for (int i = 0; i < n; i++)
-            {
-                float a = i * len / n, b = (i + 1) * len / n;
-                float su0 = alongU ? u0 + a : u0, su1 = alongU ? u0 + b : u1, sv0 = alongU ? v0 : v0 + a, sv1 = alongU ? v1 : v0 + b;
-                Range(su0, sv0, su1, sv1, out var lo, out var hi);
-                Box(su0, sv0, su1, sv1, lo - 0.2f, (lo + hi) / 2 + 1.1f, 0x18B7458, 0);
-            }
-        }
-
-        private void Beehives()
-        {
-            uint[] colors = { 0x1E8C030, 0x14F79B5, 0x1D9534A, 0x1F2EDE2 };
-            int k = 0;
-            for (float u = 0.6f; u + 0.6f < _w; u += 1.4f)
-                for (float v = 0.6f; v + 0.6f < _d; v += 2.2f)
-                {
-                    float g = Mid(u, v, u + 0.6f, v + 0.6f);
-                    Box(u, v, u + 0.6f, v + 0.6f, g - 0.1f, g + 0.7f, colors[k++ % colors.Length], 0);
-                }
-        }
-
-        private void Pitch(string sport)
-        {
-            uint surface = sport == "tennis" ? 0x1C0663Fu : (sport == "basket" ? 0x1A65E3Cu : (sport == "skate" ? 0x1A9A9A9u : 0x15FA24Cu));
-            float g = Base(0, 0, _w, _d);
-            // campo: stesso tipo "campo con linee" dello stadio (uv0 in metri del rettangolo)
-            Flat(0, 0, _w, _d, g + 0.12f, surface, 8);
-            if (sport == "football" || sport == "football5")
-            {
-                Box(0.5f, _d / 2 - 2.4f, 0.7f, _d / 2 + 2.4f, g, g + 2.4f, 0x1F2F2F2, 0);
-                Box(_w - 0.7f, _d / 2 - 2.4f, _w - 0.5f, _d / 2 + 2.4f, g, g + 2.4f, 0x1F2F2F2, 0);
-            }
-        }
-
-        private void Pool()
-        {
-            float g = Base(0, 0, _w, _d);
-            Flat(0, 0, _w, _d, g + 0.1f, 0x1D5CBB8, 10);
-            Flat(3, 3, _w - 3, _d - 3, g + 0.14f, 0x157B5D7, 11);
-        }
-
-        private void Track()
-        {
-            float g = Base(0, 0, _w, _d);
-            Flat(0, 0, _w, _d, g + 0.1f, 0x1B7694D, 2);
-            Flat(_w * 0.12f, _d * 0.2f, _w * 0.88f, _d * 0.8f, g + 0.14f, 0x15FA24C, 8);
-        }
-
-        /// <summary>
-        /// Stadio vero e proprio: campo regolamentare con le linee, quattro tribune a gradinata con i sedili colorati,
-        /// copertura a sbalzo sulla tribuna principale (sulle altre ai livelli successivi), torri faro che la sera si
-        /// accendono, cartelloni a bordo campo, panchine e tabellone.
-        /// </summary>
-        private void Stadium(CatalogItem item, float lv)
-        {
-            float H = item.Height;
-            float g = Base(0, 0, _w, _d);
-            Flat(0, 0, _w, _d, g + 0.06f, 0x1A9A69E, 10);
-            // campo (105×68 m se c'è posto) con 3 m di bordo; il tipo 8 disegna strisce e linee
-            float fl = Math.Min(111f, _w - 46f), fw = Math.Min(74f, _d - 44f);
-            float fu0 = (_w - fl) / 2, fv0 = (_d - fw) / 2, fu1 = fu0 + fl, fv1 = fv0 + fw;
-            Flat(fu0, fv0, fu1, fv1, g + 0.15f, 0x15FA24C, 8);
-            PaintedBox(fu0 + 2.9f, _d / 2 - 3.66f, fu0 + 3.1f, _d / 2 + 3.66f, g + 0.15f, g + 2.44f, 0x1F2F2F2);
-            PaintedBox(fu1 - 3.1f, _d / 2 - 3.66f, fu1 - 2.9f, _d / 2 + 3.66f, g + 0.15f, g + 2.44f, 0x1F2F2F2);
-            // colori della squadra: sedili delle tribune lunghe e delle curve
-            uint[] palette = { 0x2F6DB5, 0xB8433A, 0x3E8E4A, 0xE0A92E, 0x6B3FA0 };
-            int pick = (int)(Frac(11) * palette.Length) % palette.Length;
-            uint main = palette[pick], ends = palette[(pick + 2) % palette.Length];
-            float zMain = Math.Min(H * 0.42f, 14f), zEnds = zMain * 0.7f;
-            // tribune: principale a sud (v basse), distinti a nord, curve a ovest e a est
-            float gap = 3f;
-            SeatingStand(fu0 - 2, 2, fu1 + 2, fv0 - gap, 0, g, g + 1.3f, g + zMain, main);
-            SeatingStand(fu0 - 2, fv1 + gap, fu1 + 2, _d - 2, 1, g, g + 1.3f, g + zMain * 0.85f, main);
-            SeatingStand(2, fv0, fu0 - gap, fv1, 2, g, g + 1.3f, g + zEnds, ends);
-            SeatingStand(fu1 + gap, fv0, _w - 2, fv1, 3, g, g + 1.3f, g + zEnds, ends);
-            // coperture a sbalzo: principale sempre, distinti dal livello 2, curve al livello 3
-            StandRoof(fu0 - 2, 2, fu1 + 2, fv0 - gap, 0, g, g + zMain + 4.5f);
-            if (lv >= 1) StandRoof(fu0 - 2, fv1 + gap, fu1 + 2, _d - 2, 1, g, g + zMain * 0.85f + 4.5f);
-            if (lv >= 2)
-            {
-                StandRoof(2, fv0, fu0 - gap, fv1, 2, g, g + zEnds + 4.5f);
-                StandRoof(fu1 + gap, fv0, _w - 2, fv1, 3, g, g + zEnds + 4.5f);
-            }
-            // cartelloni pubblicitari attorno al campo e panchine davanti alla tribuna principale
-            uint[] ads = { 0x1D9534A, 0x1F2F2F2, 0x12F6DB5, 0x1F2C230, 0x13E8E4A };
-            for (float u = fu0 + 6; u + 7 < fu1 - 6; u += 8)
-            {
-                PaintedBox(u, fv0 - 1.4f, u + 7.6f, fv0 - 1.2f, g + 0.15f, g + 1.1f, ads[(int)(u / 8) % ads.Length]);
-                PaintedBox(u, fv1 + 1.2f, u + 7.6f, fv1 + 1.4f, g + 0.15f, g + 1.1f, ads[(int)(u / 8 + 2) % ads.Length]);
-            }
-            for (int k = -1; k <= 1; k += 2)
-            {
-                float cu = _w / 2 + k * 9f;
-                PaintedBox(cu - 4f, fv0 - 2.8f, cu + 4f, fv0 - 1.6f, g + 0.15f, g + 1.9f, 0x12A3A55);
-            }
-            // tabellone sopra la curva est
-            float tu = _w - 2f;
-            PaintedBox(tu - 1f, _d / 2 - 7f, tu, _d / 2 + 7f, g + zEnds, g + zEnds + 5.5f, 0x1262A30);
-            Poly(new[] { tu - 1.02f, _d / 2 - 6.4f, g + zEnds + 0.6f, tu - 1.02f, _d / 2 + 6.4f, g + zEnds + 0.6f,
-                tu - 1.02f, _d / 2 + 6.4f, g + zEnds + 5f, tu - 1.02f, _d / 2 - 6.4f, g + zEnds + 5f }, -1, 0, 0, 0x1203848, BuildingDecorator.KindLight, 0.5f);
-            // torri faro agli angoli, fari rivolti verso il centro del campo
-            for (int k = 0; k < 4; k++)
-            {
-                float mu = (k & 1) == 0 ? 4f : _w - 4f, mv = (k & 2) == 0 ? 4f : _d - 4f;
-                float mg = Ground(mu, mv);
-                float topZ = _z0 + H;
-                Cylinder(mu, mv, 0.9f, mg - 0.3f, topZ - 4.5f, 10, 0x1A9AEB4, 1f, 0.55f);
-                float du = _w / 2 - mu, dv = _d / 2 - mv;
-                float dl = (float)Math.Sqrt(du * du + dv * dv);
-                du /= dl;
-                dv /= dl;
-                float pu = mu + du * 1.2f, pv = mv + dv * 1.2f;
-                float su = -dv * 3.2f, sv = du * 3.2f;
-                PaintedBox(Math.Min(pu - su, pu + su) - 0.3f, Math.Min(pv - sv, pv + sv) - 0.3f, Math.Max(pu - su, pu + su) + 0.3f, Math.Max(pv - sv, pv + sv) + 0.3f,
-                    topZ - 4.6f, topZ - 4.4f, 0x14A4F55);
-                Poly(new[] { pu - su, pv - sv, topZ - 4.4f, pu + su, pv + sv, topZ - 4.4f, pu + su, pv + sv, topZ, pu - su, pv - sv, topZ },
-                    du, dv, 0, 0x1FFF2D2, BuildingDecorator.KindLight, 1f);
-            }
-        }
-
-        /// <summary>
-        /// Tribuna a gradinata sul rettangolo; <paramref name="front"/> = lato verso il campo (0: v alte, 1: v basse,
-        /// 2: u alte, 3: u basse). Sedili dello shader (tipo 18) sul piano inclinato, muri in cemento, scale ogni 18 m.
-        /// </summary>
-        private void SeatingStand(float u0, float v0, float u1, float v1, int front, float g, float zFront, float zBack, uint seat)
-        {
-            // angoli in ordine: fronte sinistra, fronte destra, retro destra, retro sinistra
-            float[] fu, fv, bu, bv;
-            switch (front)
-            {
-                case 0: fu = new[] { u0, u1 }; fv = new[] { v1, v1 }; bu = new[] { u0, u1 }; bv = new[] { v0, v0 }; break;
-                case 1: fu = new[] { u0, u1 }; fv = new[] { v0, v0 }; bu = new[] { u0, u1 }; bv = new[] { v1, v1 }; break;
-                case 2: fu = new[] { u1, u1 }; fv = new[] { v0, v1 }; bu = new[] { u0, u0 }; bv = new[] { v0, v1 }; break;
-                default: fu = new[] { u0, u0 }; fv = new[] { v0, v1 }; bu = new[] { u1, u1 }; bv = new[] { v0, v1 }; break;
-            }
-            float zb = g - 0.5f;
-            uint concrete = 0x1C6C2BA;
-            // gradinata
-            Poly(new[] { fu[0], fv[0], zFront, fu[1], fv[1], zFront, bu[1], bv[1], zBack, bu[0], bv[0], zBack }, 0, 0, 1, seat,
-                BuildingDecorator.KindSeats, BuildingMesher.SeatRowHeight);
-            // retro, parapetto sul fronte, fianchi
-            float ou = (bu[0] - fu[0]), ov = (bv[0] - fv[0]);
-            Poly(new[] { bu[0], bv[0], zb, bu[1], bv[1], zb, bu[1], bv[1], zBack, bu[0], bv[0], zBack }, ou, ov, 0, concrete, 0, 1, 12);
-            Poly(new[] { fu[0], fv[0], zb, fu[1], fv[1], zb, fu[1], fv[1], zFront, fu[0], fv[0], zFront }, -ou, -ov, 0, concrete, 0, 1, 12);
-            float lu = fu[0] - fu[1], lv = fv[0] - fv[1];
-            Poly(new[] { fu[0], fv[0], zb, bu[0], bv[0], zb, bu[0], bv[0], zBack, fu[0], fv[0], zFront }, lu, lv, 0, concrete, 0, 1, 12);
-            Poly(new[] { fu[1], fv[1], zb, bu[1], bv[1], zb, bu[1], bv[1], zBack, fu[1], fv[1], zFront }, -lu, -lv, 0, concrete, 0, 1, 12);
-            // scale: strisce chiare sulla gradinata
-            float len = (float)Math.Sqrt(lu * lu + lv * lv);
-            int aisles = Math.Max(1, (int)(len / 18f));
-            for (int k = 1; k <= aisles; k++)
-            {
-                float t = k / (float)(aisles + 1), w = 0.7f / len;
-                float a = t - w, b = t + w;
-                float Fu(float x) => fu[0] + (fu[1] - fu[0]) * x;
-                float Fv(float x) => fv[0] + (fv[1] - fv[0]) * x;
-                float Bu(float x) => bu[0] + (bu[1] - bu[0]) * x;
-                float Bv(float x) => bv[0] + (bv[1] - bv[0]) * x;
-                Poly(new[] { Fu(a), Fv(a), zFront + 0.05f, Fu(b), Fv(b), zFront + 0.05f, Bu(b), Bv(b), zBack + 0.05f, Bu(a), Bv(a), zBack + 0.05f },
-                    0, 0, 1, 0x1D8D4CC, BuildingDecorator.KindProp, 0);
-            }
-        }
-
-        /// <summary>Copertura a sbalzo sopra una tribuna: lastra leggermente inclinata verso il campo, pilastri sul retro.</summary>
-        private void StandRoof(float u0, float v0, float u1, float v1, int front, float g, float z)
-        {
-            // la copertura parte dal retro e copre il 75% della profondità
-            float ru0 = u0, rv0 = v0, ru1 = u1, rv1 = v1;
-            switch (front)
-            {
-                case 0: rv1 = v0 + (v1 - v0) * 0.8f; break;
-                case 1: rv0 = v1 - (v1 - v0) * 0.8f; break;
-                case 2: ru1 = u0 + (u1 - u0) * 0.8f; break;
-                default: ru0 = u1 - (u1 - u0) * 0.8f; break;
-            }
-            PaintedBox(ru0, rv0, ru1, rv1, z, z + 0.7f, 0x1E9ECEE);
-            // bordo frontale colorato
-            switch (front)
-            {
-                case 0: PaintedBox(ru0, rv1 - 0.4f, ru1, rv1, z - 0.6f, z + 0.9f, 0x12F4F7A); break;
-                case 1: PaintedBox(ru0, rv0, ru1, rv0 + 0.4f, z - 0.6f, z + 0.9f, 0x12F4F7A); break;
-                case 2: PaintedBox(ru1 - 0.4f, rv0, ru1, rv1, z - 0.6f, z + 0.9f, 0x12F4F7A); break;
-                default: PaintedBox(ru0, rv0, ru0 + 0.4f, rv1, z - 0.6f, z + 0.9f, 0x12F4F7A); break;
-            }
-            bool alongU = front < 2;
-            float len = alongU ? ru1 - ru0 : rv1 - rv0;
-            int cols = Math.Max(2, (int)(len / 16f) + 1);
-            for (int k = 0; k < cols; k++)
-            {
-                float t = k / (float)(cols - 1);
-                float cu = alongU ? ru0 + 0.8f + (ru1 - ru0 - 1.6f) * t : (front == 2 ? u0 + 0.8f : u1 - 0.8f);
-                float cv = alongU ? (front == 0 ? v0 + 0.8f : v1 - 0.8f) : rv0 + 0.8f + (rv1 - rv0 - 1.6f) * t;
-                Cylinder(cu, cv, 0.45f, g - 0.3f, z, 8, 0x1D5D9DD);
-            }
-        }
-
-        private void Amphitheatre()
-        {
-            float g = Base(0, 0, _w, _d);
-            Flat(_w * 0.3f, 0, _w * 0.7f, _d * 0.25f, g + 0.4f, 0x1D5CBB8, 10);
-            for (int s = 0; s < 8; s++)
-                Box(_w * 0.05f, _d * (0.3f + s * 0.08f), _w * 0.95f, _d * (0.38f + s * 0.08f), g - 0.3f, g + 0.5f + s * 0.6f, 0x1D9D1C2, 6 * 2);
-        }
-
-        private void Funfair(CatalogItem item)
-        {
-            Ground(0, 0, _w, _d, 0x1C9C1B5, 0.1f, 10);
-            // ruota panoramica (anello di colonnine) e qualche giostra colorata
-            float r = Math.Min(Math.Min(_w, _d) * 0.28f, (item.Height - 3f) / 2f), cu = _w * 0.3f, cv = _d * 0.5f, g = Ground(cu, cv);
-            for (int k = 0; k < 16; k++)
-            {
-                double a = k * Math.PI / 8;
-                float z = g + r + 2 + (float)Math.Sin(a) * r;
-                float du = (float)Math.Cos(a) * r;
-                Box(cu + du - 0.6f, cv - 0.6f, cu + du + 0.6f, cv + 0.6f, z - 0.6f, z + 0.6f, k % 2 == 0 ? 0x1D9534Au : 0x14F79B5u, 0);
-            }
-            Box(cu - 0.3f, cv - 2f, cu + 0.3f, cv + 2f, g, g + r + 2, 0x1F2EDE2, 0);
-            Cylinder(_w * 0.72f, _d * 0.3f, 6, g, g + 3, 16, 0x1E8C030);
-            Cone(_w * 0.72f, _d * 0.3f, 7, g + 3, 4, 0x1D9534A);
-            Cylinder(_w * 0.72f, _d * 0.72f, 5, g, g + 2.5f, 16, 0x14F79B5);
-        }
-
-        private void BusStop()
-        {
-            float g = Base(0, 0, _w, _d);
-            Box(0.2f, _d - 0.3f, _w - 0.2f, _d - 0.2f, g, g + 2.4f, 0x19FB6C4, 5 * 2);
-            Box(0, 0, _w, _d, g + 2.4f, g + 2.6f, 0x1556070, 0);
-            Box(0.3f, 0.2f, 0.4f, 0.3f, g, g + 2.4f, 0x1556070, 0);
-            Box(_w - 0.4f, 0.2f, _w - 0.3f, 0.3f, g, g + 2.4f, 0x1556070, 0);
-        }
-
-        private void Bench()
-        {
-            float g = Base(0, 0, _w, _d);
-            Box(0.05f, 0.05f, _w - 0.05f, _d - 0.05f, g + 0.4f, g + 0.48f, 0x19C7350, 0);
-            Box(0.05f, _d - 0.12f, _w - 0.05f, _d - 0.05f, g + 0.48f, g + 0.85f, 0x19C7350, 0);
-            Box(0.1f, 0.1f, 0.18f, _d - 0.1f, g, g + 0.4f, 0x1404850, 0);
-            Box(_w - 0.18f, 0.1f, _w - 0.1f, _d - 0.1f, g, g + 0.4f, 0x1404850, 0);
-        }
-
-        private void Lamp(float h)
-        {
-            float g = Ground(_w / 2, _d / 2);
-            Cylinder(_w / 2, _d / 2, 0.08f, g, g + h, 6, 0x1404850);
-            Box(_w / 2 - 0.2f, _d / 2 - 0.2f, _w / 2 + 0.2f, _d / 2 + 0.2f, g + h - 0.4f, g + h, 0x1FFF2C8, 7 * 2);
-        }
-
-        private void Fountain(float h)
-        {
-            float g = Base(0, 0, _w, _d);
-            float r = Math.Min(_w, _d) / 2;
-            Cylinder(_w / 2, _d / 2, r, g - 0.2f, g + 0.6f, 20, 0x1D9D1C2);
-            Cylinder(_w / 2, _d / 2, r * 0.85f, g + 0.6f, g + 0.62f, 20, 0x157B5D7);
-            Cylinder(_w / 2, _d / 2, r * 0.15f, g, g + h, 10, 0x1D9D1C2);
-            Cylinder(_w / 2, _d / 2, r * 0.4f, g + h * 0.6f, g + h * 0.68f, 14, 0x1D9D1C2);
-        }
-
-        private void Statue(float h)
-        {
-            float g = Base(0, 0, _w, _d);
-            Box(_w * 0.15f, _d * 0.15f, _w * 0.85f, _d * 0.85f, g - 0.2f, g + h * 0.4f, 0x1D9D1C2, 0);
-            Cylinder(_w / 2, _d / 2, Math.Min(_w, _d) * 0.16f, g + h * 0.4f, g + h * 0.85f, 10, 0x18A7A5A);
-            Dome(_w / 2, _d / 2, Math.Min(_w, _d) * 0.12f, g + h * 0.85f, 0x18A7A5A);
-        }
-
-        private void Gazebo(float h)
-        {
-            float g = Base(0, 0, _w, _d);
-            Flat(0, 0, _w, _d, g + 0.15f, 0x1D5CBB8, 10);
-            for (int k = 0; k < 4; k++)
-                Cylinder((k & 1) == 0 ? 0.3f : _w - 0.3f, (k & 2) == 0 ? 0.3f : _d - 0.3f, 0.1f, g, g + h - 1, 6, 0x1F2EDE2);
-            Building(0, 0, _w, _d, 1.2f, RoofShape.Pyramidal, 0x1F2EDE2, 0x13F6B4A, 1, BuildingUse.Roof, false, g + h - 1.2f);
-        }
-
-        private void Playground()
-        {
-            float g = Base(0, 0, _w, _d);
-            Flat(0, 0, _w, _d, g + 0.1f, 0x1C9A27A, 2);
-            Box(1, 1, 3, 3, g, g + 2.5f, 0x1D9534A, 0);
-            Box(3, 1.5f, 6, 2.5f, g, g + 1.2f, 0x1E8C030, 0);
-            Cylinder(_w - 3, _d - 3, 1.5f, g, g + 0.4f, 12, 0x14F79B5);
-            Box(1, _d - 2, _w * 0.5f, _d - 1.6f, g, g + 2.2f, 0x1F2EDE2, 0);
-        }
-
-        private void Terrace()
-        {
-            float g = Base(0, 0, _w, _d);
-            Flat(0, 0, _w, _d, g + 0.12f, 0x1C9BEA8, 10);
-            for (float u = 1; u + 1 < _w; u += 2.2f)
-                for (float v = 1; v + 1 < _d; v += 2.2f)
-                {
-                    Cylinder(u + 0.4f, v + 0.4f, 0.4f, g, g + 0.75f, 10, 0x1F2F2F2);
-                    Cylinder(u + 0.4f, v + 0.4f, 0.05f, g + 0.75f, g + 2.3f, 4, 0x1F2F2F2);
-                    Cone(u + 0.4f, v + 0.4f, 1.0f, g + 2.1f, 0.4f, 0x1C8473B);
-                }
-        }
-
-        private void Flowers(string color)
-        {
-            uint[] c = color == "rose" ? new uint[] { 0x1D9534A, 0x1E8A0B0, 0x1C0304A } : new uint[] { 0x1E8C030, 0x1D9534A, 0x19A86C8, 0x1F2EDE2 };
-            int k = (int)(_seed & 7);
-            for (float u = 0.3f; u + 0.3f < _w; u += 0.5f)
-                for (float v = 0.3f; v + 0.3f < _d; v += 0.5f)
-                {
-                    float g = Ground(u, v);
-                    Box(u, v, u + 0.22f, v + 0.22f, g + 0.35f, g + 0.55f, c[k++ % c.Length], 0);
-                }
-        }
+        private static int ParseInt(string s, int fallback) => int.TryParse(s, out var v) ? v : fallback;
 
         // ------------------------------------------------------------------ piante
 
@@ -834,8 +153,12 @@ namespace Orbis.Core.Game
         {
             var p = World(u, v);
             float scale = height / VegetationScatter.BaseHeight(kind);
-            _plants?.Add(new PlantInstance { Kind = kind, X = p.X, Y = p.Y, Z = _ground(p.X, p.Y), Scale = scale, Rotation = (_seed % 628) / 100f });
+            _plants?.Add(new PlantInstance { Kind = kind, X = p.X, Y = p.Y, Z = _ground(p.X, p.Y), Scale = scale, Rotation = (_seed % 628) / 100f + u * 0.7f });
         }
+
+        /// <summary>Albero di altezza tipica (con un po' di varietà) nel punto.</summary>
+        private void Tree(PlantKind kind, float u, float v, int salt) =>
+            Plant(kind, u, v, VegetationScatter.BaseHeight(kind) * (0.8f + 0.35f * Frac(salt * 13 + 5)));
 
         private void Grid(PlantKind kind, float gap)
         {
@@ -859,7 +182,7 @@ namespace Orbis.Core.Game
         }
 
         /// <summary>Filari lungo U, distanziati di <paramref name="gap"/> lungo V.</summary>
-        private void Rows(PlantKind kind, float gap, int unused)
+        private void Rows(PlantKind kind, float gap)
         {
             float rot = (float)Math.Atan2(_u.Y, _u.X);
             for (float v = gap / 2; v <= _d - gap / 2 + 0.01f; v += gap)
@@ -885,7 +208,9 @@ namespace Orbis.Core.Game
             }
         }
 
-        // ------------------------------------------------------------------ primitive (coordinate dell'oggetto)
+        private uint Pick(uint[] list, long salt) => list[(int)(Frac(salt) * list.Length) % list.Length];
+
+        // ------------------------------------------------------------------ terreno e quote (coordinate dell'oggetto)
 
         private Vec2 World(float u, float v) => _o + _u * u + _v * v;
 
@@ -942,9 +267,11 @@ namespace Orbis.Core.Game
             }
         }
 
-        /// <summary>Edificio procedurale (muri con finestre, tetto) sul rettangolo [u0,u1]×[v0,v1].</summary>
-        private void Building(float u0, float v0, float u1, float v1, float height, RoofShape roof, uint wall, uint roofColor, int levels,
-            BuildingUse use, bool shops = false, float minZ = float.NaN)
+        // ------------------------------------------------------------------ edifici veri (muri con finestre, tetti, addobbi)
+
+        /// <summary>Edificio procedurale (muri con finestre, tetto) sul rettangolo [u0,u1]×[v0,v1], con eventuale cortile.</summary>
+        private BuildingInfo Building(float u0, float v0, float u1, float v1, float height, RoofShape roof, uint wall, uint roofColor, int levels,
+            BuildingUse use, bool shops = false, float minZ = float.NaN, float[] courtyard = null, WallMaterial material = WallMaterial.Unknown)
         {
             var p0 = World(u0, v0);
             var p1 = World(u1, v0);
@@ -952,23 +279,163 @@ namespace Orbis.Core.Game
             var p3 = World(u0, v1);
             var outer = new[] { p0.X, p0.Y, p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y };
             if (Polygon2D.SignedArea(outer) < 0) outer = new[] { p0.X, p0.Y, p3.X, p3.Y, p2.X, p2.Y, p1.X, p1.Y };
+            var holes = Array.Empty<float[]>();
+            if (courtyard != null)
+            {
+                // cortile [cu0, cv0, cu1, cv1]: anello orario
+                var c0 = World(courtyard[0], courtyard[1]);
+                var c1 = World(courtyard[2], courtyard[1]);
+                var c2 = World(courtyard[2], courtyard[3]);
+                var c3 = World(courtyard[0], courtyard[3]);
+                var hole = new[] { c0.X, c0.Y, c3.X, c3.Y, c2.X, c2.Y, c1.X, c1.Y };
+                if (Polygon2D.SignedArea(hole) > 0) hole = new[] { c0.X, c0.Y, c1.X, c1.Y, c2.X, c2.Y, c3.X, c3.Y };
+                holes = new[] { hole };
+            }
             var b = new BuildingInfo
             {
-                OsmId = _seed * 31 + (long)(u0 * 7 + v0 * 13), Outer = outer, Holes = Array.Empty<float[]>(), Height = height,
+                OsmId = _seed * 31 + (long)(u0 * 7 + v0 * 13), Outer = outer, Holes = holes, Height = height,
                 Roof = roof, Levels = levels, Use = use, WallColor = wall, RoofColor = roofColor, Bounds = Bounds2.Of(outer),
-                Flags = shops ? BuildingFlag.HasShops : 0,
+                Flags = shops ? BuildingFlag.HasShops : 0, Material = material,
             };
             // in piano alla quota più alta della sagoma (basamento verso valle), come gli altri volumi
             float top = Base(u0, v0, u1, v1);
             GroundSampler level = (x, y) => top;
             if (!float.IsNaN(minZ))
             {
-                // volume sospeso (tetto di gazebo): base fissa sopra il piano
+                // volume sospeso (tetto di gazebo, torre sopra un podio): base fissa sopra il piano
                 b.MinHeight = Math.Max(0.2f, minZ - top);
                 b.Height = b.MinHeight + height;
             }
             _building.Build(b, level, _mb, shops);
+            return b;
         }
+
+        /// <summary>
+        /// Addobbi dell'ultimo edificio costruito (tende, insegne, dehors, balconi, gronde, comignoli, impianti sul tetto),
+        /// gli stessi degli edifici veri della città. L'ingresso è sul lato v = 0 (o nel punto indicato).
+        /// </summary>
+        private void Dress(BuildingInfo b, DressKind kind, float entranceU = float.NaN)
+        {
+            if (kind == DressKind.None) return;
+            _decor.Lot = LotSpace;
+            var entrance = World(float.IsNaN(entranceU) ? _w / 2 : entranceU, -2f);
+            _decor.Decorate(b, _building, kind, _level, entrance, null, _ground, _mb, _plants);
+        }
+
+        /// <summary>Spazio libero davanti a un lato dell'edificio fino al bordo della sagoma; il fronte su strada è il lato v = 0.</summary>
+        private float LotSpace(Vec2 mid, Vec2 normal, out bool street)
+        {
+            var r = mid - _o;
+            float u = Vec2.Dot(r, _u), v = Vec2.Dot(r, _v);
+            float nu = Vec2.Dot(normal, _u), nv = Vec2.Dot(normal, _v);
+            street = nv < -0.7f;
+            if (_party != null && Math.Abs(nu) > 0.7f)
+                foreach (float pu in _party)
+                    if (Math.Abs(u - pu) < 0.05f) return 0;
+            if (nv < -0.7f) return v;
+            if (nv > 0.7f) return _d - v;
+            if (nu < -0.7f) return u;
+            if (nu > 0.7f) return _w - u;
+            return 0.4f;
+        }
+
+        /// <summary>Quote dei piani dell'ultimo edificio (allineate alle finestre dello shader).</summary>
+        private float FloorZ(int floor) => _building.LastGroundRef + floor * BuildingMesher.FloorHeight(_building.LastWallHeight, _building.LastLevels);
+
+        private float FloorH => BuildingMesher.FloorHeight(_building.LastWallHeight, _building.LastLevels);
+
+        /// <summary>
+        /// Muro con le finestre dello shader da a a b (normale a destra di a→b, cioè verso fuori per i lati presi in senso
+        /// antiorario). cat = categoria*2 (+1 con le vetrine): 0 case, 2 uffici, 4 industria, 6 chiese, 8 rurale,
+        /// 10 vetrate continue, 12 cieco. <paramref name="floorZ"/> = quota del piano terra.
+        /// </summary>
+        private void Wall(float ua, float va, float ub, float vb, float z0, float z1, float floorZ, uint color, float cat, int levels)
+        {
+            var a = World(ua, va);
+            var b = World(ub, vb);
+            var d = b - a;
+            float len = d.Length;
+            if (len < 1e-3f) return;
+            var n = new Vec2(d.Y / len, -d.X / len);
+            uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
+            float wallH = Math.Max(z1 - floorZ, 0.5f);
+            float seed = 0.13f + 0.7f * Frac((long)(ua * 17 + va * 31));
+            int i0 = _mb.Add(a.X, a.Y, z0, n.X, n.Y, 0, c, 0, z0 - floorZ, len, wallH, 0, seed, levels, cat);
+            int i1 = _mb.Add(b.X, b.Y, z0, n.X, n.Y, 0, c, len, z0 - floorZ, len, wallH, 0, seed, levels, cat);
+            int i2 = _mb.Add(b.X, b.Y, z1, n.X, n.Y, 0, c, len, z1 - floorZ, len, wallH, 0, seed, levels, cat);
+            int i3 = _mb.Add(a.X, a.Y, z1, n.X, n.Y, 0, c, 0, z1 - floorZ, len, wallH, 0, seed, levels, cat);
+            _mb.Quad(i0, i1, i2, i3);
+        }
+
+        /// <summary>
+        /// Volume a tetto piano con una categoria di facciata per lato (sud, est, nord, ovest): capannoni, supermercati,
+        /// cinema. Restituisce la quota del piano terra.
+        /// </summary>
+        private float Block(float u0, float v0, float u1, float v1, float height, uint color, float catS, float catE, float catN, float catW,
+            int levels, uint roofColor = 0x1A9A69E, bool parapet = true)
+        {
+            float g = Base(u0, v0, u1, v1);
+            float top = g + height;
+            Wall(u0, v0, u1, v0, g - 0.3f, top, g, color, catS, levels);
+            Wall(u1, v0, u1, v1, g - 0.3f, top, g, color, catE, levels);
+            Wall(u1, v1, u0, v1, g - 0.3f, top, g, color, catN, levels);
+            Wall(u0, v1, u0, v0, g - 0.3f, top, g, color, catW, levels);
+            Flat(u0, v0, u1, v1, top, roofColor, 2);
+            if (parapet) Parapet(u0, v0, u1, v1, top, 0.9f, Lighten(color, 0.08f));
+            return g;
+        }
+
+        /// <summary>Parapetto sul bordo di un tetto piano (faccia esterna, cima, faccia interna).</summary>
+        private void Parapet(float u0, float v0, float u1, float v1, float z, float h, uint color)
+        {
+            const float t = 0.22f;
+            PaintedBox(u0, v0, u1, v0 + t, z, z + h, color);
+            PaintedBox(u0, v1 - t, u1, v1, z, z + h, color);
+            PaintedBox(u0, v0 + t, u0 + t, v1 - t, z, z + h, color);
+            PaintedBox(u1 - t, v0 + t, u1, v1 - t, z, z + h, color);
+        }
+
+        /// <summary>Vetrata applicata davanti a un muro (ingressi, foyer): una lastra con i montanti dello shader.</summary>
+        private void Glazing(float ua, float va, float ub, float vb, float z0, float z1, int levels, uint frame = 0x1595F66)
+        {
+            var a = World(ua, va);
+            var b = World(ub, vb);
+            var d = b - a;
+            float len = d.Length;
+            if (len < 1e-3f) return;
+            var n = new Vec2(d.Y / len, -d.X / len) * 0.05f;
+            float u0 = Vec2.Dot(a + n - _o, _u), v0 = Vec2.Dot(a + n - _o, _v);
+            float u1 = Vec2.Dot(b + n - _o, _u), v1 = Vec2.Dot(b + n - _o, _v);
+            Wall(u0, v0, u1, v1, z0, z1, z0, frame, 10, levels);
+        }
+
+        /// <summary>Insegna sul lato a→b (rivolta a destra), staccata di 6 cm dal muro: fondo colorato con le "lettere" accese la sera.</summary>
+        private void Sign(float ua, float va, float ub, float vb, float z0, float z1, uint color, bool text = true)
+        {
+            var a = World(ua, va);
+            var b = World(ub, vb);
+            var d = b - a;
+            float len = d.Length;
+            if (len < 1e-3f) return;
+            var dir = d * (1f / len);
+            var n = new Vec2(dir.Y, -dir.X);
+            var a1 = a + n * 0.06f;
+            var b1 = b + n * 0.06f;
+            uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
+            float h = z1 - z0, k = BuildingDecorator.KindSign, p = text ? 1 : 0;
+            int i0 = _mb.Add(a1.X, a1.Y, z0, n.X, n.Y, 0, c, 0, 0, len, h, k, 0.3f + 0.5f * Frac((long)(ua * 11)), p, 0);
+            int i1 = _mb.Add(b1.X, b1.Y, z0, n.X, n.Y, 0, c, len, 0, len, h, k, 0.3f, p, 0);
+            int i2 = _mb.Add(b1.X, b1.Y, z1, n.X, n.Y, 0, c, len, h, len, h, k, 0.3f, p, 0);
+            int i3 = _mb.Add(a1.X, a1.Y, z1, n.X, n.Y, 0, c, 0, h, len, h, k, 0.3f, p, 0);
+            _mb.Quad(i0, i1, i2, i3);
+            // spessore del pannello: bordo scuro in cima e ai lati
+            var a2 = a + n * 0.01f;
+            var b2 = b + n * 0.01f;
+            QuadW(new Vec3(a2.X, a2.Y, z1), new Vec3(b2.X, b2.Y, z1), new Vec3(b1.X, b1.Y, z1), new Vec3(a1.X, a1.Y, z1), new Vec3(0, 0, 1),
+                MeshBuffer.Rgb(0x2B2B2B), BuildingDecorator.KindProp, 0);
+        }
+
+        // ------------------------------------------------------------------ primitive (coordinate dell'oggetto)
 
         /// <summary>Parallelepipedo tra le quote assolute z0 e z1. kind = categoria*2 per i muri (12 = senza finestre).</summary>
         private void Box(float u0, float v0, float u1, float v1, float z0, float z1, uint color, int kind)
@@ -1003,8 +470,11 @@ namespace Orbis.Core.Game
             _mb.Quad(t0, t1, t2, t3);
         }
 
-        /// <summary>Superficie orizzontale piana; kind 8 = campo con linee (uv0 in metri del rettangolo), 10 = pavimentazione, 11 = acqua.</summary>
-        private void Flat(float u0, float v0, float u1, float v1, float z, uint color, float kind)
+        /// <summary>
+        /// Superficie orizzontale piana; kind 8 = campo con linee (uv0 in metri del rettangolo, param = sport),
+        /// 9 = parcheggio con gli stalli, 10 = pavimentazione, 11 = acqua, 13 = tinta piena, 17 = prato.
+        /// </summary>
+        private void Flat(float u0, float v0, float u1, float v1, float z, uint color, float kind, float param = 1)
         {
             uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
             var corners = new[] { (u0, v0), (u1, v0), (u1, v1), (u0, v1) };
@@ -1015,14 +485,14 @@ namespace Orbis.Core.Game
             for (int i = 0; i < 4; i++)
             {
                 var (u, v) = corners[i];
-                idx[i] = _mb.Add(pts[i].X, pts[i].Y, z, 0, 0, 1, c, u - u0, v - v0, u1 - u0, v1 - v0, kind, 0.5f, 1, 0);
+                idx[i] = _mb.Add(pts[i].X, pts[i].Y, z, 0, 0, 1, c, u - u0, v - v0, u1 - u0, v1 - v0, kind, 0.5f, param, 0);
             }
             if (ccw) _mb.Quad(idx[0], idx[1], idx[2], idx[3]);
             else _mb.Quad(idx[0], idx[3], idx[2], idx[1]);
         }
 
         /// <summary>Copertura del terreno che segue le pendenze (griglia da ~4 m), poco sopra il suolo.</summary>
-        private void Ground(float u0, float v0, float u1, float v1, uint color, float lift, float kind = 2)
+        private void Ground(float u0, float v0, float u1, float v1, uint color, float lift, float kind = 2, float param = 1)
         {
             uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
             int nu = Math.Max(1, (int)Math.Ceiling((u1 - u0) / 4f)), nv = Math.Max(1, (int)Math.Ceiling((v1 - v0) / 4f));
@@ -1032,7 +502,7 @@ namespace Orbis.Core.Game
                 {
                     float u = u0 + (u1 - u0) * i / nu, v = v0 + (v1 - v0) * j / nv;
                     var p = World(u, v);
-                    _mb.Add(p.X, p.Y, _ground(p.X, p.Y) + lift, 0, 0, 1, c, u - u0, v - v0, u1 - u0, v1 - v0, kind, 0.5f, 1, 0);
+                    _mb.Add(p.X, p.Y, _ground(p.X, p.Y) + lift, 0, 0, 1, c, u - u0, v - v0, u1 - u0, v1 - v0, kind, 0.5f, param, 0);
                 }
             bool ccw = Vec2.Cross(_u, _v) > 0;
             for (int j = 0; j < nv; j++)
@@ -1044,10 +514,44 @@ namespace Orbis.Core.Game
                 }
         }
 
-        private void Cylinder(float cu, float cv, float r, float z0, float z1, int sides, uint color, float bottomScale = 1f, float topScale = 1f)
+        /// <summary>Prato (fogliame fine dello shader, qualche fiore).</summary>
+        private void Lawn(float u0, float v0, float u1, float v1, float lift = 0.05f) =>
+            Ground(u0, v0, u1, v1, 0x186A85A, lift, BuildingDecorator.KindPlants, 0.012f);
+
+        /// <summary>Marciapiede o cortile in pietra.</summary>
+        private void Paving(float u0, float v0, float u1, float v1, uint color = 0x1CFC6B4, float lift = 0.08f) =>
+            Ground(u0, v0, u1, v1, color, lift, 10);
+
+        /// <summary>Asfalto liscio (piazzali, strade interne).</summary>
+        private void Asphalt(float u0, float v0, float u1, float v1, float lift = 0.07f) =>
+            Ground(u0, v0, u1, v1, 0x1686B70, lift, BuildingDecorator.KindProp);
+
+        /// <summary>Siepe potata tra due punti dell'oggetto (alta h, spessa t).</summary>
+        private void HedgeRow(float u0, float v0, float u1, float v1, float h)
+        {
+            Range(u0, v0, u1, v1, out var lo, out var hi);
+            Foliage(u0, v0, u1, v1, lo - 0.1f, (lo + hi) / 2 + h, 0x1477A3A, 0.0f);
+        }
+
+        /// <summary>Parallelepipedo di fogliame (siepi, aiuole, filari): tipo 17 dello shader, param = densità dei fiori.</summary>
+        private void Foliage(float u0, float v0, float u1, float v1, float z0, float z1, uint color, float flowers)
+        {
+            float k = BuildingDecorator.KindPlants;
+            Poly(new[] { u0, v0, z0, u1, v0, z0, u1, v0, z1, u0, v0, z1 }, 0, -1, 0, color, k, flowers);
+            Poly(new[] { u1, v0, z0, u1, v1, z0, u1, v1, z1, u1, v0, z1 }, 1, 0, 0, color, k, flowers);
+            Poly(new[] { u1, v1, z0, u0, v1, z0, u0, v1, z1, u1, v1, z1 }, 0, 1, 0, color, k, flowers);
+            Poly(new[] { u0, v1, z0, u0, v0, z0, u0, v0, z1, u0, v1, z1 }, -1, 0, 0, color, k, flowers);
+            Poly(new[] { u0, v0, z1, u1, v0, z1, u1, v1, z1, u0, v1, z1 }, 0, 0, 1, Lighten(color, 0.06f), k, flowers);
+        }
+
+        private void Cylinder(float cu, float cv, float r, float z0, float z1, int sides, uint color, float bottomScale = 1f, float topScale = 1f,
+            float kind = 0, float cat = 12)
         {
             uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
             var center = World(cu, cv);
+            int tc = _mb.Add(center.X, center.Y, z1, 0, 0, 1, c, 0, 0, 0, 0, kind < 0.5f ? 2 : kind, 0.5f, 1, 0);
+            float slope = (r * bottomScale - r * topScale) / Math.Max(0.01f, z1 - z0);
+            float nl = (float)Math.Sqrt(1 + slope * slope);
             for (int i = 0; i < sides; i++)
             {
                 double a0 = 2 * Math.PI * i / sides, a1 = 2 * Math.PI * (i + 1) / sides, am = (a0 + a1) / 2;
@@ -1059,16 +563,27 @@ namespace Orbis.Core.Game
                 var t0 = center + d0 * (r * topScale);
                 var t1 = center + d1 * (r * topScale);
                 float len = (b1 - b0).Length;
-                int i0 = _mb.Add(b0.X, b0.Y, z0, nm.X, nm.Y, 0, c, 0, 0, len, z1 - z0, 0, 0.5f, 1, 12);
-                int i1 = _mb.Add(b1.X, b1.Y, z0, nm.X, nm.Y, 0, c, len, 0, len, z1 - z0, 0, 0.5f, 1, 12);
-                int i2 = _mb.Add(t1.X, t1.Y, z1, nm.X, nm.Y, 0, c, len, z1 - z0, len, z1 - z0, 0, 0.5f, 1, 12);
-                int i3 = _mb.Add(t0.X, t0.Y, z1, nm.X, nm.Y, 0, c, 0, z1 - z0, len, z1 - z0, 0, 0.5f, 1, 12);
+                float nx = nm.X / nl, ny = nm.Y / nl, nz = slope / nl;
+                int i0 = _mb.Add(b0.X, b0.Y, z0, nx, ny, nz, c, i * len, 0, len * sides, z1 - z0, kind, 0.5f, 1, cat);
+                int i1 = _mb.Add(b1.X, b1.Y, z0, nx, ny, nz, c, (i + 1) * len, 0, len * sides, z1 - z0, kind, 0.5f, 1, cat);
+                int i2 = _mb.Add(t1.X, t1.Y, z1, nx, ny, nz, c, (i + 1) * len, z1 - z0, len * sides, z1 - z0, kind, 0.5f, 1, cat);
+                int i3 = _mb.Add(t0.X, t0.Y, z1, nx, ny, nz, c, i * len, z1 - z0, len * sides, z1 - z0, kind, 0.5f, 1, cat);
                 _mb.Quad(i0, i1, i2, i3);
-                int tc = _mb.Add(center.X, center.Y, z1, 0, 0, 1, c, 0, 0, 0, 0, 2, 0.5f, 1, 0);
-                int ta = _mb.Add(t0.X, t0.Y, z1, 0, 0, 1, c, 0, 0, 0, 0, 2, 0.5f, 1, 0);
-                int tb = _mb.Add(t1.X, t1.Y, z1, 0, 0, 1, c, 0, 0, 0, 0, 2, 0.5f, 1, 0);
+                int ta = _mb.Add(t0.X, t0.Y, z1, 0, 0, 1, c, 0, 0, 0, 0, kind < 0.5f ? 2 : kind, 0.5f, 1, 0);
+                int tb = _mb.Add(t1.X, t1.Y, z1, 0, 0, 1, c, 0, 0, 0, 0, kind < 0.5f ? 2 : kind, 0.5f, 1, 0);
                 _mb.Triangle(tc, ta, tb);
             }
+        }
+
+        /// <summary>Cilindro verniciato (serbatoi, pali, tubi verticali): tinta piena senza finestre.</summary>
+        private void Pipe(float cu, float cv, float r, float z0, float z1, uint color, int sides = 10, float topScale = 1f) =>
+            Cylinder(cu, cv, r, z0, z1, sides, color, 1f, topScale, BuildingDecorator.KindProp, 0);
+
+        /// <summary>Serbatoio verticale con il tetto a cono basso (silos, vasche del vino, cisterne).</summary>
+        private void Tank(float cu, float cv, float r, float z0, float h, uint color, float roofH = -1)
+        {
+            Pipe(cu, cv, r, z0, z0 + h, color, 18);
+            Cone(cu, cv, r * 1.02f, z0 + h, roofH < 0 ? r * 0.45f : roofH, Darken(color, 0.06f), BuildingDecorator.KindProp, 18);
         }
 
         /// <summary>
@@ -1125,35 +640,35 @@ namespace Orbis.Core.Game
         }
 
         /// <summary>Parallelepipedo verniciato (arredo, cartelloni, telai): tinta piena, senza finestre.</summary>
-        private void PaintedBox(float u0, float v0, float u1, float v1, float z0, float z1, uint color)
+        private void PaintedBox(float u0, float v0, float u1, float v1, float z0, float z1, uint color, float kind = 13, float param = 0)
         {
-            Poly(new[] { u0, v0, z0, u1, v0, z0, u1, v0, z1, u0, v0, z1 }, 0, -1, 0, color, BuildingDecorator.KindProp, 0);
-            Poly(new[] { u1, v0, z0, u1, v1, z0, u1, v1, z1, u1, v0, z1 }, 1, 0, 0, color, BuildingDecorator.KindProp, 0);
-            Poly(new[] { u1, v1, z0, u0, v1, z0, u0, v1, z1, u1, v1, z1 }, 0, 1, 0, color, BuildingDecorator.KindProp, 0);
-            Poly(new[] { u0, v1, z0, u0, v0, z0, u0, v0, z1, u0, v1, z1 }, -1, 0, 0, color, BuildingDecorator.KindProp, 0);
-            Poly(new[] { u0, v0, z1, u1, v0, z1, u1, v1, z1, u0, v1, z1 }, 0, 0, 1, color, BuildingDecorator.KindProp, 0);
+            Poly(new[] { u0, v0, z0, u1, v0, z0, u1, v0, z1, u0, v0, z1 }, 0, -1, 0, color, kind, param);
+            Poly(new[] { u1, v0, z0, u1, v1, z0, u1, v1, z1, u1, v0, z1 }, 1, 0, 0, color, kind, param);
+            Poly(new[] { u1, v1, z0, u0, v1, z0, u0, v1, z1, u1, v1, z1 }, 0, 1, 0, color, kind, param);
+            Poly(new[] { u0, v1, z0, u0, v0, z0, u0, v0, z1, u0, v1, z1 }, -1, 0, 0, color, kind, param);
+            Poly(new[] { u0, v0, z1, u1, v0, z1, u1, v1, z1, u0, v1, z1 }, 0, 0, 1, color, kind, param);
         }
 
-        private void Cone(float cu, float cv, float r, float z0, float h, uint color)
+        private void Cone(float cu, float cv, float r, float z0, float h, uint color, float kind = 1, int sides = 12, float param = 1)
         {
             uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
             var center = World(cu, cv);
-            const int sides = 12;
             for (int i = 0; i < sides; i++)
             {
                 double a0 = 2 * Math.PI * i / sides, a1 = 2 * Math.PI * (i + 1) / sides, am = (a0 + a1) / 2;
                 var p0 = center + new Vec2((float)Math.Cos(a0), (float)Math.Sin(a0)) * r;
                 var p1 = center + new Vec2((float)Math.Cos(a1), (float)Math.Sin(a1)) * r;
-                float nx = (float)Math.Cos(am), ny = (float)Math.Sin(am), nz = r / h;
+                float nx = (float)Math.Cos(am), ny = (float)Math.Sin(am), nz = r / Math.Max(0.01f, h);
                 float nl = (float)Math.Sqrt(nx * nx + ny * ny + nz * nz);
-                int i0 = _mb.Add(p0.X, p0.Y, z0, nx / nl, ny / nl, nz / nl, c, 0, 0, 0, 0, 1, 0.5f, 1, 0);
-                int i1 = _mb.Add(p1.X, p1.Y, z0, nx / nl, ny / nl, nz / nl, c, 0, 0, 0, 0, 1, 0.5f, 1, 0);
-                int t = _mb.Add(center.X, center.Y, z0 + h, nx / nl, ny / nl, nz / nl, c, 0, 0, 0, 0, 1, 0.5f, 1, 0);
+                float seg = (p1 - p0).Length;
+                int i0 = _mb.Add(p0.X, p0.Y, z0, nx / nl, ny / nl, nz / nl, c, i * seg, 0, seg * sides, h, kind, 0.5f, param, 0);
+                int i1 = _mb.Add(p1.X, p1.Y, z0, nx / nl, ny / nl, nz / nl, c, (i + 1) * seg, 0, seg * sides, h, kind, 0.5f, param, 0);
+                int t = _mb.Add(center.X, center.Y, z0 + h, nx / nl, ny / nl, nz / nl, c, (i + 0.5f) * seg, h, seg * sides, h, kind, 0.5f, param, 0);
                 _mb.Triangle(i0, i1, t);
             }
         }
 
-        private void Dome(float cu, float cv, float r, float z0, uint color, float kind = 2)
+        private void Dome(float cu, float cv, float r, float z0, uint color, float kind = 2, float squash = 1f)
         {
             uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
             var center = World(cu, cv);
@@ -1164,15 +679,301 @@ namespace Orbis.Core.Game
                 for (int i = 0; i < sides; i++)
                 {
                     double a0 = 2 * Math.PI * i / sides, a1 = 2 * Math.PI * (i + 1) / sides;
-                    Vec3 P(double a, double b) => new Vec3(center.X + (float)(Math.Cos(a) * Math.Cos(b) * r), center.Y + (float)(Math.Sin(a) * Math.Cos(b) * r), z0 + (float)(Math.Sin(b) * r));
+                    Vec3 P(double a, double b) => new Vec3(center.X + (float)(Math.Cos(a) * Math.Cos(b) * r), center.Y + (float)(Math.Sin(a) * Math.Cos(b) * r), z0 + (float)(Math.Sin(b) * r * squash));
                     var q0 = P(a0, b0);
                     var q1 = P(a1, b0);
                     var q2 = P(a1, b1);
                     var q3 = P(a0, b1);
-                    int Add(Vec3 q) => _mb.Add(q.X, q.Y, q.Z, (q.X - center.X) / r, (q.Y - center.Y) / r, (q.Z - z0) / r, c, 0, 0, 0, 0, kind, 0.5f, kind > 12.5f ? 0 : 1, 0);
+                    int Add(Vec3 q) => _mb.Add(q.X, q.Y, q.Z, (q.X - center.X) / r, (q.Y - center.Y) / r, (q.Z - z0) / (r * squash), c, 0, 0, 0, 0, kind, 0.5f, kind > 12.5f ? 0 : 1, 0);
                     _mb.Quad(Add(q0), Add(q1), Add(q2), Add(q3));
                 }
             }
+        }
+
+        /// <summary>Sfera piena (teste delle statue, lampioni a globo, serbatoi sferici).</summary>
+        private void Sphere(float cu, float cv, float cz, float r, uint color, float kind = 13)
+        {
+            Dome(cu, cv, r, cz, color, kind);
+            uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
+            var center = World(cu, cv);
+            const int sides = 12, rings = 4;
+            for (int k = 0; k < rings; k++)
+            {
+                double b0 = -Math.PI / 2 * k / rings, b1 = -Math.PI / 2 * (k + 1) / rings;
+                for (int i = 0; i < sides; i++)
+                {
+                    double a0 = 2 * Math.PI * i / sides, a1 = 2 * Math.PI * (i + 1) / sides;
+                    Vec3 P(double a, double b) => new Vec3(center.X + (float)(Math.Cos(a) * Math.Cos(b) * r), center.Y + (float)(Math.Sin(a) * Math.Cos(b) * r), cz + (float)(Math.Sin(b) * r));
+                    int Add(Vec3 q) => _mb.Add(q.X, q.Y, q.Z, (q.X - center.X) / r, (q.Y - center.Y) / r, (q.Z - cz) / r, c, 0, 0, 0, 0, kind, 0.5f, 0, 0);
+                    // sotto: giro inverso perché la latitudine scende
+                    _mb.Quad(Add(P(a0, b0)), Add(P(a0, b1)), Add(P(a1, b1)), Add(P(a1, b0)));
+                }
+            }
+        }
+
+        /// <summary>Quadrilatero in coordinate del mondo rivolto verso <paramref name="facing"/> (colore già convertito).</summary>
+        private void QuadW(Vec3 a, Vec3 b, Vec3 c, Vec3 d, Vec3 facing, uint col, float kind, float param, float w = 1, float h = 1, float cat = 0)
+        {
+            var n = Vec3.Cross(b - a, c - a);
+            float l = n.Length;
+            if (l < 1e-7f) return;
+            n = n * (1f / l);
+            bool flip = Vec3.Dot(n, facing) < 0;
+            if (flip) n = n * -1f;
+            int i0 = _mb.Add(a.X, a.Y, a.Z, n.X, n.Y, n.Z, col, 0, 0, w, h, kind, 0.5f, param, cat);
+            int i1 = _mb.Add(b.X, b.Y, b.Z, n.X, n.Y, n.Z, col, w, 0, w, h, kind, 0.5f, param, cat);
+            int i2 = _mb.Add(c.X, c.Y, c.Z, n.X, n.Y, n.Z, col, w, h, w, h, kind, 0.5f, param, cat);
+            int i3 = _mb.Add(d.X, d.Y, d.Z, n.X, n.Y, n.Z, col, 0, h, w, h, kind, 0.5f, param, cat);
+            if (flip) _mb.Quad(i0, i3, i2, i1);
+            else _mb.Quad(i0, i1, i2, i3);
+        }
+
+        /// <summary>Lastra sottile a due facce (reti, teli, pannelli di vetro): da a a b, tra le quote z0 e z1.</summary>
+        private void Panel(float ua, float va, float ub, float vb, float z0, float z1, uint color, float kind = 13, float param = 0)
+        {
+            var a = World(ua, va);
+            var b = World(ub, vb);
+            var d = b - a;
+            float len = d.Length;
+            if (len < 1e-4f) return;
+            var n = new Vec3(d.Y / len, -d.X / len, 0);
+            uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
+            var p0 = new Vec3(a.X, a.Y, z0);
+            var p1 = new Vec3(b.X, b.Y, z0);
+            var p2 = new Vec3(b.X, b.Y, z1);
+            var p3 = new Vec3(a.X, a.Y, z1);
+            QuadW(p0, p1, p2, p3, n, c, kind, param, len, z1 - z0);
+            QuadW(p0, p1, p2, p3, n * -1f, MeshBuffer.Rgb(Darken(color & 0xFFFFFF, 0.15f)), kind, param, len, z1 - z0);
+        }
+
+        /// <summary>Trave a sezione quadrata tra due punti (u, v, quota): tralicci, ruote panoramiche, ringhiere, telai.</summary>
+        private void Beam(float ua, float va, float za, float ub, float vb, float zb, float t, uint color, float kind = 13, float param = 0)
+        {
+            var A2 = World(ua, va);
+            var B2 = World(ub, vb);
+            var A = new Vec3(A2.X, A2.Y, za);
+            var B = new Vec3(B2.X, B2.Y, zb);
+            var axis = B - A;
+            float len = axis.Length;
+            if (len < 1e-4f) return;
+            axis = axis * (1f / len);
+            var helper = Math.Abs(axis.Z) > 0.9f ? new Vec3(1, 0, 0) : new Vec3(0, 0, 1);
+            var p = Vec3.Cross(axis, helper);
+            p = p * (1f / p.Length);
+            var q = Vec3.Cross(p, axis);
+            uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
+            var offs = new[] { p + q, q - p, p * -1f - q, p - q };
+            for (int k = 0; k < 4; k++)
+            {
+                var o0 = offs[k] * t;
+                var o1 = offs[(k + 1) % 4] * t;
+                var facing = offs[k] + offs[(k + 1) % 4];
+                QuadW(A + o0, A + o1, B + o1, B + o0, facing, c, kind, param, len, t);
+            }
+        }
+
+        /// <summary>Parallelepipedo orientato: centro (cu, cv), asse lungo a <paramref name="angle"/> radianti da U, mezze misure.</summary>
+        private void OBox(float cu, float cv, float angle, float hu, float hv, float z0, float z1, uint color, float kind = 13, float param = 0, bool top = true)
+        {
+            var c = World(cu, cv);
+            var ax = _u * (float)Math.Cos(angle) + _v * (float)Math.Sin(angle);
+            var sd = new Vec2(-ax.Y, ax.X);
+            var p0 = c - ax * hu - sd * hv;
+            var p1 = c + ax * hu - sd * hv;
+            var p2 = c + ax * hu + sd * hv;
+            var p3 = c - ax * hu + sd * hv;
+            uint col = MeshBuffer.Rgb(color & 0xFFFFFF);
+            var ring = new[] { p0, p1, p2, p3 };
+            for (int i = 0; i < 4; i++)
+            {
+                var a = ring[i];
+                var b = ring[(i + 1) % 4];
+                var e = b - a;
+                float len = e.Length;
+                var n = new Vec3(e.Y / len, -e.X / len, 0);
+                QuadW(new Vec3(a.X, a.Y, z0), new Vec3(b.X, b.Y, z0), new Vec3(b.X, b.Y, z1), new Vec3(a.X, a.Y, z1), n, col, kind, param, len, z1 - z0);
+            }
+            if (top)
+                QuadW(new Vec3(p0.X, p0.Y, z1), new Vec3(p1.X, p1.Y, z1), new Vec3(p2.X, p2.Y, z1), new Vec3(p3.X, p3.Y, z1), new Vec3(0, 0, 1), col, kind, param, 2 * hu, 2 * hv);
+        }
+
+        // ------------------------------------------------------------------ veicoli e oggetti ricorrenti
+
+        /// <summary>Automobile ferma (carrozzeria, vetri, tetto, ruote): lunga 4,3 m, orientata ad <paramref name="angle"/> da U.</summary>
+        private void CarBody(float cu, float cv, float angle, uint color, float baseZ = float.NaN)
+        {
+            float g = float.IsNaN(baseZ) ? Ground(cu, cv) : baseZ;
+            float ca = (float)Math.Cos(angle), sa = (float)Math.Sin(angle);
+            OBox(cu, cv, angle, 1.55f, 0.86f, g, g + 0.42f, 0x1C1C1E);                       // ruote e sottoscocca
+            OBox(cu, cv, angle, 2.15f, 0.88f, g + 0.3f, g + 0.92f, color);                    // carrozzeria
+            OBox(cu - ca * 0.2f, cv - sa * 0.2f, angle, 1.2f, 0.8f, g + 0.92f, g + 1.38f, 0x26303A);   // vetri
+            OBox(cu - ca * 0.2f, cv - sa * 0.2f, angle, 1.05f, 0.78f, g + 1.38f, g + 1.45f, color);    // tetto
+        }
+
+        /// <summary>Automobile di un colore comune scelto col seme (parcheggi, cortili).</summary>
+        private void Car(float cu, float cv, float angle, long salt, float baseZ = float.NaN) => CarBody(cu, cv, angle, Pick(CarColors, salt), baseZ);
+
+        /// <summary>Furgone (ambulanze, consegne).</summary>
+        private void Van(float cu, float cv, float angle, uint color, uint stripe)
+        {
+            float g = Ground(cu, cv);
+            float ca = (float)Math.Cos(angle), sa = (float)Math.Sin(angle);
+            OBox(cu, cv, angle, 1.9f, 0.95f, g, g + 0.45f, 0x1C1C1E);
+            OBox(cu - ca * 0.35f, cv - sa * 0.35f, angle, 2.25f, 1.0f, g + 0.35f, g + 2.4f, color);
+            OBox(cu + ca * 2.15f, cv + sa * 2.15f, angle, 0.45f, 0.98f, g + 0.35f, g + 1.3f, color);
+            OBox(cu + ca * 1.95f, cv + sa * 1.95f, angle, 0.12f, 0.92f, g + 1.3f, g + 2.1f, 0x26303A);
+            if (stripe != 0) OBox(cu - ca * 0.35f, cv - sa * 0.35f, angle, 2.27f, 1.02f, g + 1.05f, g + 1.35f, stripe, 13, 0, false);
+        }
+
+        /// <summary>Autoarticolato: trattore e semirimorchio (lungo 16 m), orientato ad <paramref name="angle"/>; la cabina è in avanti.</summary>
+        private void Truck(float cu, float cv, float angle, uint cab, uint trailer)
+        {
+            float g = Ground(cu, cv);
+            float ca = (float)Math.Cos(angle), sa = (float)Math.Sin(angle);
+            OBox(cu - ca * 1.6f, cv - sa * 1.6f, angle, 6.2f, 1.2f, g, g + 1.1f, 0x2A2A2C);
+            OBox(cu - ca * 1.6f, cv - sa * 1.6f, angle, 6.3f, 1.25f, g + 1.1f, g + 4.0f, trailer);
+            OBox(cu + ca * 6.1f, cv + sa * 6.1f, angle, 1.3f, 1.2f, g + 0.4f, g + 3.2f, cab);
+            OBox(cu + ca * 7.35f, cv + sa * 7.35f, angle, 0.06f, 1.05f, g + 1.9f, g + 2.9f, 0x26303A);
+            OBox(cu + ca * 6.1f, cv + sa * 6.1f, angle, 1.0f, 1.1f, g + 3.2f, g + 3.7f, cab);
+        }
+
+        /// <summary>Autobus di linea (12 m): fascia dei finestrini, porte, tetto con i climatizzatori.</summary>
+        private void Bus(float cu, float cv, float angle, uint color)
+        {
+            float g = Ground(cu, cv);
+            float ca = (float)Math.Cos(angle), sa = (float)Math.Sin(angle);
+            OBox(cu, cv, angle, 5.6f, 1.2f, g, g + 0.5f, 0x1C1C1E);
+            OBox(cu, cv, angle, 6.0f, 1.27f, g + 0.35f, g + 3.0f, color);
+            OBox(cu, cv, angle, 6.02f, 1.29f, g + 1.25f, g + 2.55f, 0x24303A, 13, 0, false);
+            OBox(cu - ca * 1.5f, cv - sa * 1.5f, angle, 1.6f, 0.8f, g + 3.0f, g + 3.35f, 0xD8DADC);
+        }
+
+        /// <summary>Lampione stradale: palo, braccio e testa accesa la sera (la testa sta dentro 0,25 m dal palo).</summary>
+        private void StreetLamp(float cu, float cv, float h, bool historic = false)
+        {
+            float g = Ground(cu, cv);
+            if (historic)
+            {
+                // lampione in ghisa: basamento, fusto, lanterna a quattro vetri con il cappello
+                Pipe(cu, cv, 0.17f, g, g + 0.7f, 0x1F2422, 10);
+                Pipe(cu, cv, 0.07f, g + 0.7f, g + h - 0.7f, 0x1F2422, 8);
+                Pipe(cu, cv, 0.11f, g + h - 0.75f, g + h - 0.6f, 0x1F2422, 8);
+                OBox(cu, cv, 0.785f, 0.17f, 0.17f, g + h - 0.6f, g + h - 0.12f, 0xFFE0A0, BuildingDecorator.KindLight, 1);
+                Cone(cu, cv, 0.27f, g + h - 0.14f, 0.2f, 0x1F2422, BuildingDecorator.KindProp, 8);
+                return;
+            }
+            Pipe(cu, cv, 0.08f, g, g + h - 0.15f, 0x5A6066, 8, 0.7f);
+            OBox(cu, cv, 0, 0.24f, 0.13f, g + h - 0.2f, g + h, 0x4A4F55);
+            // vetro della lampada sotto la testa
+            var a = World(cu - 0.2f, cv - 0.1f);
+            var b = World(cu + 0.2f, cv - 0.1f);
+            var c = World(cu + 0.2f, cv + 0.1f);
+            var d = World(cu - 0.2f, cv + 0.1f);
+            float z = g + h - 0.21f;
+            QuadW(new Vec3(a.X, a.Y, z), new Vec3(b.X, b.Y, z), new Vec3(c.X, c.Y, z), new Vec3(d.X, d.Y, z), new Vec3(0, 0, -1),
+                MeshBuffer.Rgb(0xFFE6B0), BuildingDecorator.KindLight, 1);
+        }
+
+        /// <summary>Asta con il tricolore italiano (o un colore solo); il telo va verso +U per <paramref name="flagLen"/> metri.</summary>
+        private void FlagPole(float cu, float cv, float h, float flagLen, uint single = 0)
+        {
+            float g = Ground(cu, cv);
+            Pipe(cu, cv, 0.18f, g, g + 0.3f, 0xBFC3C7, 8);
+            Pipe(cu, cv, 0.05f, g, g + h, 0xD8DCE0, 6);
+            Sphere(cu, cv, g + h + 0.05f, 0.08f, 0xD4B24C);
+            float fh = flagLen * 0.66f, z1 = g + h - 0.25f, z0 = z1 - fh;
+            uint[] cols = single != 0 ? new[] { single, single, single } : new uint[] { 0x009246, 0xF1F2F1, 0xCE2B37 };
+            for (int k = 0; k < 3; k++)
+            {
+                float a = cu + 0.06f + flagLen * k / 3, b = cu + 0.06f + flagLen * (k + 1) / 3;
+                // leggera onda: le strisce non sono tutte nello stesso piano
+                float wa = 0.12f * (float)Math.Sin(k * 1.9f), wb = 0.12f * (float)Math.Sin((k + 1) * 1.9f);
+                Poly(new[] { a, cv + wa, z0, b, cv + wb, z0, b, cv + wb, z1, a, cv + wa, z1 }, 0, -1, 0, cols[k], BuildingDecorator.KindCanvas, 0);
+                Poly(new[] { a, cv + wa, z0, b, cv + wb, z0, b, cv + wb, z1, a, cv + wa, z1 }, 0, 1, 0, Darken(cols[k], 0.12f), BuildingDecorator.KindCanvas, 0);
+            }
+        }
+
+        /// <summary>Recinzione metallica a pannelli: paletti ogni 2,5 m, due correnti e la rete (tinta scura) fino a h.</summary>
+        private void MetalFence(float ua, float va, float ub, float vb, float h, uint color = 0x2E3B33, bool mesh = true, float meshH = -1)
+        {
+            float len = (float)Math.Sqrt((ub - ua) * (ub - ua) + (vb - va) * (vb - va));
+            if (len < 0.2f) return;
+            int n = Math.Max(1, (int)Math.Ceiling(len / 2.5f));
+            for (int i = 0; i <= n; i++)
+            {
+                float t = i / (float)n;
+                float u = ua + (ub - ua) * t, v = va + (vb - va) * t;
+                float g = Ground(u, v);
+                Beam(u, v, g - 0.2f, u, v, g + h, 0.04f, color);
+            }
+            for (int i = 0; i < n; i++)
+            {
+                float t0 = i / (float)n, t1 = (i + 1) / (float)n;
+                float u0 = ua + (ub - ua) * t0, v0 = va + (vb - va) * t0, u1 = ua + (ub - ua) * t1, v1 = va + (vb - va) * t1;
+                float g0 = Ground(u0, v0), g1 = Ground(u1, v1), gm = Math.Min(g0, g1);
+                Beam(u0, v0, g0 + h - 0.03f, u1, v1, g1 + h - 0.03f, 0.03f, color);
+                // telo frangivento o pannello basso: la rete vera è trasparente, si disegna solo fino a meshH
+                if (mesh) Panel(u0, v0, u1, v1, gm + 0.05f, gm + (meshH > 0 ? Math.Min(meshH, h) : h) - 0.06f, Lighten(color, 0.05f), BuildingDecorator.KindProp, 0);
+                if (meshH > 0 && meshH < h - 0.3f) Beam(u0, v0, g0 + meshH, u1, v1, g1 + meshH, 0.025f, color);
+            }
+        }
+
+        /// <summary>Recinzione metallica lungo il bordo della sagoma (rientrata di 0,2 m), con un varco sul fronte largo <paramref name="gate"/>.</summary>
+        private void LotFence(float h, float gate, uint color = 0x2E3B33, bool mesh = false, float inset = 0.2f, float meshH = -1)
+        {
+            float i = inset;
+            if (gate > 0.1f)
+            {
+                MetalFence(i, i, _w / 2 - gate / 2, i, h, color, mesh, meshH);
+                MetalFence(_w / 2 + gate / 2, i, _w - i, i, h, color, mesh, meshH);
+            }
+            else MetalFence(i, i, _w - i, i, h, color, mesh, meshH);
+            MetalFence(_w - i, i, _w - i, _d - i, h, color, mesh, meshH);
+            MetalFence(_w - i, _d - i, i, _d - i, h, color, mesh, meshH);
+            MetalFence(i, _d - i, i, i, h, color, mesh, meshH);
+        }
+
+        /// <summary>Panchina in legno con le gambe in ghisa sul rettangolo (lato lungo lungo U, schienale verso +V).</summary>
+        private void Bench(float u0, float v0, float u1, float v1)
+        {
+            float g = Base(u0, v0, u1, v1);
+            float dv = v1 - v0;
+            for (int k = 0; k < 3; k++)
+                PaintedBox(u0 + 0.05f, v0 + 0.05f + k * (dv - 0.2f) / 3, u1 - 0.05f, v0 + 0.05f + k * (dv - 0.2f) / 3 + (dv - 0.2f) / 3.6f, g + 0.42f, g + 0.47f, 0x1A0744C);
+            PaintedBox(u0 + 0.05f, v1 - 0.12f, u1 - 0.05f, v1 - 0.06f, g + 0.55f, g + 0.68f, 0x1A0744C);
+            PaintedBox(u0 + 0.05f, v1 - 0.12f, u1 - 0.05f, v1 - 0.06f, g + 0.74f, g + 0.86f, 0x1A0744C);
+            foreach (float u in new[] { u0 + 0.12f, u1 - 0.18f })
+            {
+                PaintedBox(u, v0 + 0.08f, u + 0.06f, v1 - 0.06f, g, g + 0.42f, 0x1303438);
+                PaintedBox(u, v1 - 0.14f, u + 0.06f, v1 - 0.06f, g + 0.42f, g + 0.88f, 0x1303438);
+            }
+        }
+
+        /// <summary>Cestino dei rifiuti con il coperchio.</summary>
+        private void Bin(float cu, float cv)
+        {
+            float g = Ground(cu, cv);
+            Pipe(cu, cv, 0.22f, g - 0.05f, g + 0.85f, 0x2F4F3A, 10);
+            Pipe(cu, cv, 0.24f, g + 0.85f, g + 0.95f, 0x26302A, 10);
+        }
+
+        // ------------------------------------------------------------------ colori
+
+        private static uint Lighten(uint rgb, float k)
+        {
+            uint flag = rgb & 0xFF000000;
+            uint r = (rgb >> 16) & 0xFF, g = (rgb >> 8) & 0xFF, b = rgb & 0xFF;
+            r = (uint)Math.Min(255, r + (255 - r) * k);
+            g = (uint)Math.Min(255, g + (255 - g) * k);
+            b = (uint)Math.Min(255, b + (255 - b) * k);
+            return flag | (r << 16) | (g << 8) | b;
+        }
+
+        private static uint Darken(uint rgb, float k)
+        {
+            uint flag = rgb & 0xFF000000;
+            uint r = (uint)(((rgb >> 16) & 0xFF) * (1 - k)), g = (uint)(((rgb >> 8) & 0xFF) * (1 - k)), b = (uint)((rgb & 0xFF) * (1 - k));
+            return flag | (r << 16) | (g << 8) | b;
         }
 
         private readonly struct Vec3
@@ -1185,6 +986,13 @@ namespace Orbis.Core.Game
                 Y = y;
                 Z = z;
             }
+
+            public float Length => (float)Math.Sqrt(X * X + Y * Y + Z * Z);
+            public static Vec3 operator +(Vec3 a, Vec3 b) => new Vec3(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+            public static Vec3 operator -(Vec3 a, Vec3 b) => new Vec3(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+            public static Vec3 operator *(Vec3 a, float k) => new Vec3(a.X * k, a.Y * k, a.Z * k);
+            public static Vec3 Cross(Vec3 a, Vec3 b) => new Vec3(a.Y * b.Z - a.Z * b.Y, a.Z * b.X - a.X * b.Z, a.X * b.Y - a.Y * b.X);
+            public static float Dot(Vec3 a, Vec3 b) => a.X * b.X + a.Y * b.Y + a.Z * b.Z;
         }
     }
 }

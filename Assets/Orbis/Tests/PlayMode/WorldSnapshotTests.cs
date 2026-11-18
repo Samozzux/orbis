@@ -535,6 +535,133 @@ namespace Orbis.Tests.PlayMode
             OrbisApp.Instance.EndGame();
         }
 
+        /// <summary>
+        /// Tutti i modelli del catalogo fotografati fuori scena: un foglio per categoria (60-&lt;categoria&gt;-liv&lt;n&gt;-&lt;ora&gt;h.png,
+        /// in ordine di catalogo, 5 per riga). ORBIS_MODELS = chiavi separate da virgola per fotografare solo quelle, in grande
+        /// (61-&lt;chiave&gt;-liv&lt;n&gt;-&lt;ora&gt;h.png). ORBIS_MODELS_LEVEL = livello (1 predefinito, "max" = ultimo), ORBIS_MODELS_HOUR = ora.
+        /// </summary>
+        [UnityTest]
+        [Timeout(1800000)]
+        public IEnumerator Catalogo()
+        {
+            var dir = Environment.GetEnvironmentVariable("ORBIS_SNAPSHOT_DIR");
+            if (string.IsNullOrEmpty(dir)) Assert.Ignore("ORBIS_SNAPSHOT_DIR non impostata");
+            Directory.CreateDirectory(dir);
+            var onlyEnv = Environment.GetEnvironmentVariable("ORBIS_MODELS");
+            var only = string.IsNullOrEmpty(onlyEnv) ? null : onlyEnv.Split(',').Select(s => s.Trim()).Where(s => s.Length > 0).ToArray();
+            var levelEnv = Environment.GetEnvironmentVariable("ORBIS_MODELS_LEVEL") ?? "1";
+            int hour = int.TryParse(Environment.GetEnvironmentVariable("ORBIS_MODELS_HOUR"), out var h) ? h : 11;
+            SceneManager.LoadScene("Boot");
+            var deadline = Time.realtimeSinceStartup + 60f;
+            while ((OrbisApp.Instance == null || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu) && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            OrbisApp.Instance.StartGame(new Orbis.UI.Game.GameStart { Transient = true });
+            var session = OrbisApp.Instance.Session;
+            deadline = Time.realtimeSinceStartup + 120f;
+            while (session.State == WorldSession.Phase.Loading && Time.realtimeSinceStartup < deadline) yield return null;
+            while (session.World.PendingBuilds > 0) yield return null;
+            yield return At(session, hour);
+            var game = OrbisApp.Instance.Game;
+            // set sopra la città ma a quota normale (a -20 km lo shader perde precisione e prati e siepi escono rosa)
+            var stage = new Vector3(0, 1500, 0);
+            var cam = new GameObject("Foto catalogo").AddComponent<Camera>();
+            cam.CopyFrom(session.CameraRig.Cam);
+            cam.enabled = false;
+            bool fog = RenderSettings.fog;
+            RenderSettings.fog = false;
+            const int cols = 5, tw = 480, th = 360;
+            var groups = game.Content.Catalog.Items
+                .Where(it => only == null || only.Contains(it.Key))
+                .GroupBy(it => it.Category).ToList();
+            foreach (var group in groups)
+            {
+                var items = group.ToList();
+                int rows = (items.Count + cols - 1) / cols;
+                var sheet = only == null ? new Texture2D(cols * tw, rows * th, TextureFormat.RGB24, false) : null;
+                for (int n = 0; n < items.Count; n++)
+                {
+                    var item = items[n];
+                    int level = levelEnv == "max" ? item.MaxLevel : Math.Max(1, Math.Min(item.MaxLevel, int.TryParse(levelEnv, out var l) ? l : 1));
+                    var mb = new Orbis.Core.World.Meshing.MeshBuffer();
+                    var plants = new System.Collections.Generic.List<Orbis.Core.World.Meshing.PlantInstance>();
+                    new Orbis.Core.Game.ObjectMesher().Build(item, level, null, new Orbis.Core.World.Geometry.Vec2(0, 0), 0, 0, (x, y) => 0f, mb, plants, 7);
+                    float ext = Math.Max(item.Width, item.Depth) * 6 + 1500;
+                    uint grass = Orbis.Core.World.Meshing.MeshBuffer.Rgb(0x8CAD66);
+                    int g0 = mb.Add(-ext, -ext, -0.05f, 0, 0, 1, grass, 0, 0, 1, 1, 13, 0.5f, 0, 0);
+                    int g1 = mb.Add(ext, -ext, -0.05f, 0, 0, 1, grass, 0, 0, 1, 1, 13, 0.5f, 0, 0);
+                    int g2 = mb.Add(ext, ext, -0.05f, 0, 0, 1, grass, 0, 0, 1, 1, 13, 0.5f, 0, 0);
+                    int g3 = mb.Add(-ext, ext, -0.05f, 0, 0, 1, grass, 0, 0, 1, 1, 13, 0.5f, 0, 0);
+                    mb.Quad(g0, g1, g2, g3);
+                    var mesh = Orbis.World.MeshUpload.ToMesh(mb, item.Key);
+                    var go = new GameObject("Modello " + item.Key);
+                    go.transform.position = stage;
+                    go.AddComponent<MeshFilter>().sharedMesh = mesh;
+                    go.AddComponent<MeshRenderer>().sharedMaterial = session.World.Materials.Building;
+                    // piante del modello (alberi, palme, vigneti), come le disegna il gioco
+                    foreach (var p in plants)
+                    {
+                        var pg = new GameObject("Pianta");
+                        pg.transform.SetParent(go.transform, false);
+                        pg.transform.localPosition = new Vector3(p.X, p.Z, p.Y);
+                        pg.transform.localRotation = Quaternion.Euler(0, -p.Rotation * Mathf.Rad2Deg, 0);
+                        pg.transform.localScale = p.Kind == Orbis.Core.World.Meshing.PlantKind.VineRow ? new Vector3(p.Length, 1, 1) : Vector3.one * p.Scale;
+                        pg.AddComponent<MeshFilter>().sharedMesh = session.World.Vegetation.MeshOf(p.Kind);
+                        pg.AddComponent<MeshRenderer>().sharedMaterial = session.World.Vegetation.Material;
+                    }
+                    // inquadratura: sfera che contiene l'elemento, vista da sud-ovest (il fronte è a sud)
+                    float radius = 0.5f * Mathf.Sqrt(item.Width * item.Width + item.Depth * item.Depth + item.Height * item.Height);
+                    var center = stage + new Vector3(item.Width / 2, item.Height * 0.35f, item.Depth / 2);
+                    var rot = Quaternion.Euler(28, 32, 0);
+                    float dist = Mathf.Max(4f, radius / Mathf.Sin(cam.fieldOfView * 0.5f * Mathf.Deg2Rad) * 0.95f);
+                    cam.transform.SetPositionAndRotation(center - rot * Vector3.forward * dist, rot);
+                    cam.nearClipPlane = Mathf.Max(0.05f, dist * 0.02f);
+                    cam.farClipPlane = dist * 10 + 500;
+                    yield return null;
+                    if (sheet != null)
+                    {
+                        int col = n % cols, row = n / cols;
+                        Render(cam, tw, th, sheet, col * tw, (rows - 1 - row) * th);
+                    }
+                    else
+                    {
+                        var single = new Texture2D(1600, 1200, TextureFormat.RGB24, false);
+                        Render(cam, 1600, 1200, single, 0, 0);
+                        File.WriteAllBytes(Path.Combine(dir, $"61-{item.Key}-liv{level}-{hour}h.png"), single.EncodeToPNG());
+                        UnityEngine.Object.Destroy(single);
+                    }
+                    UnityEngine.Object.Destroy(go);
+                    UnityEngine.Object.Destroy(mesh);
+                }
+                if (sheet != null)
+                {
+                    sheet.Apply();
+                    File.WriteAllBytes(Path.Combine(dir, $"60-{group.Key.ToString().ToLowerInvariant()}-liv{levelEnv}-{hour}h.png"), sheet.EncodeToPNG());
+                    Debug.Log($"[Orbis] foglio {group.Key}: " + string.Join(", ", items.Select(i => i.Key)));
+                    UnityEngine.Object.Destroy(sheet);
+                }
+            }
+            RenderSettings.fog = fog;
+            UnityEngine.Object.Destroy(cam.gameObject);
+            OrbisApp.Instance.EndGame();
+        }
+
+        private static void Render(Camera cam, int w, int h, Texture2D into, int x, int y)
+        {
+            var rt = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
+            var old = cam.targetTexture;
+            cam.targetTexture = rt;
+            cam.aspect = w / (float)h;
+            cam.Render();
+            cam.targetTexture = old;
+            var prev = RenderTexture.active;
+            RenderTexture.active = rt;
+            into.ReadPixels(new Rect(0, 0, w, h), x, y);
+            into.Apply();
+            RenderTexture.active = prev;
+            rt.Release();
+            UnityEngine.Object.Destroy(rt);
+        }
+
         private static IEnumerator At(WorldSession session, int hour)
         {
             var now = session.Game != null ? session.Game.State.Now : session.Clock.Now;

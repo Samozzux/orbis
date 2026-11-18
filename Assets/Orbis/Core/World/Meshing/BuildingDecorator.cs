@@ -10,7 +10,15 @@ namespace Orbis.Core.World.Meshing
     public enum DressKind
     {
         None, Residential, FoodDrink, Shop, Pharmacy, Bank, Hotel, Fuel, Canopy, FuelCanopy, School, Hospital, Civic, Office, Industrial, Farm,
+        /// <summary>Edifici moderni del catalogo: solo tetto (parapetto, impianti, gronde), la facciata la fa chi li costruisce.</summary>
+        Modern,
     }
+
+    /// <summary>
+    /// Spazio del lotto per gli elementi del catalogo (non hanno strade attorno): spazio libero davanti al lato con
+    /// centro <paramref name="mid"/> e normale esterna <paramref name="normal"/>, e se quel lato è il fronte su strada.
+    /// </summary>
+    public delegate float LotSpace(Vec2 mid, Vec2 normal, out bool street);
 
     /// <summary>Insegna con il nome vero del locale (il testo lo scrive il motore, solo da vicino).</summary>
     public struct SignInfo
@@ -91,6 +99,9 @@ namespace Orbis.Core.World.Meshing
 
         /// <summary>Densità degli addobbi (1 = piena; i profili di qualità bassi usano meno).</summary>
         public float Density = 1f;
+
+        /// <summary>Se impostato (elementi del catalogo), decide spazio libero e fronte di ogni lato al posto delle strade.</summary>
+        public LotSpace Lot;
 
         /// <summary>Tipo di addobbi dall'uso dell'edificio e dalla categoria del POI principale (es. "amenity/bar").</summary>
         public static DressKind KindOf(BuildingInfo b, string poiCategory)
@@ -251,9 +262,13 @@ namespace Orbis.Core.World.Meshing
                 var dir = d * (1f / len);
                 var e = new Edge { P = p, Q = q, Dir = dir, Len = len, Normal = new Vec2(dir.Y, -dir.X) };
                 var mid = Vec2.Lerp(p, q, 0.5f);
-                e.Free = roads != null ? roads.DistanceToEdge(mid + e.Normal * 0.3f, 25f) : float.PositiveInfinity;
-                e.Ground = Math.Max(m.LastGroundRef, Ground(mid + e.Normal * 1.0f));
-                e.Street = e.Free < 16f;
+                bool street = false;
+                e.Free = roads != null ? roads.DistanceToEdge(mid + e.Normal * 0.3f, 25f)
+                    : Lot != null ? Lot(mid, e.Normal, out street) : float.PositiveInfinity;
+                e.Ground = Math.Max(m.LastGroundRef, Ground(mid + e.Normal * (Lot != null && roads == null ? Math.Min(1.0f, Math.Max(0.1f, e.Free - 0.1f)) : 1.0f)));
+                e.Street = Lot != null && roads == null ? street : e.Free < 16f;
+                // elementi del catalogo: un lato attaccato a un'altra unità (case a schiera) non riceve addobbi
+                if (Lot != null && roads == null && e.Free < 0.2f) continue;
                 e.Bays = Math.Max(1, (int)Math.Round(len / bayW));
                 e.Bay = len / e.Bays;
                 _edges.Add(e);

@@ -269,8 +269,13 @@ Shader "Orbis/Building"
                         float3 pw = i.positionWS * 6.0;
                         float leaf = OrbisNoise(pw.xz + pw.y);
                         albedo = baseColor * (0.65 + 0.5 * leaf);
-                        float hsh = OrbisHash21(floor(i.positionWS.xz * 7.0 + i.positionWS.y * 5.0));
-                        if (hsh < param * 0.75)
+                        // fiori: puntini tondi nelle celle da ~14 cm (non quadratini), il verde resta attorno
+                        float2 q = i.positionWS.xz * 7.0 + i.positionWS.y * 5.0;
+                        float hsh = OrbisHash21(floor(q));
+                        float2 fq = frac(q) - 0.5;
+                        float rq = length(fq + (float2(frac(hsh * 13.1), frac(hsh * 7.7)) - 0.5) * 0.25);
+                        float blob = 1.0 - smoothstep(0.24, 0.24 + max(fwidth(q.x), 1e-3), rq);
+                        if (hsh < param * 0.75 && blob > 0.5)
                         {
                             float pick = frac(hsh * 37.17);
                             half3 flower = pick < 0.25 ? half3(0.86, 0.12, 0.18) : (pick < 0.45 ? half3(0.95, 0.45, 0.65) :
@@ -318,20 +323,78 @@ Shader "Orbis/Building"
                 }
                 else if (kind > 7.5)
                 {
-                    // ---------------- campo da calcio: strisce del prato e linee (uv0 = m nel rettangolo, lati)
+                    // ---------------- campi sportivi con le linee (uv0 = m nel rettangolo, lati). uv1.z = sport:
+                    // fino a 1 calcio, 2 tennis, 3 basket, 4 senza linee (cemento dello skate park), 5 calcetto
                     float x = i.uv0.x, y = i.uv0.y, L = i.uv0.z, W = i.uv0.w;
-                    albedo = baseColor * (0.9 + 0.12 * step(0.5, frac(x / 11.0)));
-                    float m = 3.0, lw = 0.07;
-                    float fx = x - m, fy = y - m, fl = L - 2 * m, fw = W - 2 * m;
-                    float inside = step(-lw, fx) * step(fx, fl + lw) * step(-lw, fy) * step(fy, fw + lw);
-                    float lines = (1 - Box(fx, lw, fl - lw) * Box(fy, lw, fw - lw)) * inside;
-                    lines += Box(fx, fl * 0.5 - lw, fl * 0.5 + lw) * inside;
-                    float r = distance(float2(fx, fy), float2(fl * 0.5, fw * 0.5));
-                    lines += Box(r, 9.15 - lw, 9.15 + lw);
-                    float boxW = min(40.3, fw * 0.6) * 0.5;
-                    float ends = Box(fx, 16.5 - lw, 16.5 + lw) + Box(fx, fl - 16.5 - lw, fl - 16.5 + lw);
-                    lines += ends * Box(fy, fw * 0.5 - boxW, fw * 0.5 + boxW);
-                    lines += (Box(fx, 0, 16.5) + Box(fx, fl - 16.5, fl)) * (Box(fy, fw * 0.5 - boxW - lw, fw * 0.5 - boxW + lw) + Box(fy, fw * 0.5 + boxW - lw, fw * 0.5 + boxW + lw));
+                    float sport = i.uv1.z;
+                    float lw = 0.07;
+                    float lines = 0;
+                    // campo sempre col lato lungo lungo x
+                    bool alongX = L >= W;
+                    float px = alongX ? x : y, py = alongX ? y : x, PL = alongX ? L : W, PW = alongX ? W : L;
+                    if (sport < 1.5 || sport > 4.5)
+                    {
+                        bool five = sport > 4.5;
+                        albedo = baseColor * (0.9 + 0.12 * step(0.5, frac(px / (five ? 5.0 : 11.0))));
+                        float m = five ? 1.0 : 3.0;
+                        float fx = px - m, fy = py - m, fl = PL - 2 * m, fw = PW - 2 * m;
+                        float inside = step(-lw, fx) * step(fx, fl + lw) * step(-lw, fy) * step(fy, fw + lw);
+                        lines = (1 - Box(fx, lw, fl - lw) * Box(fy, lw, fw - lw)) * inside;
+                        lines += Box(fx, fl * 0.5 - lw, fl * 0.5 + lw) * inside;
+                        float r = distance(float2(fx, fy), float2(fl * 0.5, fw * 0.5));
+                        float rc = five ? 3.0 : 9.15;
+                        lines += Box(r, rc - lw, rc + lw);
+                        float area = five ? 6.0 : 16.5;
+                        float boxW = (five ? min(13.0, fw * 0.6) : min(40.3, fw * 0.6)) * 0.5;
+                        float ends = Box(fx, area - lw, area + lw) + Box(fx, fl - area - lw, fl - area + lw);
+                        lines += ends * Box(fy, fw * 0.5 - boxW, fw * 0.5 + boxW);
+                        lines += (Box(fx, 0, area) + Box(fx, fl - area, fl)) * (Box(fy, fw * 0.5 - boxW - lw, fw * 0.5 - boxW + lw) + Box(fy, fw * 0.5 + boxW - lw, fw * 0.5 + boxW + lw));
+                    }
+                    else if (sport < 2.5)
+                    {
+                        // tennis: doppio 23,77 × 10,97 al centro, corridoi da 1,37, linee del servizio a 6,40 m dalla rete
+                        albedo = baseColor * (0.92 + 0.1 * OrbisNoise(i.positionWS.xz * 2.0));
+                        float cl = 23.77, cw = 10.97;
+                        float fx = px - (PL - cl) * 0.5, fy = py - (PW - cw) * 0.5;
+                        float inside = step(-lw, fx) * step(fx, cl + lw) * step(-lw, fy) * step(fy, cw + lw);
+                        lines = (1 - Box(fx, lw, cl - lw) * Box(fy, lw, cw - lw)) * inside;
+                        lines += (Box(fy, 1.37 - lw, 1.37 + lw) + Box(fy, cw - 1.37 - lw, cw - 1.37 + lw)) * inside;
+                        float sv = Box(fx, cl * 0.5 - 6.40 - lw, cl * 0.5 - 6.40 + lw) + Box(fx, cl * 0.5 + 6.40 - lw, cl * 0.5 + 6.40 + lw);
+                        lines += sv * Box(fy, 1.37, cw - 1.37);
+                        lines += Box(fy, cw * 0.5 - lw, cw * 0.5 + lw) * Box(fx, cl * 0.5 - 6.40, cl * 0.5 + 6.40);
+                        lines += Box(fx, -0.3, 0.0) * Box(fy, cw * 0.5 - lw, cw * 0.5 + lw) + Box(fx, cl, cl + 0.3) * Box(fy, cw * 0.5 - lw, cw * 0.5 + lw);
+                        albedo *= lerp(0.9, 1.0, inside);
+                    }
+                    else if (sport < 3.5)
+                    {
+                        // basket: 28 × 15 (o quanto c'è), cerchio 1,80 m, area 4,90 × 5,80, tiro da tre a 6,75 m dal canestro
+                        albedo = baseColor * (0.92 + 0.1 * OrbisNoise(i.positionWS.xz * 2.0));
+                        float cl = min(28.0, PL - 2.0), cw = min(15.0, PW - 2.0);
+                        float fx = px - (PL - cl) * 0.5, fy = py - (PW - cw) * 0.5;
+                        float inside = step(-lw, fx) * step(fx, cl + lw) * step(-lw, fy) * step(fy, cw + lw);
+                        lines = (1 - Box(fx, lw, cl - lw) * Box(fy, lw, cw - lw)) * inside;
+                        lines += Box(fx, cl * 0.5 - lw, cl * 0.5 + lw) * inside;
+                        lines += Box(distance(float2(fx, fy), float2(cl * 0.5, cw * 0.5)), 1.8 - lw, 1.8 + lw);
+                        float keyU = Box(fx, 0, 5.8) + Box(fx, cl - 5.8, cl);
+                        float keyV = Box(fy, cw * 0.5 - 2.45, cw * 0.5 + 2.45);
+                        lines += keyU * (Box(fy, cw * 0.5 - 2.45 - lw, cw * 0.5 - 2.45 + lw) + Box(fy, cw * 0.5 + 2.45 - lw, cw * 0.5 + 2.45 + lw));
+                        lines += (Box(fx, 5.8 - lw, 5.8 + lw) + Box(fx, cl - 5.8 - lw, cl - 5.8 + lw)) * keyV;
+                        lines += Box(distance(float2(fx, fy), float2(5.8, cw * 0.5)), 1.8 - lw, 1.8 + lw) * step(5.8, fx);
+                        lines += Box(distance(float2(fx, fy), float2(cl - 5.8, cw * 0.5)), 1.8 - lw, 1.8 + lw) * step(fx, cl - 5.8);
+                        float sideBand = step(0.9, fy) * step(fy, cw - 0.9);
+                        float r1 = distance(float2(fx, fy), float2(1.575, cw * 0.5));
+                        float r2 = distance(float2(fx, fy), float2(cl - 1.575, cw * 0.5));
+                        lines += (Box(r1, 6.75 - lw, 6.75 + lw) * step(1.575, fx) + Box(r2, 6.75 - lw, 6.75 + lw) * step(fx, cl - 1.575)) * sideBand;
+                        lines += (Box(fy, 0.9 - lw, 0.9 + lw) + Box(fy, cw - 0.9 - lw, cw - 0.9 + lw)) * (Box(fx, 0, 1.575) + Box(fx, cl - 1.575, cl));
+                        albedo = lerp(albedo, albedo * half3(0.62, 0.72, 0.95), saturate(keyU * keyV) * 0.6);
+                    }
+                    else
+                    {
+                        // cemento liscio (skate park) con i giunti ogni 4 m
+                        albedo = baseColor * (0.9 + 0.14 * OrbisNoise(i.positionWS.xz * 1.5));
+                        float2 j = abs(frac(float2(px, py) / 4.0) - 0.5);
+                        albedo *= 1.0 - 0.12 * Box(max(j.x, j.y), 0.48, 0.51);
+                    }
                     albedo = lerp(albedo, half3(0.92, 0.93, 0.9), saturate(lines));
                 }
                 else

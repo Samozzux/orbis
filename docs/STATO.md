@@ -23,6 +23,57 @@
   - due torri di raffreddamento a iperboloide, vuote dentro, con i pilastri alla base;
   - edificio del reattore con la cupola, sala turbine e edificio ausiliario;
   - camino a bande bianche e rosse, stazione elettrica tra le torri, piazzale, strada e recinzione.
+- **Tutti gli edifici del catalogo come quelli veri.** Richiesta di Samuele: "tutti gli edifici esistenti e da poter aggiungere devono essere reali"; la regola è ora in `docs/08` §2. Tutti i 150 elementi del catalogo hanno un modello del loro tipo; il generatore è diviso in `ObjectMesher.Town/Public/Industry/Leisure.cs`.
+  - **Case.** Lotto con giardino, vialetto, muretto e cancello. Gronde, comignoli, fioriere e balconi sono gli stessi addobbi degli edifici di Chieti, con il fronte sul lato v = 0. Ci sono poi:
+    - case a schiera e bifamiliari a più colori;
+    - villa moderna con la piscina, casa con il portico, casale con la scala esterna e la loggia;
+    - palazzo nobiliare a quattro ali con il cortile, il portone e il balcone;
+    - villa liberty con la torretta;
+    - loft in mattoni con la ciminiera;
+    - condomini con i balconi continui e le tende da sole;
+    - grattacielo di vetro con podio, rastremazione e antenna.
+  - **Negozi.** Sono al piano terra di una palazzina a due piani con le case sopra (altezze del catalogo aggiornate). Hanno vetrine, tende, insegna e dehors con tavolini e ombrelloni; la farmacia ha la croce verde. Poi:
+    - supermercato e centro commerciale con i parcheggi pieni di auto;
+    - cinema col foyer e le locandine accese;
+    - distributore con pensilina, pompe e totem;
+    - albergo, uffici e torre di vetro.
+  - **Servizi pubblici.**
+    - Scuole con pensilina, bandiere e cortile (giochi all'infanzia, basket al liceo) e università a chiostro.
+    - Ospedale con eliporto, pronto soccorso e ambulanze.
+    - Caserma dei carabinieri con le gazzelle, vigili del fuoco con portoni rossi, torre e autopompe.
+    - Poste con l'insegna gialla, biblioteca con il portico.
+  - **Cultura e spettacolo.**
+    - Museo con il pronao, teatro con la torre scenica e la loggia.
+    - Chiesa con facciata a timpano, rosone, portale, abside e campanile; cappella con il campanile a vela.
+    - Anfiteatro a gradoni, luna park con ruota panoramica, giostra, torre e autoscontri, discoteca.
+  - **Industria.**
+    - Capannoni con baie di carico e camion.
+    - Stabilimenti col tetto a shed; allo stabilimento automobilistico le auto nuove in fila.
+    - Cantina con le vasche inox, frantoio, cementificio con torre dei cicloni, forno rotante e silos.
+  - **Campagna.**
+    - Campi veri: grano con le carreggiate, mais, girasoli, lavanda, orto con capanno.
+    - Pascolo con le pecore, stalla con le vacche, fienile aperto con le balle.
+    - Serre a tunnel, silos, apiario.
+  - **Energia.** Traliccio a traliccio con isolatori, sottostazione con trasformatori e portali, diga idroelettrica con bacino e condotte, centrali a gas, a biomasse e geotermica.
+  - **Sport.**
+    - Linee regolamentari di tennis, basket e calcetto disegnate dallo shader (parametro sport del tipo 8).
+    - Reti trasparenti col telo basso, porte con le reti, torri faro.
+    - Piscina con corsie, blocchi e spogliatoi; palazzetto ellittico con la cupola; pista d'atletica vera con il campo dentro.
+  - **Trasporti.**
+    - Parcheggi con le auto e multipiano a piani aperti con la "P".
+    - Pensilina del bus, autostazione con gli autobus.
+    - Piazza con rosone, lampioni e alberi; eliporto con la "H" e la manica a vento.
+  - **Arredo e natura.**
+    - Statue con figure umane, monumento ai caduti con la Vittoria alata, fontane a bacile.
+    - Chiosco col bancone, parco giochi, rastrelliera con le bici.
+    - Siepi e aiuole con fiori tondi, laghetto con i sassi.
+  - **Corretto per strada.**
+    - Alcuni parallelepipedi (file dei campi, siepi, aiuole) usavano per errore il muro con le finestre.
+    - Il traliccio era fatto di pezzi staccati.
+    - Il chiosco era un cubo verde.
+  - **Prove e controlli.**
+    - Il test "ogni elemento sta dentro la sua sagoma" ora elenca tutti gli elementi che sbagliano, non solo il primo.
+    - Nuova fotografia `WorldSnapshotTests.Catalogo`: un foglio per categoria, con le piante, anche di sera con `ORBIS_MODELS_HOUR=21`.
 - **Aeroporto e "molte altre cose"** (domanda di Samuele): come da specifica, l'aeroporto arriva con aeroporti e voli in M10 e il catalogo esteso in M9. Si può anticipare un aeroporto "statico" se Samuele lo vuole.
 - **Prove.** 145 test .NET (8 nuovi: tribune dritte, ad anello, strette, di punta, pista). Nuova foto di controllo `WorldSnapshotTests.Modelli` (modelli del catalogo di giorno e di sera, stadio di Chieti). EditMode 10/10.
 
@@ -368,3 +419,4 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 
 ### 18/11/2026 — Ritocchi dopo la prova di M2
 - **Fatto**: su richiesta di Samuele bottoni del gioco rifatti (centrati, anello uniforme), stadi veri con gradinate, pista e fari, stadio del catalogo e centrale nucleare come quelli veri (branch `ritocchi-bottoni-edifici`). Il lato gioco di M3 (account e sincronizzazione) è in pausa e riprende subito dopo.
+- **Poi**: Samuele chiede che tutti gli edifici, quelli che ci sono e quelli da aggiungere, siano come quelli veri. Rifatti tutti i 150 modelli del catalogo (stessa PR #13); regola scritta in `docs/08` §2.
