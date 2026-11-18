@@ -263,7 +263,7 @@ Shader "Orbis/Building"
                         albedo = baseColor;
                         emission = baseColor * (0.12 + 1.8 * _OrbisNight) * max(param, 0.3);
                     }
-                    else
+                    else if (kind < 17.5)
                     {
                         // piante e fiori: fogliame a macchie con fiori colorati (densità = parametro)
                         float3 pw = i.positionWS * 6.0;
@@ -278,6 +278,34 @@ Shader "Orbis/Building"
                             albedo = flower;
                         }
                         ao = 0.85;
+                    }
+                    else if (kind < 18.5)
+                    {
+                        // gradinata dello stadio: una fila di sedili (colore del vertice) ogni "param" metri di quota,
+                        // con l'alzata in cemento e l'ombra sotto il gradino; da lontano un colore medio
+                        float rowH = max(param, 0.3);
+                        float y = i.positionWS.y / rowH;
+                        float r = frac(y);
+                        float w = max(fwidth(y), 1e-4);
+                        float seat = saturate((r - 0.24) / w + 0.5) * saturate((0.96 - r) / w + 0.5);
+                        float lip = saturate((0.07 - r) / w + 0.5);
+                        half3 concrete = half3(0.74, 0.73, 0.7);
+                        float speck = OrbisHash21(floor(i.positionWS.xz / 0.55) + floor(y) * 3.1);
+                        half3 rows = lerp(concrete, baseColor * (0.84 + 0.28 * speck), seat) * (1.0 - 0.28 * lip);
+                        float far = saturate(w * 1.5);
+                        albedo = lerp(rows, lerp(concrete, baseColor, 0.8), far);
+                    }
+                    else
+                    {
+                        // pista d'atletica: tartan con le corsie da 1,22 m (uv0.y = distanza dal bordo interno, uv0.z = larghezza)
+                        float y = i.uv0.y, wTrack = max(i.uv0.z, 1.0);
+                        float laneY = y / 1.22;
+                        float lane = frac(laneY);
+                        float wl = max(fwidth(laneY), 1e-4);
+                        float laneMark = saturate((0.05 - lane) / wl + 0.5) + saturate((lane - 0.95) / wl + 0.5);
+                        laneMark *= step(0.05, y) * step(y, wTrack - 0.05);
+                        albedo = baseColor * (0.9 + 0.12 * OrbisNoise(i.positionWS.xz * 3.0));
+                        albedo = lerp(albedo, half3(0.95, 0.95, 0.93), saturate(laneMark) * (1.0 - saturate(wl * 3.0)));
                     }
                 }
                 else if (kind > 11.5)

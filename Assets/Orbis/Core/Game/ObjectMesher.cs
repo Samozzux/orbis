@@ -69,7 +69,7 @@ namespace Orbis.Core.Game
                     break;
                 case "hydro": Hydro(item); break;
                 case "thermal": Thermal(item); break;
-                case "nuclear": Nuclear(item); break;
+                case "nuclear": Nuclear(item, lv); break;
                 case "substation": Substation(); break;
                 case "pylon": Pylon(item.Height); break;
                 case "field": Field(item.Param("crop", "wheat")); break;
@@ -82,7 +82,7 @@ namespace Orbis.Core.Game
                 case "pool": Pool(); break;
                 case "hall": Building(0, 0, _w, _d, item.Height, RoofShape.Round, wall != 0 ? wall : 0x1D9DCDD, 0x1B8BEC2, 2, BuildingUse.Sports); break;
                 case "track": Track(); break;
-                case "stadium": Stadium(item); break;
+                case "stadium": Stadium(item, lv); break;
                 case "amphitheatre": Amphitheatre(); break;
                 case "funfair": Funfair(item); break;
                 case "parking": Ground(0, 0, _w, _d, 0x19C9D9D, 0.12f, 9); break;
@@ -336,18 +336,134 @@ namespace Orbis.Core.Game
             Box(_w * 0.05f, _d * 0.75f, _w * 0.6f, _d * 0.95f, Base(0, _d * 0.75f, _w * 0.6f, _d * 0.95f), Base(0, _d * 0.75f, _w * 0.6f, _d * 0.95f) + 6, 0x1B8BEC2, 6 * 2);
         }
 
-        private void Nuclear(CatalogItem item)
+        /// <summary>
+        /// Centrale nucleare come quelle vere: due torri di raffreddamento a iperboloide (vuote, con i pilastri alla base),
+        /// edificio di contenimento del reattore con cupola, sala turbine, edificio ausiliario con il camino a bande
+        /// bianche e rosse, stazione elettrica tra le torri, piazzale, strade e recinzione.
+        /// </summary>
+        private void Nuclear(CatalogItem item, float lv)
         {
-            // due torri di raffreddamento iperboliche, edificio del reattore con cupola, turbine
-            float r = Math.Min(_w * 0.2f, _d * 0.32f);
-            float g = Base(0, 0, _w, _d);
-            Cylinder(_w * 0.22f, _d * 0.68f, r, g, g + item.Height, 28, 0x1D9D7D2, 1.0f, 0.62f);
-            Cylinder(_w * 0.22f + 0f, _d * 0.68f, r * 0.62f, g + item.Height * 0.55f, g + item.Height, 28, 0x1D9D7D2, 0.62f / 0.62f, 0.75f / 0.62f);
-            Cylinder(_w * 0.5f, _d * 0.68f, r, g, g + item.Height, 28, 0x1D9D7D2, 1.0f, 0.62f);
-            float rr = Math.Min(_w, _d) * 0.13f;
-            Cylinder(_w * 0.78f, _d * 0.35f, rr, g, g + item.Height * 0.35f, 24, 0x1E8E4DC);
-            Dome(_w * 0.78f, _d * 0.35f, rr, g + item.Height * 0.35f, 0x1E8E4DC);
-            Building(_w * 0.35f, _d * 0.05f, _w * 0.65f, _d * 0.35f, 22, RoofShape.Flat, 0x1C8CCCE, 0x19A9A96, 3, BuildingUse.Industrial);
+            float H = item.Height;
+            Ground(0, 0, _w, _d, 0x1BDB9B0, 0.08f, 13);
+            // strade interne
+            Ground(_w * 0.02f, _d * 0.31f, _w * 0.98f, _d * 0.37f, 0x1707274, 0.12f, 13);
+            // torri di raffreddamento
+            float r0 = Math.Min(_w * 0.19f, _d * 0.25f);
+            float ht = Math.Min(H * 0.78f, r0 * 3.9f);
+            CoolingTower(_w * 0.25f, _d * 0.65f, r0, ht);
+            CoolingTower(_w * 0.75f, _d * 0.65f, r0, ht);
+            // stazione elettrica tra le torri: trasformatori e portali
+            float su0 = _w * 0.45f, su1 = _w * 0.55f;
+            float sg = Base(su0, _d * 0.4f, su1, _d * 0.95f);
+            for (int k = 0; k < 4; k++)
+            {
+                float v = _d * (0.45f + k * 0.12f);
+                PaintedBox(su0 + 1.5f, v, su1 - 1.5f, v + 4f, sg, sg + 3.2f, 0x18E9196);
+                Cylinder(su0 + 1f, v + 2f, 0.25f, sg, sg + 9f, 6, 0x1A9AEB4);
+                Cylinder(su1 - 1f, v + 2f, 0.25f, sg, sg + 9f, 6, 0x1A9AEB4);
+                PaintedBox(su0 + 0.8f, v + 1.8f, su1 - 0.8f, v + 2.2f, sg + 8.6f, sg + 9.2f, 0x1A9AEB4);
+            }
+            // edificio del reattore: cilindro di cemento con la cupola
+            float rr = Math.Min(_w, _d) * 0.11f;
+            float rg = Base(_w * 0.19f - rr, _d * 0.18f - rr, _w * 0.19f + rr, _d * 0.18f + rr);
+            float rh = Math.Min(H * 0.24f, 36f);
+            Cylinder(_w * 0.19f, _d * 0.18f, rr, rg - 0.5f, rg + rh, 32, 0x1DEDAD2);
+            Cylinder(_w * 0.19f, _d * 0.18f, rr * 1.01f, rg + rh - 3f, rg + rh - 2.2f, 32, 0x1A5A29B);
+            Dome(_w * 0.19f, _d * 0.18f, rr, rg + rh, 0x1E6E2DA, 13);
+            // sala turbine (rivestimento metallico azzurro) e edificio ausiliario
+            Building(_w * 0.3f, _d * 0.05f, _w * 0.72f, _d * 0.28f, Math.Min(26f, H * 0.18f), RoofShape.Flat, 0x1849BB2, 0x19A9A96, 3, BuildingUse.Industrial);
+            Building(_w * 0.75f, _d * 0.05f, _w * 0.95f, _d * 0.26f, Math.Min(16f, H * 0.11f), RoofShape.Flat, 0x1CFCBC2, 0x19A9A96, 3, BuildingUse.Industrial);
+            // camino di ventilazione: fusto chiaro, ultime bande bianche e rosse
+            float cu = _w * 0.87f, cv = _d * 0.15f;
+            float cg = Ground(cu, cv);
+            float top = _z0 + H;
+            float bands = Math.Min(20f, (top - cg) * 0.15f);
+            Cylinder(cu, cv, 2.8f, cg - 0.5f, top - bands, 16, 0x1D6D3CC, 1f, 0.78f);
+            for (int k = 0; k < 4; k++)
+            {
+                float z0 = top - bands + bands * k / 4, z1 = top - bands + bands * (k + 1) / 4;
+                float s0 = 0.78f - 0.08f * k / 4, s1 = 0.78f - 0.08f * (k + 1) / 4;
+                Cylinder(cu, cv, 2.8f, z0, z1, 16, k % 2 == 0 ? 0x1C8382Eu : 0x1F2F0EBu, s0, s1);
+            }
+            Fence();
+        }
+
+        /// <summary>Torre di raffreddamento a iperboloide (vuota): base larga con i pilastri, strozzatura, bocca larga in cima.</summary>
+        private void CoolingTower(float cu, float cv, float r0, float height)
+        {
+            float g = Base(cu - r0, cv - r0, cu + r0, cv + r0);
+            var c = World(cu, cv);
+            const int sides = 32, rings = 12;
+            float zt = height * 0.78f, rt = r0 * 0.6f;
+            float k = zt / (float)Math.Sqrt((r0 / rt) * (r0 / rt) - 1);
+            float R(float z) => rt * (float)Math.Sqrt(1 + ((z - zt) / k) * ((z - zt) / k));
+            float legs = Math.Min(6f, height * 0.05f);
+            uint shell = MeshBuffer.Rgb(0xD2CFC8), inner = MeshBuffer.Rgb(0x8D8A84), stain = MeshBuffer.Rgb(0xB4B0A8), dark = MeshBuffer.Rgb(0x3B3A37);
+            for (int j = 0; j < rings; j++)
+            {
+                float z0 = legs + (height - legs) * j / rings, z1 = legs + (height - legs) * (j + 1) / rings;
+                float ra = R(z0), rb = R(z1);
+                float slope = (rb - ra) / (z1 - z0);
+                uint col = j == rings - 1 ? stain : shell;
+                for (int i = 0; i < sides; i++)
+                {
+                    double a0 = 2 * Math.PI * i / sides, a1 = 2 * Math.PI * (i + 1) / sides, am = (a0 + a1) / 2;
+                    var d0 = new Vec2((float)Math.Cos(a0), (float)Math.Sin(a0));
+                    var d1 = new Vec2((float)Math.Cos(a1), (float)Math.Sin(a1));
+                    float nl = (float)Math.Sqrt(1 + slope * slope);
+                    float nx = (float)Math.Cos(am) / nl, ny = (float)Math.Sin(am) / nl, nz = -slope / nl;
+                    var p0 = c + d0 * ra;
+                    var p1 = c + d1 * ra;
+                    var p2 = c + d1 * rb;
+                    var p3 = c + d0 * rb;
+                    float len = (p1 - p0).Length;
+                    int i0 = _mb.Add(p0.X, p0.Y, g + z0, nx, ny, nz, col, 0, 0, len, z1 - z0, 13, 0.5f, 0, 0);
+                    int i1 = _mb.Add(p1.X, p1.Y, g + z0, nx, ny, nz, col, len, 0, len, z1 - z0, 13, 0.5f, 0, 0);
+                    int i2 = _mb.Add(p2.X, p2.Y, g + z1, nx, ny, nz, col, len, z1 - z0, len, z1 - z0, 13, 0.5f, 0, 0);
+                    int i3 = _mb.Add(p3.X, p3.Y, g + z1, nx, ny, nz, col, 0, z1 - z0, len, z1 - z0, 13, 0.5f, 0, 0);
+                    _mb.Quad(i0, i1, i2, i3);
+                    // interno (si vede dall'alto): stesso guscio, girato verso il centro
+                    var q0 = c + d0 * (ra - 0.4f);
+                    var q1 = c + d1 * (ra - 0.4f);
+                    var q2 = c + d1 * (rb - 0.4f);
+                    var q3 = c + d0 * (rb - 0.4f);
+                    int j0 = _mb.Add(q0.X, q0.Y, g + z0, -nx, -ny, -nz, inner, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                    int j1 = _mb.Add(q1.X, q1.Y, g + z0, -nx, -ny, -nz, inner, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                    int j2 = _mb.Add(q2.X, q2.Y, g + z1, -nx, -ny, -nz, inner, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                    int j3 = _mb.Add(q3.X, q3.Y, g + z1, -nx, -ny, -nz, inner, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                    _mb.Quad(j0, j3, j2, j1);
+                }
+            }
+            // bordo in cima e pilastri alla base (tra i pilastri il buio dell'ingresso dell'aria)
+            float rtop = R(height);
+            for (int i = 0; i < sides; i++)
+            {
+                double a0 = 2 * Math.PI * i / sides, a1 = 2 * Math.PI * (i + 1) / sides, am = (a0 + a1) / 2;
+                var d0 = new Vec2((float)Math.Cos(a0), (float)Math.Sin(a0));
+                var d1 = new Vec2((float)Math.Cos(a1), (float)Math.Sin(a1));
+                var o0 = c + d0 * rtop;
+                var o1 = c + d1 * rtop;
+                var n0 = c + d0 * (rtop - 0.4f);
+                var n1 = c + d1 * (rtop - 0.4f);
+                int t0 = _mb.Add(o0.X, o0.Y, g + height, 0, 0, 1, stain, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                int t1 = _mb.Add(o1.X, o1.Y, g + height, 0, 0, 1, stain, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                int t2 = _mb.Add(n1.X, n1.Y, g + height, 0, 0, 1, stain, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                int t3 = _mb.Add(n0.X, n0.Y, g + height, 0, 0, 1, stain, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                _mb.Quad(t0, t1, t2, t3);
+                var b0 = c + d0 * r0;
+                var b1 = c + d1 * r0;
+                var l0 = c + d0 * R(legs);
+                var l1 = c + d1 * R(legs);
+                uint col = i % 2 == 0 ? shell : dark;
+                float nx = (float)Math.Cos(am), ny = (float)Math.Sin(am);
+                int k0 = _mb.Add(b0.X, b0.Y, g - 0.5f, nx, ny, 0, col, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                int k1 = _mb.Add(b1.X, b1.Y, g - 0.5f, nx, ny, 0, col, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                int k2 = _mb.Add(l1.X, l1.Y, g + legs, nx, ny, 0, col, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                int k3 = _mb.Add(l0.X, l0.Y, g + legs, nx, ny, 0, col, 0, 0, 0, 0, 13, 0.5f, 0, 0);
+                _mb.Quad(k0, k1, k2, k3);
+            }
+            // fondo scuro della vasca (si vede dall'alto, dentro la torre)
+            Flat(cu - R(legs) * 0.7f, cv - R(legs) * 0.7f, cu + R(legs) * 0.7f, cv + R(legs) * 0.7f, g + 0.3f, 0x14A5E66, 11);
         }
 
         private void Substation()
@@ -451,29 +567,151 @@ namespace Orbis.Core.Game
             Flat(_w * 0.12f, _d * 0.2f, _w * 0.88f, _d * 0.8f, g + 0.14f, 0x15FA24C, 8);
         }
 
-        private void Stadium(CatalogItem item)
+        /// <summary>
+        /// Stadio vero e proprio: campo regolamentare con le linee, quattro tribune a gradinata con i sedili colorati,
+        /// copertura a sbalzo sulla tribuna principale (sulle altre ai livelli successivi), torri faro che la sera si
+        /// accendono, cartelloni a bordo campo, panchine e tabellone.
+        /// </summary>
+        private void Stadium(CatalogItem item, float lv)
         {
+            float H = item.Height;
             float g = Base(0, 0, _w, _d);
-            Flat(_w * 0.2f, _d * 0.22f, _w * 0.8f, _d * 0.78f, g + 0.15f, 0x15FA24C, 8);
-            // le torri faro sono la parte più alta (= altezza dell'elemento), le tribune più basse
-            Stand(0, 0, _w, _d * 0.2f, g, item.Height * 0.6f, true);
-            Stand(0, _d * 0.8f, _w, _d, g, item.Height * 0.5f, false);
+            Flat(0, 0, _w, _d, g + 0.06f, 0x1A9A69E, 10);
+            // campo (105×68 m se c'è posto) con 3 m di bordo; il tipo 8 disegna strisce e linee
+            float fl = Math.Min(111f, _w - 46f), fw = Math.Min(74f, _d - 44f);
+            float fu0 = (_w - fl) / 2, fv0 = (_d - fw) / 2, fu1 = fu0 + fl, fv1 = fv0 + fw;
+            Flat(fu0, fv0, fu1, fv1, g + 0.15f, 0x15FA24C, 8);
+            PaintedBox(fu0 + 2.9f, _d / 2 - 3.66f, fu0 + 3.1f, _d / 2 + 3.66f, g + 0.15f, g + 2.44f, 0x1F2F2F2);
+            PaintedBox(fu1 - 3.1f, _d / 2 - 3.66f, fu1 - 2.9f, _d / 2 + 3.66f, g + 0.15f, g + 2.44f, 0x1F2F2F2);
+            // colori della squadra: sedili delle tribune lunghe e delle curve
+            uint[] palette = { 0x2F6DB5, 0xB8433A, 0x3E8E4A, 0xE0A92E, 0x6B3FA0 };
+            int pick = (int)(Frac(11) * palette.Length) % palette.Length;
+            uint main = palette[pick], ends = palette[(pick + 2) % palette.Length];
+            float zMain = Math.Min(H * 0.42f, 14f), zEnds = zMain * 0.7f;
+            // tribune: principale a sud (v basse), distinti a nord, curve a ovest e a est
+            float gap = 3f;
+            SeatingStand(fu0 - 2, 2, fu1 + 2, fv0 - gap, 0, g, g + 1.3f, g + zMain, main);
+            SeatingStand(fu0 - 2, fv1 + gap, fu1 + 2, _d - 2, 1, g, g + 1.3f, g + zMain * 0.85f, main);
+            SeatingStand(2, fv0, fu0 - gap, fv1, 2, g, g + 1.3f, g + zEnds, ends);
+            SeatingStand(fu1 + gap, fv0, _w - 2, fv1, 3, g, g + 1.3f, g + zEnds, ends);
+            // coperture a sbalzo: principale sempre, distinti dal livello 2, curve al livello 3
+            StandRoof(fu0 - 2, 2, fu1 + 2, fv0 - gap, 0, g, g + zMain + 4.5f);
+            if (lv >= 1) StandRoof(fu0 - 2, fv1 + gap, fu1 + 2, _d - 2, 1, g, g + zMain * 0.85f + 4.5f);
+            if (lv >= 2)
+            {
+                StandRoof(2, fv0, fu0 - gap, fv1, 2, g, g + zEnds + 4.5f);
+                StandRoof(fu1 + gap, fv0, _w - 2, fv1, 3, g, g + zEnds + 4.5f);
+            }
+            // cartelloni pubblicitari attorno al campo e panchine davanti alla tribuna principale
+            uint[] ads = { 0x1D9534A, 0x1F2F2F2, 0x12F6DB5, 0x1F2C230, 0x13E8E4A };
+            for (float u = fu0 + 6; u + 7 < fu1 - 6; u += 8)
+            {
+                PaintedBox(u, fv0 - 1.4f, u + 7.6f, fv0 - 1.2f, g + 0.15f, g + 1.1f, ads[(int)(u / 8) % ads.Length]);
+                PaintedBox(u, fv1 + 1.2f, u + 7.6f, fv1 + 1.4f, g + 0.15f, g + 1.1f, ads[(int)(u / 8 + 2) % ads.Length]);
+            }
+            for (int k = -1; k <= 1; k += 2)
+            {
+                float cu = _w / 2 + k * 9f;
+                PaintedBox(cu - 4f, fv0 - 2.8f, cu + 4f, fv0 - 1.6f, g + 0.15f, g + 1.9f, 0x12A3A55);
+            }
+            // tabellone sopra la curva est
+            float tu = _w - 2f;
+            PaintedBox(tu - 1f, _d / 2 - 7f, tu, _d / 2 + 7f, g + zEnds, g + zEnds + 5.5f, 0x1262A30);
+            Poly(new[] { tu - 1.02f, _d / 2 - 6.4f, g + zEnds + 0.6f, tu - 1.02f, _d / 2 + 6.4f, g + zEnds + 0.6f,
+                tu - 1.02f, _d / 2 + 6.4f, g + zEnds + 5f, tu - 1.02f, _d / 2 - 6.4f, g + zEnds + 5f }, -1, 0, 0, 0x1203848, BuildingDecorator.KindLight, 0.5f);
+            // torri faro agli angoli, fari rivolti verso il centro del campo
             for (int k = 0; k < 4; k++)
             {
-                float cu = (k & 1) == 0 ? 1.5f : _w - 1.5f, cv = (k & 2) == 0 ? 1.5f : _d - 1.5f;
-                Cylinder(cu, cv, 0.5f, g, g + item.Height, 8, 0x1A9AEB4);
+                float mu = (k & 1) == 0 ? 4f : _w - 4f, mv = (k & 2) == 0 ? 4f : _d - 4f;
+                float mg = Ground(mu, mv);
+                float topZ = _z0 + H;
+                Cylinder(mu, mv, 0.9f, mg - 0.3f, topZ - 4.5f, 10, 0x1A9AEB4, 1f, 0.55f);
+                float du = _w / 2 - mu, dv = _d / 2 - mv;
+                float dl = (float)Math.Sqrt(du * du + dv * dv);
+                du /= dl;
+                dv /= dl;
+                float pu = mu + du * 1.2f, pv = mv + dv * 1.2f;
+                float su = -dv * 3.2f, sv = du * 3.2f;
+                PaintedBox(Math.Min(pu - su, pu + su) - 0.3f, Math.Min(pv - sv, pv + sv) - 0.3f, Math.Max(pu - su, pu + su) + 0.3f, Math.Max(pv - sv, pv + sv) + 0.3f,
+                    topZ - 4.6f, topZ - 4.4f, 0x14A4F55);
+                Poly(new[] { pu - su, pv - sv, topZ - 4.4f, pu + su, pv + sv, topZ - 4.4f, pu + su, pv + sv, topZ, pu - su, pv - sv, topZ },
+                    du, dv, 0, 0x1FFF2D2, BuildingDecorator.KindLight, 1f);
             }
         }
 
-        private void Stand(float u0, float v0, float u1, float v1, float g, float h, bool towardV)
+        /// <summary>
+        /// Tribuna a gradinata sul rettangolo; <paramref name="front"/> = lato verso il campo (0: v alte, 1: v basse,
+        /// 2: u alte, 3: u basse). Sedili dello shader (tipo 18) sul piano inclinato, muri in cemento, scale ogni 18 m.
+        /// </summary>
+        private void SeatingStand(float u0, float v0, float u1, float v1, int front, float g, float zFront, float zBack, uint seat)
         {
-            int steps = 10;
-            for (int s = 0; s < steps; s++)
+            // angoli in ordine: fronte sinistra, fronte destra, retro destra, retro sinistra
+            float[] fu, fv, bu, bv;
+            switch (front)
             {
-                float a = s / (float)steps, b = (s + 1) / (float)steps;
-                float vs0 = towardV ? v1 - (v1 - v0) * b : v0 + (v1 - v0) * a;
-                float vs1 = towardV ? v1 - (v1 - v0) * a : v0 + (v1 - v0) * b;
-                Box(u0, vs0, u1, vs1, g - 0.5f, g + 1 + h * b * 0.8f, s % 2 == 0 ? 0x1C9CED8u : 0x1B9B4AAu, 6 * 2);
+                case 0: fu = new[] { u0, u1 }; fv = new[] { v1, v1 }; bu = new[] { u0, u1 }; bv = new[] { v0, v0 }; break;
+                case 1: fu = new[] { u0, u1 }; fv = new[] { v0, v0 }; bu = new[] { u0, u1 }; bv = new[] { v1, v1 }; break;
+                case 2: fu = new[] { u1, u1 }; fv = new[] { v0, v1 }; bu = new[] { u0, u0 }; bv = new[] { v0, v1 }; break;
+                default: fu = new[] { u0, u0 }; fv = new[] { v0, v1 }; bu = new[] { u1, u1 }; bv = new[] { v0, v1 }; break;
+            }
+            float zb = g - 0.5f;
+            uint concrete = 0x1C6C2BA;
+            // gradinata
+            Poly(new[] { fu[0], fv[0], zFront, fu[1], fv[1], zFront, bu[1], bv[1], zBack, bu[0], bv[0], zBack }, 0, 0, 1, seat,
+                BuildingDecorator.KindSeats, BuildingMesher.SeatRowHeight);
+            // retro, parapetto sul fronte, fianchi
+            float ou = (bu[0] - fu[0]), ov = (bv[0] - fv[0]);
+            Poly(new[] { bu[0], bv[0], zb, bu[1], bv[1], zb, bu[1], bv[1], zBack, bu[0], bv[0], zBack }, ou, ov, 0, concrete, 0, 1, 12);
+            Poly(new[] { fu[0], fv[0], zb, fu[1], fv[1], zb, fu[1], fv[1], zFront, fu[0], fv[0], zFront }, -ou, -ov, 0, concrete, 0, 1, 12);
+            float lu = fu[0] - fu[1], lv = fv[0] - fv[1];
+            Poly(new[] { fu[0], fv[0], zb, bu[0], bv[0], zb, bu[0], bv[0], zBack, fu[0], fv[0], zFront }, lu, lv, 0, concrete, 0, 1, 12);
+            Poly(new[] { fu[1], fv[1], zb, bu[1], bv[1], zb, bu[1], bv[1], zBack, fu[1], fv[1], zFront }, -lu, -lv, 0, concrete, 0, 1, 12);
+            // scale: strisce chiare sulla gradinata
+            float len = (float)Math.Sqrt(lu * lu + lv * lv);
+            int aisles = Math.Max(1, (int)(len / 18f));
+            for (int k = 1; k <= aisles; k++)
+            {
+                float t = k / (float)(aisles + 1), w = 0.7f / len;
+                float a = t - w, b = t + w;
+                float Fu(float x) => fu[0] + (fu[1] - fu[0]) * x;
+                float Fv(float x) => fv[0] + (fv[1] - fv[0]) * x;
+                float Bu(float x) => bu[0] + (bu[1] - bu[0]) * x;
+                float Bv(float x) => bv[0] + (bv[1] - bv[0]) * x;
+                Poly(new[] { Fu(a), Fv(a), zFront + 0.05f, Fu(b), Fv(b), zFront + 0.05f, Bu(b), Bv(b), zBack + 0.05f, Bu(a), Bv(a), zBack + 0.05f },
+                    0, 0, 1, 0x1D8D4CC, BuildingDecorator.KindProp, 0);
+            }
+        }
+
+        /// <summary>Copertura a sbalzo sopra una tribuna: lastra leggermente inclinata verso il campo, pilastri sul retro.</summary>
+        private void StandRoof(float u0, float v0, float u1, float v1, int front, float g, float z)
+        {
+            // la copertura parte dal retro e copre il 75% della profondità
+            float ru0 = u0, rv0 = v0, ru1 = u1, rv1 = v1;
+            switch (front)
+            {
+                case 0: rv1 = v0 + (v1 - v0) * 0.8f; break;
+                case 1: rv0 = v1 - (v1 - v0) * 0.8f; break;
+                case 2: ru1 = u0 + (u1 - u0) * 0.8f; break;
+                default: ru0 = u1 - (u1 - u0) * 0.8f; break;
+            }
+            PaintedBox(ru0, rv0, ru1, rv1, z, z + 0.7f, 0x1E9ECEE);
+            // bordo frontale colorato
+            switch (front)
+            {
+                case 0: PaintedBox(ru0, rv1 - 0.4f, ru1, rv1, z - 0.6f, z + 0.9f, 0x12F4F7A); break;
+                case 1: PaintedBox(ru0, rv0, ru1, rv0 + 0.4f, z - 0.6f, z + 0.9f, 0x12F4F7A); break;
+                case 2: PaintedBox(ru1 - 0.4f, rv0, ru1, rv1, z - 0.6f, z + 0.9f, 0x12F4F7A); break;
+                default: PaintedBox(ru0, rv0, ru0 + 0.4f, rv1, z - 0.6f, z + 0.9f, 0x12F4F7A); break;
+            }
+            bool alongU = front < 2;
+            float len = alongU ? ru1 - ru0 : rv1 - rv0;
+            int cols = Math.Max(2, (int)(len / 16f) + 1);
+            for (int k = 0; k < cols; k++)
+            {
+                float t = k / (float)(cols - 1);
+                float cu = alongU ? ru0 + 0.8f + (ru1 - ru0 - 1.6f) * t : (front == 2 ? u0 + 0.8f : u1 - 0.8f);
+                float cv = alongU ? (front == 0 ? v0 + 0.8f : v1 - 0.8f) : rv0 + 0.8f + (rv1 - rv0 - 1.6f) * t;
+                Cylinder(cu, cv, 0.45f, g - 0.3f, z, 8, 0x1D5D9DD);
             }
         }
 
@@ -833,6 +1071,69 @@ namespace Orbis.Core.Game
             }
         }
 
+        /// <summary>
+        /// Poligono (3 o 4 vertici: u, v, quota assoluta) orientato verso (ou, ov, oz) in coordinate dell'oggetto.
+        /// kind 0 = muro (cat = categoria muro, 12 senza finestre); per gli altri tipi param va in uv1.z.
+        /// </summary>
+        private void Poly(float[] uvz, float ou, float ov, float oz, uint color, float kind, float param, float cat = 0)
+        {
+            uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
+            int n = uvz.Length / 3;
+            var p = new (float x, float y, float z)[n];
+            for (int i = 0; i < n; i++)
+            {
+                var w = World(uvz[3 * i], uvz[3 * i + 1]);
+                p[i] = (w.X, w.Y, uvz[3 * i + 2]);
+            }
+            float ax = p[1].x - p[0].x, ay = p[1].y - p[0].y, az = p[1].z - p[0].z;
+            float bx = p[2].x - p[0].x, by = p[2].y - p[0].y, bz = p[2].z - p[0].z;
+            float nx = ay * bz - az * by, ny = az * bx - ax * bz, nz = ax * by - ay * bx;
+            float nl = (float)Math.Sqrt(nx * nx + ny * ny + nz * nz);
+            if (nl < 1e-6f) return;
+            nx /= nl;
+            ny /= nl;
+            nz /= nl;
+            // direzione desiderata nel mondo
+            var o = _u * ou + _v * ov;
+            if (nx * o.X + ny * o.Y + nz * oz < 0)
+            {
+                Array.Reverse(p);
+                nx = -nx;
+                ny = -ny;
+                nz = -nz;
+            }
+            float zMin = float.MaxValue, zMax = float.MinValue;
+            foreach (var q in p)
+            {
+                zMin = Math.Min(zMin, q.z);
+                zMax = Math.Max(zMax, q.z);
+            }
+            float total = 0;
+            for (int i = 1; i < n; i++) total = Math.Max(total, (float)Math.Sqrt((p[i].x - p[0].x) * (p[i].x - p[0].x) + (p[i].y - p[0].y) * (p[i].y - p[0].y)));
+            var idx = new int[n];
+            for (int i = 0; i < n; i++)
+            {
+                if (kind < 0.5f)
+                {
+                    float along = (float)Math.Sqrt((p[i].x - p[0].x) * (p[i].x - p[0].x) + (p[i].y - p[0].y) * (p[i].y - p[0].y));
+                    idx[i] = _mb.Add(p[i].x, p[i].y, p[i].z, nx, ny, nz, c, along, p[i].z - zMin, total, zMax - zMin, 0, 0.5f, 1, cat);
+                }
+                else idx[i] = _mb.Add(p[i].x, p[i].y, p[i].z, nx, ny, nz, c, p[i].x, p[i].y, 0, 0, kind, 0.5f, param, cat);
+            }
+            if (n == 3) _mb.Triangle(idx[0], idx[1], idx[2]);
+            else _mb.Quad(idx[0], idx[1], idx[2], idx[3]);
+        }
+
+        /// <summary>Parallelepipedo verniciato (arredo, cartelloni, telai): tinta piena, senza finestre.</summary>
+        private void PaintedBox(float u0, float v0, float u1, float v1, float z0, float z1, uint color)
+        {
+            Poly(new[] { u0, v0, z0, u1, v0, z0, u1, v0, z1, u0, v0, z1 }, 0, -1, 0, color, BuildingDecorator.KindProp, 0);
+            Poly(new[] { u1, v0, z0, u1, v1, z0, u1, v1, z1, u1, v0, z1 }, 1, 0, 0, color, BuildingDecorator.KindProp, 0);
+            Poly(new[] { u1, v1, z0, u0, v1, z0, u0, v1, z1, u1, v1, z1 }, 0, 1, 0, color, BuildingDecorator.KindProp, 0);
+            Poly(new[] { u0, v1, z0, u0, v0, z0, u0, v0, z1, u0, v1, z1 }, -1, 0, 0, color, BuildingDecorator.KindProp, 0);
+            Poly(new[] { u0, v0, z1, u1, v0, z1, u1, v1, z1, u0, v1, z1 }, 0, 0, 1, color, BuildingDecorator.KindProp, 0);
+        }
+
         private void Cone(float cu, float cv, float r, float z0, float h, uint color)
         {
             uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
@@ -852,7 +1153,7 @@ namespace Orbis.Core.Game
             }
         }
 
-        private void Dome(float cu, float cv, float r, float z0, uint color)
+        private void Dome(float cu, float cv, float r, float z0, uint color, float kind = 2)
         {
             uint c = MeshBuffer.Rgb(color & 0xFFFFFF);
             var center = World(cu, cv);
@@ -868,7 +1169,7 @@ namespace Orbis.Core.Game
                     var q1 = P(a1, b0);
                     var q2 = P(a1, b1);
                     var q3 = P(a0, b1);
-                    int Add(Vec3 q) => _mb.Add(q.X, q.Y, q.Z, (q.X - center.X) / r, (q.Y - center.Y) / r, (q.Z - z0) / r, c, 0, 0, 0, 0, 2, 0.5f, 1, 0);
+                    int Add(Vec3 q) => _mb.Add(q.X, q.Y, q.Z, (q.X - center.X) / r, (q.Y - center.Y) / r, (q.Z - z0) / r, c, 0, 0, 0, 0, kind, 0.5f, kind > 12.5f ? 0 : 1, 0);
                     _mb.Quad(Add(q0), Add(q1), Add(q2), Add(q3));
                 }
             }

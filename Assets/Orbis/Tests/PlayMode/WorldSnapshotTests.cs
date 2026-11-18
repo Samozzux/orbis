@@ -412,6 +412,129 @@ namespace Orbis.Tests.PlayMode
             OrbisApp.Instance.EndGame();
         }
 
+        /// <summary>
+        /// Modelli del catalogo rifatti come quelli veri (centrale nucleare, stadio ai livelli 1 e 3, anche di sera)
+        /// fotografati fuori scena su un prato, e le tribune vere dello stadio di Chieti (gradinate verso il campo).
+        /// </summary>
+        [UnityTest]
+        [Timeout(600000)]
+        public IEnumerator Modelli()
+        {
+            var dir = Environment.GetEnvironmentVariable("ORBIS_SNAPSHOT_DIR");
+            if (string.IsNullOrEmpty(dir)) Assert.Ignore("ORBIS_SNAPSHOT_DIR non impostata");
+            Directory.CreateDirectory(dir);
+            SceneManager.LoadScene("Boot");
+            var deadline = Time.realtimeSinceStartup + 60f;
+            while ((OrbisApp.Instance == null || OrbisApp.Instance.State != OrbisApp.AppState.MainMenu) && Time.realtimeSinceStartup < deadline)
+                yield return null;
+            OrbisApp.Instance.StartGame(new Orbis.UI.Game.GameStart { Transient = true });
+            var session = OrbisApp.Instance.Session;
+            deadline = Time.realtimeSinceStartup + 120f;
+            while (session.State == WorldSession.Phase.Loading && Time.realtimeSinceStartup < deadline) yield return null;
+            while (session.World.PendingBuilds > 0) yield return null;
+            var game = OrbisApp.Instance.Game;
+            var stage = new Vector3(0, -20000, 0);
+            var camGo = new GameObject("Foto modelli");
+            var cam = camGo.AddComponent<Camera>();
+            cam.CopyFrom(session.CameraRig.Cam);
+            cam.enabled = false;
+            var shots = new (string key, int level, float yaw, float pitch, float dist, int hour)[]
+            {
+                ("centrale_nucleare", 1, 215, 26, 340, 11),
+                ("centrale_nucleare", 1, 35, 18, 300, 16),
+                ("stadio_piccolo", 1, 215, 34, 230, 11),
+                ("stadio_piccolo", 3, 30, 42, 210, 15),
+                ("stadio_piccolo", 3, 215, 30, 230, 21),
+            };
+            for (int n = 0; n < shots.Length; n++)
+            {
+                var s = shots[n];
+                var item = game.Content.Catalog.Get(s.key);
+                Assert.That(item, Is.Not.Null, s.key);
+                var mb = new Orbis.Core.World.Meshing.MeshBuffer();
+                new Orbis.Core.Game.ObjectMesher().Build(item, s.level, null, new Orbis.Core.World.Geometry.Vec2(0, 0), 0, 0, (x, y) => 0f, mb,
+                    new System.Collections.Generic.List<Orbis.Core.World.Meshing.PlantInstance>(), 7);
+                // prato attorno
+                uint grass = Orbis.Core.World.Meshing.MeshBuffer.Rgb(0x8CAD66);
+                int g0 = mb.Add(-400, -400, -0.05f, 0, 0, 1, grass, 0, 0, 1, 1, 13, 0.5f, 0, 0);
+                int g1 = mb.Add(600, -400, -0.05f, 0, 0, 1, grass, 0, 0, 1, 1, 13, 0.5f, 0, 0);
+                int g2 = mb.Add(600, 600, -0.05f, 0, 0, 1, grass, 0, 0, 1, 1, 13, 0.5f, 0, 0);
+                int g3 = mb.Add(-400, 600, -0.05f, 0, 0, 1, grass, 0, 0, 1, 1, 13, 0.5f, 0, 0);
+                mb.Quad(g0, g1, g2, g3);
+                var mesh = Orbis.World.MeshUpload.ToMesh(mb, s.key);
+                var go = new GameObject("Modello " + s.key);
+                go.transform.position = stage;
+                go.AddComponent<MeshFilter>().sharedMesh = mesh;
+                go.AddComponent<MeshRenderer>().sharedMaterial = session.World.Materials.Building;
+                yield return At(session, s.hour);
+                var center = stage + new Vector3(item.Width / 2, item.Height * 0.25f, item.Depth / 2);
+                var rot = Quaternion.Euler(s.pitch, s.yaw, 0);
+                cam.transform.SetPositionAndRotation(center - rot * Vector3.forward * s.dist, rot);
+                cam.nearClipPlane = 1f;
+                cam.farClipPlane = 4000f;
+                bool fog = RenderSettings.fog;
+                RenderSettings.fog = false;
+                Save(cam, Path.Combine(dir, $"50-{s.key}-liv{s.level}-{s.hour}h.png"));
+                RenderSettings.fog = fog;
+                UnityEngine.Object.Destroy(go);
+                UnityEngine.Object.Destroy(mesh);
+            }
+            UnityEngine.Object.Destroy(camGo);
+
+            // tribune vere dello stadio di Chieti
+            Vector3? stadium = null;
+            for (int tries = 0; tries < 2 && stadium == null; tries++)
+            {
+                foreach (var view in session.World.Tiles.Values)
+                {
+                    if (view.Data == null) continue;
+                    foreach (var a in view.Data.Areas)
+                        if (a.Kind == Orbis.Core.World.Fb.AreaKind.Stadium && !string.IsNullOrEmpty(a.Landmark))
+                            stadium = view.Origin + new Vector3((a.Bounds.MinX + a.Bounds.MaxX) / 2, 0, (a.Bounds.MinY + a.Bounds.MaxY) / 2);
+                }
+                if (stadium == null)
+                {
+                    // i tile attorno a Chieti si caricano allargando la vista
+                    session.CameraRig.Target = Vector3.zero;
+                    session.CameraRig.Distance = 2600;
+                    session.CameraRig.Snap();
+                    var until = Time.realtimeSinceStartup + 6f;
+                    while (Time.realtimeSinceStartup < until || session.World.PendingBuilds > 0) yield return null;
+                }
+            }
+            Assert.That(stadium, Is.Not.Null, "stadio di Chieti non trovato");
+            foreach (var view in session.World.Tiles.Values)
+            {
+                if (view.Data == null) continue;
+                foreach (var b in view.Data.Buildings)
+                {
+                    var c = view.Origin + new Vector3((b.Bounds.MinX + b.Bounds.MaxX) / 2, 0, (b.Bounds.MinY + b.Bounds.MaxY) / 2);
+                    if ((c - stadium.Value).sqrMagnitude > 160 * 160) continue;
+                    Debug.Log($"[Orbis] edificio vicino allo stadio: {b.OsmType}/{b.OsmId} uso {b.Use} landmark '{b.Landmark}' nome '{b.Name}' flag {b.Flags} h {b.Height} min {b.MinHeight} buchi {b.Holes?.Length ?? 0} punti {b.Outer.Length / 2}");
+                }
+                foreach (var a in view.Data.Areas)
+                {
+                    var c = view.Origin + new Vector3((a.Bounds.MinX + a.Bounds.MaxX) / 2, 0, (a.Bounds.MinY + a.Bounds.MaxY) / 2);
+                    if ((c - stadium.Value).sqrMagnitude > 160 * 160) continue;
+                    Debug.Log($"[Orbis] area vicino allo stadio: {a.Kind} landmark '{a.Landmark}' {a.Bounds.MaxX - a.Bounds.MinX:0}×{a.Bounds.MaxY - a.Bounds.MinY:0}");
+                }
+            }
+            var rig = session.CameraRig;
+            foreach (var (yaw, pitch, dist, hour) in new[] { (30f, 35f, 240f, 15), (200f, 28f, 200f, 11), (30f, 32f, 260f, 21) })
+            {
+                rig.Target = stadium.Value;
+                rig.Yaw = yaw;
+                rig.Pitch = pitch;
+                rig.Distance = dist;
+                rig.Snap();
+                yield return At(session, hour);
+                var until = Time.realtimeSinceStartup + 3f;
+                while (Time.realtimeSinceStartup < until || session.World.PendingBuilds > 0) yield return null;
+                Save(rig.Cam, Path.Combine(dir, $"51-stadio-chieti-{yaw:0}-{hour}h.png"));
+            }
+            OrbisApp.Instance.EndGame();
+        }
+
         private static IEnumerator At(WorldSession session, int hour)
         {
             var now = session.Game != null ? session.Game.State.Now : session.Clock.Now;

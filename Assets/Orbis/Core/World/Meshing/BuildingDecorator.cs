@@ -36,7 +36,7 @@ namespace Orbis.Core.World.Meshing
     public sealed class BuildingDecorator
     {
         // tipi di superficie dello shader degli edifici (uv1.x)
-        public const float KindProp = 13, KindCanvas = 14, KindSign = 15, KindLight = 16, KindPlants = 17, KindSolar = 12, KindWater = 11;
+        public const float KindProp = 13, KindCanvas = 14, KindSign = 15, KindLight = 16, KindPlants = 17, KindSeats = 18, KindTrack = 19, KindSolar = 12, KindWater = 11;
 
         private static readonly uint[] Awnings = { 0xC8372D, 0x2E7D4F, 0x1F5FA8, 0xE8A317, 0x2A9D8F, 0xD9622B, 0x7B2D5B };
         private static readonly uint[] SignColors = { 0x1E5631, 0x7A1F2B, 0x1C2E5A, 0x262626, 0xB3261E, 0x2A6F97 };
@@ -95,6 +95,8 @@ namespace Orbis.Core.World.Meshing
         /// <summary>Tipo di addobbi dall'uso dell'edificio e dalla categoria del POI principale (es. "amenity/bar").</summary>
         public static DressKind KindOf(BuildingInfo b, string poiCategory)
         {
+            // le tribune sono gradinate, non palazzi: niente vetrine o insegne anche se dentro c'è un bar
+            if (b.Use == BuildingUse.Stadium || LandmarkMesher.GeneratorFor(b.Landmark) == "stadium") return DressKind.None;
             if (!string.IsNullOrEmpty(poiCategory))
             {
                 switch (poiCategory)
