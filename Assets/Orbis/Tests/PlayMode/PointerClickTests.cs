@@ -44,9 +44,20 @@ namespace Orbis.Tests.PlayMode
             base.TearDown();
         }
 
+        /// <summary>
+        /// Con la GPU (in locale) il mouse vero del Mac si mescola a quello del test e i clic si perdono dopo altri
+        /// test: questi vanno lanciati con -nographics, come in CI. Così in locale si saltano invece di fallire.
+        /// </summary>
+        private static void RequireNoGraphics()
+        {
+            if (SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
+                Assert.Ignore("test dei clic col mouse: lanciare con -nographics (con la GPU il mouse vero interferisce)");
+        }
+
         [UnityTest]
         public IEnumerator ClicMouse_SuImpostazioni_ApreIlPannello()
         {
+            RequireNoGraphics();
             yield return LoadMenu();
             var root = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement;
             yield return Click(root.Q<Button>("nav-settings"));
@@ -56,6 +67,7 @@ namespace Orbis.Tests.PlayMode
         [UnityTest]
         public IEnumerator ClicMouse_SuCrediti_MostraLAvviso()
         {
+            RequireNoGraphics();
             yield return LoadMenu();
             var root = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement;
             var button = root.Q<Button>("nav-credits");
@@ -68,6 +80,7 @@ namespace Orbis.Tests.PlayMode
         [UnityTest]
         public IEnumerator ClicMouse_SuAccount_ApreLAccesso()
         {
+            RequireNoGraphics();
             yield return LoadMenu();
             var deadline = Time.realtimeSinceStartup + 10f;
             while (OrbisApp.Instance.Account == null && Time.realtimeSinceStartup < deadline) yield return null;
@@ -82,6 +95,7 @@ namespace Orbis.Tests.PlayMode
         [UnityTest]
         public IEnumerator ClicMouse_SuNuovaPartita_ApreIlMondo()
         {
+            RequireNoGraphics();
             yield return LoadMenu();
             var root = OrbisApp.Instance.GetComponent<UIDocument>().rootVisualElement;
             yield return Click(root.Q<Button>("btn-new-game"));
@@ -99,6 +113,7 @@ namespace Orbis.Tests.PlayMode
         [UnityTest]
         public IEnumerator ClicMouse_SuUnEdificio_ApreIDettagli()
         {
+            RequireNoGraphics();
             yield return LoadMenu();
             OrbisApp.Instance.StartGame();
             var session = OrbisApp.Instance.Session;
