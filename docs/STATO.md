@@ -144,10 +144,29 @@
     - **Testi.** 75 testi nuovi, in `data/localization/ui.json`.
   - **Eliminazioni.** Una partita eliminata nell'elenco viene tolta anche dal cloud.
   - **Test.** I test PlayMode ora cliccano "Crediti" invece di "Amici"; c'è un test nuovo, il clic su Account apre l'accesso. Nei test (batchmode) la schermata di accesso non si apre da sola sopra il menu.
+- **Passkey per il web** (blocco 3, 18/11, branch `m3-passkey`):
+  - **Backend (API 0.4.0).** Migrazione `004_passkeys.sql` (`orb_passkeys`, `orb_passkey_challenges`) e `PasskeyController`. Sei rotte:
+    - opzioni e verifica per creare la passkey (serve l'accesso);
+    - opzioni e verifica per entrare (senza nome utente);
+    - elenco ed eliminazione.
+
+    `Cbor` e `WebAuthn` in PHP 7.0 puro con openssl (presente su Altervista). Gli autenticatori che usano il contatore devono farlo crescere, altrimenti la passkey copiata viene rifiutata.
+  - **Test del backend.** 27 nuovi (126 in tutto) con un autenticatore finto e firme vere ES256 e RS256. Coprono:
+    - creazione e accesso;
+    - origine di un altro sito, sfida riusata, verifica dell'utente mancante;
+    - firma alterata, contatore copiato, passkey sconosciuta;
+    - eliminazione e passkey degli altri.
+  - **Web.** `OrbisWeb.jslib` fa partire `navigator.credentials.create/get` dentro il gesto del giocatore, come vuole Safari. La richiesta si prepara quando il dito o il mouse preme il pulsante e parte al rilascio; se il rilascio è già passato, parte subito. `WebPasskeys` è il lato C#.
+  - **Schermate (solo web).**
+    - "Entra con una passkey" sopra i campi dell'accesso;
+    - proposta di creare una passkey dopo il primo accesso con la password;
+    - sezione "Passkey" nel profilo con l'elenco, Elimina e "Crea una passkey".
+  - **Testi.** 21 nuovi. Core: un test in più (169).
 - **Da verificare sui dispositivi** (non posso farlo da qui):
   - Face ID e il Keychain sull'iPhone;
   - impronta e Keystore su Android;
-  - il giro completo con l'account vero: crea l'account sull'iPhone, gioca, continua dal browser del Mac.
+  - il giro completo con l'account vero: crea l'account sull'iPhone, gioca, continua dal browser del Mac;
+  - la passkey su Safari (Mac e iPhone) e su Chrome.
 
   Le build di GitHub compilano Swift e Kotlin.
 - **Scelte semplici annotate**:

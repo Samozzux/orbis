@@ -35,6 +35,13 @@ class App
             $router->add('POST', '/auth/logout', array($auth, 'logout'));
             $router->add('GET', '/auth/sessions', array($auth, 'sessions'));
             $router->add('DELETE', '/auth/sessions/{id}', array($auth, 'revokeSession'));
+            $passkeys = 'Orbis\Api\Controllers\PasskeyController';
+            $router->add('POST', '/auth/passkey/register/options', array($passkeys, 'registerOptions'));
+            $router->add('POST', '/auth/passkey/register/verify', array($passkeys, 'registerVerify'));
+            $router->add('POST', '/auth/passkey/login/options', array($passkeys, 'loginOptions'));
+            $router->add('POST', '/auth/passkey/login/verify', array($passkeys, 'loginVerify'));
+            $router->add('GET', '/auth/passkeys', array($passkeys, 'index'));
+            $router->add('DELETE', '/auth/passkeys/{id}', array($passkeys, 'delete'));
             $router->add('GET', '/me', array('Orbis\Api\Controllers\MeController', 'show'));
             $router->add('PATCH', '/me', array('Orbis\Api\Controllers\MeController', 'update'));
             // salvataggi nel cloud (M3, docs/06 §5)

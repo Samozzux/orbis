@@ -134,6 +134,29 @@ namespace Orbis.Core.Tests
         }
 
         [Fact]
+        public async Task Passkey_SiEntraSenzaPassword()
+        {
+            var backend = Backend();
+            var phone = NewDevice(backend, "iPhone");
+            await phone.Session.RegisterAsync("samuele", "password-segreta", "Samuele");
+            var web = NewDevice(backend, "Safari sul Mac", "web");
+            var options = await web.Session.Api.PasskeyLoginOptionsAsync();
+            Assert.Equal("samozzux.github.io", options["publicKey"]["rpId"].AsString());
+            // risposta del browser (navigator.credentials.get)
+            var assertion = Orbis.Core.Data.Json.Parse(new JsonObject
+            {
+                ["credentialId"] = "cred-samuele", ["clientDataJSON"] = "e30", ["authenticatorData"] = "AA", ["signature"] = "firma", ["userHandle"] = "",
+            }.ToString());
+            await web.Session.LoginWithPasskeyAsync(options["challengeId"].AsString(), assertion);
+            Assert.True(web.Session.IsSignedIn);
+            Assert.Equal("samuele", web.Session.User.Username);
+            Assert.NotNull(web.Tokens.Token);
+            var wrong = Orbis.Core.Data.Json.Parse(new JsonObject { ["credentialId"] = "cred-samuele", ["signature"] = "falsa" }.ToString());
+            var e = await Assert.ThrowsAsync<ApiException>(() => NewDevice(backend, "Altro").Session.LoginWithPasskeyAsync("c1", wrong));
+            Assert.Equal("invalid_passkey", e.Code);
+        }
+
+        [Fact]
         public async Task Uscita_ChiudeLaSessioneAncheSulServer()
         {
             var backend = Backend();

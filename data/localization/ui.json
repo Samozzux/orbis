@@ -1748,6 +1748,90 @@
     {
       "key": "saves.cloud.local",
       "it": "Solo su questo dispositivo"
+    },
+    {
+      "key": "account.passkey.login",
+      "it": "Entra con una passkey"
+    },
+    {
+      "key": "account.passkey.or",
+      "it": "oppure con nome utente e password:"
+    },
+    {
+      "key": "account.passkey.section",
+      "it": "Passkey"
+    },
+    {
+      "key": "account.passkey.note",
+      "it": "Entra da questo browser senza password, con Face ID, Touch ID, Windows Hello o il telefono."
+    },
+    {
+      "key": "account.passkey.create",
+      "it": "Crea una passkey"
+    },
+    {
+      "key": "account.passkey.created",
+      "it": "Passkey creata: la prossima volta entri senza password."
+    },
+    {
+      "key": "account.passkey.offer.title",
+      "it": "Creare una passkey?"
+    },
+    {
+      "key": "account.passkey.offer.text",
+      "it": "Con una passkey entri da questo browser con Face ID, Touch ID o Windows Hello, senza scrivere la password."
+    },
+    {
+      "key": "account.passkey.offer.yes",
+      "it": "Crea la passkey"
+    },
+    {
+      "key": "account.passkey.none",
+      "it": "Nessuna passkey per ora."
+    },
+    {
+      "key": "account.passkey.used",
+      "it": "Usata {0}"
+    },
+    {
+      "key": "account.passkey.never_used",
+      "it": "Non ancora usata"
+    },
+    {
+      "key": "account.passkey.remove",
+      "it": "Elimina"
+    },
+    {
+      "key": "account.passkey.remove.title",
+      "it": "Eliminare la passkey?"
+    },
+    {
+      "key": "account.passkey.remove.text",
+      "it": "«{0}» non servirà più per entrare. Puoi sempre entrare con la password."
+    },
+    {
+      "key": "account.passkey.cancelled",
+      "it": "Passkey annullata."
+    },
+    {
+      "key": "account.passkey.tap_again",
+      "it": "Tocca di nuovo il pulsante per usare la passkey."
+    },
+    {
+      "key": "account.passkey.exists",
+      "it": "Su questo dispositivo c'è già una passkey per Orbis."
+    },
+    {
+      "key": "account.passkey.unknown",
+      "it": "Questa passkey non è collegata a un account: entra con la password e creane una nuova."
+    },
+    {
+      "key": "account.passkey.error",
+      "it": "La passkey non ha funzionato: riprova o entra con la password."
+    },
+    {
+      "key": "account.passkey.loading",
+      "it": "Preparo la passkey…"
     }
   ]
 }

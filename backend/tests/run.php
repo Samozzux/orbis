@@ -182,6 +182,7 @@ try {
     if ($hasDb) {
         require __DIR__ . '/auth.php';
         require __DIR__ . '/saves.php';
+        require __DIR__ . '/passkeys.php';
     }
 } finally {
     proc_terminate($server);

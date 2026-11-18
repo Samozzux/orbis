@@ -66,6 +66,13 @@ Come su iOS: il refresh token viene salvato cifrato con una chiave dell'**Androi
 ### Passkey (web)
 - `POST /api/auth/passkey/register/options`, `.../register/verify`, `POST /api/auth/passkey/login/options`, `.../login/verify` (WebAuthn: challenge, verifica firma ES256/RS256 con openssl, contatore).
 - Implementazione compatibile con la versione PHP di Altervista (libreria leggera compatibile o implementazione minimale con CBOR decoder). Se impraticabile sul piano gratuito → ripiego: sessione lunga con refresh token in IndexedDB. Annotare la scelta in `docs/STATO.md`.
+- **Fatto in M3 (18/11/2026).** Implementazione minimale in PHP puro: decoder CBOR, chiavi COSE ES256/RS256 convertite in PEM, verifica con `openssl_verify`. openssl c'è sul piano gratuito.
+  - **RP ID.** È l'host della pagina: `samozzux.github.io`, `localhost` in sviluppo.
+  - **Attestazione.** Si chiede `none`.
+  - **Opzioni richieste.** Passkey "discoverable" (si entra senza scrivere il nome utente) e verifica dell'utente obbligatoria.
+  - **Sicurezza.** Sfide monouso da 5 minuti; il contatore che non cresce viene rifiutato.
+  - **Endpoint in più.** `GET /api/auth/passkeys` e `DELETE /api/auth/passkeys/{id}`.
+  - **Uso.** Si crea dal profilo dopo l'accesso con la password; sul web la si propone subito dopo il primo accesso.
 
 ### CORS
 Tutte le risposte API includono `Access-Control-Allow-Origin: https://samozzux.github.io` (+ localhost per sviluppo), gestione `OPTIONS` preflight, header `Authorization` e `Content-Type` ammessi.
