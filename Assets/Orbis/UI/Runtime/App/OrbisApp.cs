@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Orbis.Core.Boot;
 using Orbis.Core.Game;
 using Orbis.Gameplay;
+using Orbis.Net;
 using Orbis.Platform;
 using Orbis.UI.Game;
 using Orbis.UI.Glass;
@@ -62,6 +63,9 @@ namespace Orbis.UI.App
         /// <summary>Menu principale (disponibile quando <see cref="State"/> è MainMenu).</summary>
         public MainMenuController MainMenu => _mainMenu;
 
+        /// <summary>Account e cloud (M3): pronto poco dopo il menu, null prima.</summary>
+        public AccountMenus Account => _account;
+
         /// <summary>Pannello Impostazioni.</summary>
         public SettingsController Settings => _settings;
 
@@ -84,6 +88,8 @@ namespace Orbis.UI.App
         private LotsOverlay _lots;
         private GamePanel _panel;
         private GameMenus _menus;
+        private AccountMenus _account;
+        private OnlineHub _hub;
         private bool _starting;
 
         private void Awake()
@@ -135,6 +141,7 @@ namespace Orbis.UI.App
             // 1) testi: servono già al logo
             yield return Loc.Initialize();
             Loc.LocalizeTree(root);
+            if (services.Biometrics is AndroidBiometricAuth android) android.CancelText = Loc.Get("panel.cancel");
             progress.Complete("texts");
 
             // 2) logo
@@ -195,6 +202,25 @@ namespace Orbis.UI.App
             _screens.Show(_menu);
             _mainMenu.OnShown();
             Debug.Log("[Orbis] Menu principale pronto.");
+
+            // 5) account e cloud (M3): rientro automatico (Face ID se attivo) e sincronizzazione
+            var hub = OnlineHub.CreateAsync(services, AccountMenus.BiometricReason, AccountMenus.DeviceName(services.Kind));
+            while (!hub.IsCompleted) yield return null;
+            if (hub.Status != TaskStatus.RanToCompletion)
+            {
+                Debug.LogWarning("[Orbis] account non disponibile: " + hub.Exception?.GetBaseException().Message);
+                yield break;
+            }
+            _hub = hub.Result;
+            _hub.Sync.ActiveSaveId = () => Game?.SaveId;
+            _account = new AccountMenus(_panel, services, _hub);
+            _account.Toast += _mainMenu.ShowToast;
+            _account.SavesChanged += () => { if (State == AppState.MainMenu) StartCoroutine(_mainMenu.Prepare()); };
+            _hub.Account.Changed += () => _mainMenu.SetAccountName(_hub.Account.IsSignedIn ? _hub.Account.User?.DisplayName : null);
+            _mainMenu.Account += _account.Open;
+            _menus.CloudLabel = _account.CloudLabelAsync;
+            // nei test (batchmode) niente richiesta di accesso sopra il menu
+            if (!Application.isBatchMode) _ = _account.StartupAsync();
         }
 
         private void Update()
@@ -202,6 +228,16 @@ namespace Orbis.UI.App
             _layout?.Update();
             _hud?.Update();
             _economy?.Update();
+            _hub?.Tick();
+            // i conflitti si risolvono nel menu, non durante la partita
+            if (State == AppState.MainMenu && _account != null && _account.HasConflicts && !_panel.IsOpen) _account.ShowNextConflict();
+        }
+
+        private void OnApplicationPause(bool paused)
+        {
+            if (!paused || _hub == null) return;
+            Game?.SaveNowSync();
+            _hub.OnPause();
         }
 
         /// <summary>Nuova partita con le opzioni predefinite (test e fotografie).</summary>
@@ -309,6 +345,8 @@ namespace Orbis.UI.App
             _screens.Show(_menu);
             StartCoroutine(_mainMenu.Prepare());
             _mainMenu.OnShown();
+            // la partita appena chiusa va nel cloud (e arrivano quelle giocate altrove)
+            if (_hub != null) _ = _hub.SyncNowAsync();
         }
 
         /// <summary>La barra avanza in modo morbido verso il valore reale.</summary>

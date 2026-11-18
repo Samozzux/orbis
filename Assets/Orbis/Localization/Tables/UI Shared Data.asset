@@ -1459,6 +1459,306 @@ MonoBehaviour:
     m_Key: details.osm.upgraded
     m_Metadata:
       m_Items: []
+  - m_Id: 954717621444608
+    m_Key: menu.account
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027520
+    m_Key: device.iphone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027521
+    m_Key: device.ipad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027522
+    m_Key: device.android
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027523
+    m_Key: device.browser
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027524
+    m_Key: device.browser_on
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027525
+    m_Key: device.editor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027526
+    m_Key: account.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027527
+    m_Key: account.intro
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027528
+    m_Key: account.tab.login
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027529
+    m_Key: account.tab.register
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027530
+    m_Key: account.username
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027531
+    m_Key: account.username.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027532
+    m_Key: account.display_name
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027533
+    m_Key: account.password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027534
+    m_Key: account.password.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027535
+    m_Key: account.login
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027536
+    m_Key: account.register
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027537
+    m_Key: account.offline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027538
+    m_Key: account.offline.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027539
+    m_Key: account.working
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027540
+    m_Key: account.welcome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027541
+    m_Key: account.welcome_back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027542
+    m_Key: account.logged_out
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027543
+    m_Key: account.error.credentials
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027544
+    m_Key: account.error.username_taken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027545
+    m_Key: account.error.username
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027546
+    m_Key: account.error.password
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027547
+    m_Key: account.error.too_many
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027548
+    m_Key: account.error.offline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027549
+    m_Key: account.error.generic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027550
+    m_Key: account.ended.refresh_reused
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027551
+    m_Key: account.ended.refresh_expired
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027552
+    m_Key: account.ended.generic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027553
+    m_Key: account.username_line
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027554
+    m_Key: account.cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027555
+    m_Key: account.cloud.synced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027556
+    m_Key: account.cloud.never
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027557
+    m_Key: account.cloud.syncing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027558
+    m_Key: account.cloud.offline
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027559
+    m_Key: account.cloud.failed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027560
+    m_Key: account.sync_now
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027561
+    m_Key: account.biometric.ios
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027562
+    m_Key: account.biometric.android
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027563
+    m_Key: account.biometric.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027564
+    m_Key: account.biometric.reason
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027565
+    m_Key: account.biometric.offer.title.ios
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027566
+    m_Key: account.biometric.offer.title.android
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027567
+    m_Key: account.biometric.offer.text.ios
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027568
+    m_Key: account.biometric.offer.text.android
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027569
+    m_Key: account.biometric.yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027570
+    m_Key: account.biometric.no
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027571
+    m_Key: account.devices
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027572
+    m_Key: account.devices.loading
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027573
+    m_Key: account.devices.this
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027574
+    m_Key: account.devices.last
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027575
+    m_Key: account.devices.remove
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027576
+    m_Key: account.devices.remove.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027577
+    m_Key: account.devices.remove.text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027578
+    m_Key: account.devices.error
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027579
+    m_Key: account.logout
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027580
+    m_Key: account.logout.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027581
+    m_Key: account.logout.text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027582
+    m_Key: conflict.title
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027583
+    m_Key: conflict.text
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027584
+    m_Key: conflict.local
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027585
+    m_Key: conflict.cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027586
+    m_Key: conflict.info
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027587
+    m_Key: conflict.both.note
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027588
+    m_Key: conflict.keep_device
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717634027589
+    m_Key: conflict.keep_cloud
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717638221824
+    m_Key: conflict.keep_both
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717638221825
+    m_Key: conflict.error
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717638221826
+    m_Key: saves.cloud.synced
+    m_Metadata:
+      m_Items: []
+  - m_Id: 954717638221827
+    m_Key: saves.cloud.local
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

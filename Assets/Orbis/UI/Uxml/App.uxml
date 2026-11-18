@@ -72,13 +72,13 @@
 
                 <ui:VisualElement class="navbar">
                     <glass:GlassSurface />
-                    <ui:Button name="nav-friends" class="nav-item nav-item--friends">
+                    <ui:Button name="nav-account" class="nav-item nav-item--friends">
                         <ui:VisualElement class="nav-item__badge" picking-mode="Ignore">
                             <ui:VisualElement class="candy-face" picking-mode="Ignore">
-                                <el:OrbisIcon icon="Friends" class="nav-item__icon" />
+                                <el:OrbisIcon icon="User" class="nav-item__icon" />
                             </ui:VisualElement>
                         </ui:VisualElement>
-                        <ui:Label class="nav-item__label" text="#menu.friends" picking-mode="Ignore" />
+                        <ui:Label name="nav-account-label" class="nav-item__label" text="#menu.account" picking-mode="Ignore" />
                     </ui:Button>
                     <ui:Button name="nav-settings" class="nav-item nav-item--settings">
                         <ui:VisualElement class="nav-item__badge" picking-mode="Ignore">

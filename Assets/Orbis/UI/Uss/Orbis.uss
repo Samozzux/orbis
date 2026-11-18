@@ -1651,6 +1651,18 @@
 .app .save-card__info { font-size: 13px; color: rgba(255, 255, 255, 0.78); white-space: normal; margin: 2px 0 6px 0; }
 .save-card__actions { flex-direction: row; justify-content: flex-end; flex-wrap: wrap; }
 
+/* account e cloud (M3) */
+.app .save-card__cloud { font-size: 12px; color: rgba(160, 214, 255, 0.95); margin: 0 0 6px 0; -unity-font-style: bold; }
+.app .account-name { font-size: 26px; color: rgb(255, 255, 255); -unity-font-style: bold; margin: 4px 4px 0 4px; white-space: normal; }
+.app .panel-text--error { color: rgb(255, 196, 120); -unity-font-style: bold; }
+.app .panel-text--notice {
+    color: rgb(255, 255, 255);
+    background-color: rgba(255, 170, 60, 0.22);
+    border-radius: 12px;
+    padding: 8px 10px;
+}
+.panel-actions { flex-direction: row; justify-content: flex-start; flex-wrap: wrap; margin: 2px 0 8px 0; }
+
 /* telefono: la barra in basso deve stare nei 375-393 punti di larghezza */
 .layout-compact .hud-actions .hud-button.unity-button { width: 46px; height: 46px; margin: 0 3px 10px 3px; }
 .layout-compact .hud-build.unity-button { height: 58px; margin: 0 5px; padding: 0 14px 0 10px; }

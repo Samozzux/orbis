@@ -37,6 +37,9 @@ namespace Orbis.UI.Game
         /// <summary>L'elenco delle partite è cambiato (es. eliminata l'ultima).</summary>
         public event Action SavesChanged;
 
+        /// <summary>Stato nel cloud di una partita ("Nel cloud", "Solo su questo dispositivo"; vuoto senza account).</summary>
+        public Func<string, Task<string>> CloudLabel;
+
         public GameMenus(GamePanel panel, IPlatformServices services)
         {
             _panel = panel;
@@ -160,6 +163,9 @@ namespace Orbis.UI.Game
                 var info = new Label(Loc.Format("saves.info", Fmt.DateTime(s.GameTime), Fmt.Money(s.Cash), s.Level,
                     Fmt.DateTime(s.SavedUtc.ToLocalTime())));
                 info.AddToClassList("save-card__info");
+                var cloud = new Label("");
+                cloud.AddToClassList("save-card__cloud");
+                if (CloudLabel != null) _ = FillAsync(cloud, CloudLabel(s.Id));
                 var actions = new VisualElement();
                 actions.AddToClassList("save-card__actions");
                 var meta = s;
@@ -177,9 +183,23 @@ namespace Orbis.UI.Game
                 }).name = "saves-play";
                 card.Add(title);
                 card.Add(info);
+                card.Add(cloud);
                 card.Add(actions);
                 _panel.Content.Add(card);
             }
+        }
+
+        private static async Task FillAsync(Label label, Task<string> text)
+        {
+            try
+            {
+                label.text = await text;
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("[Orbis] stato cloud non disponibile: " + e.Message);
+            }
+            label.style.display = string.IsNullOrEmpty(label.text) ? DisplayStyle.None : DisplayStyle.Flex;
         }
 
         /// <summary>La partita più recente (per "Continua" con un solo salvataggio), null se non ce ne sono.</summary>

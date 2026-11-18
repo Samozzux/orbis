@@ -11,6 +11,7 @@ namespace Orbis.Platform
         public EditorPlatformServices() : base(Application.isEditor ? PlatformKind.Editor : PlatformKind.Desktop)
         {
             SaveStore = new FileSaveStore(Path.Combine(Application.persistentDataPath, "store"));
+            SecureStore = new FileSecureStore(Path.Combine(Application.persistentDataPath, "secure"));
             DeviceProfile = new UnityDeviceProfile(Kind, UnityDeviceProfile.DesktopPixelsPerPoint, () => false);
         }
     }

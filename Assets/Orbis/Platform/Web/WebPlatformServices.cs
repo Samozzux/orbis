@@ -17,6 +17,8 @@ namespace Orbis.Platform
         {
             DeviceProfile = new UnityDeviceProfile(Kind, PixelsPerPoint, IsTouchPrimary);
             SaveStore = new FileSaveStore(Path.Combine(Application.persistentDataPath, "store"), SyncFs);
+            // refresh token nella memoria del sito (IndexedDB): ripiego della specifica finché non arrivano le passkey
+            SecureStore = new FileSecureStore(Path.Combine(Application.persistentDataPath, "secure"), SyncFs);
         }
 
 #if UNITY_WEBGL && !UNITY_EDITOR

@@ -44,6 +44,7 @@ namespace Orbis.UI.Elements
         Chart,
         Flag,
         Minus,
+        User,
     }
 
     /// <summary>Icone lineari disegnate in vettoriale (niente file esterni), nel colore del testo (USS "color").</summary>
@@ -106,6 +107,12 @@ namespace Orbis.UI.Elements
                     p.BeginPath();
                     p.MoveTo(P(0.18f, 0.5f)); p.LineTo(P(0.82f, 0.5f));
                     p.Stroke();
+                    break;
+
+                case OrbisIconKind.User:
+                    // profilo: testa e spalle
+                    Circle(p, P(0.5f, 0.32f), s * 0.16f);
+                    Arc(p, P(0.5f, 0.9f), s * 0.32f, 200f, 340f);
                     break;
 
                 case OrbisIconKind.Friends:
