@@ -515,20 +515,30 @@
     translate: 0 2px;
 }
 
+/* Bottoni e badge "caramella": anello bianco uniforme (sfondo + padding dell'elemento) attorno a una faccia
+   colorata con il bordino scuro in basso (.candy-face, elemento figlio). L'anello non si interrompe più agli
+   angoli e il contenuto della faccia è sempre centrato. */
+.candy-face {
+    flex-grow: 1;
+    align-self: stretch;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-bottom-width: 4px;
+}
+
 .nav-item__badge {
     width: 44px;
     height: 44px;
     border-radius: 22px;
-    align-items: center;
-    justify-content: center;
-    border-width: 2px;
-    border-bottom-width: 4px;
-    border-color: rgba(255, 255, 255, 0.85);
+    padding: 2px;
+    background-color: rgba(255, 255, 255, 0.85);
 }
 
-.nav-item--friends .nav-item__badge { background-color: rgb(52, 199, 89); border-bottom-color: rgb(28, 128, 54); }
-.nav-item--settings .nav-item__badge { background-color: rgb(175, 82, 222); border-bottom-color: rgb(110, 44, 150); }
-.nav-item--credits .nav-item__badge { background-color: rgb(255, 159, 10); border-bottom-color: rgb(196, 100, 0); }
+.nav-item__badge > .candy-face { border-radius: 20px; }
+.nav-item--friends .nav-item__badge > .candy-face { background-color: rgb(52, 199, 89); border-color: rgb(28, 128, 54); }
+.nav-item--settings .nav-item__badge > .candy-face { background-color: rgb(175, 82, 222); border-color: rgb(110, 44, 150); }
+.nav-item--credits .nav-item__badge > .candy-face { background-color: rgb(255, 159, 10); border-color: rgb(196, 100, 0); }
 
 .nav-item__icon {
     width: 22px;
@@ -660,16 +670,13 @@
     width: 44px;
     height: 44px;
     margin: 0;
-    padding: 0;
-    border-width: 2px;
-    border-bottom-width: 4px;
+    padding: 2px;
+    border-width: 0;
     border-radius: 22px;
-    border-color: rgba(255, 255, 255, 0.8);
-    border-bottom-color: rgb(150, 40, 30);
-    background-color: rgb(235, 72, 56);
-    align-items: center;
-    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.85);
 }
+
+.icon-button > .candy-face { border-radius: 20px; background-color: rgb(235, 72, 56); border-color: rgb(150, 40, 30); }
 
 .icon-button {
     transition-property: scale;
@@ -887,6 +894,7 @@
 .layout-medium .navbar { bottom: 22px; }
 .layout-medium .nav-item.unity-button { width: 108px; height: 80px; }
 .layout-medium .nav-item__badge { width: 50px; height: 50px; border-radius: 25px; }
+.layout-medium .nav-item__badge > .candy-face { border-radius: 23px; }
 
 /* ---------- Desktop ---------- */
 
@@ -901,6 +909,7 @@
 .layout-wide .navbar { bottom: 28px; }
 .layout-wide .nav-item.unity-button { width: 116px; height: 84px; }
 .layout-wide .nav-item__badge { width: 52px; height: 52px; border-radius: 26px; }
+.layout-wide .nav-item__badge > .candy-face { border-radius: 24px; }
 .layout-wide .nav-item__label { font-size: 15px; }
 .layout-wide .logo--splash { width: 220px; height: 220px; }
 .layout-wide .wordmark--splash { font-size: 96px; }
@@ -1030,19 +1039,16 @@
 .hud-speed.unity-button:hover,
 .hud-speed.unity-button:active,
 .hud-speed.unity-button:focus {
-    flex-direction: row;
-    align-items: center;
     height: 40px;
-    min-width: 58px;
+    min-width: 62px;
     margin: 0;
-    padding: 0 10px;
-    border-width: 2px;
-    border-bottom-width: 4px;
+    padding: 2px;
+    border-width: 0;
     border-radius: 20px;
-    border-color: rgba(255, 255, 255, 0.8);
-    border-bottom-color: rgb(196, 86, 8);
-    background-color: rgb(255, 160, 30);
+    background-color: rgba(255, 255, 255, 0.85);
 }
+
+.hud-speed > .candy-face { border-radius: 18px; padding: 0 10px; background-color: rgb(255, 160, 30); border-color: rgb(196, 86, 8); }
 
 .hud-speed__icon {
     width: 16px;
@@ -1127,19 +1133,12 @@
     height: 48px;
     border-radius: 24px;
     margin-right: 12px;
-    align-items: center;
-    justify-content: center;
-    background-color: rgb(255, 160, 30);
-    border-width: 2px;
-    border-bottom-width: 4px;
-    border-color: rgba(255, 255, 255, 0.85);
-    border-bottom-color: rgb(196, 86, 8);
+    padding: 2px;
+    background-color: rgba(255, 255, 255, 0.85);
 }
 
-.details--landmark .details__badge {
-    background-color: rgb(175, 82, 222);
-    border-bottom-color: rgb(110, 44, 150);
-}
+.details__badge > .candy-face { border-radius: 22px; background-color: rgb(255, 160, 30); border-color: rgb(196, 86, 8); }
+.details--landmark .details__badge > .candy-face { background-color: rgb(175, 82, 222); border-color: rgb(110, 44, 150); }
 
 .details__badge-icon {
     width: 26px;
@@ -1475,20 +1474,18 @@
     width: 52px;
     height: 52px;
     margin: 0 4px;
-    padding: 0;
-    border-width: 2px;
-    border-bottom-width: 4px;
+    padding: 2px;
+    border-width: 0;
     border-radius: 26px;
-    border-color: rgba(255, 255, 255, 0.85);
-    align-items: center;
-    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.85);
 }
 
 .round-button { transition-property: scale; transition-duration: 0.12s; }
 .round-button:active { scale: 0.9 0.9; }
-.round-button--green.unity-button { background-color: rgb(52, 199, 89); border-bottom-color: rgb(28, 128, 54); }
-.round-button--blue.unity-button { background-color: rgb(50, 140, 255); border-bottom-color: rgb(20, 80, 180); }
-.round-button--red.unity-button { background-color: rgb(235, 72, 56); border-bottom-color: rgb(150, 40, 30); }
+.round-button > .candy-face { border-radius: 24px; }
+.round-button--green > .candy-face { background-color: rgb(52, 199, 89); border-color: rgb(28, 128, 54); }
+.round-button--blue > .candy-face { background-color: rgb(50, 140, 255); border-color: rgb(20, 80, 180); }
+.round-button--red > .candy-face { background-color: rgb(235, 72, 56); border-color: rgb(150, 40, 30); }
 .round-button:disabled { opacity: 0.4; }
 .round-button__icon { width: 24px; height: 24px; color: rgb(255, 255, 255); }
 
@@ -1519,23 +1516,25 @@
 .action-button.unity-button:hover,
 .action-button.unity-button:active,
 .action-button.unity-button:focus {
-    flex-direction: row;
-    align-items: center;
-    height: 40px;
+    height: 42px;
     margin: 0 6px 6px 0;
-    padding: 0 12px 0 8px;
-    border-width: 2px;
-    border-bottom-width: 4px;
-    border-radius: 20px;
-    border-color: rgba(255, 255, 255, 0.8);
-    background-color: rgb(50, 140, 255);
-    border-bottom-color: rgb(20, 80, 180);
+    padding: 2px;
+    border-width: 0;
+    border-radius: 21px;
+    background-color: rgba(255, 255, 255, 0.85);
 }
 
-.action-button--primary.unity-button { background-color: rgb(255, 160, 30); border-bottom-color: rgb(196, 86, 8); }
-.action-button--danger.unity-button { background-color: rgb(235, 72, 56); border-bottom-color: rgb(150, 40, 30); }
+.action-button { transition-property: scale; transition-duration: 0.12s; }
+.action-button:active { scale: 0.94 0.94; }
+.action-button > .candy-face { border-radius: 19px; padding: 0 16px; background-color: rgb(50, 140, 255); border-color: rgb(20, 80, 180); }
+.action-button--with-icon > .candy-face { padding: 0 16px 0 12px; }
+.action-button--icon-only.unity-button { width: 42px; }
+.action-button--icon-only > .candy-face { padding: 0; }
+.action-button--primary > .candy-face { background-color: rgb(255, 160, 30); border-color: rgb(196, 86, 8); }
+.action-button--danger > .candy-face { background-color: rgb(235, 72, 56); border-color: rgb(150, 40, 30); }
 .action-button:disabled { opacity: 0.45; }
-.action-button__icon { width: 18px; height: 18px; color: rgb(255, 255, 255); margin-right: 6px; }
+.action-button__icon { width: 18px; height: 18px; color: rgb(255, 255, 255); margin-right: 6px; flex-shrink: 0; }
+.action-button--icon-only .action-button__icon { width: 20px; height: 20px; margin-right: 0; }
 .action-button__label { font-size: 14px; -unity-font-definition: url("project://database/Assets/Orbis/UI/Fonts/LilitaOne/LilitaOne-Regular.ttf"); }
 
 /* pannello generico (catalogo, finanze, riavvolgi, partite) */
@@ -1665,7 +1664,11 @@
 
 /* aliquote: valore e −/+ insieme a destra */
 .tax-controls { flex-direction: row; align-items: center; flex-shrink: 0; }
-.app .tax-controls .panel-row__value { margin-right: 8px; min-width: 56px; }
+.app .tax-controls .panel-row__value { margin-right: 4px; min-width: 56px; }
+.tax-controls .action-button.unity-button,
+.tax-controls .action-button.unity-button:hover,
+.tax-controls .action-button.unity-button:active,
+.tax-controls .action-button.unity-button:focus { margin: 0 0 0 8px; }
 
 /* catalogo: tre colonne su tablet e desktop, due sul telefono */
 .catalog-card.unity-button { width: 31.5%; }

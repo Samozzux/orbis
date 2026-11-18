@@ -145,20 +145,32 @@ namespace Orbis.UI.Game
             return row;
         }
 
+        /// <summary>
+        /// Bottone "caramella": anello bianco attorno a una faccia colorata col bordino scuro in basso (vedi Orbis.uss);
+        /// con <paramref name="label"/> vuoto è un bottone quadrato con la sola icona, centrata.
+        /// </summary>
         public static Button ActionButton(VisualElement parent, string label, OrbisIconKind icon, string style, Action onClick)
         {
             var b = new Button();
             b.AddToClassList("action-button");
             if (!string.IsNullOrEmpty(style)) b.AddToClassList("action-button--" + style);
+            var face = new VisualElement { pickingMode = PickingMode.Ignore };
+            face.AddToClassList("candy-face");
+            b.Add(face);
+            bool iconOnly = string.IsNullOrEmpty(label) && icon != OrbisIconKind.None;
             if (icon != OrbisIconKind.None)
             {
+                b.AddToClassList(iconOnly ? "action-button--icon-only" : "action-button--with-icon");
                 var i = new OrbisIcon { icon = icon, pickingMode = PickingMode.Ignore };
                 i.AddToClassList("action-button__icon");
-                b.Add(i);
+                face.Add(i);
             }
-            var l = new Label(label) { pickingMode = PickingMode.Ignore };
-            l.AddToClassList("action-button__label");
-            b.Add(l);
+            if (!iconOnly)
+            {
+                var l = new Label(label) { pickingMode = PickingMode.Ignore };
+                l.AddToClassList("action-button__label");
+                face.Add(l);
+            }
             b.clicked += onClick;
             parent.Add(b);
             return b;

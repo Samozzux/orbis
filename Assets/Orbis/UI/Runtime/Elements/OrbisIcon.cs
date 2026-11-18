@@ -43,6 +43,7 @@ namespace Orbis.UI.Elements
         Move,
         Chart,
         Flag,
+        Minus,
     }
 
     /// <summary>Icone lineari disegnate in vettoriale (niente file esterni), nel colore del testo (USS "color").</summary>
@@ -97,6 +98,12 @@ namespace Orbis.UI.Elements
                 case OrbisIconKind.Plus:
                     p.BeginPath();
                     p.MoveTo(P(0.5f, 0.18f)); p.LineTo(P(0.5f, 0.82f));
+                    p.MoveTo(P(0.18f, 0.5f)); p.LineTo(P(0.82f, 0.5f));
+                    p.Stroke();
+                    break;
+
+                case OrbisIconKind.Minus:
+                    p.BeginPath();
                     p.MoveTo(P(0.18f, 0.5f)); p.LineTo(P(0.82f, 0.5f));
                     p.Stroke();
                     break;
