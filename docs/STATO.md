@@ -1,7 +1,9 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M3 — Account e cloud**: iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
+**M4 — Cittadini e città viva**: si parte il 19/11/2026, dopo la chiusura di M3. Il piano a blocchi arriva con la prossima PR.
+
+**M3 — Account e cloud**: chiusa il 19/11/2026 su scelta di Samuele **senza la prova sui dispositivi** ("Chiudi M3 senza prova"). Tag `v0.3.0` con IPA e APK; tutte le build di `main` verdi. Restano da provare sui dispositivi Face ID, impronta, passkey e il giro iPhone → Mac (vedi "Da verificare sui dispositivi" e "Cosa provare (M3)"). Iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 
 ### Ritocchi chiesti da Samuele dopo M2 (18/11/2026, branch `ritocchi-bottoni-edifici`)
 - **Bottoni del gioco** ("il + e il − delle aliquote non sono centrati e tutte quelle cose lì"):
@@ -173,7 +175,7 @@
     - se lo sblocco non riesce resta l'avviso e la password.
 
     Due test PlayMode nuovi.
-- **Da verificare sui dispositivi** (non posso farlo da qui):
+- **Da verificare sui dispositivi** (non posso farlo da qui; ancora da fare, M3 è stata chiusa senza la prova):
   - Face ID e il Keychain sull'iPhone;
   - impronta e Keystore su Android;
   - il giro completo con l'account vero: crea l'account sull'iPhone, gioca, continua dal browser del Mac;
@@ -435,9 +437,10 @@ Branch `m2-costruzione`.
 - ✅ Fatto il 16/11: prova di M0 sui dispositivi (tag `v0.0.0`).
 - ✅ Fatto il 16/11: prova di M1 ("quasi perfetto", correzioni nella PR #5), tag `v0.1.0`.
 - ✅ Fatto il 17/11: prova di M2 ("sì va bene"; corretta la scheda della missione sul telefono), tag `v0.2.0`.
+- ⏳ Prova di M3 sui dispositivi: rimandata da Samuele il 19/11 (M3 chiusa senza la prova, tag `v0.3.0`). Quando la fai, segui "Cosa provare (M3)" e dimmi cosa non va: le correzioni hanno la precedenza su M4.
 
 ## Cosa provare (M3 — Account e cloud)
-Build dopo l'unione delle PR #14 e #15: web su GitHub Pages, `Orbis-ipa` e `Orbis-apk` dalle ultime esecuzioni verdi di `main`.
+Release `v0.3.0` (IPA e APK allegati) e build web su GitHub Pages.
 - **iPhone, primo avvio**: dopo il caricamento si apre "Account".
   - "Crea account" → nome utente (3–20 caratteri), nome da mostrare, password (almeno 8) → "Crea l'account".
   - Alla domanda "Entrare con Face ID?" → "Sì, attiva".
@@ -525,4 +528,5 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 
 ### 19/11/2026 — In attesa della prova di M3
 - **Fatto**: rivisti i plugin Face ID (Swift) e impronta (Kotlin) prima della prova sui dispositivi. Aggiunto "Entra con Face ID / con l'impronta" nel modulo di accesso, per riprovare dopo aver annullato la richiesta all'avvio (branch `m3-riprova-biometria`).
-- **Prossimo passo**: la prova di Samuele (sezione "Cosa provare (M3)"), poi tag `v0.3.0`. M4 parte solo dopo la sua conferma.
+- **Chiusura di M3**: PR #17 unita, build di `main` verdi (web, IPA, APK). Samuele sceglie di chiudere M3 senza la prova sui dispositivi; tag `v0.3.0`.
+- **Prossimo passo**: M4 — Cittadini e città viva, cominciando dal piano a blocchi.
