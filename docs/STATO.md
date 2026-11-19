@@ -58,7 +58,7 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
 
 **Scelte semplici per M4** (le cambio se Samuele preferisce altro):
 - **Chi si simula.**
-  - Comune di Chieti: tutti gli abitanti uno per uno (circa 50.000; il numero esatto viene da ISTAT), dentro il budget L1 di 100.000.
+  - Comune di Chieti: tutti gli abitanti uno per uno (48.368 al 1° gennaio 2026, stima ISTAT), dentro il budget L1 di 100.000.
   - Altri comuni della provincia: solo L3, cioè indicatori di popolazione ed economia.
 - **Simulazione sul web.** Il web non ha thread per il C#, quindi la simulazione gira a pezzi sul thread principale, con un tempo massimo per frame. Su iOS e Android gira su thread e Jobs. Così si rispetta la regola "niente lavoro pesante sul main thread".
 - **Persone e veicoli.** In M4 li faccio da codice come gli edifici, simili a quelli veri. Il generatore completo dei personaggi (viso, capelli, vestiti; MakeHuman in docs/08) arriva con gli interni, la prima persona e la creazione del personaggio (M5–M6).
