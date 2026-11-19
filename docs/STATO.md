@@ -162,6 +162,17 @@
     - proposta di creare una passkey dopo il primo accesso con la password;
     - sezione "Passkey" nel profilo con l'elenco, Elimina e "Crea una passkey".
   - **Testi.** 21 nuovi. Core: un test in più (169).
+- **Revisione dei plugin Face ID e impronta** (19/11, branch `m3-riprova-biometria`), fatta prima della prova di Samuele:
+  - **Swift e Kotlin.** Nessun difetto trovato:
+    - il token (43 caratteri) sta largo nel limite di RSA-OAEP (190 byte);
+    - le risposte tornano sul thread di Unity, perché nessun `await` usa `ConfigureAwait(false)`;
+    - una chiave invalidata da nuove impronte viene cancellata e serve la password.
+  - **Difetto corretto.** Se all'avvio si annullava Face ID o l'impronta, si finiva sulla password senza poter riprovare, anche se il token protetto c'era ancora. Ora il modulo di accesso mostra "Entra con Face ID" (o "con l'impronta o il volto") sopra i campi:
+    - il pulsante compare solo se c'è un token protetto: lo dice un segno nell'archivio normale, letto senza mostrare la richiesta;
+    - "Esci" e una sessione chiusa dal server tolgono il segno, quindi in quei casi il pulsante non compare;
+    - se lo sblocco non riesce resta l'avviso e la password.
+
+    Due test PlayMode nuovi.
 - **Da verificare sui dispositivi** (non posso farlo da qui):
   - Face ID e il Keychain sull'iPhone;
   - impronta e Keystore su Android;
@@ -431,6 +442,7 @@ Build dopo l'unione delle PR #14 e #15: web su GitHub Pages, `Orbis-ipa` e `Orbi
   - "Crea account" → nome utente (3–20 caratteri), nome da mostrare, password (almeno 8) → "Crea l'account".
   - Alla domanda "Entrare con Face ID?" → "Sì, attiva".
 - **iPhone, riavvio**: chiudere del tutto l'app e riaprirla. Compare Face ID e poi "Bentornato"; in basso nella barra c'è il tuo nome.
+- **Face ID annullato**: riaprire l'app e, quando compare Face ID, toccare "Annulla". Nel modulo di accesso c'è "Entra con Face ID": toccandolo Face ID ricompare e si entra senza password.
 - **Giocare**: "Nuova partita", costruire qualcosa, tornare al menu con la casetta. In Account → "Partite nel cloud" deve dire "Tutto sincronizzato alle …", e in "Continua" la partita deve risultare "Nel cloud".
 - **Mac, browser** (Safari o Chrome sulla pagina del gioco):
   1. Account → "Entra" con nome utente e password.
@@ -509,3 +521,8 @@ Build con la grafica nuova **pronte** (16/11, commit `c16787b`): web online su G
 ### 18/11/2026 — Ritocchi dopo la prova di M2
 - **Fatto**: su richiesta di Samuele bottoni del gioco rifatti (centrati, anello uniforme), stadi veri con gradinate, pista e fari, stadio del catalogo e centrale nucleare come quelli veri (branch `ritocchi-bottoni-edifici`). Il lato gioco di M3 (account e sincronizzazione) è in pausa e riprende subito dopo.
 - **Poi**: Samuele chiede che tutti gli edifici, quelli che ci sono e quelli da aggiungere, siano come quelli veri. Rifatti tutti i 150 modelli del catalogo (stessa PR #13); regola scritta in `docs/08` §2.
+- **Lato gioco di M3**: account, Face ID, impronta e sincronizzazione (PR #14); passkey per il web con API 0.4.0 (PR #15); test dei clic e passi della prova di M3 (PR #16). Tutte unite in `main`, con il backend online.
+
+### 19/11/2026 — In attesa della prova di M3
+- **Fatto**: rivisti i plugin Face ID (Swift) e impronta (Kotlin) prima della prova sui dispositivi. Aggiunto "Entra con Face ID / con l'impronta" nel modulo di accesso, per riprovare dopo aver annullato la richiesta all'avvio (branch `m3-riprova-biometria`).
+- **Prossimo passo**: la prova di Samuele (sezione "Cosa provare (M3)"), poi tag `v0.3.0`. M4 parte solo dopo la sua conferma.

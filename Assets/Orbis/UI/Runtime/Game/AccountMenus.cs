@@ -127,6 +127,20 @@ namespace Orbis.UI.Game
                 }, status).name = "account-passkey-login";
                 _panel.Text(Loc.Get("account.passkey.or"));
             }
+            if (!register && !PasskeysHere && _hub.Tokens.BiometricsAvailable)
+            {
+                // Face ID / impronta annullati all'avvio: il token protetto c'è ancora, si può riprovare
+                var row = new VisualElement();
+                row.AddToClassList("panel-actions");
+                row.style.display = DisplayStyle.None;
+                _panel.Content.Add(row);
+                var status = _panel.Text("");
+                status.AddToClassList("panel-text--error");
+                status.style.display = DisplayStyle.None;
+                var or = _panel.Text(Loc.Get("account.passkey.or"));
+                or.style.display = DisplayStyle.None;
+                _ = BiometricRetryAsync(row, status, or, atStartup);
+            }
 
             _panel.Section(Loc.Get("account.username"));
             var user = Field("account-username", 20, false);
@@ -189,6 +203,46 @@ namespace Orbis.UI.Game
             if (_hub.Tokens.BiometricsAvailable && !await _hub.Tokens.BiometricsEnabledAsync()) OfferBiometrics();
             else if (withPassword && PasskeysHere && !await HasPasskeysAsync()) OfferPasskey();
             else OpenProfile();
+        }
+
+        /// <summary>Mostra "Entra con Face ID / l'impronta" nel modulo di accesso se c'è un token protetto da rileggere.</summary>
+        private async Task BiometricRetryAsync(VisualElement row, Label status, Label or, bool atStartup)
+        {
+            if (!await _hub.Tokens.HasProtectedTokenAsync() || row.panel == null) return;
+            row.style.display = DisplayStyle.Flex;
+            or.style.display = DisplayStyle.Flex;
+            GamePanel.ActionButton(row, Loc.Get("account.biometric." + (IsIos ? "ios" : "android")), OrbisIconKind.Lock, "primary", async () =>
+            {
+                if (_busy) return;
+                _busy = true;
+                status.style.display = DisplayStyle.None;
+                bool ok;
+                try
+                {
+                    ok = await _hub.RestoreAsync();
+                }
+                finally
+                {
+                    _busy = false;
+                }
+                if (ok)
+                {
+                    _services.Haptics.Play(HapticKind.Success);
+                    Toast?.Invoke(Loc.Format("account.welcome_back", _hub.Account.User?.DisplayName ?? ""));
+                    if (atStartup) _panel.Close();
+                    else OpenProfile();
+                    return;
+                }
+                // sessione chiusa dal server: il modulo si riapre con la spiegazione (e senza questo pulsante)
+                if (!string.IsNullOrEmpty(_hub.Account.EndReason))
+                {
+                    OpenSignIn(atStartup, false);
+                    return;
+                }
+                _services.Haptics.Play(HapticKind.Warning);
+                status.text = Loc.Get("account.biometric.failed." + (IsIos ? "ios" : "android"));
+                status.style.display = DisplayStyle.Flex;
+            }).name = "account-biometric-login";
         }
 
         private TextField Field(string name, int maxLength, bool password)
