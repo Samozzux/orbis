@@ -18,6 +18,10 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
      - linee bus reali da OSM (`route=bus`, con le fermate).
    - Calendario `data/events/`: festività italiane, Venerdì Santo, San Giustino.
    - CREDITS aggiornato.
+   - **Fonti già verificate** (19/11):
+     - ISTAT, popolazione per età e sesso al 1° gennaio 2026 (stima), un file per provincia: `demo.istat.it/data/posas/POSAS_2026_it_069_Chieti.zip`. Comune 069022: 48.368 abitanti. Licenza CC BY 4.0.
+     - MEF, Dipartimento delle Finanze, redditi IRPEF per comune (anno d'imposta 2024): contribuenti per fascia di reddito e per tipo (dipendente, pensione, autonomo). Chieti: 36.435 contribuenti. Licenza CC BY 3.0 IT.
+     - Ancora da trovare: famiglie per numero di componenti, nomi per anno di nascita, cognomi.
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;
