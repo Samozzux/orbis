@@ -1634,6 +1634,14 @@
       "it": "Entra in Orbis"
     },
     {
+      "key": "account.biometric.failed.ios",
+      "it": "Face ID non ha funzionato: riprova oppure entra con la password."
+    },
+    {
+      "key": "account.biometric.failed.android",
+      "it": "Lo sblocco non ha funzionato: riprova oppure entra con la password."
+    },
+    {
       "key": "account.biometric.offer.title.ios",
       "it": "Entrare con Face ID?"
     },

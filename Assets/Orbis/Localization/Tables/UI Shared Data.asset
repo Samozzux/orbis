@@ -1843,6 +1843,14 @@ MonoBehaviour:
     m_Key: account.passkey.loading
     m_Metadata:
       m_Items: []
+  - m_Id: 1204597346525184
+    m_Key: account.biometric.failed.ios
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1204597363302400
+    m_Key: account.biometric.failed.android
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

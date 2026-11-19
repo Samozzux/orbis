@@ -1846,6 +1846,14 @@ MonoBehaviour:
     m_Localized: "Preparo la passkey\u2026"
     m_Metadata:
       m_Items: []
+  - m_Id: 1204597346525184
+    m_Localized: 'Face ID non ha funzionato: riprova oppure entra con la password.'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1204597363302400
+    m_Localized: 'Lo sblocco non ha funzionato: riprova oppure entra con la password.'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

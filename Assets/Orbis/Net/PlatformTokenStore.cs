@@ -14,6 +14,8 @@ namespace Orbis.Net
     {
         private const string TokenKey = "orbis.refresh";
         private const string BiometricKey = "orbis.biometric";
+        // segno (nell'archivio normale) che c'è un token protetto: si sa senza leggerlo, cioè senza Face ID
+        private const string ProtectedMarkKey = "orbis.refresh.protected";
 
         private readonly IPlatformServices _platform;
         private readonly string _reason;
@@ -62,17 +64,27 @@ namespace Orbis.Net
             if (await BiometricsEnabledAsync() && await _platform.Biometrics.StoreProtectedAsync(TokenKey, token))
             {
                 await _platform.SecureStore.DeleteAsync(TokenKey);
+                await _platform.SecureStore.SetAsync(ProtectedMarkKey, "1");
                 return;
             }
             await _platform.SecureStore.SetAsync(TokenKey, token);
             await _platform.Biometrics.DeleteProtectedAsync(TokenKey);
+            await _platform.SecureStore.DeleteAsync(ProtectedMarkKey);
         }
 
         public async Task ClearAsync(CancellationToken ct)
         {
             await _platform.SecureStore.DeleteAsync(TokenKey);
             await _platform.Biometrics.DeleteProtectedAsync(TokenKey);
+            await _platform.SecureStore.DeleteAsync(ProtectedMarkKey);
         }
+
+        /// <summary>
+        /// C'è un token protetto da Face ID / impronta che si può riprovare a leggere (per esempio dopo aver annullato
+        /// la richiesta all'avvio). Non mostra nessuna richiesta.
+        /// </summary>
+        public async Task<bool> HasProtectedTokenAsync() =>
+            await BiometricsEnabledAsync() && await _platform.SecureStore.GetAsync(ProtectedMarkKey) == "1";
 
         /// <summary>C'è un token salvato in chiaro (o protetto): serve a sapere se all'avvio provare a rientrare.</summary>
         public async Task<bool> HasPlainTokenAsync() => !string.IsNullOrEmpty(await _platform.SecureStore.GetAsync(TokenKey));
