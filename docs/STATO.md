@@ -1,7 +1,71 @@
 # Stato del progetto
 
 ## Milestone attuale
-**M4 — Cittadini e città viva**: si parte il 19/11/2026, dopo la chiusura di M3. Il piano a blocchi arriva con la prossima PR.
+**M4 — Cittadini e città viva**: iniziata il 19/11/2026, dopo la chiusura di M3 (branch `m4-piano`).
+
+### Piano di M4 (a blocchi, ognuno con PR e test)
+Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno ispezionabile (casa, lavoro, soldi, frigo), e le scelte del sindaco cambiano felicità ed economia.
+1. **Dati reali.**
+   - `tools/population/` (Python):
+     - abitanti del comune per età e sesso (ISTAT);
+     - redditi per fascia (MEF);
+     - composizione delle famiglie (ISTAT);
+     - nomi per anno di nascita e cognomi frequenti in Abruzzo;
+
+     il risultato va in `data/population/chieti.json`.
+   - Pack del mondo v4:
+     - confini dei comuni, per sapere quali case stanno nel comune di Chieti;
+     - linee bus reali da OSM (`route=bus`, con le fermate).
+   - Calendario `data/events/`: festività italiane, Venerdì Santo, San Giustino.
+   - CREDITS aggiornato.
+   - **Fonti già verificate** (19/11):
+     - ISTAT, popolazione per età e sesso al 1° gennaio 2026 (stima), un file per provincia: `demo.istat.it/data/posas/POSAS_2026_it_069_Chieti.zip`. Comune 069022: 48.368 abitanti. Licenza CC BY 4.0.
+     - MEF, Dipartimento delle Finanze, redditi IRPEF per comune (anno d'imposta 2024): contribuenti per fascia di reddito e per tipo (dipendente, pensione, autonomo). Chieti: 36.435 contribuenti. Licenza CC BY 3.0 IT.
+     - Ancora da trovare: famiglie per numero di componenti, nomi per anno di nascita, cognomi.
+2. **Core: popolazione.**
+   - Generatore deterministico (dal seed della partita):
+     - le famiglie vanno nelle case in proporzione alla superficie dei piani;
+     - ogni cittadino ha identità, età, istruzione, reddito, risparmi, tratti e gusti;
+     - lavoro e scuola sono posti veri: negozi, uffici e scuole da OSM, più gli edifici del catalogo.
+   - Archivio compatto per decine di migliaia di cittadini; nel salvataggio solo le differenze.
+   - Test: i numeri ISTAT sono rispettati e lo stesso seed dà la stessa città.
+3. **Core: vita dei cittadini.**
+   - Bisogni, routine e scelte a utilità.
+   - Frigo e spesa al supermercato vero.
+   - Stipendi, affitti, risparmi, debiti.
+   - Attività commerciali con un conto economico: incassi dai clienti simulati, costi, utile, fallimenti.
+   - Ciclo di vita: nascite, invecchiamento, morte, traslochi, emigrazione.
+   - Livelli: L1 nei quartieri vicini alla camera, L2 statistico nel resto, L3 per gli altri comuni.
+   - L'economia del sindaco passa ai cittadini veri: tasse sui redditi e sulle attività.
+   - Test: un anno di gioco senza valori assurdi, denaro conservato, popolazione entro i limiti.
+4. **Core: strade e traffico L1.**
+   - Grafo stradale dai tile (sensi unici, corsie, velocità).
+   - Viaggi sul grafo con la congestione per tratto.
+   - Bus reali da OSM e linee disegnabili (fermate, frequenze, costi, incassi).
+   - Strade nuove disegnabili (spostate qui da M2).
+5. **Servizi, felicità, reazioni, eventi, meteo.**
+   - Copertura di polizia, pompieri, ospedali, scuole e rifiuti, sia negli edifici reali sia in quelli del catalogo.
+   - Felicità per ogni cittadino.
+   - Reazioni ai tre livelli: commenti, petizioni, proteste, emigrazione.
+   - Eventi dal calendario ed eventi generati.
+   - Meteo reale da Open-Meteo, con un clima medio per mese come ripiego.
+6. **Unity: città viva (L0).**
+   - Persone e veicoli visibili vicino alla camera, con instancing.
+   - Bus sulle linee, semafori e precedenze semplici, mezzi d'emergenza.
+7. **Interfaccia.**
+   - Tocco su un cittadino: casa, lavoro, soldi, frigo, famiglia, "Segui".
+   - Tocco su un edificio: residenti, lavoratori, conti dell'attività.
+   - Mappe di calore: felicità, servizi, traffico, valore.
+   - Disegno di linee bus e strade.
+   - Notizie ed eventi.
+8. **Prestazioni, prove, build, STATO, tag `v0.4.0`.** Obiettivo 60 fps (minimo 30) sull'iPhone 15 Pro e 30 fps sul web.
+
+**Scelte semplici per M4** (le cambio se Samuele preferisce altro):
+- **Chi si simula.**
+  - Comune di Chieti: tutti gli abitanti uno per uno (48.368 al 1° gennaio 2026, stima ISTAT), dentro il budget L1 di 100.000.
+  - Altri comuni della provincia: solo L3, cioè indicatori di popolazione ed economia.
+- **Simulazione sul web.** Il web non ha thread per il C#, quindi la simulazione gira a pezzi sul thread principale, con un tempo massimo per frame. Su iOS e Android gira su thread e Jobs. Così si rispetta la regola "niente lavoro pesante sul main thread".
+- **Persone e veicoli.** In M4 li faccio da codice come gli edifici, simili a quelli veri. Il generatore completo dei personaggi (viso, capelli, vestiti; MakeHuman in docs/08) arriva con gli interni, la prima persona e la creazione del personaggio (M5–M6).
 
 **M3 — Account e cloud**: chiusa il 19/11/2026 su scelta di Samuele **senza la prova sui dispositivi** ("Chiudi M3 senza prova"). Tag `v0.3.0` con IPA e APK; tutte le build di `main` verdi. Restano da provare sui dispositivi Face ID, impronta, passkey e il giro iPhone → Mac (vedi "Da verificare sui dispositivi" e "Cosa provare (M3)"). Iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 
