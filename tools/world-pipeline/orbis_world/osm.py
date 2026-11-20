@@ -73,6 +73,23 @@ class Tree:
 
 
 @dataclass
+class TransitStop:
+    osm_id: int
+    lon: float
+    lat: float
+    name: str
+
+
+@dataclass
+class TransitRoute:
+    osm_id: int
+    mode: int
+    tags: dict
+    ways: list   # ID delle vie del percorso, in ordine
+    stops: list  # ID dei nodi fermata, in ordine
+
+
+@dataclass
 class OsmData:
     buildings: list = field(default_factory=list)
     roads: list = field(default_factory=list)
@@ -81,6 +98,8 @@ class OsmData:
     pois: list = field(default_factory=list)
     trees: list = field(default_factory=list)
     coastlines: list = field(default_factory=list)
+    stops: dict = field(default_factory=dict)    # id nodo → TransitStop (tutti i candidati)
+    routes: list = field(default_factory=list)
 
 
 def _tags(obj):
@@ -101,6 +120,8 @@ def load(path, log=print):
             if not o.tags:
                 continue
             tg = _tags(o)
+            if T.is_transit_stop(tg):
+                data.stops[o.id] = TransitStop(o.id, o.location.lon, o.location.lat, tg.get("name", ""))
             if tg.get("natural") == "tree":
                 x, y = geo.to_merc(o.location.lon, o.location.lat)
                 h = T.parse_length(tg.get("height")) or 0.0
@@ -138,6 +159,19 @@ def load(path, log=print):
                 for i in range(count):
                     p = line.interpolate(i / (count - 1), normalized=True)
                     data.trees.append(Tree(p.x, p.y, kind, 0.0))
+        elif o.is_relation():
+            if not o.tags:
+                continue
+            tg = _tags(o)
+            mode = T.transit_mode(tg)
+            if mode is None:
+                continue
+            members = [(m.type, m.ref, m.role) for m in o.members]
+            ways = [ref for typ, ref, role in members if typ == "w" and role in ("", "forward", "backward")]
+            stops = [ref for typ, ref, role in members if typ == "n" and role.startswith("stop")]
+            if not stops:  # linee che indicano solo le banchine
+                stops = [ref for typ, ref, role in members if typ == "n" and role.startswith("platform")]
+            data.routes.append(TransitRoute(o.id, mode, {k: tg[k] for k in _ROUTE_TAGS if k in tg}, ways, stops))
         elif o.is_area():
             if not o.tags:
                 continue
@@ -172,9 +206,12 @@ def load(path, log=print):
                 data.pois.append(Poi(oid, osm_type, p.x, p.y, cat or T.poi_category(tg), tg.get("name", ""),
                                      T.address(tg)))
     log(f"  letti {n:,} oggetti: {len(data.buildings):,} edifici, {len(data.roads):,} strade, "
-        f"{len(data.areas):,} aree, {len(data.pois):,} POI, {len(data.trees):,} alberi, {len(data.lines):,} linee")
+        f"{len(data.areas):,} aree, {len(data.pois):,} POI, {len(data.trees):,} alberi, {len(data.lines):,} linee, "
+        f"{len(data.routes):,} linee di trasporto")
     return data
 
+
+_ROUTE_TAGS = ("ref", "name", "from", "to", "operator", "network", "colour")
 
 _KEEP = ("name", "building", "amenity", "leisure", "historic", "tourism", "wikidata", "religion", "denomination",
          "sport", "building:part")
@@ -212,3 +249,30 @@ def find_boundary(path, admin_level, match, log=print):
 
 def point(x, y):
     return Point(x, y)
+
+
+def municipalities(path, region_lonlat, admin_level=8, log=print):
+    """Comuni (confini amministrativi di livello 8) il cui punto interno cade nella regione.
+    Restituisce [(codice ISTAT, nome, MultiPolygon lon/lat)] ordinati per codice e nome."""
+    fab = osmium.geom.WKBFactory()
+    region = shapely.make_valid(region_lonlat)
+    shapely.prepare(region)
+    out = []
+    fp = osmium.FileProcessor(str(path)).with_locations().with_areas()
+    for o in fp:
+        if not o.is_area() or o.from_way():
+            continue
+        tg = _tags(o)
+        if tg.get("boundary") != "administrative" or tg.get("admin_level") != str(admin_level):
+            continue
+        try:
+            geom = wkb.loads(fab.create_multipolygon(o), hex=True)
+        except (RuntimeError, ValueError, osmium.InvalidLocationError):
+            continue
+        if geom.is_empty or not region.contains(geom.representative_point()):
+            continue
+        out.append((tg.get("ref:ISTAT", ""), tg.get("name", ""), geom))
+    out.sort(key=lambda m: (m[0], m[1]))
+    log(f"  comuni nella regione: {len(out)}")
+    return out
+

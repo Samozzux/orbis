@@ -3,6 +3,8 @@
   python -m orbis_world boundary --region regions/chieti.json --pbf admin.pbf --out boundary.geojson
   python -m orbis_world build --region regions/chieti.json --pbf region.pbf --boundary boundary.geojson \
       --out out/chieti --cache cache --version 1
+  python -m orbis_world extras --region regions/chieti.json --pack out/chieti --pbf region.pbf \
+      --boundary boundary.geojson --admin admin.pbf --version 4
 """
 import argparse
 import json
@@ -62,8 +64,20 @@ def cmd_build(a):
     source = terrain.TerrariumSource(merc.buffer(pad).bounds, a.cache, log=_log)
     far_pad = (region.get("far_radius_m", 50000) + 5000) / geo.scale_at(region["origin"]["lat"])
     far_source = terrain.TerrariumSource(merc.buffer(far_pad).bounds, a.cache, z=9, log=_log)
+    muns = osm.municipalities(a.admin, boundary, log=_log) if a.admin else []
     tiler.build(region, a.pbf, boundary, source, a.out, landmarks=landmarks, version=a.version,
-                source_name=a.source or os.path.basename(a.pbf), log=_log, far_source=far_source)
+                source_name=a.source or os.path.basename(a.pbf), log=_log, far_source=far_source,
+                municipalities=muns)
+    return 0
+
+
+def cmd_extras(a):
+    region = _region(a.region)
+    with open(a.boundary, encoding="utf-8") as f:
+        boundary = shape(json.load(f)["geometry"])
+    muns = osm.municipalities(a.admin, boundary, log=_log) if a.admin else []
+    tiler.add_extras(region, a.pack, a.pbf, boundary, municipalities=muns, version=a.version,
+                     source_name=a.source, log=_log)
     return 0
 
 
@@ -96,6 +110,15 @@ def main(argv=None):
     c.add_argument("--cache", default="cache")
     c.add_argument("--version", type=int, default=1)
     c.add_argument("--source", default="")
+    c.add_argument("--admin", default="", help="estratto con i confini amministrativi (comuni, pack v4)")
+    x = sub.add_parser("extras", help="aggiorna l'indice di un pack esistente con comuni e linee (tile identici)")
+    x.add_argument("--region", required=True)
+    x.add_argument("--pack", required=True, help="cartella del pack da aggiornare (index.bin + tile)")
+    x.add_argument("--pbf", required=True)
+    x.add_argument("--boundary", required=True)
+    x.add_argument("--admin", default="")
+    x.add_argument("--version", type=int, default=None)
+    x.add_argument("--source", default="")
     v = sub.add_parser("preview", help="immagini PNG di controllo del pack")
     v.add_argument("--pack", required=True)
     v.add_argument("--out", required=True)
@@ -106,7 +129,8 @@ def main(argv=None):
     g.add_argument("--width", type=int, default=2048)
     g.add_argument("--cache", default="cache")
     a = p.parse_args(argv)
-    return {"boundary": cmd_boundary, "build": cmd_build, "preview": cmd_preview, "globe": cmd_globe}[a.cmd](a)
+    return {"boundary": cmd_boundary, "build": cmd_build, "extras": cmd_extras, "preview": cmd_preview,
+            "globe": cmd_globe}[a.cmd](a)
 
 
 if __name__ == "__main__":

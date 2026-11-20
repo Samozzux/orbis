@@ -1,6 +1,8 @@
 # Pipeline del mondo (docs/02 §2): OpenStreetMap + terreno → region pack, pubblicato come GitHub Release.
 # - su PR e push: solo i test della pipeline (veloci, nessun download)
 # - a mano (Actions → World data → Run workflow): costruisce e pubblica il pack `world-<regione>-v<versione>`
+#   con "base" (es. world-chieti-v3) non ricostruisce i tile: aggiorna solo l'indice del pack esistente con
+#   comuni e linee di trasporto, così i lotti (e le partite salvate) restano identici
 name: World data
 
 on:
@@ -27,6 +29,10 @@ on:
         description: 'Pubblica la Release (altrimenti solo artifact)'
         type: boolean
         default: true
+      base:
+        description: 'Pack da aggiornare senza toccare i tile (es. world-chieti-v3); vuoto = ricostruisci tutto'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -65,6 +71,7 @@ jobs:
     env:
       REGION: ${{ inputs.region }}
       VERSION: ${{ inputs.version }}
+      BASE: ${{ inputs.base }}
     defaults:
       run:
         working-directory: tools/world-pipeline
@@ -117,17 +124,32 @@ jobs:
             nwr/building nwr/building:part w/highway w/railway w/aeroway nwr/landuse nwr/natural nwr/leisure \
             nwr/amenity nwr/shop nwr/tourism nwr/waterway nwr/water nwr/power nwr/barrier nwr/historic \
             nwr/man_made nwr/office nwr/craft nwr/healthcare nwr/public_transport nwr/sport nwr/place \
-            nwr/area:highway nwr/emergency \
+            nwr/area:highway nwr/emergency r/route=bus,trolleybus,tram,train \
             -o work/region.osm.pbf --overwrite
           ls -lh work/region-all.osm.pbf work/region.osm.pbf
 
       - name: Costruisci il pack
+        if: inputs.base == ''
         run: |
           python -m orbis_world build --region regions/${REGION}.json --pbf work/region.osm.pbf \
             --boundary work/boundary.geojson --out out/${REGION} --cache cache --version ${VERSION} \
-            --source "$SOURCE_NAME"
+            --source "$SOURCE_NAME" --admin work/admin.pbf
+
+      - name: Aggiorna il pack esistente (tile identici)
+        if: inputs.base != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p base "out/${REGION}"
+          gh release download "${BASE}" --repo "${GITHUB_REPOSITORY}" -p "${BASE}.zip" -D base
+          unzip -q "base/${BASE}.zip" -d "out/${REGION}"
+          python -m orbis_world extras --region regions/${REGION}.json --pack out/${REGION} \
+            --pbf work/region.osm.pbf --boundary work/boundary.geojson --admin work/admin.pbf \
+            --version ${VERSION} --source "$SOURCE_NAME"
 
       - name: Globo base (Terrain Tiles z3)
+        if: inputs.base == ''
         run: python -m orbis_world globe --out out/${REGION}/globe.jpg --cache cache
 
       - name: Anteprime
@@ -148,7 +170,7 @@ jobs:
             echo "- dimensione: $(( size / 1024 / 1024 )) MB"
             echo "- sha256: \`$sha\`"
             echo '```json'
-            python -c "import json;r=json.load(open('${name}-report.json'));print(json.dumps({k:r[k] for k in ('tiles','counts','bytes','landmarks')},ensure_ascii=False,indent=1))"
+            python -c "import json;r=json.load(open('${name}-report.json'));print(json.dumps({k:r.get(k) for k in ('tiles','counts','bytes','landmarks','municipalities','transit')},ensure_ascii=False,indent=1))"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 

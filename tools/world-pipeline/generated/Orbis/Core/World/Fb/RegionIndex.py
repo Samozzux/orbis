@@ -160,8 +160,83 @@ class RegionIndex(object):
             return obj
         return None
 
+    # RegionIndex
+    def Municipalities(self, j):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(30))
+        if o != 0:
+            x = self._tab.Vector(o)
+            x += flatbuffers.number_types.UOffsetTFlags.py_type(j) * 4
+            x = self._tab.Indirect(x)
+            from Orbis.Core.World.Fb.Municipality import Municipality
+            obj = Municipality()
+            obj.Init(self._tab.Bytes, x)
+            return obj
+        return None
+
+    # RegionIndex
+    def MunicipalitiesLength(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(30))
+        if o != 0:
+            return self._tab.VectorLen(o)
+        return 0
+
+    # RegionIndex
+    def MunicipalitiesIsNone(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(30))
+        return o == 0
+
+    # RegionIndex
+    def TransitStops(self, j):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(32))
+        if o != 0:
+            x = self._tab.Vector(o)
+            x += flatbuffers.number_types.UOffsetTFlags.py_type(j) * 4
+            x = self._tab.Indirect(x)
+            from Orbis.Core.World.Fb.TransitStop import TransitStop
+            obj = TransitStop()
+            obj.Init(self._tab.Bytes, x)
+            return obj
+        return None
+
+    # RegionIndex
+    def TransitStopsLength(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(32))
+        if o != 0:
+            return self._tab.VectorLen(o)
+        return 0
+
+    # RegionIndex
+    def TransitStopsIsNone(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(32))
+        return o == 0
+
+    # RegionIndex
+    def TransitRoutes(self, j):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(34))
+        if o != 0:
+            x = self._tab.Vector(o)
+            x += flatbuffers.number_types.UOffsetTFlags.py_type(j) * 4
+            x = self._tab.Indirect(x)
+            from Orbis.Core.World.Fb.TransitRoute import TransitRoute
+            obj = TransitRoute()
+            obj.Init(self._tab.Bytes, x)
+            return obj
+        return None
+
+    # RegionIndex
+    def TransitRoutesLength(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(34))
+        if o != 0:
+            return self._tab.VectorLen(o)
+        return 0
+
+    # RegionIndex
+    def TransitRoutesIsNone(self):
+        o = flatbuffers.number_types.UOffsetTFlags.py_type(self._tab.Offset(34))
+        return o == 0
+
 def RegionIndexStart(builder):
-    builder.StartObject(13)
+    builder.StartObject(16)
 
 def Start(builder):
     RegionIndexStart(builder)
@@ -255,6 +330,42 @@ def RegionIndexAddFar(builder, far):
 
 def AddFar(builder, far):
     RegionIndexAddFar(builder, far)
+
+def RegionIndexAddMunicipalities(builder, municipalities):
+    builder.PrependUOffsetTRelativeSlot(13, flatbuffers.number_types.UOffsetTFlags.py_type(municipalities), 0)
+
+def AddMunicipalities(builder, municipalities):
+    RegionIndexAddMunicipalities(builder, municipalities)
+
+def RegionIndexStartMunicipalitiesVector(builder, numElems):
+    return builder.StartVector(4, numElems, 4)
+
+def StartMunicipalitiesVector(builder, numElems):
+    return RegionIndexStartMunicipalitiesVector(builder, numElems)
+
+def RegionIndexAddTransitStops(builder, transitStops):
+    builder.PrependUOffsetTRelativeSlot(14, flatbuffers.number_types.UOffsetTFlags.py_type(transitStops), 0)
+
+def AddTransitStops(builder, transitStops):
+    RegionIndexAddTransitStops(builder, transitStops)
+
+def RegionIndexStartTransitStopsVector(builder, numElems):
+    return builder.StartVector(4, numElems, 4)
+
+def StartTransitStopsVector(builder, numElems):
+    return RegionIndexStartTransitStopsVector(builder, numElems)
+
+def RegionIndexAddTransitRoutes(builder, transitRoutes):
+    builder.PrependUOffsetTRelativeSlot(15, flatbuffers.number_types.UOffsetTFlags.py_type(transitRoutes), 0)
+
+def AddTransitRoutes(builder, transitRoutes):
+    RegionIndexAddTransitRoutes(builder, transitRoutes)
+
+def RegionIndexStartTransitRoutesVector(builder, numElems):
+    return builder.StartVector(4, numElems, 4)
+
+def StartTransitRoutesVector(builder, numElems):
+    return RegionIndexStartTransitRoutesVector(builder, numElems)
 
 def RegionIndexEnd(builder):
     return builder.EndObject()

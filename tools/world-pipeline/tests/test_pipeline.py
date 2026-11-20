@@ -27,6 +27,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FIXTURES_CS = os.path.join(HERE, "..", "..", "..", "tests", "Orbis.Core.Tests", "Fixtures")
 
 
+def _member(m):
+    """(id via, ruolo) oppure ("node"/"way", id, ruolo)."""
+    typ, ref, role = m if len(m) == 3 else ("way", *m)
+    return f'<member type="{typ}" ref="{ref}" role="{role}"/>'
+
+
 class OsmWriter:
     """Scrive un file .osm XML: coordinate in metri veri attorno all'origine (x est, y nord)."""
 
@@ -74,7 +80,7 @@ class OsmWriter:
                 f.write(f'<way id="{wid}" version="1">' + "".join(f'<nd ref="{i}"/>' for i in ids) + t(tags) + "</way>\n")
             for rid, members, tags in self.relations:
                 f.write(f'<relation id="{rid}" version="1">' +
-                        "".join(f'<member type="way" ref="{m}" role="{r}"/>' for m, r in members) + t(tags) +
+                        "".join(_member(m) for m in members) + t(tags) +
                         "</relation>\n")
             f.write("</osm>\n")
 
@@ -82,10 +88,10 @@ class OsmWriter:
 def make_city(path):
     w = OsmWriter()
     # griglia di strade: due vie est-ovest e due nord-sud (isolati di ~100 m)
-    w.way([(-300, 0), (300, 0)], highway="residential", name="Corso Marrucino")
+    corso = w.way([(-300, 0), (300, 0)], highway="residential", name="Corso Marrucino")
     w.way([(-300, 120), (300, 120)], highway="tertiary", name="Via Arniense")
     w.way([(0, -200), (0, 300)], highway="residential", name="Via Pollione", oneway="yes")
-    w.way([(130, -200), (130, 300)], highway="primary", name="Viale Amendola", ref="SS 5")
+    viale = w.way([(130, -200), (130, 300)], highway="primary", name="Viale Amendola", ref="SS 5")
     w.way([(-300, -200), (300, -200), (300, 300), (-300, 300)], closed=True, highway="unclassified")
     # edifici dentro l'isolato tra le vie (0..130, 0..120)
     w.rect(10, 10, 40, 30, building="apartments", building_levels="5", building_colour="#e8c48a",
@@ -109,10 +115,30 @@ def make_city(path):
     w.node(-185, 75, amenity="theatre", name="Teatro Marrucino")
     w.way([(-300, 250), (300, 260)], power="line")
     w.way([(-250, 210), (-200, 230), (-150, 210)], waterway="stream", name="Fosso")
-    # confine "provincia"
+    # linea bus su Corso Marrucino e Viale Amendola, con tre fermate
+    s1 = w.node(-200, 0, public_transport="stop_position", bus="yes", name="Piazza Vico")
+    s2 = w.node(100, 0, public_transport="stop_position", bus="yes", name="Corso Marrucino")
+    s3 = w.node(130, 250, highway="bus_stop", name="Stazione")
+    w.relation([("node", s1, "stop"), ("node", s2, "stop_entry_only"), ("node", s3, "stop"),
+                ("way", corso, ""), ("way", viale, "")],
+               type="route", route="bus", ref="2", name="Bus 2: Piazza Vico → Stazione", operator="TUA",
+               colour="#e30613")
+    # linea con una sola fermata nell'area: va scartata
+    s4 = w.node(-250, 0, public_transport="stop_position", name="Sola")
+    w.relation([("node", s4, "stop"), ("way", corso, "")], type="route", route="bus", ref="99")
+    # confine "provincia" e due "comuni" (livello 8) dentro, più uno fuori
     b = w.way([(-320, -220), (320, -220), (320, 320), (-320, 320)], closed=True)
     w.relation([(b, "outer")], type="boundary", boundary="administrative", admin_level="6", ref="CH",
                name="Chieti")
+    c1 = w.way([(-320, -220), (0, -220), (0, 320), (-320, 320)], closed=True)
+    w.relation([(c1, "outer")], type="boundary", boundary="administrative", admin_level="8", name="Ovest",
+               **{"ref:ISTAT": "069001"})
+    c2 = w.way([(0, -220), (320, -220), (320, 320), (0, 320)], closed=True)
+    w.relation([(c2, "outer")], type="boundary", boundary="administrative", admin_level="8", name="Chieti",
+               **{"ref:ISTAT": "069022"})
+    c3 = w.way([(2000, 2000), (2300, 2000), (2300, 2300), (2000, 2300)], closed=True)
+    w.relation([(c3, "outer")], type="boundary", boundary="administrative", admin_level="8", name="Lontano",
+               **{"ref:ISTAT": "068001"})
     w.write(path)
 
 
@@ -206,8 +232,10 @@ def test_build_region(city):
     logs = []
     region["far_radius_m"] = 3000
     region["far_cell_m"] = 500
+    muns = osm.municipalities(path, geom, log=logs.append)
     report = tiler.build(region, path, geom, terrain.FunctionSource(hills), out, landmarks=landmarks,
-                         version=3, source_name="city.osm", log=logs.append, far_source=terrain.FunctionSource(hills))
+                         version=3, source_name="city.osm", log=logs.append, far_source=terrain.FunctionSource(hills),
+                         municipalities=muns)
     assert report["landmarks"][0]["matches"], logs
     assert report["landmarks"][1]["matches"], logs  # trovato dal POI dentro l'edificio
 
@@ -219,6 +247,21 @@ def test_build_region(city):
     far = idx.Far()
     assert far is not None and far.Cols() > 10 and far.Rows() > 10
     assert len(far.HeightsAsNumpy()) == far.Cols() * far.Rows()
+
+    # pack v4: comuni dentro la provincia (quello lontano no) e la linea bus con le sue fermate
+    mun = [idx.Municipalities(i) for i in range(idx.MunicipalitiesLength())]
+    assert [(m.Code(), m.Name()) for m in mun] == [(b"069001", b"Ovest"), (b"069022", b"Chieti")]
+    ring = mun[1].Rings(0).PtsAsNumpy().reshape(-1, 2)
+    assert len(ring) == 4 and abs(ring[:, 0].min() - LON0) < 1e-5
+    assert report["municipalities"] == 2 and report["transit"] == {"routes": 1, "stops": 3}, logs
+    assert idx.TransitRoutesLength() == 1
+    route = idx.TransitRoutes(0)
+    assert (route.Ref(), route.Mode(), route.Operator(), route.Colour()) == (b"2", 0, b"TUA", 0x1E30613)
+    assert route.WaysLength() == 2
+    assert [idx.TransitStops(route.Stops(i)).Name() for i in range(route.StopsLength())] == \
+        [b"Piazza Vico", b"Corso Marrucino", b"Stazione"]
+    first = idx.TransitStops(route.Stops(0))
+    assert abs(first.Lon() - LON0) < 0.01 and abs(first.Lat() - LAT0) < 0.01
     assert len(entries) >= 1
     assert sum(e.Buildings() for e in entries) == 6  # 4 edifici + 2 parti (contorno sostituito)
 
@@ -285,6 +328,43 @@ def test_build_region(city):
         os.makedirs(FIXTURES_CS, exist_ok=True)
         shutil.copyfile(tile_path, os.path.join(FIXTURES_CS, "tile_sample.bin"))
         shutil.copyfile(os.path.join(out, "index.bin"), os.path.join(FIXTURES_CS, "index_sample.bin"))
+
+
+def test_extras_upgrade_keeps_tiles(city, tmp_path):
+    """Pack v4 da un pack esistente: tile identici byte per byte, indice con comuni e linee."""
+    path, _ = city
+    geom, _ = osm.find_boundary(path, 6, {"ref": "CH"}, log=lambda *_: None)
+    region = {"key": "test", "name": "Città di prova", "origin": {"lat": LAT0, "lon": LON0}, "zoom": 14,
+              "full_buffer_m": 100, "outer_buffer_m": 600}
+    out = str(tmp_path / "pack")
+    tiler.build(region, path, geom, terrain.FunctionSource(lambda x, y: 300.0 + 0.0 * x), out, version=3,
+                source_name="city.osm", log=lambda *_: None)
+    tiles = {}
+    for root, _, files in os.walk(out):
+        for f in files:
+            if f.endswith(".bin") and f != "index.bin":
+                with open(os.path.join(root, f), "rb") as fh:
+                    tiles[os.path.join(root, f)] = fh.read()
+    with open(os.path.join(out, "index.bin"), "rb") as f:
+        before = RegionIndex.GetRootAs(encode.unpack(f.read()), 0)
+    assert before.MunicipalitiesLength() == 0
+
+    muns = osm.municipalities(path, geom, log=lambda *_: None)
+    report = tiler.add_extras(region, out, path, geom, municipalities=muns, version=4, source_name="nuovo.osm",
+                              log=lambda *_: None)
+    assert report["municipalities"] == 2 and report["transit"] == {"routes": 1, "stops": 3}
+    for p, data in tiles.items():
+        with open(p, "rb") as fh:
+            assert fh.read() == data
+    with open(os.path.join(out, "index.bin"), "rb") as f:
+        idx = RegionIndex.GetRootAs(encode.unpack(f.read()), 0)
+    assert idx.Version() == 4 and idx.Key() == b"test"
+    assert idx.TilesLength() == before.TilesLength()
+    assert [(idx.Tiles(i).X(), idx.Tiles(i).Crc()) for i in range(idx.TilesLength())] == \
+        [(before.Tiles(i).X(), before.Tiles(i).Crc()) for i in range(before.TilesLength())]
+    assert idx.MunicipalitiesLength() == 2 and idx.TransitRoutesLength() == 1
+    assert b"nuovo.osm" in idx.Source()
+    assert np.array_equal(idx.BoundaryAsNumpy(), before.BoundaryAsNumpy())
 
 
 def test_cli_boundary_and_preview(city, tmp_path):

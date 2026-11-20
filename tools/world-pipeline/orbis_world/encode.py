@@ -10,13 +10,17 @@ from Orbis.Core.World.Fb import Building as FB
 from Orbis.Core.World.Fb import FarTerrain as FFar
 from Orbis.Core.World.Fb import Line as FL
 from Orbis.Core.World.Fb import Lot as FLot
+from Orbis.Core.World.Fb import Municipality as FMun
 from Orbis.Core.World.Fb import Poi as FP
 from Orbis.Core.World.Fb import RegionIndex as FR
 from Orbis.Core.World.Fb import Ring as FRing
+from Orbis.Core.World.Fb import RingLonLat as FRingLL
 from Orbis.Core.World.Fb import Road as FRoad
 from Orbis.Core.World.Fb import Terrain as FTer
 from Orbis.Core.World.Fb import Tile as FT
 from Orbis.Core.World.Fb import TileEntry as FTE
+from Orbis.Core.World.Fb import TransitRoute as FTRoute
+from Orbis.Core.World.Fb import TransitStop as FTStop
 
 FORMAT_VERSION = 1  # deve coincidere con TileReader.FormatVersion (C#)
 MAGIC = b"OTZ1"
@@ -247,10 +251,78 @@ def encode_tile(z, x, y, tile):
     return pack(b.Output())
 
 
+def _offsets_vector(b, offsets):
+    b.StartVector(4, len(offsets), 4)
+    for o in reversed(offsets):
+        b.PrependUOffsetTRelative(o)
+    return b.EndVector()
+
+
+def _municipalities(b, municipalities):
+    """[(codice, nome, [anelli numpy lon/lat])] → vettore di Municipality."""
+    offs = []
+    for code, name, rings in municipalities:
+        s_code, s_name = b.CreateString(code or ""), b.CreateString(name or "")
+        ring_offs = []
+        for r in rings:
+            v = b.CreateNumpyVector(np.asarray(r, dtype=np.float64).ravel())
+            FRingLL.Start(b)
+            FRingLL.AddPts(b, v)
+            ring_offs.append(FRingLL.End(b))
+        v_rings = _offsets_vector(b, ring_offs)
+        FMun.Start(b)
+        FMun.AddCode(b, s_code)
+        FMun.AddName(b, s_name)
+        FMun.AddRings(b, v_rings)
+        offs.append(FMun.End(b))
+    return _offsets_vector(b, offs)
+
+
+def _stops(b, stops):
+    """[(osm_id, lon, lat, nome)] → vettore di TransitStop."""
+    offs = []
+    for osm_id, lon, lat, name in stops:
+        s_name = b.CreateString(name or "")
+        FTStop.Start(b)
+        FTStop.AddOsmId(b, osm_id)
+        FTStop.AddLon(b, lon)
+        FTStop.AddLat(b, lat)
+        FTStop.AddName(b, s_name)
+        offs.append(FTStop.End(b))
+    return _offsets_vector(b, offs)
+
+
+def _routes(b, routes):
+    """dict con osm_id, mode, ref, name, from, to, operator, network, colour, ways, stops (indici)."""
+    offs = []
+    for r in routes:
+        strs = {k: b.CreateString(r.get(k) or "") for k in ("ref", "name", "from", "to", "operator", "network")}
+        v_ways = b.CreateNumpyVector(np.asarray(r["ways"], dtype=np.int64))
+        v_stops = b.CreateNumpyVector(np.asarray(r["stops"], dtype=np.uint32))
+        FTRoute.Start(b)
+        FTRoute.AddOsmId(b, r["osm_id"])
+        FTRoute.AddMode(b, r["mode"])
+        FTRoute.AddRef(b, strs["ref"])
+        FTRoute.AddName(b, strs["name"])
+        FTRoute.AddFrom(b, strs["from"])
+        FTRoute.AddTo(b, strs["to"])
+        FTRoute.AddOperator(b, strs["operator"])
+        FTRoute.AddNetwork(b, strs["network"])
+        FTRoute.AddColour(b, r.get("colour", 0))
+        FTRoute.AddWays(b, v_ways)
+        FTRoute.AddStops(b, v_stops)
+        offs.append(FTRoute.End(b))
+    return _offsets_vector(b, offs)
+
+
 def encode_index(key, name, version, z, entries, origin_lat, origin_lon, boundary_lonlat, attribution,
-                 created, source, far=None):
-    """`entries`: lista di (x, y, size, crc, buildings); `far`: dict del terreno lontano (facoltativo)."""
+                 created, source, far=None, municipalities=(), stops=(), routes=()):
+    """`entries`: lista di (x, y, size, crc, buildings); `far`: dict del terreno lontano (facoltativo);
+    dal pack v4 anche comuni, fermate e linee di trasporto pubblico (vedi _municipalities, _stops, _routes)."""
     b = flatbuffers.Builder(1 << 14)
+    v_mun = _municipalities(b, municipalities) if municipalities else None
+    v_stops = _stops(b, stops) if stops else None
+    v_routes = _routes(b, routes) if routes else None
     far_off = None
     if far is not None:
         hv = b.CreateNumpyVector(np.ascontiguousarray(far["values"], dtype=np.uint16).ravel())
@@ -287,6 +359,12 @@ def encode_index(key, name, version, z, entries, origin_lat, origin_lon, boundar
     FR.RegionIndexAddSource(b, s_source)
     if far_off is not None:
         FR.RegionIndexAddFar(b, far_off)
+    if v_mun is not None:
+        FR.AddMunicipalities(b, v_mun)
+    if v_stops is not None:
+        FR.AddTransitStops(b, v_stops)
+    if v_routes is not None:
+        FR.AddTransitRoutes(b, v_routes)
     root = FR.RegionIndexEnd(b)
     b.Finish(root)
     return pack(b.Output())

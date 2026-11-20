@@ -256,7 +256,57 @@ namespace Orbis.Core.World.Tiles
                 var id = new TileId(info.Zoom, (int)e.X, (int)e.Y);
                 info.Tiles[id] = new RegionTile(id, e.Size, e.Crc, (int)e.Buildings);
             }
+            ReadMunicipalities(idx, info);
+            ReadTransit(idx, info);
             return info;
+        }
+
+        // pack v4: comuni (per sapere dove abita chi) e linee di trasporto pubblico; vuoti nei pack precedenti
+        private static void ReadMunicipalities(RegionIndex idx, RegionInfo info)
+        {
+            for (int i = 0; i < idx.MunicipalitiesLength; i++)
+            {
+                var m = idx.Municipalities(i);
+                if (!m.HasValue) continue;
+                var rings = new List<double[]>(m.Value.RingsLength);
+                for (int r = 0; r < m.Value.RingsLength; r++)
+                {
+                    var pts = m.Value.Rings(r)?.GetPtsArray();
+                    if (pts != null && pts.Length >= 6 && pts.Length % 2 == 0) rings.Add(pts);
+                }
+                if (rings.Count > 0) info.Municipalities.Add(new MunicipalityInfo(m.Value.Code ?? "", m.Value.Name ?? "", rings.ToArray()));
+            }
+        }
+
+        private static void ReadTransit(RegionIndex idx, RegionInfo info)
+        {
+            for (int i = 0; i < idx.TransitStopsLength; i++)
+            {
+                var s = idx.TransitStops(i).Value;
+                info.TransitStops.Add(new TransitStopInfo { OsmId = s.OsmId, Lon = s.Lon, Lat = s.Lat, Name = s.Name ?? "" });
+            }
+            for (int i = 0; i < idx.TransitRoutesLength; i++)
+            {
+                var r = idx.TransitRoutes(i).Value;
+                var stops = r.GetStopsArray() ?? Array.Empty<uint>();
+                var list = new List<int>(stops.Length);
+                foreach (var s in stops)
+                    if (s < info.TransitStops.Count) list.Add((int)s);
+                info.TransitRoutes.Add(new TransitRouteInfo
+                {
+                    OsmId = r.OsmId,
+                    Mode = r.Mode,
+                    Ref = r.Ref ?? "",
+                    Name = r.Name ?? "",
+                    From = r.From ?? "",
+                    To = r.To ?? "",
+                    Operator = r.Operator ?? "",
+                    Network = r.Network ?? "",
+                    Colour = r.Colour,
+                    Ways = r.GetWaysArray() ?? Array.Empty<long>(),
+                    Stops = list.ToArray(),
+                });
+            }
         }
     }
 
@@ -274,6 +324,71 @@ namespace Orbis.Core.World.Tiles
             row = row < 0 ? 0 : (row >= Rows ? Rows - 1 : row);
             return Heights[row * Cols + col];
         }
+    }
+
+    /// <summary>Comune con il suo confine in gradi (anelli esterni e buchi, regola pari/dispari).</summary>
+    public sealed class MunicipalityInfo
+    {
+        public readonly string Code;
+        public readonly string Name;
+        /// <summary>Anelli lon, lat, lon, lat… senza ripetere il primo punto.</summary>
+        public readonly double[][] Rings;
+        public readonly double MinLon, MinLat, MaxLon, MaxLat;
+
+        public MunicipalityInfo(string code, string name, double[][] rings)
+        {
+            Code = code;
+            Name = name;
+            Rings = rings;
+            MinLon = MinLat = double.MaxValue;
+            MaxLon = MaxLat = double.MinValue;
+            foreach (var r in rings)
+                for (int i = 0; i + 1 < r.Length; i += 2)
+                {
+                    MinLon = Math.Min(MinLon, r[i]);
+                    MaxLon = Math.Max(MaxLon, r[i]);
+                    MinLat = Math.Min(MinLat, r[i + 1]);
+                    MaxLat = Math.Max(MaxLat, r[i + 1]);
+                }
+        }
+
+        public bool Contains(double lon, double lat)
+        {
+            if (lon < MinLon || lon > MaxLon || lat < MinLat || lat > MaxLat) return false;
+            bool inside = false;
+            foreach (var r in Rings)
+            {
+                int n = r.Length / 2;
+                for (int i = 0, j = n - 1; i < n; j = i++)
+                {
+                    double xi = r[2 * i], yi = r[2 * i + 1], xj = r[2 * j], yj = r[2 * j + 1];
+                    if ((yi > lat) != (yj > lat) && lon < (xj - xi) * (lat - yi) / (yj - yi) + xi) inside = !inside;
+                }
+            }
+            return inside;
+        }
+
+        public override string ToString() => Name + " (" + Code + ")";
+    }
+
+    public sealed class TransitStopInfo
+    {
+        public long OsmId;
+        public double Lon, Lat;
+        public string Name;
+    }
+
+    /// <summary>Linea reale da OSM: le strade del percorso (Road.OsmId nei tile) e le fermate in ordine.</summary>
+    public sealed class TransitRouteInfo
+    {
+        public long OsmId;
+        public TransitMode Mode;
+        public string Ref, Name, From, To, Operator, Network;
+        /// <summary>0x01RRGGBB, 0 = nessun colore indicato.</summary>
+        public uint Colour;
+        public long[] Ways;
+        /// <summary>Indici in <see cref="RegionInfo.TransitStops"/>.</summary>
+        public int[] Stops;
     }
 
     public readonly struct RegionTile
@@ -308,6 +423,28 @@ namespace Orbis.Core.World.Tiles
         public readonly Dictionary<TileId, RegionTile> Tiles = new Dictionary<TileId, RegionTile>();
         /// <summary>Terreno lontano (orizzonte), null se il pack non lo contiene.</summary>
         public FarTerrainInfo Far;
+        /// <summary>Comuni della regione (pack v4), ordinati per codice ISTAT.</summary>
+        public readonly List<MunicipalityInfo> Municipalities = new List<MunicipalityInfo>();
+        /// <summary>Fermate usate dalle linee (pack v4).</summary>
+        public readonly List<TransitStopInfo> TransitStops = new List<TransitStopInfo>();
+        /// <summary>Linee reali di bus, filobus, tram e treni da OSM (pack v4).</summary>
+        public readonly List<TransitRouteInfo> TransitRoutes = new List<TransitRouteInfo>();
+
+        /// <summary>Comune che contiene il punto (gradi), null se fuori da tutti.</summary>
+        public MunicipalityInfo MunicipalityAt(double lon, double lat)
+        {
+            foreach (var m in Municipalities)
+                if (m.Contains(lon, lat)) return m;
+            return null;
+        }
+
+        /// <summary>Comune con il codice ISTAT indicato, null se non c'è.</summary>
+        public MunicipalityInfo Municipality(string code)
+        {
+            foreach (var m in Municipalities)
+                if (m.Code == code) return m;
+            return null;
+        }
 
         /// <summary>Metri veri per metro Mercatore (scala unica per tutta la regione).</summary>
         public double Scale => WebMercator.ScaleAt(OriginLat);

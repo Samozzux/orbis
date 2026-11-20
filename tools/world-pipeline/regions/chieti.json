@@ -1,7 +1,7 @@
 {
   "key": "chieti",
   "name": "Provincia di Chieti",
-  "geofabrik": "https://download.geofabrik.de/europe/italy/sud-latest.osm.pbf",
+  "geofabrik": "https://download.geofabrik.de/europe/italy/sud/sud-latest.osm.pbf",
   "boundary": {
     "admin_level": 6,
     "match": [
