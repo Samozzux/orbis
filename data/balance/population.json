@@ -1,0 +1,272 @@
+{
+  "_info": "Generatore di popolazione (docs/03 §2): valori iniziali da bilanciare. I numeri veri (abitanti per età e sesso, famiglie, redditi) vengono da data/population/<regione>.json; qui ci sono solo le stime che le fonti non danno.",
+  "housing": {
+    "residentialWeight": {
+      "House": 1.0,
+      "Detached": 1.0,
+      "Apartments": 1.0,
+      "Residential": 1.0,
+      "Terrace": 1.0,
+      "Unknown": 0.6
+    },
+    "minFootprintM2": 30,
+    "unknownMaxFootprintM2": 1500,
+    "floorHeightM": 3.0,
+    "maxLevels": 30,
+    "grossM2PerPerson": 45,
+    "spareCapacity": 1.15,
+    "unitM2": 85,
+    "ownerShare": 0.72,
+    "rentPerM2Month": 6.0
+  },
+  "work": {
+    "jobsPerM2": {
+      "Office": 0.04,
+      "Commercial": 0.03,
+      "Retail": 0.025,
+      "Industrial": 0.012,
+      "Warehouse": 0.006,
+      "Hospital": 0.03,
+      "School": 0.012,
+      "Kindergarten": 0.015,
+      "University": 0.02,
+      "Civic": 0.03,
+      "Government": 0.035,
+      "Hotel": 0.01,
+      "TrainStation": 0.005,
+      "Transportation": 0.005,
+      "Museum": 0.006,
+      "Theatre": 0.006,
+      "Sports": 0.003,
+      "Stadium": 0.001,
+      "Church": 0.001,
+      "Cathedral": 0.001,
+      "Religious": 0.001,
+      "Farm": 0.004
+    },
+    "poiJobs": {
+      "_info": "Posti di lavoro per attività (POI) che non sta in un edificio già contato: categoria esatta, altrimenti il prefisso (shop, office, craft, healthcare). Le categorie che non compaiono non danno lavoro (parcheggi, panchine…).",
+      "shop": 3,
+      "office": 6,
+      "craft": 3,
+      "healthcare": 4,
+      "amenity/bar": 3,
+      "amenity/cafe": 3,
+      "amenity/pub": 3,
+      "amenity/ice_cream": 2,
+      "amenity/restaurant": 6,
+      "amenity/fast_food": 4,
+      "amenity/pharmacy": 4,
+      "amenity/bank": 8,
+      "amenity/post_office": 8,
+      "amenity/doctors": 3,
+      "amenity/dentist": 3,
+      "amenity/clinic": 10,
+      "amenity/hospital": 300,
+      "amenity/veterinary": 3,
+      "amenity/police": 15,
+      "amenity/fire_station": 20,
+      "amenity/townhall": 40,
+      "amenity/courthouse": 40,
+      "amenity/library": 4,
+      "amenity/cinema": 6,
+      "amenity/theatre": 10,
+      "amenity/nightclub": 6,
+      "amenity/fuel": 3,
+      "amenity/car_wash": 2,
+      "amenity/marketplace": 10,
+      "amenity/social_facility": 10,
+      "amenity/kindergarten": 8,
+      "amenity/school": 40,
+      "amenity/college": 40,
+      "amenity/university": 200,
+      "tourism/hotel": 10,
+      "tourism/guest_house": 2,
+      "tourism/hostel": 2,
+      "tourism/museum": 5,
+      "leisure/fitness_centre": 4,
+      "leisure/sports_centre": 6
+    },
+    "maxJobsPerPlace": 1500,
+    "minEducation": {
+      "Hospital": 3,
+      "University": 3,
+      "Office": 3,
+      "Government": 3,
+      "amenity/pharmacy": 4,
+      "amenity/doctors": 4,
+      "amenity/dentist": 4,
+      "amenity/bank": 3
+    },
+    "localShare": 0.7,
+    "workFromAge": 19,
+    "retirementAge": 67,
+    "earlyPensionFromAge": 58,
+    "employmentByAge": [
+      {
+        "from": 19,
+        "to": 24,
+        "weight": 0.35
+      },
+      {
+        "from": 25,
+        "to": 34,
+        "weight": 0.75
+      },
+      {
+        "from": 35,
+        "to": 54,
+        "weight": 0.9
+      },
+      {
+        "from": 55,
+        "to": 66,
+        "weight": 0.6
+      }
+    ],
+    "homemakerShareFemale": 0.55
+  },
+  "education": {
+    "_info": "Quote per anno di nascita: nessun titolo, licenza elementare, licenza media, diploma, laurea.",
+    "byBirthYear": [
+      {
+        "to": 1944,
+        "shares": [
+          0.08,
+          0.5,
+          0.22,
+          0.14,
+          0.06
+        ]
+      },
+      {
+        "to": 1959,
+        "shares": [
+          0.02,
+          0.25,
+          0.33,
+          0.28,
+          0.12
+        ]
+      },
+      {
+        "to": 1974,
+        "shares": [
+          0.01,
+          0.06,
+          0.36,
+          0.38,
+          0.19
+        ]
+      },
+      {
+        "to": 1989,
+        "shares": [
+          0.0,
+          0.02,
+          0.27,
+          0.43,
+          0.28
+        ]
+      },
+      {
+        "to": 9999,
+        "shares": [
+          0.0,
+          0.01,
+          0.22,
+          0.42,
+          0.35
+        ]
+      }
+    ]
+  },
+  "school": {
+    "kindergartenFrom": 3,
+    "schoolFrom": 6,
+    "schoolTo": 18,
+    "universityTo": 24,
+    "universityShare": 0.45,
+    "studentsPerM2": 0.1,
+    "kindergartenChildrenPerM2": 0.08,
+    "universityStudentsPerM2": 0.05,
+    "poiStudents": {
+      "amenity/kindergarten": 60,
+      "amenity/school": 300,
+      "amenity/college": 400,
+      "amenity/university": 2000
+    }
+  },
+  "family": {
+    "parentAgeGapMean": 31,
+    "parentAgeGapSd": 5,
+    "parentAgeGapMin": 17,
+    "parentAgeGapMax": 50,
+    "maxChildren": 6,
+    "otherHouseholdSize": 2.4
+  },
+  "money": {
+    "savingsMonthsMean": 8,
+    "savingsSpread": 0.9
+  },
+  "traits": {
+    "perCitizenMin": 3,
+    "perCitizenMax": 5,
+    "keys": [
+      "sociable",
+      "shy",
+      "lazy",
+      "active",
+      "ambitious",
+      "relaxed",
+      "sporty",
+      "bookworm",
+      "foodie",
+      "music_lover",
+      "family_oriented",
+      "independent",
+      "frugal",
+      "generous",
+      "grumpy",
+      "cheerful",
+      "tech_lover",
+      "nature_lover",
+      "night_owl",
+      "early_bird",
+      "football_fan",
+      "curious",
+      "romantic",
+      "neat"
+    ],
+    "opposites": [
+      [
+        "sociable",
+        "shy"
+      ],
+      [
+        "lazy",
+        "active"
+      ],
+      [
+        "ambitious",
+        "relaxed"
+      ],
+      [
+        "frugal",
+        "generous"
+      ],
+      [
+        "grumpy",
+        "cheerful"
+      ],
+      [
+        "night_owl",
+        "early_bird"
+      ],
+      [
+        "family_oriented",
+        "independent"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,164 @@
+using System;
+using System.Collections.Generic;
+using Orbis.Core.World.Fb;
+
+namespace Orbis.Core.Population
+{
+    public enum Sex : byte { Male = 0, Female = 1 }
+
+    /// <summary>Titolo di studio: nessuno, licenza elementare, licenza media, diploma, laurea.</summary>
+    public enum Education : byte { None = 0, Primary = 1, Lower = 2, Upper = 3, Degree = 4 }
+
+    public enum Occupation : byte
+    {
+        Toddler = 0,
+        Pupil,
+        UniversityStudent,
+        Employee,
+        SelfEmployed,
+        Entrepreneur,
+        Unemployed,
+        Homemaker,
+        Retired,
+    }
+
+    /// <summary>Posizione in famiglia.</summary>
+    public enum FamilyRole : byte { Single = 0, Partner, Child, Parent, Relative }
+
+    /// <summary>Tipo di famiglia (stesse categorie ISTAT).</summary>
+    public enum HouseholdType : byte { Alone = 0, Couple, CoupleWithChildren, SingleParent, Other }
+
+    public enum Tenure : byte { Owner = 0, Renter }
+
+    /// <summary>
+    /// Cittadino: un record compatto (docs/01 §6: ogni cittadino esiste sempre come record persistente).
+    /// I riferimenti sono indici: famiglia in <see cref="CityPopulation.Households"/>, lavoro in
+    /// <see cref="CityPopulation.Workplaces"/> (<see cref="WorkOutside"/> = fuori comune), scuola in
+    /// <see cref="CityPopulation.Schools"/>.
+    /// </summary>
+    public struct Citizen
+    {
+        public const int None = -1;
+        public const int WorkOutside = -2;
+
+        public int Household;
+        public int Partner;
+        public int Work;
+        public int School;
+        /// <summary>Giorno di nascita: giorni dall'1/1/1900.</summary>
+        public int BirthDay;
+        /// <summary>Reddito lordo annuo in euro (0 = nessun reddito).</summary>
+        public int Income;
+        /// <summary>Risparmi in euro.</summary>
+        public int Savings;
+        public ushort FirstName;
+        public ushort Surname;
+        public Sex Sex;
+        public Education Education;
+        public Occupation Occupation;
+        public FamilyRole Role;
+        /// <summary>Tratti di personalità: un bit per chiave di <see cref="PopulationBalance.TraitKeys"/>.</summary>
+        public ulong Traits;
+        /// <summary>Aspetto: carnagione, capelli, altezza, corporatura… impacchettati (il personaggio si ricostruisce identico).</summary>
+        public uint Appearance;
+        /// <summary>Gusti: cibo, musica, sport, svago (4 bit ciascuno).</summary>
+        public uint Tastes;
+        // bisogni 0–100 (docs/03 §2)
+        public byte Hunger, Energy, Hygiene, Fun, Social, Comfort, Health;
+        public byte Mood;
+
+        public static readonly DateTime Epoch = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        public DateTime BirthDate => Epoch.AddDays(BirthDay);
+
+        public int AgeOn(DateTime date)
+        {
+            var b = BirthDate;
+            int age = date.Year - b.Year;
+            if (date.Month < b.Month || (date.Month == b.Month && date.Day < b.Day)) age--;
+            return age;
+        }
+
+        public bool HasTrait(int index) => (Traits & (1UL << index)) != 0;
+
+        public bool Works => Occupation == Occupation.Employee || Occupation == Occupation.SelfEmployed || Occupation == Occupation.Entrepreneur;
+    }
+
+    /// <summary>Famiglia: chi ci vive e dove (casa = indice in <see cref="CityPopulation.Dwellings"/>, appartamento).</summary>
+    public sealed class Household
+    {
+        public HouseholdType Type;
+        public int Dwelling = -1;
+        public int Unit;
+        public Tenure Tenure;
+        /// <summary>Affitto in euro al mese (0 se la casa è di proprietà).</summary>
+        public int Rent;
+        public readonly List<int> Members = new List<int>();
+    }
+
+    /// <summary>Edificio abitato del mondo reale (o del catalogo), con la superficie dei piani.</summary>
+    public sealed class Dwelling
+    {
+        public long OsmId;
+        public int TileX, TileY;
+        /// <summary>Posizione in metri nel sistema della regione (WorldFrame).</summary>
+        public float X, Y;
+        public float FloorArea;
+        public int Units;
+        /// <summary>Abitanti che ci stanno (stima dalla superficie).</summary>
+        public int Capacity;
+        public BuildingUse Use;
+        public string Address;
+
+        public Dwelling Clone() => (Dwelling)MemberwiseClone();
+    }
+
+    public enum PlaceLevel : byte { Work = 0, Kindergarten, School, University }
+
+    /// <summary>Posto di lavoro o di studio: edificio non residenziale o attività (POI) dentro un edificio.</summary>
+    public sealed class Place
+    {
+        public long OsmId;
+        public int TileX, TileY;
+        public float X, Y;
+        public PlaceLevel Level;
+        /// <summary>"Hospital", "shop/supermarket", "amenity/bar"…</summary>
+        public string Category;
+        public string Name;
+        /// <summary>Posti (lavoratori o studenti).</summary>
+        public int Capacity;
+        public Education MinEducation;
+
+        public Place Clone() => (Place)MemberwiseClone();
+    }
+
+    /// <summary>Tutti i cittadini di un comune con famiglie, case, posti di lavoro e scuole.</summary>
+    public sealed class CityPopulation
+    {
+        public string MunicipalityCode;
+        public string MunicipalityName;
+        public int Seed;
+        public DateTime Date;
+        public Citizen[] Citizens = Array.Empty<Citizen>();
+        public int Count;
+        public readonly List<Household> Households = new List<Household>();
+        public readonly List<Dwelling> Dwellings = new List<Dwelling>();
+        public readonly List<Place> Workplaces = new List<Place>();
+        public readonly List<Place> Schools = new List<Place>();
+        /// <summary>Tabella dei nomi (Citizen.FirstName) e dei cognomi (Citizen.Surname).</summary>
+        public readonly List<string> FirstNames = new List<string>();
+        public readonly List<string> Surnames = new List<string>();
+        public string[] TraitKeys = Array.Empty<string>();
+
+        public ref Citizen this[int i] => ref Citizens[i];
+
+        public int Add(in Citizen c)
+        {
+            if (Count == Citizens.Length) Array.Resize(ref Citizens, Math.Max(64, Count * 2));
+            Citizens[Count] = c;
+            return Count++;
+        }
+
+        public string FullName(int i) => FirstNames[Citizens[i].FirstName] + " " + Surnames[Citizens[i].Surname];
+    }
+}

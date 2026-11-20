@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Orbis.EditorTools
 {
     /// <summary>
-    /// Copia i dati del gioco da /data (catalogo, bilanciamento, missioni) in Resources, così finiscono in
+    /// Copia i dati del gioco da /data (catalogo, bilanciamento, missioni, popolazione, eventi) in Resources, così finiscono in
     /// tutte le build (docs/01 §3: "dati prima di tutto"; i content pack scaricabili arrivano più avanti).
     /// </summary>
     public static class ContentGenerator
@@ -21,6 +21,12 @@ namespace Orbis.EditorTools
                 changed |= Copy(file, Path.Combine(root, Folder, "catalog_" + Path.GetFileName(file)));
             changed |= Copy(Path.Combine(root, "data", "balance", "economy.json"), Path.Combine(root, Folder, "economy.json"));
             changed |= Copy(Path.Combine(root, "data", "scenarios", "missions.json"), Path.Combine(root, Folder, "missions.json"));
+            // popolazione reale (M4): dati ISTAT/MEF per comune, nomi, parametri del generatore, calendario degli eventi
+            foreach (var file in Directory.GetFiles(Path.Combine(root, "data", "population"), "*.json"))
+                changed |= Copy(file, Path.Combine(root, Folder, "population_" + Path.GetFileName(file)));
+            changed |= Copy(Path.Combine(root, "data", "balance", "population.json"), Path.Combine(root, Folder, "population_balance.json"));
+            foreach (var file in Directory.GetFiles(Path.Combine(root, "data", "events"), "*.json"))
+                changed |= Copy(file, Path.Combine(root, Folder, "events_" + Path.GetFileName(file)));
             if (changed) AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         }
 

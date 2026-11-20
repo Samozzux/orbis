@@ -1,0 +1,775 @@
+{
+  "format": 1,
+  "region": "chieti",
+  "municipality": {
+    "istat": "069022",
+    "name": "Chieti"
+  },
+  "population_date": "2026-01-01",
+  "sources": [
+    {
+      "name": "ISTAT — Popolazione residente per età e sesso al 1° gennaio (demo.istat.it)",
+      "license": "CC BY 4.0"
+    },
+    {
+      "name": "ISTAT — Bilancio demografico (demo.istat.it)",
+      "license": "CC BY 4.0"
+    },
+    {
+      "name": "ISTAT — Previsioni delle famiglie, base 1/1/2025 (demo.istat.it)",
+      "license": "CC BY 4.0"
+    },
+    {
+      "name": "ISTAT — Tavole di mortalità provinciali (demo.istat.it)",
+      "license": "CC BY 4.0"
+    },
+    {
+      "name": "MEF - Dipartimento delle Finanze — Redditi e principali variabili IRPEF su base comunale",
+      "license": "CC BY 3.0 IT"
+    }
+  ],
+  "population": {
+    "total": 48368,
+    "male": [123, 143, 145, 138, 156, 136, 153, 154, 153, 174, 173, 196, 187, 209, 213, 235, 227, 212, 220, 217, 233, 245, 237, 236, 285, 256, 283, 246, 241, 245, 261, 252, 259, 271, 253, 279, 280, 309, 250, 257, 267, 278, 285, 281, 265, 306, 327, 336, 279, 302, 355, 344, 330, 361, 364, 381, 368, 382, 347, 392, 396, 409, 338, 381, 366, 333, 347, 304, 298, 305, 273, 276, 297, 271, 262, 288, 297, 278, 278, 271, 160, 174, 160, 159, 143, 151, 142, 114, 94, 75, 77, 58, 35, 30, 17, 17, 13, 4, 6, 3, 5],
+    "female": [131, 135, 144, 132, 141, 148, 142, 155, 182, 172, 153, 179, 187, 195, 200, 202, 211, 222, 225, 219, 219, 220, 208, 233, 264, 214, 228, 235, 235, 252, 248, 243, 255, 261, 235, 265, 288, 283, 255, 255, 271, 268, 285, 278, 284, 279, 280, 330, 315, 313, 357, 334, 350, 370, 420, 404, 386, 418, 405, 416, 416, 448, 387, 375, 394, 411, 393, 386, 387, 336, 351, 371, 344, 345, 330, 339, 322, 347, 325, 294, 227, 248, 224, 231, 218, 232, 221, 156, 177, 151, 140, 108, 97, 84, 59, 44, 36, 25, 22, 14, 22]
+  },
+  "balance": {
+    "year": 2025,
+    "births": 247,
+    "deaths": 581,
+    "moved_in": 1254,
+    "moved_out": 1142,
+    "immigrated": 324,
+    "emigrated": 137,
+    "population_start": 48403,
+    "population_end": 48368
+  },
+  "households": {
+    "region": "Abruzzo",
+    "year": 2025,
+    "size": {
+      "average": 2.19,
+      "average_with_nucleus": 2.88
+    },
+    "types": {
+      "alone_male": 100439,
+      "alone_female": 112420,
+      "couple_no_children": 109912,
+      "couple_young_children": 100929,
+      "couple_adult_children": 63237,
+      "father_young_children": 3549,
+      "father_adult_children": 7822,
+      "mother_young_children": 22472,
+      "mother_adult_children": 34375,
+      "other": 20468
+    },
+    "position_keys": ["alone_male", "alone_female", "couple_no_children", "couple_young_children", "couple_adult_children", "father_young_children", "father_adult_children", "mother_young_children", "mother_adult_children", "child", "other"],
+    "positions_by_age": [
+      {
+        "from": 0,
+        "to": 4,
+        "counts": [0, 0, 0, 0, 0, 0, 0, 0, 0, 38188, 2057]
+      },
+      {
+        "from": 5,
+        "to": 9,
+        "counts": [0, 0, 0, 0, 0, 0, 0, 0, 0, 46440, 2053]
+      },
+      {
+        "from": 10,
+        "to": 14,
+        "counts": [0, 0, 0, 0, 0, 0, 0, 0, 0, 54637, 1180]
+      },
+      {
+        "from": 15,
+        "to": 19,
+        "counts": [218, 0, 0, 0, 0, 0, 0, 0, 0, 56703, 2062]
+      },
+      {
+        "from": 20,
+        "to": 24,
+        "counts": [1744, 1002, 525, 451, 0, 26, 0, 63, 0, 53510, 2794]
+      },
+      {
+        "from": 25,
+        "to": 29,
+        "counts": [5776, 3484, 3777, 5935, 0, 0, 0, 1104, 0, 37260, 3911]
+      },
+      {
+        "from": 30,
+        "to": 34,
+        "counts": [6921, 3402, 7420, 16215, 0, 309, 0, 2025, 0, 24878, 4950]
+      },
+      {
+        "from": 35,
+        "to": 39,
+        "counts": [6717, 3015, 7851, 30986, 0, 30, 0, 2908, 0, 14925, 4920]
+      },
+      {
+        "from": 40,
+        "to": 44,
+        "counts": [7082, 4050, 6653, 40309, 359, 477, 0, 4228, 201, 10166, 4937]
+      },
+      {
+        "from": 45,
+        "to": 49,
+        "counts": [8119, 5362, 8464, 44148, 3733, 757, 138, 5708, 1081, 7298, 5235]
+      },
+      {
+        "from": 50,
+        "to": 54,
+        "counts": [11158, 6076, 9165, 38777, 13243, 860, 547, 4753, 4143, 6499, 4933]
+      },
+      {
+        "from": 55,
+        "to": 59,
+        "counts": [11483, 8604, 17203, 17023, 30629, 690, 1663, 1485, 5049, 4315, 6521]
+      },
+      {
+        "from": 60,
+        "to": 64,
+        "counts": [10530, 8731, 28073, 6619, 28639, 267, 1364, 199, 5800, 1807, 5429]
+      },
+      {
+        "from": 65,
+        "to": 69,
+        "counts": [7841, 9856, 34659, 1152, 21459, 61, 1195, 0, 3543, 336, 5585]
+      },
+      {
+        "from": 70,
+        "to": 74,
+        "counts": [6497, 11879, 34868, 244, 13282, 0, 745, 0, 3096, 227, 4586]
+      },
+      {
+        "from": 75,
+        "to": 79,
+        "counts": [6587, 13800, 28855, 0, 8929, 72, 215, 0, 3879, 51, 4550]
+      },
+      {
+        "from": 80,
+        "to": 84,
+        "counts": [3956, 11751, 18767, 0, 4193, 0, 991, 0, 2690, 0, 4148]
+      },
+      {
+        "from": 85,
+        "to": 100,
+        "counts": [5811, 21407, 13544, 0, 2009, 0, 963, 0, 4893, 0, 6447]
+      }
+    ]
+  },
+  "mortality": {
+    "year": 2025,
+    "male": [0.0016228, 7.87e-05, 7.29e-05, 6.71e-05, 6.13e-05, 1.39e-05, 3.11e-05, 4.83e-05, 6.55e-05, 8.27e-05, 8.41e-05, 9.86e-05, 0.0001131, 0.0001379, 0.000173, 0.0002357, 0.0002754, 0.0003151, 0.0003336, 0.0003307, 0.0002747, 0.0002723, 0.0002699, 0.0002868, 0.0003231, 0.0004194, 0.0004617, 0.0005041, 0.0005137, 0.0004905, 0.0003835, 0.0003644, 0.0003454, 0.0003602, 0.0004087, 0.0004978, 0.0005506, 0.0006035, 0.0007039, 0.0008518, 0.0010909, 0.0012524, 0.0014138, 0.0015517, 0.0016661, 0.0017368, 0.0018484, 0.00196, 0.0020328, 0.0020669, 0.0018589, 0.0018891, 0.0019193, 0.0021656, 0.002628, 0.0035136, 0.0040392, 0.0045648, 0.0051248, 0.0057191, 0.006174, 0.0067551, 0.0073363, 0.0080212, 0.0088098, 0.0093314, 0.0100982, 0.0108649, 0.0121194, 0.0138615, 0.0161666, 0.017971, 0.0197753, 0.0218218, 0.0241103, 0.0252996, 0.0274939, 0.0296882, 0.0335457, 0.0390666, 0.0462306, 0.0519499, 0.0576682, 0.0648047, 0.0733585, 0.0800698, 0.0884365, 0.0968028, 0.1095824, 0.1267743, 0.1473825, 0.1649383, 0.1824829, 0.2038553, 0.2290457, 0.2558412, 0.2811101, 0.3063458, 0.3337358, 0.3632686, 0.391519, 0.42089, 0.4502113, 0.4815384, 0.5148557, 0.5512571, 0.5844643, 0.6175605, 0.6483773, 0.6769293, 0.7056021, 0.7339289, 0.7621277, 0.7861872, 0.8061511, 0.8251017, 0.8449306, 0.8646593, 0.8805943, 0.8927812],
+    "female": [0.0027653, 0.0001469, 0.0001489, 0.000151, 0.0001531, 0.00019, 0.0001702, 0.0001504, 0.0001305, 0.0001107, 6.19e-05, 4.83e-05, 3.48e-05, 3.29e-05, 4.26e-05, 8.5e-05, 0.0001007, 0.0001165, 0.000137, 0.0001622, 0.0001971, 0.0002236, 0.0002502, 0.0002669, 0.0002738, 0.000253, 0.0002592, 0.0002654, 0.0002822, 0.0003096, 0.000362, 0.0003913, 0.0004207, 0.000441, 0.0004521, 0.0003991, 0.0004087, 0.0004182, 0.0004876, 0.0006168, 0.0009341, 0.0010959, 0.0012576, 0.0013195, 0.0012815, 0.0009933, 0.0009629, 0.0009325, 0.0009996, 0.001164, 0.0015736, 0.0017683, 0.0019631, 0.002099, 0.0021761, 0.0020888, 0.0021603, 0.0022318, 0.0023567, 0.0025351, 0.0026622, 0.0028372, 0.0030123, 0.0033834, 0.0039507, 0.0048395, 0.0054471, 0.0060546, 0.0066799, 0.007323, 0.0073886, 0.0079852, 0.0085819, 0.0098734, 0.01186, 0.0144468, 0.016519, 0.0185911, 0.021614, 0.0255876, 0.0292288, 0.033158, 0.0370872, 0.0433164, 0.0518454, 0.061399, 0.0700669, 0.0787332, 0.0907016, 0.1059694, 0.1234655, 0.1389813, 0.1544862, 0.1720886, 0.191783, 0.2090941, 0.2285647, 0.2480224, 0.2715176, 0.2990396, 0.3283534, 0.355927, 0.3834619, 0.41378, 0.4468646, 0.4823863, 0.5154128, 0.5483495, 0.58055, 0.6120135, 0.6444361, 0.675681, 0.7067978, 0.7343309, 0.7583135, 0.7816764, 0.8054677, 0.8291394, 0.848779, 0.864434]
+  },
+  "income": {
+    "year": 2024,
+    "taxpayers": 36435,
+    "total": {
+      "count": 35059,
+      "amount": 874546058
+    },
+    "classes": [
+      {
+        "from": null,
+        "to": 0,
+        "count": 0,
+        "amount": 0
+      },
+      {
+        "from": 0,
+        "to": 10000,
+        "count": 8200,
+        "amount": 34436318
+      },
+      {
+        "from": 10000,
+        "to": 15000,
+        "count": 3572,
+        "amount": 44847927
+      },
+      {
+        "from": 15000,
+        "to": 26000,
+        "count": 9528,
+        "amount": 198481512
+      },
+      {
+        "from": 26000,
+        "to": 55000,
+        "count": 11727,
+        "amount": 408291106
+      },
+      {
+        "from": 55000,
+        "to": 75000,
+        "count": 913,
+        "amount": 58422994
+      },
+      {
+        "from": 75000,
+        "to": 120000,
+        "count": 825,
+        "amount": 74998694
+      },
+      {
+        "from": 120000,
+        "to": null,
+        "count": 294,
+        "amount": 55067507
+      }
+    ],
+    "kinds": {
+      "employee": {
+        "count": 18941,
+        "amount": 431980018
+      },
+      "pension": {
+        "count": 13482,
+        "amount": 324462266
+      },
+      "self_employed": {
+        "count": 614,
+        "amount": 33857130
+      },
+      "business": {
+        "count": 747,
+        "amount": 15821786
+      },
+      "partnership": {
+        "count": 852,
+        "amount": 16053237
+      },
+      "buildings": {
+        "count": 16727,
+        "amount": 20001344
+      }
+    }
+  },
+  "province": {
+    "code": "069",
+    "name": "Chieti",
+    "municipalities": [
+      {
+        "istat": "069001",
+        "name": "Altino",
+        "population": 3010
+      },
+      {
+        "istat": "069002",
+        "name": "Archi",
+        "population": 1929
+      },
+      {
+        "istat": "069003",
+        "name": "Ari",
+        "population": 1071
+      },
+      {
+        "istat": "069004",
+        "name": "Arielli",
+        "population": 1042
+      },
+      {
+        "istat": "069005",
+        "name": "Atessa",
+        "population": 10208
+      },
+      {
+        "istat": "069006",
+        "name": "Bomba",
+        "population": 686
+      },
+      {
+        "istat": "069007",
+        "name": "Borrello",
+        "population": 328
+      },
+      {
+        "istat": "069008",
+        "name": "Bucchianico",
+        "population": 4892
+      },
+      {
+        "istat": "069009",
+        "name": "Montebello sul Sangro",
+        "population": 80
+      },
+      {
+        "istat": "069010",
+        "name": "Canosa Sannita",
+        "population": 1207
+      },
+      {
+        "istat": "069011",
+        "name": "Carpineto Sinello",
+        "population": 486
+      },
+      {
+        "istat": "069012",
+        "name": "Carunchio",
+        "population": 535
+      },
+      {
+        "istat": "069013",
+        "name": "Casacanditella",
+        "population": 1172
+      },
+      {
+        "istat": "069014",
+        "name": "Casalanguida",
+        "population": 789
+      },
+      {
+        "istat": "069015",
+        "name": "Casalbordino",
+        "population": 5591
+      },
+      {
+        "istat": "069016",
+        "name": "Casalincontrada",
+        "population": 2960
+      },
+      {
+        "istat": "069017",
+        "name": "Casoli",
+        "population": 5033
+      },
+      {
+        "istat": "069018",
+        "name": "Castel Frentano",
+        "population": 4181
+      },
+      {
+        "istat": "069019",
+        "name": "Castelguidone",
+        "population": 270
+      },
+      {
+        "istat": "069020",
+        "name": "Castiglione Messer Marino",
+        "population": 1398
+      },
+      {
+        "istat": "069021",
+        "name": "Celenza sul Trigno",
+        "population": 758
+      },
+      {
+        "istat": "069022",
+        "name": "Chieti",
+        "population": 48368
+      },
+      {
+        "istat": "069023",
+        "name": "Civitaluparella",
+        "population": 272
+      },
+      {
+        "istat": "069024",
+        "name": "Civitella Messer Raimondo",
+        "population": 738
+      },
+      {
+        "istat": "069025",
+        "name": "Colledimacine",
+        "population": 149
+      },
+      {
+        "istat": "069026",
+        "name": "Colledimezzo",
+        "population": 401
+      },
+      {
+        "istat": "069027",
+        "name": "Crecchio",
+        "population": 2550
+      },
+      {
+        "istat": "069028",
+        "name": "Cupello",
+        "population": 4899
+      },
+      {
+        "istat": "069029",
+        "name": "Dogliola",
+        "population": 304
+      },
+      {
+        "istat": "069030",
+        "name": "Fara Filiorum Petri",
+        "population": 1972
+      },
+      {
+        "istat": "069031",
+        "name": "Fara San Martino",
+        "population": 1253
+      },
+      {
+        "istat": "069032",
+        "name": "Filetto",
+        "population": 807
+      },
+      {
+        "istat": "069033",
+        "name": "Fossacesia",
+        "population": 6269
+      },
+      {
+        "istat": "069034",
+        "name": "Fraine",
+        "population": 238
+      },
+      {
+        "istat": "069035",
+        "name": "Francavilla al Mare",
+        "population": 25521
+      },
+      {
+        "istat": "069036",
+        "name": "Fresagrandinaria",
+        "population": 913
+      },
+      {
+        "istat": "069037",
+        "name": "Frisa",
+        "population": 1594
+      },
+      {
+        "istat": "069038",
+        "name": "Furci",
+        "population": 779
+      },
+      {
+        "istat": "069039",
+        "name": "Gamberale",
+        "population": 267
+      },
+      {
+        "istat": "069040",
+        "name": "Gessopalena",
+        "population": 1137
+      },
+      {
+        "istat": "069041",
+        "name": "Gissi",
+        "population": 2401
+      },
+      {
+        "istat": "069042",
+        "name": "Giuliano Teatino",
+        "population": 1105
+      },
+      {
+        "istat": "069043",
+        "name": "Guardiagrele",
+        "population": 8161
+      },
+      {
+        "istat": "069044",
+        "name": "Guilmi",
+        "population": 443
+      },
+      {
+        "istat": "069045",
+        "name": "Lama dei Peligni",
+        "population": 1007
+      },
+      {
+        "istat": "069046",
+        "name": "Lanciano",
+        "population": 33843
+      },
+      {
+        "istat": "069047",
+        "name": "Lentella",
+        "population": 653
+      },
+      {
+        "istat": "069048",
+        "name": "Lettopalena",
+        "population": 306
+      },
+      {
+        "istat": "069049",
+        "name": "Liscia",
+        "population": 623
+      },
+      {
+        "istat": "069050",
+        "name": "Miglianico",
+        "population": 4620
+      },
+      {
+        "istat": "069051",
+        "name": "Montazzoli",
+        "population": 790
+      },
+      {
+        "istat": "069052",
+        "name": "Monteferrante",
+        "population": 100
+      },
+      {
+        "istat": "069053",
+        "name": "Montelapiano",
+        "population": 68
+      },
+      {
+        "istat": "069054",
+        "name": "Montenerodomo",
+        "population": 562
+      },
+      {
+        "istat": "069055",
+        "name": "Monteodorisio",
+        "population": 2314
+      },
+      {
+        "istat": "069056",
+        "name": "Mozzagrogna",
+        "population": 2422
+      },
+      {
+        "istat": "069057",
+        "name": "Orsogna",
+        "population": 3595
+      },
+      {
+        "istat": "069058",
+        "name": "Ortona",
+        "population": 21921
+      },
+      {
+        "istat": "069059",
+        "name": "Paglieta",
+        "population": 4100
+      },
+      {
+        "istat": "069060",
+        "name": "Palena",
+        "population": 1196
+      },
+      {
+        "istat": "069061",
+        "name": "Palmoli",
+        "population": 851
+      },
+      {
+        "istat": "069062",
+        "name": "Palombaro",
+        "population": 921
+      },
+      {
+        "istat": "069063",
+        "name": "Pennadomo",
+        "population": 201
+      },
+      {
+        "istat": "069064",
+        "name": "Pennapiedimonte",
+        "population": 365
+      },
+      {
+        "istat": "069065",
+        "name": "Perano",
+        "population": 1463
+      },
+      {
+        "istat": "069066",
+        "name": "Pizzoferrato",
+        "population": 949
+      },
+      {
+        "istat": "069067",
+        "name": "Poggiofiorito",
+        "population": 751
+      },
+      {
+        "istat": "069068",
+        "name": "Pollutri",
+        "population": 2016
+      },
+      {
+        "istat": "069069",
+        "name": "Pretoro",
+        "population": 859
+      },
+      {
+        "istat": "069070",
+        "name": "Quadri",
+        "population": 672
+      },
+      {
+        "istat": "069071",
+        "name": "Rapino",
+        "population": 1115
+      },
+      {
+        "istat": "069072",
+        "name": "Ripa Teatina",
+        "population": 3899
+      },
+      {
+        "istat": "069073",
+        "name": "Roccamontepiano",
+        "population": 1533
+      },
+      {
+        "istat": "069074",
+        "name": "Rocca San Giovanni",
+        "population": 2299
+      },
+      {
+        "istat": "069075",
+        "name": "Roccascalegna",
+        "population": 1011
+      },
+      {
+        "istat": "069076",
+        "name": "Roccaspinalveti",
+        "population": 1121
+      },
+      {
+        "istat": "069077",
+        "name": "Roio del Sangro",
+        "population": 101
+      },
+      {
+        "istat": "069078",
+        "name": "Rosello",
+        "population": 175
+      },
+      {
+        "istat": "069079",
+        "name": "San Buono",
+        "population": 835
+      },
+      {
+        "istat": "069080",
+        "name": "San Giovanni Lipioni",
+        "population": 139
+      },
+      {
+        "istat": "069081",
+        "name": "San Giovanni Teatino",
+        "population": 14541
+      },
+      {
+        "istat": "069082",
+        "name": "San Martino sulla Marrucina",
+        "population": 868
+      },
+      {
+        "istat": "069083",
+        "name": "San Salvo",
+        "population": 19918
+      },
+      {
+        "istat": "069084",
+        "name": "Santa Maria Imbaro",
+        "population": 2022
+      },
+      {
+        "istat": "069085",
+        "name": "Sant'Eusanio del Sangro",
+        "population": 2224
+      },
+      {
+        "istat": "069086",
+        "name": "San Vito Chietino",
+        "population": 5058
+      },
+      {
+        "istat": "069087",
+        "name": "Scerni",
+        "population": 2901
+      },
+      {
+        "istat": "069088",
+        "name": "Schiavi di Abruzzo",
+        "population": 616
+      },
+      {
+        "istat": "069089",
+        "name": "Taranta Peligna",
+        "population": 301
+      },
+      {
+        "istat": "069090",
+        "name": "Tollo",
+        "population": 3868
+      },
+      {
+        "istat": "069091",
+        "name": "Torino di Sangro",
+        "population": 2925
+      },
+      {
+        "istat": "069092",
+        "name": "Tornareccio",
+        "population": 1640
+      },
+      {
+        "istat": "069093",
+        "name": "Torrebruna",
+        "population": 635
+      },
+      {
+        "istat": "069094",
+        "name": "Torrevecchia Teatina",
+        "population": 4183
+      },
+      {
+        "istat": "069095",
+        "name": "Torricella Peligna",
+        "population": 1077
+      },
+      {
+        "istat": "069096",
+        "name": "Treglio",
+        "population": 1721
+      },
+      {
+        "istat": "069097",
+        "name": "Tufillo",
+        "population": 307
+      },
+      {
+        "istat": "069098",
+        "name": "Vacri",
+        "population": 1471
+      },
+      {
+        "istat": "069099",
+        "name": "Vasto",
+        "population": 40920
+      },
+      {
+        "istat": "069100",
+        "name": "Villalfonsina",
+        "population": 855
+      },
+      {
+        "istat": "069101",
+        "name": "Villamagna",
+        "population": 2126
+      },
+      {
+        "istat": "069102",
+        "name": "Villa Santa Maria",
+        "population": 1072
+      },
+      {
+        "istat": "069103",
+        "name": "Pietraferrazzana",
+        "population": 126
+      },
+      {
+        "istat": "069104",
+        "name": "Fallo",
+        "population": 121
+      }
+    ]
+  }
+}
