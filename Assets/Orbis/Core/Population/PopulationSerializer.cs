@@ -12,7 +12,7 @@ namespace Orbis.Core.Population
     /// </summary>
     public static class PopulationSerializer
     {
-        public const int Version = 1;
+        public const int Version = 2; // 2: stato dei cittadini, conti delle attività, contatori della vita
         private const uint Magic = 0x504F5043; // "CPOP"
 
         public static void Write(BinaryWriter w, CityPopulation p)
@@ -23,6 +23,14 @@ namespace Orbis.Core.Population
             w.Write(p.MunicipalityName ?? "");
             w.Write(p.Seed);
             w.Write(p.Date.Ticks);
+            w.Write(p.ExternalIn);
+            w.Write(p.ExternalOut);
+            w.Write(p.Births);
+            w.Write(p.Deaths);
+            w.Write(p.Arrived);
+            w.Write(p.Left);
+            w.Write(p.LastDay);
+            w.Write(p.LastWelfare);
             Strings(w, p.TraitKeys);
             Strings(w, p.FirstNames);
             Strings(w, p.Surnames);
@@ -84,6 +92,7 @@ namespace Orbis.Core.Population
                 w.Write(c.Comfort);
                 w.Write(c.Health);
                 w.Write(c.Mood);
+                w.Write((byte)c.Flags);
             }
         }
 
@@ -99,6 +108,17 @@ namespace Orbis.Core.Population
                 Seed = r.ReadInt32(),
                 Date = new DateTime(r.ReadInt64(), DateTimeKind.Utc),
             };
+            if (version >= 2)
+            {
+                p.ExternalIn = r.ReadInt64();
+                p.ExternalOut = r.ReadInt64();
+                p.Births = r.ReadInt32();
+                p.Deaths = r.ReadInt32();
+                p.Arrived = r.ReadInt32();
+                p.Left = r.ReadInt32();
+                p.LastDay = r.ReadInt32();
+                p.LastWelfare = r.ReadInt64();
+            }
             p.TraitKeys = ReadStrings(r).ToArray();
             p.FirstNames.AddRange(ReadStrings(r));
             p.Surnames.AddRange(ReadStrings(r));
@@ -118,8 +138,8 @@ namespace Orbis.Core.Population
                     Use = (BuildingUse)r.ReadByte(),
                     Address = r.ReadString(),
                 });
-            ReadPlaces(r, p.Workplaces);
-            ReadPlaces(r, p.Schools);
+            ReadPlaces(r, p.Workplaces, version);
+            ReadPlaces(r, p.Schools, version);
 
             int households = Count(r);
             for (int i = 0; i < households; i++)
@@ -168,6 +188,7 @@ namespace Orbis.Core.Population
                     Health = r.ReadByte(),
                     Mood = r.ReadByte(),
                 };
+                if (version >= 2) c.Flags = (CitizenFlags)r.ReadByte();
                 p.Add(c);
             }
             Validate(p);
@@ -231,14 +252,21 @@ namespace Orbis.Core.Population
                 w.Write(p.Name ?? "");
                 w.Write(p.Capacity);
                 w.Write((byte)p.MinEducation);
+                w.Write(p.Public);
+                w.Write(p.Closed);
+                w.Write(p.Cash);
+                w.Write(p.RevenueDay);
+                w.Write(p.CostsDay);
+                w.Write(p.BadMonths);
             }
         }
 
-        private static void ReadPlaces(BinaryReader r, List<Place> list)
+        private static void ReadPlaces(BinaryReader r, List<Place> list, int version)
         {
             int n = Count(r);
             for (int i = 0; i < n; i++)
-                list.Add(new Place
+            {
+                var place = new Place
                 {
                     OsmId = r.ReadInt64(),
                     TileX = r.ReadInt32(),
@@ -250,7 +278,18 @@ namespace Orbis.Core.Population
                     Name = r.ReadString(),
                     Capacity = r.ReadInt32(),
                     MinEducation = (Education)r.ReadByte(),
-                });
+                };
+                if (version >= 2)
+                {
+                    place.Public = r.ReadBoolean();
+                    place.Closed = r.ReadBoolean();
+                    place.Cash = r.ReadInt64();
+                    place.RevenueDay = r.ReadInt64();
+                    place.CostsDay = r.ReadInt64();
+                    place.BadMonths = r.ReadByte();
+                }
+                list.Add(place);
+            }
         }
 
         private static void Strings(BinaryWriter w, IReadOnlyList<string> list)

@@ -27,9 +27,12 @@ namespace Orbis.Core.Game
             public double ResidentialTax, CommercialTax, IndustrialTax, Rent, PublicLand, Production;
             public double EnergySales, EnergyPurchase, Maintenance, Services;
             public float PowerKw, Happiness;
+            /// <summary>Con la popolazione (M4): tasse di cittadini e attività e aiuti sociali, stimati sul giorno
+            /// (li registra la vita dei cittadini, qui servono alla previsione).</summary>
+            public double CitizensTax, BusinessTax, Welfare;
 
             public double Net => ResidentialTax + CommercialTax + IndustrialTax + Rent + PublicLand + Production + EnergySales
-                                 - EnergyPurchase - Maintenance - Services;
+                                 + CitizensTax + BusinessTax - Welfare - EnergyPurchase - Maintenance - Services;
         }
 
         public static Figures Compute(GameContext ctx)
@@ -38,7 +41,11 @@ namespace Orbis.Core.Game
             var b = ctx.Balance;
             var f = new Figures();
             float mult = b.IncomeMultiplier(s.Config.Difficulty);
-            int residents = b.BasePopulation, com = (int)(b.BaseJobs * b.CommercialJobShare), ind = b.BaseJobs - com;
+            // con la popolazione vera (M4) la città esistente non si stima: le tasse le pagano i cittadini e le attività
+            var pop = ctx.Population;
+            int residents = pop != null ? 0 : b.BasePopulation;
+            int com = pop != null ? 0 : (int)(b.BaseJobs * b.CommercialJobShare);
+            int ind = pop != null ? 0 : b.BaseJobs - com;
             double rent = 0, production = 0, maintenance = 0, power = 0, happiness = 0;
             foreach (var o in s.Objects.Values)
             {
@@ -63,12 +70,23 @@ namespace Orbis.Core.Game
                 rent += kv.Value.FloorArea * b.UpgradeOsmRentPerM2Month * (kv.Value.Level - 1) / 30.0;
                 happiness += 0.1 * (kv.Value.Level - 1);
             }
-            f.Population = residents;
-            f.CommercialJobs = com;
-            f.IndustrialJobs = ind;
             f.ResidentialTax = residents * b.IncomePerResidentYear / 365.0 * s.ResidentialTax / 100.0 * mult;
             f.CommercialTax = com * b.RevenuePerJobYear / 365.0 * s.CommercialTax / 100.0 * mult;
             f.IndustrialTax = ind * b.RevenuePerJobYear / 365.0 * s.IndustrialTax / 100.0 * mult;
+            if (pop != null && ctx.Life != null)
+            {
+                var sum = ctx.Life.Summarize(pop, ctx.TaxRates);
+                residents += sum.Alive;
+                com += sum.CommercialJobs;
+                ind += sum.IndustrialJobs;
+                f.CitizensTax = sum.ResidentialTaxDay;
+                f.BusinessTax = sum.CommercialTaxDay + sum.IndustrialTaxDay;
+                f.Welfare = sum.WelfareDay;
+            }
+            else if (pop != null) residents += pop.AliveCount;
+            f.Population = residents;
+            f.CommercialJobs = com;
+            f.IndustrialJobs = ind;
             f.Rent = rent * mult;
             f.Production = production * mult;
             f.PublicLand = residents * b.PublicLandPerResidentYear / 365.0 * mult;
@@ -76,7 +94,7 @@ namespace Orbis.Core.Game
             if (power > 0) f.EnergySales = power * 24 * b.EnergySellPerKwh;
             else f.EnergyPurchase = -power * 24 * b.EnergyBuyPerKwh;
             f.Maintenance = maintenance;
-            f.Services = b.BaseServicesPerDay + residents * b.ServiceCostPerResidentYear / 365.0;
+            f.Services = b.BaseServicesPerDay + residents * b.ServiceCostPerResidentYear / 365.0 + s.ServicesAdjustPerDay;
             float taxPenalty = (s.ResidentialTax - b.ResidentialTax.Default) * b.HappinessPerTaxPoint
                                + (s.CommercialTax - b.CommercialTax.Default) * b.HappinessPerTaxPoint * 0.5f
                                + (s.IndustrialTax - b.IndustrialTax.Default) * b.HappinessPerTaxPoint * 0.3f;
@@ -85,10 +103,18 @@ namespace Orbis.Core.Game
         }
 
         /// <summary>Chiude la giornata: registra entrate e uscite e aggiorna gli indicatori.</summary>
-        public static Figures CloseDay(GameContext ctx)
+        /// <param name="life">giornata dei cittadini appena simulata: le sue tasse e i suoi aiuti sono già registrati,
+        /// qui entrano solo nel saldo del giorno (al posto della stima)</param>
+        public static Figures CloseDay(GameContext ctx, Orbis.Core.Population.LifeDay life = null)
         {
             var s = ctx.State;
             var f = Compute(ctx);
+            if (life != null && !life.Skipped)
+            {
+                f.CitizensTax = life.ResidentialTax;
+                f.BusinessTax = life.CommercialTax + life.IndustrialTax;
+                f.Welfare = life.Welfare;
+            }
             s.Transact(LedgerCategory.ResidentialTax, Round(f.ResidentialTax));
             s.Transact(LedgerCategory.CommercialTax, Round(f.CommercialTax));
             s.Transact(LedgerCategory.IndustrialTax, Round(f.IndustrialTax));
@@ -120,6 +146,17 @@ namespace Orbis.Core.Game
         /// <summary>Chiamato a ogni mezzanotte di gioco, dopo l'economia (per le istantanee).</summary>
         public event Action<GameContext> Midnight;
 
+        private static LedgerCategory Ledger(Orbis.Core.Population.CityFlow flow)
+        {
+            switch (flow)
+            {
+                case Orbis.Core.Population.CityFlow.ResidentialTax: return LedgerCategory.ResidentialTax;
+                case Orbis.Core.Population.CityFlow.CommercialTax: return LedgerCategory.CommercialTax;
+                case Orbis.Core.Population.CityFlow.IndustrialTax: return LedgerCategory.IndustrialTax;
+                default: return LedgerCategory.Services;
+            }
+        }
+
         public List<SimEvent> Advance(GameContext ctx, TimeSpan span, List<SimEvent> events = null)
         {
             events = events ?? new List<SimEvent>();
@@ -139,7 +176,11 @@ namespace Orbis.Core.Game
                     // la giornata appena finita si registra con la sua data
                     var closing = s.Now;
                     s.Now = closing.AddTicks(-1);
-                    var f = Economy.CloseDay(ctx);
+                    // prima la giornata dei cittadini (stipendi, spese, tasse, nascite…), poi i conti del comune
+                    Orbis.Core.Population.LifeDay life = null;
+                    if (ctx.Population != null && ctx.Life != null)
+                        life = ctx.Life.Day(ctx.Population, closing.AddDays(-1), ctx.TaxRates, s.Config.LifeCycle, (flow, amount) => s.Transact(Ledger(flow), amount));
+                    var f = Economy.CloseDay(ctx, life);
                     s.Now = closing;
                     events.Add(new SimEvent { Kind = SimEventKind.DayClosed, Time = closing, Amount = s.Stats.LastDayNet });
                     Midnight?.Invoke(ctx);

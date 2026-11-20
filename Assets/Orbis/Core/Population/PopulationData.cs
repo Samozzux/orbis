@@ -191,7 +191,7 @@ namespace Orbis.Core.Population
         public readonly Dictionary<string, int> PoiJobs = new Dictionary<string, int>();
         public readonly Dictionary<string, int> MinEducation = new Dictionary<string, int>();
         public int MaxJobsPerPlace = 1500;
-        public double LocalWorkShare = 0.7;
+        public double LocalWorkShare = 0.7, JobsPerLocalWorker = 1.45;
         public int WorkFromAge = 19, RetirementAge = 67, EarlyPensionFromAge = 58;
         public readonly List<(int From, int To, double Weight)> EmploymentByAge = new List<(int, int, double)>();
         public double HomemakerShareFemale = 0.55;
@@ -207,6 +207,20 @@ namespace Orbis.Core.Population
         public double OtherHouseholdSize = 2.4;
 
         public double SavingsMonthsMean = 8, SavingsSpread = 0.9;
+
+        // vita giornaliera (sezione "life")
+        public double NetIncomeShare = 0.78, SpendingShare = 0.85, SubsistencePerPersonDay = 9, UtilitiesPerPersonMonth = 55;
+        public double LocalSpendingShare = 0.6, DebtLimitPerAdult = 3000, CityWelfareShare = 0.25, CashBufferMonths = 3;
+        public readonly HashSet<string> PublicCategories = new HashSet<string>();
+        public readonly HashSet<string> ConsumerCategories = new HashSet<string>();
+        public readonly HashSet<string> IndustrialCategories = new HashSet<string>();
+        public double ProductivityPerJobDay = 175, ConsumerExternalPerJobDay = 40, OperatingCostShare = 0.35, InitialCashPerJob = 4000;
+        public double BadCashMonthsOfWages = 2;
+        public int CloseAfterBadMonths = 4;
+        public double JobLossPerYear = 0.07;
+        public double JobSearchDays = 75, PensionReplacement = 0.7, FertilityPeakAge = 32, FertilitySd = 5.5;
+        public double ArrivalAgeMean = 33, ArrivalAgeSd = 9, ArrivalJobChance = 0.6, ArrivalSavingsMonths = 4;
+        public int DepartureMinAge = 18;
 
         public int TraitsMin = 3, TraitsMax = 5;
         public string[] TraitKeys = Array.Empty<string>();
@@ -235,6 +249,7 @@ namespace Orbis.Core.Population
             foreach (var k in w["minEducation"].Keys) b.MinEducation[k] = w["minEducation"][k].AsInt();
             b.MaxJobsPerPlace = w["maxJobsPerPlace"].AsInt(b.MaxJobsPerPlace);
             b.LocalWorkShare = w["localShare"].AsDouble(b.LocalWorkShare);
+            b.JobsPerLocalWorker = w["jobsPerLocalWorker"].AsDouble(b.JobsPerLocalWorker);
             b.WorkFromAge = w["workFromAge"].AsInt(b.WorkFromAge);
             b.RetirementAge = w["retirementAge"].AsInt(b.RetirementAge);
             b.EarlyPensionFromAge = w["earlyPensionFromAge"].AsInt(b.EarlyPensionFromAge);
@@ -270,6 +285,35 @@ namespace Orbis.Core.Population
             b.SavingsMonthsMean = r["money"]["savingsMonthsMean"].AsDouble(b.SavingsMonthsMean);
             b.SavingsSpread = r["money"]["savingsSpread"].AsDouble(b.SavingsSpread);
 
+            var life = r["life"];
+            b.NetIncomeShare = life["netIncomeShare"].AsDouble(b.NetIncomeShare);
+            b.SpendingShare = life["spendingShare"].AsDouble(b.SpendingShare);
+            b.SubsistencePerPersonDay = life["subsistencePerPersonDay"].AsDouble(b.SubsistencePerPersonDay);
+            b.UtilitiesPerPersonMonth = life["utilitiesPerPersonMonth"].AsDouble(b.UtilitiesPerPersonMonth);
+            b.LocalSpendingShare = life["localSpendingShare"].AsDouble(b.LocalSpendingShare);
+            b.DebtLimitPerAdult = life["debtLimitPerAdult"].AsDouble(b.DebtLimitPerAdult);
+            b.CityWelfareShare = life["cityWelfareShare"].AsDouble(b.CityWelfareShare);
+            b.CashBufferMonths = life["cashBufferMonths"].AsDouble(b.CashBufferMonths);
+            foreach (var c in life["publicCategories"].Items) b.PublicCategories.Add(c.AsString(""));
+            foreach (var c in life["consumerCategories"].Items) b.ConsumerCategories.Add(c.AsString(""));
+            foreach (var c in life["industrialCategories"].Items) b.IndustrialCategories.Add(c.AsString(""));
+            b.ProductivityPerJobDay = life["productivityPerJobDay"].AsDouble(b.ProductivityPerJobDay);
+            b.ConsumerExternalPerJobDay = life["consumerExternalPerJobDay"].AsDouble(b.ConsumerExternalPerJobDay);
+            b.OperatingCostShare = life["operatingCostShare"].AsDouble(b.OperatingCostShare);
+            b.InitialCashPerJob = life["initialCashPerJob"].AsDouble(b.InitialCashPerJob);
+            b.BadCashMonthsOfWages = life["badCashMonthsOfWages"].AsDouble(b.BadCashMonthsOfWages);
+            b.CloseAfterBadMonths = life["closeAfterBadMonths"].AsInt(b.CloseAfterBadMonths);
+            b.JobSearchDays = life["jobSearchDays"].AsDouble(b.JobSearchDays);
+            b.JobLossPerYear = life["jobLossPerYear"].AsDouble(b.JobLossPerYear);
+            b.PensionReplacement = life["pensionReplacement"].AsDouble(b.PensionReplacement);
+            b.FertilityPeakAge = life["fertilityPeakAge"].AsDouble(b.FertilityPeakAge);
+            b.FertilitySd = life["fertilitySd"].AsDouble(b.FertilitySd);
+            b.ArrivalAgeMean = life["arrivalAgeMean"].AsDouble(b.ArrivalAgeMean);
+            b.ArrivalAgeSd = life["arrivalAgeSd"].AsDouble(b.ArrivalAgeSd);
+            b.ArrivalJobChance = life["arrivalJobChance"].AsDouble(b.ArrivalJobChance);
+            b.ArrivalSavingsMonths = life["arrivalSavingsMonths"].AsDouble(b.ArrivalSavingsMonths);
+            b.DepartureMinAge = life["departureMinAge"].AsInt(b.DepartureMinAge);
+
             var t = r["traits"];
             b.TraitsMin = t["perCitizenMin"].AsInt(b.TraitsMin);
             b.TraitsMax = t["perCitizenMax"].AsInt(b.TraitsMax);
@@ -290,6 +334,15 @@ namespace Orbis.Core.Population
             foreach (var e in EducationByBirthYear)
                 if (birthYear <= e.To) return e.Shares;
             return EducationByBirthYear.Count > 0 ? EducationByBirthYear[EducationByBirthYear.Count - 1].Shares : new[] { 0, 0, 0.3, 0.4, 0.3 };
+        }
+
+        /// <summary>La categoria (o il suo prefisso prima di "/") è nell'insieme.</summary>
+        public static bool InSet(HashSet<string> set, string category)
+        {
+            if (string.IsNullOrEmpty(category)) return false;
+            if (set.Contains(category)) return true;
+            int slash = category.IndexOf('/');
+            return slash > 0 && set.Contains(category.Substring(0, slash));
         }
 
         public double EmploymentWeight(int age)
