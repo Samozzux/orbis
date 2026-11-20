@@ -39,7 +39,13 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - `italia.json`: festività nazionali, con le date di Pasqua relative al giorno di Pasqua;
     - `chieti.json`: la processione del Venerdì Santo dalla cattedrale, alle 19, e San Giustino, l'11 maggio.
   - **CREDITS.** Aggiunti ISTAT (CC BY 4.0) e MEF (CC BY 3.0 IT). La schermata Crediti del gioco è ancora "in arrivo": quando si fa deve elencarli.
-  - **Resta del blocco 1.** Pack del mondo v4, con i confini dei comuni e le linee bus da OSM.
+- **Pack del mondo v4** (blocco 1, 20/11, branch `m4-pack-v4`): `world-chieti-v4`, pubblicato e incluso nelle build.
+  - **Tile.** Identici byte per byte a quelli del v3: stessi lotti, quindi le partite salvate restano valide. Il nuovo comando della pipeline `extras` (nel workflow: campo `base`) riscrive solo `index.bin`, con l'estratto OSM del 20/11. Ricostruire tutto con l'OSM di oggi avrebbe cambiato i numeri dei lotti.
+  - **Comuni.** Tutti i 104 della provincia, col codice ISTAT e il confine semplificato a ~10 m. In C#, `RegionInfo.MunicipalityAt(lon, lat)` dice in quale comune cade un punto.
+  - **Linee.** 40 linee (`route=bus/trolleybus/tram/train`) con 376 fermate e le strade del percorso in ordine. Ci sono i bus urbani di Chieti ("La Panoramica"), la filovia, i bus GTM di Pescara, i treni Trenitalia e i Flixbus. Molte linee in OSM hanno poche fermate segnate: se ne terrà conto nel blocco 4.
+  - **Schema.** Campi nuovi in fondo a `RegionIndex`, che i lettori vecchi ignorano: il formato resta 1.
+  - **Test.** 10 della pipeline (anche "aggiornamento con tile identici") e 169 del Core (indice v4 con comuni e linea bus).
+  - **Indirizzo Geofabrik.** L'estratto del Sud Italia ora sta in `europe/italy/sud/`: il vecchio indirizzo faceva fallire il controllo md5.
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;
