@@ -1,0 +1,13 @@
+{
+  "key": "chieti",
+  "municipality": { "istat": "069022", "name": "Chieti" },
+  "province": { "code": "069", "name": "Chieti" },
+  "region": "Abruzzo",
+  "years": {
+    "population": 2026,
+    "balance": 2025,
+    "households": 2025,
+    "mortality": 2025,
+    "income": 2024
+  }
+}

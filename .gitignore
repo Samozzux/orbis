@@ -129,3 +129,7 @@ InitTestScene*.unity*
 # region pack scaricati da tools/world-pipeline/scarica-pack.sh (pubblicati come GitHub Release)
 /Assets/StreamingAssets/world/
 /Assets/StreamingAssets/world.meta
+
+# file scaricati da tools/population (fonti ISTAT e MEF)
+tools/population/cache/
+__pycache__/

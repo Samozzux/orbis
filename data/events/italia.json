@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "_info": "Calendario nazionale (docs/03 §10). Date fisse \"MM-GG\" oppure \"easter\": giorni rispetto a Pasqua (calcolata nel gioco). holiday = giorno festivo: scuole e uffici chiusi.",
+  "events": [
+    { "key": "capodanno", "name": "Capodanno", "date": "01-01", "holiday": true, "kind": "holiday" },
+    { "key": "epifania", "name": "Epifania", "date": "01-06", "holiday": true, "kind": "holiday" },
+    { "key": "martedi_grasso", "name": "Martedì grasso", "easter": -47, "holiday": false, "kind": "festival" },
+    { "key": "pasqua", "name": "Pasqua", "easter": 0, "holiday": true, "kind": "holiday" },
+    { "key": "pasquetta", "name": "Lunedì dell'Angelo", "easter": 1, "holiday": true, "kind": "holiday" },
+    { "key": "liberazione", "name": "Festa della Liberazione", "date": "04-25", "holiday": true, "kind": "holiday" },
+    { "key": "lavoratori", "name": "Festa dei Lavoratori", "date": "05-01", "holiday": true, "kind": "holiday" },
+    { "key": "repubblica", "name": "Festa della Repubblica", "date": "06-02", "holiday": true, "kind": "holiday" },
+    { "key": "ferragosto", "name": "Ferragosto", "date": "08-15", "holiday": true, "kind": "holiday" },
+    { "key": "ognissanti", "name": "Ognissanti", "date": "11-01", "holiday": true, "kind": "holiday" },
+    { "key": "immacolata", "name": "Immacolata Concezione", "date": "12-08", "holiday": true, "kind": "holiday" },
+    { "key": "vigilia_natale", "name": "Vigilia di Natale", "date": "12-24", "holiday": false, "kind": "festival" },
+    { "key": "natale", "name": "Natale", "date": "12-25", "holiday": true, "kind": "holiday" },
+    { "key": "santo_stefano", "name": "Santo Stefano", "date": "12-26", "holiday": true, "kind": "holiday" },
+    { "key": "san_silvestro", "name": "San Silvestro", "date": "12-31", "holiday": false, "kind": "festival", "start": "21:00", "end": "02:00" }
+  ]
+}

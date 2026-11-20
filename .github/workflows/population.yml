@@ -1,0 +1,34 @@
+# Test dello strumento della popolazione reale (tools/population) e del file data/population.
+name: Population data
+
+on:
+  push:
+    paths:
+      - 'tools/population/**'
+      - 'data/population/**'
+      - '.github/workflows/population.yml'
+  pull_request:
+    paths:
+      - 'tools/population/**'
+      - 'data/population/**'
+      - '.github/workflows/population.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  population:
+    name: population
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: tools/population
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Test
+        run: python -m unittest discover -s tests -v
