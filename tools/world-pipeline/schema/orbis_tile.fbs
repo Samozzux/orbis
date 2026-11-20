@@ -186,6 +186,41 @@ table FarTerrain {
   heights:[ushort];      // rows×cols, righe da sud a nord
 }
 
+// Anello in gradi: lon, lat, lon, lat… (senza ripetere il primo punto).
+table RingLonLat { pts:[double]; }
+
+// Comune (confine amministrativo di livello 8): per sapere in quale comune sta un edificio.
+table Municipality {
+  code:string;           // codice ISTAT (tag ref:ISTAT), es. "069022"; vuoto se manca
+  name:string;
+  rings:[RingLonLat];    // anelli esterni e buchi: un punto è dentro se cade in un numero dispari di anelli
+}
+
+enum TransitMode : ubyte { Bus = 0, Trolleybus, Tram, Train }
+
+// Fermata di una linea (nodo public_transport=stop_position o platform, o highway=bus_stop).
+table TransitStop {
+  osm_id:long;
+  lon:double;
+  lat:double;
+  name:string;
+}
+
+// Linea di trasporto pubblico da una relazione OSM route=bus/trolleybus/tram/train.
+table TransitRoute {
+  osm_id:long;
+  mode:TransitMode;
+  ref:string;            // numero della linea, es. "2"
+  name:string;
+  from:string;
+  to:string;
+  operator:string;
+  network:string;
+  colour:uint;           // 0x01RRGGBB, 0 = nessuno
+  ways:[long];           // ID OSM delle strade del percorso, in ordine (Road.osm_id nei tile)
+  stops:[uint];          // indici in RegionIndex.transit_stops, in ordine
+}
+
 // Indice di un region pack (file index.bin accanto ai tile).
 struct TileEntry {
   x:uint;
@@ -209,6 +244,10 @@ table RegionIndex {
   created:string;        // data UTC ISO 8601
   source:string;         // estratto OSM usato
   far:FarTerrain;        // facoltativo
+  // dal pack v4 (campi nuovi in fondo: i lettori vecchi li ignorano)
+  municipalities:[Municipality];
+  transit_stops:[TransitStop];
+  transit_routes:[TransitRoute];
 }
 
 root_type Tile;

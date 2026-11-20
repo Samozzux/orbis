@@ -262,6 +262,14 @@ public enum LotKind : byte
   Water = 4,
 };
 
+public enum TransitMode : byte
+{
+  Bus = 0,
+  Trolleybus = 1,
+  Tram = 2,
+  Train = 3,
+};
+
 public struct Ring : IFlatbufferObject
 {
   private Table __p;
@@ -1268,6 +1276,325 @@ static public class FarTerrainVerify
       && verifier.VerifyTableEnd(tablePos);
   }
 }
+public struct RingLonLat : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_25_12_19(); }
+  public static RingLonLat GetRootAsRingLonLat(ByteBuffer _bb) { return GetRootAsRingLonLat(_bb, new RingLonLat()); }
+  public static RingLonLat GetRootAsRingLonLat(ByteBuffer _bb, RingLonLat obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public RingLonLat __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public double Pts(int j) { int o = __p.__offset(4); return o != 0 ? __p.bb.GetDouble(__p.__vector(o) + j * 8) : (double)0; }
+  public int PtsLength { get { int o = __p.__offset(4); return o != 0 ? __p.__vector_len(o) : 0; } }
+#if ENABLE_SPAN_T
+  public Span<double> GetPtsBytes() { return __p.__vector_as_span<double>(4, 8); }
+#else
+  public ArraySegment<byte>? GetPtsBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public double[] GetPtsArray() { return __p.__vector_as_array<double>(4); }
+
+  public static Offset<Orbis.Core.World.Fb.RingLonLat> CreateRingLonLat(FlatBufferBuilder builder,
+      VectorOffset ptsOffset = default(VectorOffset)) {
+    builder.StartTable(1);
+    RingLonLat.AddPts(builder, ptsOffset);
+    return RingLonLat.EndRingLonLat(builder);
+  }
+
+  public static void StartRingLonLat(FlatBufferBuilder builder) { builder.StartTable(1); }
+  public static void AddPts(FlatBufferBuilder builder, VectorOffset ptsOffset) { builder.AddOffset(0, ptsOffset.Value, 0); }
+  public static VectorOffset CreatePtsVector(FlatBufferBuilder builder, double[] data) { builder.StartVector(8, data.Length, 8); for (int i = data.Length - 1; i >= 0; i--) builder.AddDouble(data[i]); return builder.EndVector(); }
+  public static VectorOffset CreatePtsVectorBlock(FlatBufferBuilder builder, double[] data) { builder.StartVector(8, data.Length, 8); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreatePtsVectorBlock(FlatBufferBuilder builder, ArraySegment<double> data) { builder.StartVector(8, data.Count, 8); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreatePtsVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<double>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartPtsVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(8, numElems, 8); }
+  public static Offset<Orbis.Core.World.Fb.RingLonLat> EndRingLonLat(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<Orbis.Core.World.Fb.RingLonLat>(o);
+  }
+}
+
+
+static public class RingLonLatVerify
+{
+  static public bool Verify(Google.FlatBuffers.Verifier verifier, uint tablePos)
+  {
+    return verifier.VerifyTableStart(tablePos)
+      && verifier.VerifyVectorOfData(tablePos, 4 /*Pts*/, 8 /*double*/, false)
+      && verifier.VerifyTableEnd(tablePos);
+  }
+}
+public struct Municipality : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_25_12_19(); }
+  public static Municipality GetRootAsMunicipality(ByteBuffer _bb) { return GetRootAsMunicipality(_bb, new Municipality()); }
+  public static Municipality GetRootAsMunicipality(ByteBuffer _bb, Municipality obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public Municipality __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public string Code { get { int o = __p.__offset(4); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetCodeBytes() { return __p.__vector_as_span<byte>(4, 1); }
+#else
+  public ArraySegment<byte>? GetCodeBytes() { return __p.__vector_as_arraysegment(4); }
+#endif
+  public byte[] GetCodeArray() { return __p.__vector_as_array<byte>(4); }
+  public string Name { get { int o = __p.__offset(6); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetNameBytes() { return __p.__vector_as_span<byte>(6, 1); }
+#else
+  public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(6); }
+#endif
+  public byte[] GetNameArray() { return __p.__vector_as_array<byte>(6); }
+  public Orbis.Core.World.Fb.RingLonLat? Rings(int j) { int o = __p.__offset(8); return o != 0 ? (Orbis.Core.World.Fb.RingLonLat?)(new Orbis.Core.World.Fb.RingLonLat()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
+  public int RingsLength { get { int o = __p.__offset(8); return o != 0 ? __p.__vector_len(o) : 0; } }
+
+  public static Offset<Orbis.Core.World.Fb.Municipality> CreateMunicipality(FlatBufferBuilder builder,
+      StringOffset codeOffset = default(StringOffset),
+      StringOffset nameOffset = default(StringOffset),
+      VectorOffset ringsOffset = default(VectorOffset)) {
+    builder.StartTable(3);
+    Municipality.AddRings(builder, ringsOffset);
+    Municipality.AddName(builder, nameOffset);
+    Municipality.AddCode(builder, codeOffset);
+    return Municipality.EndMunicipality(builder);
+  }
+
+  public static void StartMunicipality(FlatBufferBuilder builder) { builder.StartTable(3); }
+  public static void AddCode(FlatBufferBuilder builder, StringOffset codeOffset) { builder.AddOffset(0, codeOffset.Value, 0); }
+  public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(1, nameOffset.Value, 0); }
+  public static void AddRings(FlatBufferBuilder builder, VectorOffset ringsOffset) { builder.AddOffset(2, ringsOffset.Value, 0); }
+  public static VectorOffset CreateRingsVector(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.RingLonLat>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
+  public static VectorOffset CreateRingsVectorBlock(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.RingLonLat>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateRingsVectorBlock(FlatBufferBuilder builder, ArraySegment<Offset<Orbis.Core.World.Fb.RingLonLat>> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateRingsVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<Offset<Orbis.Core.World.Fb.RingLonLat>>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartRingsVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
+  public static Offset<Orbis.Core.World.Fb.Municipality> EndMunicipality(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<Orbis.Core.World.Fb.Municipality>(o);
+  }
+}
+
+
+static public class MunicipalityVerify
+{
+  static public bool Verify(Google.FlatBuffers.Verifier verifier, uint tablePos)
+  {
+    return verifier.VerifyTableStart(tablePos)
+      && verifier.VerifyString(tablePos, 4 /*Code*/, false)
+      && verifier.VerifyString(tablePos, 6 /*Name*/, false)
+      && verifier.VerifyVectorOfTables(tablePos, 8 /*Rings*/, Orbis.Core.World.Fb.RingLonLatVerify.Verify, false)
+      && verifier.VerifyTableEnd(tablePos);
+  }
+}
+public struct TransitStop : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_25_12_19(); }
+  public static TransitStop GetRootAsTransitStop(ByteBuffer _bb) { return GetRootAsTransitStop(_bb, new TransitStop()); }
+  public static TransitStop GetRootAsTransitStop(ByteBuffer _bb, TransitStop obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public TransitStop __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public long OsmId { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetLong(o + __p.bb_pos) : (long)0; } }
+  public double Lon { get { int o = __p.__offset(6); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
+  public double Lat { get { int o = __p.__offset(8); return o != 0 ? __p.bb.GetDouble(o + __p.bb_pos) : (double)0.0; } }
+  public string Name { get { int o = __p.__offset(10); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetNameBytes() { return __p.__vector_as_span<byte>(10, 1); }
+#else
+  public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(10); }
+#endif
+  public byte[] GetNameArray() { return __p.__vector_as_array<byte>(10); }
+
+  public static Offset<Orbis.Core.World.Fb.TransitStop> CreateTransitStop(FlatBufferBuilder builder,
+      long osm_id = 0,
+      double lon = 0.0,
+      double lat = 0.0,
+      StringOffset nameOffset = default(StringOffset)) {
+    builder.StartTable(4);
+    TransitStop.AddLat(builder, lat);
+    TransitStop.AddLon(builder, lon);
+    TransitStop.AddOsmId(builder, osm_id);
+    TransitStop.AddName(builder, nameOffset);
+    return TransitStop.EndTransitStop(builder);
+  }
+
+  public static void StartTransitStop(FlatBufferBuilder builder) { builder.StartTable(4); }
+  public static void AddOsmId(FlatBufferBuilder builder, long osmId) { builder.AddLong(0, osmId, 0); }
+  public static void AddLon(FlatBufferBuilder builder, double lon) { builder.AddDouble(1, lon, 0.0); }
+  public static void AddLat(FlatBufferBuilder builder, double lat) { builder.AddDouble(2, lat, 0.0); }
+  public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(3, nameOffset.Value, 0); }
+  public static Offset<Orbis.Core.World.Fb.TransitStop> EndTransitStop(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<Orbis.Core.World.Fb.TransitStop>(o);
+  }
+}
+
+
+static public class TransitStopVerify
+{
+  static public bool Verify(Google.FlatBuffers.Verifier verifier, uint tablePos)
+  {
+    return verifier.VerifyTableStart(tablePos)
+      && verifier.VerifyField(tablePos, 4 /*OsmId*/, 8 /*long*/, 8, false)
+      && verifier.VerifyField(tablePos, 6 /*Lon*/, 8 /*double*/, 8, false)
+      && verifier.VerifyField(tablePos, 8 /*Lat*/, 8 /*double*/, 8, false)
+      && verifier.VerifyString(tablePos, 10 /*Name*/, false)
+      && verifier.VerifyTableEnd(tablePos);
+  }
+}
+public struct TransitRoute : IFlatbufferObject
+{
+  private Table __p;
+  public ByteBuffer ByteBuffer { get { return __p.bb; } }
+  public static void ValidateVersion() { FlatBufferConstants.FLATBUFFERS_25_12_19(); }
+  public static TransitRoute GetRootAsTransitRoute(ByteBuffer _bb) { return GetRootAsTransitRoute(_bb, new TransitRoute()); }
+  public static TransitRoute GetRootAsTransitRoute(ByteBuffer _bb, TransitRoute obj) { return (obj.__assign(_bb.GetInt(_bb.Position) + _bb.Position, _bb)); }
+  public void __init(int _i, ByteBuffer _bb) { __p = new Table(_i, _bb); }
+  public TransitRoute __assign(int _i, ByteBuffer _bb) { __init(_i, _bb); return this; }
+
+  public long OsmId { get { int o = __p.__offset(4); return o != 0 ? __p.bb.GetLong(o + __p.bb_pos) : (long)0; } }
+  public Orbis.Core.World.Fb.TransitMode Mode { get { int o = __p.__offset(6); return o != 0 ? (Orbis.Core.World.Fb.TransitMode)__p.bb.Get(o + __p.bb_pos) : Orbis.Core.World.Fb.TransitMode.Bus; } }
+  public string Ref { get { int o = __p.__offset(8); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetRefBytes() { return __p.__vector_as_span<byte>(8, 1); }
+#else
+  public ArraySegment<byte>? GetRefBytes() { return __p.__vector_as_arraysegment(8); }
+#endif
+  public byte[] GetRefArray() { return __p.__vector_as_array<byte>(8); }
+  public string Name { get { int o = __p.__offset(10); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetNameBytes() { return __p.__vector_as_span<byte>(10, 1); }
+#else
+  public ArraySegment<byte>? GetNameBytes() { return __p.__vector_as_arraysegment(10); }
+#endif
+  public byte[] GetNameArray() { return __p.__vector_as_array<byte>(10); }
+  public string From { get { int o = __p.__offset(12); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetFromBytes() { return __p.__vector_as_span<byte>(12, 1); }
+#else
+  public ArraySegment<byte>? GetFromBytes() { return __p.__vector_as_arraysegment(12); }
+#endif
+  public byte[] GetFromArray() { return __p.__vector_as_array<byte>(12); }
+  public string To { get { int o = __p.__offset(14); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetToBytes() { return __p.__vector_as_span<byte>(14, 1); }
+#else
+  public ArraySegment<byte>? GetToBytes() { return __p.__vector_as_arraysegment(14); }
+#endif
+  public byte[] GetToArray() { return __p.__vector_as_array<byte>(14); }
+  public string Operator { get { int o = __p.__offset(16); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetOperatorBytes() { return __p.__vector_as_span<byte>(16, 1); }
+#else
+  public ArraySegment<byte>? GetOperatorBytes() { return __p.__vector_as_arraysegment(16); }
+#endif
+  public byte[] GetOperatorArray() { return __p.__vector_as_array<byte>(16); }
+  public string Network { get { int o = __p.__offset(18); return o != 0 ? __p.__string(o + __p.bb_pos) : null; } }
+#if ENABLE_SPAN_T
+  public Span<byte> GetNetworkBytes() { return __p.__vector_as_span<byte>(18, 1); }
+#else
+  public ArraySegment<byte>? GetNetworkBytes() { return __p.__vector_as_arraysegment(18); }
+#endif
+  public byte[] GetNetworkArray() { return __p.__vector_as_array<byte>(18); }
+  public uint Colour { get { int o = __p.__offset(20); return o != 0 ? __p.bb.GetUint(o + __p.bb_pos) : (uint)0; } }
+  public long Ways(int j) { int o = __p.__offset(22); return o != 0 ? __p.bb.GetLong(__p.__vector(o) + j * 8) : (long)0; }
+  public int WaysLength { get { int o = __p.__offset(22); return o != 0 ? __p.__vector_len(o) : 0; } }
+#if ENABLE_SPAN_T
+  public Span<long> GetWaysBytes() { return __p.__vector_as_span<long>(22, 8); }
+#else
+  public ArraySegment<byte>? GetWaysBytes() { return __p.__vector_as_arraysegment(22); }
+#endif
+  public long[] GetWaysArray() { return __p.__vector_as_array<long>(22); }
+  public uint Stops(int j) { int o = __p.__offset(24); return o != 0 ? __p.bb.GetUint(__p.__vector(o) + j * 4) : (uint)0; }
+  public int StopsLength { get { int o = __p.__offset(24); return o != 0 ? __p.__vector_len(o) : 0; } }
+#if ENABLE_SPAN_T
+  public Span<uint> GetStopsBytes() { return __p.__vector_as_span<uint>(24, 4); }
+#else
+  public ArraySegment<byte>? GetStopsBytes() { return __p.__vector_as_arraysegment(24); }
+#endif
+  public uint[] GetStopsArray() { return __p.__vector_as_array<uint>(24); }
+
+  public static Offset<Orbis.Core.World.Fb.TransitRoute> CreateTransitRoute(FlatBufferBuilder builder,
+      long osm_id = 0,
+      Orbis.Core.World.Fb.TransitMode mode = Orbis.Core.World.Fb.TransitMode.Bus,
+      StringOffset @refOffset = default(StringOffset),
+      StringOffset nameOffset = default(StringOffset),
+      StringOffset fromOffset = default(StringOffset),
+      StringOffset toOffset = default(StringOffset),
+      StringOffset @operatorOffset = default(StringOffset),
+      StringOffset networkOffset = default(StringOffset),
+      uint colour = 0,
+      VectorOffset waysOffset = default(VectorOffset),
+      VectorOffset stopsOffset = default(VectorOffset)) {
+    builder.StartTable(11);
+    TransitRoute.AddOsmId(builder, osm_id);
+    TransitRoute.AddStops(builder, stopsOffset);
+    TransitRoute.AddWays(builder, waysOffset);
+    TransitRoute.AddColour(builder, colour);
+    TransitRoute.AddNetwork(builder, networkOffset);
+    TransitRoute.AddOperator(builder, @operatorOffset);
+    TransitRoute.AddTo(builder, toOffset);
+    TransitRoute.AddFrom(builder, fromOffset);
+    TransitRoute.AddName(builder, nameOffset);
+    TransitRoute.AddRef(builder, @refOffset);
+    TransitRoute.AddMode(builder, mode);
+    return TransitRoute.EndTransitRoute(builder);
+  }
+
+  public static void StartTransitRoute(FlatBufferBuilder builder) { builder.StartTable(11); }
+  public static void AddOsmId(FlatBufferBuilder builder, long osmId) { builder.AddLong(0, osmId, 0); }
+  public static void AddMode(FlatBufferBuilder builder, Orbis.Core.World.Fb.TransitMode mode) { builder.AddByte(1, (byte)mode, 0); }
+  public static void AddRef(FlatBufferBuilder builder, StringOffset refOffset) { builder.AddOffset(2, refOffset.Value, 0); }
+  public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(3, nameOffset.Value, 0); }
+  public static void AddFrom(FlatBufferBuilder builder, StringOffset fromOffset) { builder.AddOffset(4, fromOffset.Value, 0); }
+  public static void AddTo(FlatBufferBuilder builder, StringOffset toOffset) { builder.AddOffset(5, toOffset.Value, 0); }
+  public static void AddOperator(FlatBufferBuilder builder, StringOffset operatorOffset) { builder.AddOffset(6, operatorOffset.Value, 0); }
+  public static void AddNetwork(FlatBufferBuilder builder, StringOffset networkOffset) { builder.AddOffset(7, networkOffset.Value, 0); }
+  public static void AddColour(FlatBufferBuilder builder, uint colour) { builder.AddUint(8, colour, 0); }
+  public static void AddWays(FlatBufferBuilder builder, VectorOffset waysOffset) { builder.AddOffset(9, waysOffset.Value, 0); }
+  public static VectorOffset CreateWaysVector(FlatBufferBuilder builder, long[] data) { builder.StartVector(8, data.Length, 8); for (int i = data.Length - 1; i >= 0; i--) builder.AddLong(data[i]); return builder.EndVector(); }
+  public static VectorOffset CreateWaysVectorBlock(FlatBufferBuilder builder, long[] data) { builder.StartVector(8, data.Length, 8); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateWaysVectorBlock(FlatBufferBuilder builder, ArraySegment<long> data) { builder.StartVector(8, data.Count, 8); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateWaysVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<long>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartWaysVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(8, numElems, 8); }
+  public static void AddStops(FlatBufferBuilder builder, VectorOffset stopsOffset) { builder.AddOffset(10, stopsOffset.Value, 0); }
+  public static VectorOffset CreateStopsVector(FlatBufferBuilder builder, uint[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddUint(data[i]); return builder.EndVector(); }
+  public static VectorOffset CreateStopsVectorBlock(FlatBufferBuilder builder, uint[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateStopsVectorBlock(FlatBufferBuilder builder, ArraySegment<uint> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateStopsVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<uint>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartStopsVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
+  public static Offset<Orbis.Core.World.Fb.TransitRoute> EndTransitRoute(FlatBufferBuilder builder) {
+    int o = builder.EndTable();
+    return new Offset<Orbis.Core.World.Fb.TransitRoute>(o);
+  }
+}
+
+
+static public class TransitRouteVerify
+{
+  static public bool Verify(Google.FlatBuffers.Verifier verifier, uint tablePos)
+  {
+    return verifier.VerifyTableStart(tablePos)
+      && verifier.VerifyField(tablePos, 4 /*OsmId*/, 8 /*long*/, 8, false)
+      && verifier.VerifyField(tablePos, 6 /*Mode*/, 1 /*Orbis.Core.World.Fb.TransitMode*/, 1, false)
+      && verifier.VerifyString(tablePos, 8 /*Ref*/, false)
+      && verifier.VerifyString(tablePos, 10 /*Name*/, false)
+      && verifier.VerifyString(tablePos, 12 /*From*/, false)
+      && verifier.VerifyString(tablePos, 14 /*To*/, false)
+      && verifier.VerifyString(tablePos, 16 /*Operator*/, false)
+      && verifier.VerifyString(tablePos, 18 /*Network*/, false)
+      && verifier.VerifyField(tablePos, 20 /*Colour*/, 4 /*uint*/, 4, false)
+      && verifier.VerifyVectorOfData(tablePos, 22 /*Ways*/, 8 /*long*/, false)
+      && verifier.VerifyVectorOfData(tablePos, 24 /*Stops*/, 4 /*uint*/, false)
+      && verifier.VerifyTableEnd(tablePos);
+  }
+}
 public struct TileEntry : IFlatbufferObject
 {
   private Struct __p;
@@ -1353,6 +1680,12 @@ public struct RegionIndex : IFlatbufferObject
 #endif
   public byte[] GetSourceArray() { return __p.__vector_as_array<byte>(26); }
   public Orbis.Core.World.Fb.FarTerrain? Far { get { int o = __p.__offset(28); return o != 0 ? (Orbis.Core.World.Fb.FarTerrain?)(new Orbis.Core.World.Fb.FarTerrain()).__assign(__p.__indirect(o + __p.bb_pos), __p.bb) : null; } }
+  public Orbis.Core.World.Fb.Municipality? Municipalities(int j) { int o = __p.__offset(30); return o != 0 ? (Orbis.Core.World.Fb.Municipality?)(new Orbis.Core.World.Fb.Municipality()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
+  public int MunicipalitiesLength { get { int o = __p.__offset(30); return o != 0 ? __p.__vector_len(o) : 0; } }
+  public Orbis.Core.World.Fb.TransitStop? TransitStops(int j) { int o = __p.__offset(32); return o != 0 ? (Orbis.Core.World.Fb.TransitStop?)(new Orbis.Core.World.Fb.TransitStop()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
+  public int TransitStopsLength { get { int o = __p.__offset(32); return o != 0 ? __p.__vector_len(o) : 0; } }
+  public Orbis.Core.World.Fb.TransitRoute? TransitRoutes(int j) { int o = __p.__offset(34); return o != 0 ? (Orbis.Core.World.Fb.TransitRoute?)(new Orbis.Core.World.Fb.TransitRoute()).__assign(__p.__indirect(__p.__vector(o) + j * 4), __p.bb) : null; }
+  public int TransitRoutesLength { get { int o = __p.__offset(34); return o != 0 ? __p.__vector_len(o) : 0; } }
 
   public static Offset<Orbis.Core.World.Fb.RegionIndex> CreateRegionIndex(FlatBufferBuilder builder,
       ushort format = 0,
@@ -1367,10 +1700,16 @@ public struct RegionIndex : IFlatbufferObject
       StringOffset attributionOffset = default(StringOffset),
       StringOffset createdOffset = default(StringOffset),
       StringOffset sourceOffset = default(StringOffset),
-      Offset<Orbis.Core.World.Fb.FarTerrain> farOffset = default(Offset<Orbis.Core.World.Fb.FarTerrain>)) {
-    builder.StartTable(13);
+      Offset<Orbis.Core.World.Fb.FarTerrain> farOffset = default(Offset<Orbis.Core.World.Fb.FarTerrain>),
+      VectorOffset municipalitiesOffset = default(VectorOffset),
+      VectorOffset transit_stopsOffset = default(VectorOffset),
+      VectorOffset transit_routesOffset = default(VectorOffset)) {
+    builder.StartTable(16);
     RegionIndex.AddOriginLon(builder, origin_lon);
     RegionIndex.AddOriginLat(builder, origin_lat);
+    RegionIndex.AddTransitRoutes(builder, transit_routesOffset);
+    RegionIndex.AddTransitStops(builder, transit_stopsOffset);
+    RegionIndex.AddMunicipalities(builder, municipalitiesOffset);
     RegionIndex.AddFar(builder, farOffset);
     RegionIndex.AddSource(builder, sourceOffset);
     RegionIndex.AddCreated(builder, createdOffset);
@@ -1385,7 +1724,7 @@ public struct RegionIndex : IFlatbufferObject
     return RegionIndex.EndRegionIndex(builder);
   }
 
-  public static void StartRegionIndex(FlatBufferBuilder builder) { builder.StartTable(13); }
+  public static void StartRegionIndex(FlatBufferBuilder builder) { builder.StartTable(16); }
   public static void AddFormat(FlatBufferBuilder builder, ushort format) { builder.AddUshort(0, format, 0); }
   public static void AddKey(FlatBufferBuilder builder, StringOffset keyOffset) { builder.AddOffset(1, keyOffset.Value, 0); }
   public static void AddName(FlatBufferBuilder builder, StringOffset nameOffset) { builder.AddOffset(2, nameOffset.Value, 0); }
@@ -1405,6 +1744,24 @@ public struct RegionIndex : IFlatbufferObject
   public static void AddCreated(FlatBufferBuilder builder, StringOffset createdOffset) { builder.AddOffset(10, createdOffset.Value, 0); }
   public static void AddSource(FlatBufferBuilder builder, StringOffset sourceOffset) { builder.AddOffset(11, sourceOffset.Value, 0); }
   public static void AddFar(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.FarTerrain> farOffset) { builder.AddOffset(12, farOffset.Value, 0); }
+  public static void AddMunicipalities(FlatBufferBuilder builder, VectorOffset municipalitiesOffset) { builder.AddOffset(13, municipalitiesOffset.Value, 0); }
+  public static VectorOffset CreateMunicipalitiesVector(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.Municipality>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
+  public static VectorOffset CreateMunicipalitiesVectorBlock(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.Municipality>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateMunicipalitiesVectorBlock(FlatBufferBuilder builder, ArraySegment<Offset<Orbis.Core.World.Fb.Municipality>> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateMunicipalitiesVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<Offset<Orbis.Core.World.Fb.Municipality>>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartMunicipalitiesVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
+  public static void AddTransitStops(FlatBufferBuilder builder, VectorOffset transitStopsOffset) { builder.AddOffset(14, transitStopsOffset.Value, 0); }
+  public static VectorOffset CreateTransitStopsVector(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.TransitStop>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
+  public static VectorOffset CreateTransitStopsVectorBlock(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.TransitStop>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateTransitStopsVectorBlock(FlatBufferBuilder builder, ArraySegment<Offset<Orbis.Core.World.Fb.TransitStop>> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateTransitStopsVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<Offset<Orbis.Core.World.Fb.TransitStop>>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartTransitStopsVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
+  public static void AddTransitRoutes(FlatBufferBuilder builder, VectorOffset transitRoutesOffset) { builder.AddOffset(15, transitRoutesOffset.Value, 0); }
+  public static VectorOffset CreateTransitRoutesVector(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.TransitRoute>[] data) { builder.StartVector(4, data.Length, 4); for (int i = data.Length - 1; i >= 0; i--) builder.AddOffset(data[i].Value); return builder.EndVector(); }
+  public static VectorOffset CreateTransitRoutesVectorBlock(FlatBufferBuilder builder, Offset<Orbis.Core.World.Fb.TransitRoute>[] data) { builder.StartVector(4, data.Length, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateTransitRoutesVectorBlock(FlatBufferBuilder builder, ArraySegment<Offset<Orbis.Core.World.Fb.TransitRoute>> data) { builder.StartVector(4, data.Count, 4); builder.Add(data); return builder.EndVector(); }
+  public static VectorOffset CreateTransitRoutesVectorBlock(FlatBufferBuilder builder, IntPtr dataPtr, int sizeInBytes) { builder.StartVector(1, sizeInBytes, 1); builder.Add<Offset<Orbis.Core.World.Fb.TransitRoute>>(dataPtr, sizeInBytes); return builder.EndVector(); }
+  public static void StartTransitRoutesVector(FlatBufferBuilder builder, int numElems) { builder.StartVector(4, numElems, 4); }
   public static Offset<Orbis.Core.World.Fb.RegionIndex> EndRegionIndex(FlatBufferBuilder builder) {
     int o = builder.EndTable();
     return new Offset<Orbis.Core.World.Fb.RegionIndex>(o);
@@ -1430,6 +1787,9 @@ static public class RegionIndexVerify
       && verifier.VerifyString(tablePos, 24 /*Created*/, false)
       && verifier.VerifyString(tablePos, 26 /*Source*/, false)
       && verifier.VerifyTable(tablePos, 28 /*Far*/, Orbis.Core.World.Fb.FarTerrainVerify.Verify, false)
+      && verifier.VerifyVectorOfTables(tablePos, 30 /*Municipalities*/, Orbis.Core.World.Fb.MunicipalityVerify.Verify, false)
+      && verifier.VerifyVectorOfTables(tablePos, 32 /*TransitStops*/, Orbis.Core.World.Fb.TransitStopVerify.Verify, false)
+      && verifier.VerifyVectorOfTables(tablePos, 34 /*TransitRoutes*/, Orbis.Core.World.Fb.TransitRouteVerify.Verify, false)
       && verifier.VerifyTableEnd(tablePos);
   }
 }

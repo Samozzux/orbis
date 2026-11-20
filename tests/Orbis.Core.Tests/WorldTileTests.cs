@@ -110,6 +110,21 @@ namespace Orbis.Core.Tests
             Assert.NotNull(region.Far);
             Assert.Equal(region.Far.Cols * region.Far.Rows, region.Far.Heights.Length);
 
+            // pack v4: comuni e linea bus reali
+            Assert.Equal(new[] { "069001", "069022" }, region.Municipalities.Select(m => m.Code).ToArray());
+            var chieti = region.Municipality("069022");
+            Assert.Equal("Chieti", chieti.Name);
+            Assert.Same(chieti, region.MunicipalityAt(region.OriginLon + 0.001, region.OriginLat));
+            Assert.Equal("Ovest", region.MunicipalityAt(region.OriginLon - 0.001, region.OriginLat).Name);
+            Assert.Null(region.MunicipalityAt(region.OriginLon + 0.1, region.OriginLat));
+            var bus = Assert.Single(region.TransitRoutes);
+            Assert.Equal(TransitMode.Bus, bus.Mode);
+            Assert.Equal("2", bus.Ref);
+            Assert.Equal("TUA", bus.Operator);
+            Assert.Equal(0x1E30613u, bus.Colour);
+            Assert.Equal(2, bus.Ways.Length);
+            Assert.Equal(new[] { "Piazza Vico", "Corso Marrucino", "Stazione" }, bus.Stops.Select(i => region.TransitStops[i].Name).ToArray());
+
             var frame = region.CreateFrame();
             var id = frame.TileAt(14, 0, 0);
             Assert.True(region.Tiles.ContainsKey(id));

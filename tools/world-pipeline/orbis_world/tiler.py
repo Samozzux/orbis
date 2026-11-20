@@ -17,7 +17,7 @@ from Orbis.Core.World.Fb.BuildingFlag import BuildingFlag as BF
 from Orbis.Core.World.Fb.LineKind import LineKind as LK
 from Orbis.Core.World.Fb.RoadClass import RoadClass as RC
 
-from . import encode, geo, lots as L, osm, terrain as TR
+from . import encode, geo, lots as L, osm, tags as T, terrain as TR
 
 ATTRIBUTION = "© OpenStreetMap contributors (ODbL) · Terrain Tiles: Mapzen/AWS Open Data"
 
@@ -199,9 +199,57 @@ def _split(geom, z, keep_tiles):
 
 # ---------------------------------------------------------------- costruzione
 
+def municipality_rings(geom, tolerance=0.0001):
+    """Anelli (esterni e buchi) semplificati di ~10 m, in lon/lat, senza ripetere il primo punto."""
+    rings = []
+    for poly in _polygons(geom):
+        p = poly.simplify(tolerance, preserve_topology=True)
+        if p.is_empty:
+            continue
+        for ring in [p.exterior, *p.interiors]:
+            c = np.asarray(ring.coords)[:-1]
+            if len(c) >= 3:
+                rings.append(c)
+    return rings
+
+
+def transit(data, area, log=print, road_ids=None):
+    """Linee di trasporto pubblico con almeno due fermate nell'area e il percorso su strade del pack
+    (`road_ids`: ID delle strade presenti nei tile; di default quelle lette dall'estratto).
+    Restituisce (fermate [(id, lon, lat, nome)], linee [dict per encode.encode_index])."""
+    if road_ids is None:
+        road_ids = {r.osm_id for r in data.roads}
+    shapely.prepare(area)
+    stops, index, routes = [], {}, []
+    for r in sorted(data.routes, key=lambda r: r.osm_id):
+        sids = [s for s in r.stops if s in data.stops]
+        inside = 0
+        for s in sids:
+            x, y = geo.to_merc(data.stops[s].lon, data.stops[s].lat)
+            inside += bool(shapely.contains_xy(area, float(x), float(y)))
+        ways = [w for w in r.ways if w in road_ids]
+        if inside < 2 or not ways:
+            continue
+        idx = []
+        for s in sids:
+            if s not in index:
+                index[s] = len(stops)
+                st = data.stops[s]
+                stops.append((st.osm_id, float(st.lon), float(st.lat), st.name))
+            idx.append(index[s])
+        tg = r.tags
+        routes.append({"osm_id": r.osm_id, "mode": r.mode, "ref": tg.get("ref", ""), "name": tg.get("name", ""),
+                       "from": tg.get("from", ""), "to": tg.get("to", ""), "operator": tg.get("operator", ""),
+                       "network": tg.get("network", ""), "colour": T.parse_color(tg.get("colour")),
+                       "ways": ways, "stops": idx})
+    log(f"trasporto pubblico: {len(routes)} linee su {len(data.routes)}, {len(stops)} fermate")
+    return stops, routes
+
+
 def build(region, osm_path, boundary_lonlat, terrain_source, out_dir, landmarks=(), version=1,
-          source_name="", log=print, far_source=None):
-    """Costruisce il region pack in `out_dir` (index.bin + z/x/y.bin + report.json)."""
+          source_name="", log=print, far_source=None, municipalities=()):
+    """Costruisce il region pack in `out_dir` (index.bin + z/x/y.bin + report.json).
+    `municipalities`: [(codice ISTAT, nome, geometria lon/lat)] da osm.municipalities (pack v4)."""
     z = region.get("zoom", 14)
     origin_lat, origin_lon = region["origin"]["lat"], region["origin"]["lon"]
     scale = geo.scale_at(origin_lat)
@@ -378,13 +426,17 @@ def build(region, osm_path, boundary_lonlat, terrain_source, out_dir, landmarks=
         log(f"terreno lontano: {far['cols']}×{far['rows']} celle da {cell * scale:.0f} m")
     outline = max(_polygons(boundary_lonlat), key=lambda p: p.area).simplify(0.0005)
     created = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    stops, routes = transit(data, outer_area, log=log)
+    muns = [(code, name, municipality_rings(geom)) for code, name, geom in municipalities]
     index = encode.encode_index(region["key"], region["name"], version, z, entries, origin_lat, origin_lon,
-                                np.asarray(outline.exterior.coords), ATTRIBUTION, created, source_name, far=far)
+                                np.asarray(outline.exterior.coords), ATTRIBUTION, created, source_name, far=far,
+                                municipalities=muns, stops=stops, routes=routes)
     with open(os.path.join(out_dir, "index.bin"), "wb") as f:
         f.write(index)
     report.update({"version": version, "created": created, "source": source_name, "zoom": z,
                    "tiles": {"full": len(full_tiles), "outer": len(outer_tiles)},
-                   "bytes": total_bytes + len(index), "counts": dict(totals)})
+                   "bytes": total_bytes + len(index), "counts": dict(totals),
+                   "municipalities": len(muns), "transit": {"routes": len(routes), "stops": len(stops)}})
     with open(os.path.join(out_dir, "report.json"), "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, indent=2)
     log(f"fatto: {len(entries)} tile, {total_bytes / 1e6:.1f} MB, " +
@@ -406,3 +458,69 @@ def _link_pois(tile):
     for p in pois:
         idx = tree.query(shapely.points(*p["_pt"]), predicate="within")
         p["building"] = int(idx[0]) if len(idx) else -1
+
+
+# ---------------------------------------------------------------- aggiornamento di un pack esistente
+
+def add_extras(region, pack_dir, osm_path, boundary_lonlat, municipalities=(), version=None, source_name="",
+               log=print):
+    """Pack v4 a partire da un pack già pubblicato: i tile restano identici (stessi lotti, quindi le partite
+    salvate restano valide) e si riscrive solo l'indice con comuni e linee di trasporto pubblico."""
+    from Orbis.Core.World.Fb.RegionIndex import RegionIndex
+    from Orbis.Core.World.Fb.Tile import Tile
+
+    index_path = os.path.join(pack_dir, "index.bin")
+    with open(index_path, "rb") as f:
+        idx = RegionIndex.GetRootAs(encode.unpack(f.read()), 0)
+    if idx.Format() != encode.FORMAT_VERSION:
+        raise ValueError(f"formato dell'indice {idx.Format()} non supportato")
+    z = idx.Z()
+    entries = []
+    road_ids = set()
+    for i in range(idx.TilesLength()):
+        e = idx.Tiles(i)
+        entries.append((e.X(), e.Y(), e.Size(), e.Crc(), e.Buildings()))
+        with open(os.path.join(pack_dir, str(z), str(e.X()), f"{e.Y()}.bin"), "rb") as f:
+            data_bytes = f.read()
+        if len(data_bytes) != e.Size() or (zlib.crc32(data_bytes) & 0xFFFFFFFF) != e.Crc():
+            raise ValueError(f"tile {z}/{e.X()}/{e.Y()} diverso dall'indice")
+        t = Tile.GetRootAs(encode.unpack(data_bytes), 0)
+        for j in range(t.RoadsLength()):
+            road_ids.add(t.Roads(j).OsmId())
+    far = None
+    fo = idx.Far()
+    if fo is not None:
+        far = {"x0": fo.X0(), "y0": fo.Y0(), "cell": fo.Cell(), "cols": fo.Cols(), "rows": fo.Rows(),
+               "base": fo.Base(), "step": fo.Step(), "values": fo.HeightsAsNumpy()}
+    old_version = idx.Version()
+    version = version if version is not None else old_version + 1
+    old_source = (idx.Source() or b"").decode("utf-8")
+    source = old_source + (f" · trasporti e comuni: {source_name}" if source_name else "")
+    log(f"pack v{old_version}: {len(entries)} tile, {len(road_ids):,} strade")
+
+    scale = geo.scale_at(idx.OriginLat())
+    outer_area = _merc_geom(boundary_lonlat).buffer(region.get("outer_buffer_m", 12000) / scale)
+    log("lettura OSM…")
+    data = osm.load(osm_path, log=log)
+    stops, routes = transit(data, outer_area, log=log, road_ids=road_ids)
+    muns = [(code, name, municipality_rings(geom)) for code, name, geom in municipalities]
+    created = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    index = encode.encode_index(
+        (idx.Key() or b"").decode("utf-8"), (idx.Name() or b"").decode("utf-8"), version, z, entries,
+        idx.OriginLat(), idx.OriginLon(), idx.BoundaryAsNumpy().reshape(-1, 2),
+        (idx.Attribution() or b"").decode("utf-8"), created, source, far=far,
+        municipalities=muns, stops=stops, routes=routes)
+    with open(index_path, "wb") as f:
+        f.write(index)
+    report_path = os.path.join(pack_dir, "report.json")
+    report = {}
+    if os.path.exists(report_path):
+        with open(report_path, encoding="utf-8") as f:
+            report = json.load(f)
+    report.update({"version": version, "created": created, "source": source, "base_version": old_version,
+                   "municipalities": len(muns), "transit": {"routes": len(routes), "stops": len(stops)}})
+    with open(report_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
+    log(f"indice v{version}: {len(muns)} comuni, {len(routes)} linee, {len(stops)} fermate")
+    return report
+

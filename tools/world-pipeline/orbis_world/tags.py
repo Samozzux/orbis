@@ -527,3 +527,23 @@ def poi_category(tags):
             continue
         return f"{key}/{v}"
     return None
+
+
+# ---------------------------------------------------------------- trasporto pubblico (pack v4)
+
+TRANSIT_MODES = {"bus": 0, "trolleybus": 1, "tram": 2, "train": 3}
+
+
+def transit_mode(tags):
+    """Modalità (TransitMode) di una relazione route=…, None se non è una linea di trasporto pubblico."""
+    if tags.get("type") not in ("route", None):
+        return None
+    return TRANSIT_MODES.get(tags.get("route"))
+
+
+def is_transit_stop(tags):
+    """Nodo che può essere una fermata di una linea."""
+    return (tags.get("public_transport") in ("stop_position", "platform")
+            or tags.get("highway") == "bus_stop"
+            or tags.get("railway") in ("stop", "halt", "station", "tram_stop"))
+
