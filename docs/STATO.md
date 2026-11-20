@@ -22,6 +22,24 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
      - ISTAT, popolazione per età e sesso al 1° gennaio 2026 (stima), un file per provincia: `demo.istat.it/data/posas/POSAS_2026_it_069_Chieti.zip`. Comune 069022: 48.368 abitanti. Licenza CC BY 4.0.
      - MEF, Dipartimento delle Finanze, redditi IRPEF per comune (anno d'imposta 2024): contribuenti per fascia di reddito e per tipo (dipendente, pensione, autonomo). Chieti: 36.435 contribuenti. Licenza CC BY 3.0 IT.
      - Ancora da trovare: famiglie per numero di componenti, nomi per anno di nascita, cognomi.
+
+### Avanzamento M4
+- **Dati reali, prima parte** (blocco 1, 20/11, branch `m4-dati`):
+  - **Strumento.** `tools/population/`, in Python con la sola libreria standard. Scarica le fonti aperte e scrive `data/population/chieti.json` (20 KB). Contenuto:
+    - abitanti di Chieti per età (0–100) e sesso: 48.368 al 1° gennaio 2026;
+    - bilancio del 2025: 247 nati, 581 morti, 1.254 arrivati da altri comuni e 1.142 partiti, 324 arrivati dall'estero e 137 partiti;
+    - famiglie dell'Abruzzo nel 2025: tipi, 2,19 persone in media e posizione in famiglia per età (sola, in coppia, figlio…), dalle previsioni ISTAT;
+    - tavola di mortalità della provincia, per età e sesso;
+    - redditi di Chieti nel 2024 (MEF): 36.435 contribuenti, divisi in 8 fasce di reddito e per tipo (dipendenti, pensioni, autonomi, imprese);
+    - abitanti di tutti i 104 comuni della provincia (369.059 in tutto), per il livello L3.
+  - **Controlli.** Lo strumento rifiuta i file che non tornano: somme per età diverse dal totale, fasce di reddito incomplete, età mancanti. 9 test (`python -m unittest`) e un workflow `Population data`.
+  - **Famiglie per numero di componenti.** Non c'è un file ISTAT per comune: uso i dati regionali sulla posizione in famiglia per età, più che sufficienti per formare le famiglie.
+  - **Nomi e cognomi.** `data/population/names-it.json` è una lista interna scritta a mano, perché l'ISTAT pubblica i nomi dei nati solo dal 1999 e senza file scaricabile. Contiene i 25 nomi più comuni per sesso e periodo di nascita (dal 1920 al 2029) e 95 cognomi frequenti in Abruzzo e in Italia.
+  - **Calendario.** In `data/events/`:
+    - `italia.json`: festività nazionali, con le date di Pasqua relative al giorno di Pasqua;
+    - `chieti.json`: la processione del Venerdì Santo dalla cattedrale, alle 19, e San Giustino, l'11 maggio.
+  - **CREDITS.** Aggiunti ISTAT (CC BY 4.0) e MEF (CC BY 3.0 IT). La schermata Crediti del gioco è ancora "in arrivo": quando si fa deve elencarli.
+  - **Resta del blocco 1.** Pack del mondo v4, con i confini dei comuni e le linee bus da OSM.
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;

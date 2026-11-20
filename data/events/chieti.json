@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "_info": "Eventi locali del comune di Chieti (docs/03 §10). Stesso formato di italia.json; place = chiave in data/landmarks.",
+  "region": "chieti",
+  "events": [
+    {
+      "key": "venerdi_santo_chieti",
+      "name": "Processione del Venerdì Santo",
+      "easter": -2,
+      "holiday": false,
+      "kind": "procession",
+      "place": "cattedrale_san_giustino",
+      "start": "19:00",
+      "end": "22:30",
+      "description": "Dalla Cattedrale di San Giustino per le vie del centro storico, alla luce di fiaccole e ceri, con il Miserere di Saverio Selecchy. È tra le processioni più antiche d'Italia."
+    },
+    {
+      "key": "san_giustino",
+      "name": "Festa di San Giustino, patrono di Chieti",
+      "date": "05-11",
+      "holiday": true,
+      "kind": "patron",
+      "place": "cattedrale_san_giustino",
+      "start": "09:00",
+      "end": "23:59",
+      "description": "Festa del patrono della città: messe in cattedrale, processione e festeggiamenti nel centro."
+    }
+  ]
+}
