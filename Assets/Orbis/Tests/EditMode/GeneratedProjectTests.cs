@@ -77,6 +77,8 @@ namespace Orbis.Tests.EditMode
             Add<Orbis.Core.Game.LedgerCategory>("ledger.");
             Add<Orbis.Core.Game.TaxKind>("tax.");
             Add<Orbis.Core.Game.Difficulty>("newgame.difficulty.");
+            Add<Orbis.Core.Population.ReactionKind>("reaction.");
+            Add<Orbis.Core.Population.HappinessFactor>("demand.");
             var missing = expected.Where(k => !keys.Contains(k)).ToList();
             Assert.That(missing, Is.Empty, "Testi degli enum assenti in data/localization/ui.json");
         }

@@ -12,7 +12,7 @@ namespace Orbis.Core.Population
     /// </summary>
     public static class PopulationSerializer
     {
-        public const int Version = 6; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico; 5: biglietti delle linee del comune; 6: felicità
+        public const int Version = 7; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico; 5: biglietti delle linee del comune; 6: felicità; 7: reazioni
         private const uint Magic = 0x504F5043; // "CPOP"
 
         public static void Write(BinaryWriter w, CityPopulation p)
@@ -36,6 +36,15 @@ namespace Orbis.Core.Population
             w.Write(p.UnhappyCount);
             w.Write(p.HappinessFactors.Length);
             foreach (var f in p.HappinessFactors) w.Write(f);
+            w.Write(p.Approval);
+            w.Write(p.LastProtestDay);
+            w.Write(p.ProtestPending);
+            w.Write(p.LowWorkDays);
+            w.Write(p.StrikeDay);
+            w.Write(p.Petitions.Count);
+            foreach (var x in p.Petitions) x.Write(w);
+            w.Write(p.Feed.Count);
+            foreach (var x in p.Feed) x.Write(w);
             Strings(w, p.TraitKeys);
             Strings(w, p.FirstNames);
             Strings(w, p.Surnames);
@@ -115,6 +124,7 @@ namespace Orbis.Core.Population
                 w.Write(c.TransitLine);
                 w.Write(c.Happiness);
                 w.Write(c.Commute);
+                w.Write(c.Worry);
             }
         }
 
@@ -152,6 +162,18 @@ namespace Orbis.Core.Population
                     float f = r.ReadSingle();
                     if (k < p.HappinessFactors.Length) p.HappinessFactors[k] = f;
                 }
+            }
+            if (version >= 7)
+            {
+                p.Approval = r.ReadSingle();
+                p.LastProtestDay = r.ReadInt32();
+                p.ProtestPending = r.ReadByte();
+                p.LowWorkDays = r.ReadInt32();
+                p.StrikeDay = r.ReadInt32();
+                int petitions = Count(r);
+                for (int k = 0; k < petitions; k++) p.Petitions.Add(Petition.Read(r));
+                int feed = Count(r);
+                for (int k = 0; k < feed; k++) p.Feed.Add(Reaction.Read(r));
             }
             p.TraitKeys = ReadStrings(r).ToArray();
             p.FirstNames.AddRange(ReadStrings(r));
@@ -256,6 +278,7 @@ namespace Orbis.Core.Population
                     c.Happiness = r.ReadByte();
                     c.Commute = r.ReadByte();
                 }
+                c.Worry = version >= 7 ? r.ReadByte() : (byte)HappinessFactor.Count;
                 p.Add(c);
             }
             Validate(p);

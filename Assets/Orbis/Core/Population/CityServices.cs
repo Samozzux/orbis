@@ -35,6 +35,10 @@ namespace Orbis.Core.Population
         public double Employed = 80, Unemployed = 25, Retired = 70, Homemaker = 60, Student = 75;
         public double TaxDefault = 1.5, TaxPerPoint = 10, DailyChange = 0.3;
         public int UnhappyBelow = 40;
+        /// <summary>Il problema più grave pesa di più: sotto <see cref="WorstBelow"/> toglie <see cref="WorstPenalty"/> per punto.</summary>
+        public double WorstBelow = 60, WorstPenalty = 0.35;
+        /// <summary>Reazioni dei cittadini (blocco 5b).</summary>
+        public ReactionSpec Reactions = new ReactionSpec();
 
         public ServicesBalance()
         {
@@ -77,6 +81,9 @@ namespace Orbis.Core.Population
             b.TaxPerPoint = h["taxPerPoint"].AsDouble(b.TaxPerPoint);
             b.DailyChange = Math.Max(0.01, Math.Min(1, h["dailyChange"].AsDouble(b.DailyChange)));
             b.UnhappyBelow = h["unhappyBelow"].AsInt(b.UnhappyBelow);
+            b.WorstBelow = h["worstBelow"].AsDouble(b.WorstBelow);
+            b.WorstPenalty = h["worstPenalty"].AsDouble(b.WorstPenalty);
+            if (!r["reactions"].IsNull) b.Reactions = ReactionSpec.Parse(r["reactions"]);
             return b;
         }
 
@@ -330,6 +337,17 @@ namespace Orbis.Core.Population
                     sums[k] += f[k];
                 }
                 target /= wsum;
+                // la preoccupazione: il fattore peggiore (tranne l'umore del giorno), che pesa di più se è grave
+                int worst = (int)HappinessFactor.Home;
+                for (int k = (int)HappinessFactor.Home; k < n; k++)
+                    if (f[k] < f[worst]) worst = k;
+                if (f[worst] < b.WorstBelow)
+                {
+                    target -= (b.WorstBelow - f[worst]) * b.WorstPenalty;
+                    c.Worry = (byte)worst;
+                }
+                else c.Worry = (byte)HappinessFactor.Count;
+                if (target < 1) target = 1;
                 double now = first || c.Happiness == 0 ? target : c.Happiness + (target - c.Happiness) * b.DailyChange;
                 c.Happiness = (byte)Math.Max(1, Math.Min(100, Math.Round(now)));
                 total += c.Happiness;
