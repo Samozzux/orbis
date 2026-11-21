@@ -13,9 +13,9 @@ namespace Orbis.Core.Tests
     /// <summary>Generatore di popolazione (M4 blocco 2) con i dati veri di Chieti e una città finta.</summary>
     public class PopulationTests
     {
-        private static string Root => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
+        internal static string Root => Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", ".."));
 
-        private static readonly Lazy<(PopulationData Data, NameData Names, PopulationBalance Balance)> Inputs =
+        internal static readonly Lazy<(PopulationData Data, NameData Names, PopulationBalance Balance)> Inputs =
             new Lazy<(PopulationData, NameData, PopulationBalance)>(() => (
                 PopulationData.Parse(File.ReadAllText(Path.Combine(Root, "data", "population", "chieti.json"))),
                 NameData.Parse(File.ReadAllText(Path.Combine(Root, "data", "population", "names-it.json"))),
@@ -24,7 +24,7 @@ namespace Orbis.Core.Tests
         private static readonly Lazy<CityPopulation> Chieti = new Lazy<CityPopulation>(() => Generate(42));
 
         /// <summary>Città finta: 2.500 case, 400 posti di lavoro, scuole di ogni livello su 6×6 km.</summary>
-        private static CityPlaces FakeCity()
+        internal static CityPlaces FakeCity()
         {
             var b = Inputs.Value.Balance;
             var places = new CityPlaces(b);

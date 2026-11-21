@@ -853,12 +853,16 @@ namespace Orbis.Core.Population
             if (places.Count == 0) return;
             double jobs = 0;
             foreach (var p in places) jobs += p.Capacity;
-            double factor = jobs > 0 ? local.Count * 1.05 / jobs : 1;
+            // posti per i residenti e per i pendolari che vengono da fuori (Chieti ha più posti che lavoratori residenti)
+            double factor = jobs > 0 ? local.Count * Math.Max(1.05, _b.JobsPerLocalWorker) / jobs : 1;
             var picker = new WeightedPicker(places.Count);
             var free = new int[places.Count];
             for (int i = 0; i < places.Count; i++)
             {
                 places[i].Capacity = Math.Max(1, (int)Math.Round(places[i].Capacity * factor));
+                // conto iniziale: i posti pubblici sono pagati dallo Stato, le attività partono con un po' di cassa
+                places[i].Public = PopulationBalance.InSet(_b.PublicCategories, places[i].Category);
+                places[i].Cash = places[i].Public ? 0 : (long)Math.Round(places[i].Capacity * _b.InitialCashPerJob);
                 free[i] = places[i].Capacity;
                 picker.Set(i, free[i]);
             }

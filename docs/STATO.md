@@ -75,6 +75,50 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - salvataggio andata e ritorno;
     - case e lavori dai tile veri, col confine del comune.
   - **Nel gioco.** I dati sono copiati in Resources. Collegare il generatore alla nuova partita (caricamento dei tile del comune con la barra di avanzamento, salvataggio) si fa con la vita dei cittadini (blocco 3), quando la popolazione serve davvero alla simulazione.
+- **Vita dei cittadini, parte economica e ciclo di vita** (blocco 3a, 20/11, branch `m4-vita`). Il blocco 3 è diviso in tre parti:
+  - 3a: soldi e ciclo di vita giorno per giorno (livello L2);
+  - 3b: popolazione generata nella nuova partita e salvata;
+  - 3c: routine, bisogni, frigo e spesa vicino alla camera (L1).
+
+  Cosa c'è nella 3a (`CityLife`):
+  - **Ogni giorno, i soldi:**
+    - stipendi e pensioni, con le tasse allo Stato e l'addizionale comunale al sindaco;
+    - spese della famiglia: cibo, affitto e bollette, il 15% del netto risparmiato;
+    - debiti fino a 3.000 € per adulto, poi l'aiuto sociale: lo paga per il 25% il comune e per il resto lo Stato.
+  - **Attività:**
+    - incassano dai clienti di fuori e dalla spesa dei cittadini (negozi, bar, ristoranti, in proporzione ai posti);
+    - pagano stipendi e costi; pagano le tasse sul fatturato, commerciali o industriali secondo l'aliquota;
+    - i posti non coperti dai residenti li coprono pendolari da fuori, con 1,45 posti per lavoratore residente come la stima di M2;
+    - gli utili oltre tre mesi di costi vanno ai proprietari;
+    - un'attività in rosso per 4 mesi chiude e licenzia.
+  - **Lavoro.** Il 7% l'anno perde il lavoro; chi lo cerca lo trova in circa un anno nei posti liberi.
+  - **Ciclo di vita** (se attivo):
+    - morti con la tavola di mortalità ISTAT, con eredità al partner o in famiglia;
+    - nascite nelle coppie, con l'età delle madri centrata sui 32 anni e il totale tarato sui nati ISTAT;
+    - compleanni: asilo, scuola, maturità, università, laurea, pensione al 70%;
+    - partenze e arrivi con le quote del bilancio ISTAT; chi arriva trova una casa libera, magari un lavoro, e porta i risparmi.
+  - **Conti.** Il denaro si conserva: un test verifica al centesimo che cittadini, attività e comune cambiano solo per ciò che entra o esce dalla città. Lo stesso giorno non si simula due volte.
+  - **Un anno sulla città di prova:**
+
+    | | Simulati | ISTAT |
+    |---|---|---|
+    | Abitanti a fine anno | 48.172 (da 48.368) | −35 |
+    | Nati | 245 | 247 |
+    | Morti | 626 | 581 |
+    | Arrivati | 1.492 | 1.578 |
+    | Partiti | 1.304 | 1.279 |
+
+    I disoccupati si assestano intorno al 12%, nessuna attività fallisce e l'anno si simula in pochi secondi sul Mac.
+  - **Nel gioco (Core):**
+    - a mezzanotte la simulazione fa la giornata dei cittadini, poi chiude i conti del comune. Tasse e aiuti sociali finiscono nel registro del giorno;
+    - la previsione del pannello Finanze ne tiene conto;
+    - se la partita ha i cittadini, la città esistente non si stima più (popolazione e posti veri).
+  - **Saldo.** Quando i cittadini veri prendono il posto della città stimata, il costo dei servizi si aggiusta una volta (`ServicesAdjustPerDay`, salvato nella partita), così la partita mantiene il saldo che aveva. Le tasse delle attività dipendono da come è fatta la città, e il pareggio di M2 era tarato a mano sulla città stimata.
+  - **Salvataggio della partita.**
+    - Versione 2 con i cittadini, stato versione 3; i salvataggi vecchi si leggono ancora.
+    - "Riavvolgi" riporta anche i cittadini se l'istantanea è degli ultimi 7 giorni: quelle dei cittadini stanno solo in memoria, perché pesano qualche MB. Più indietro, i cittadini restano come sono e riprendono a vivere dal giorno riavvolto.
+  - **Test.** 7 nuovi (185 in tutto): denaro conservato, un anno senza valori assurdi, giorno non ripetuto, senza ciclo di vita nessuno nasce né muore, tasse nel registro di una partita vera, salvataggio e riavvolgimento.
+  - **Dimensione del salvataggio.** Senza compressione è di circa 3,6 MB con 48.000 cittadini. Un compressore Deflate in C# puro (come il decompressore dei tile) lo ridurrebbe: si valuta con le prestazioni (blocco 8).
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;

@@ -36,6 +36,25 @@ namespace Orbis.Core.Game
         public Balance Balance;
         public IWorldAccess World;
         public Missions Missions;
+        /// <summary>Cittadini del comune (M4); null nelle partite senza popolazione (economia stimata come in M2).</summary>
+        public Orbis.Core.Population.CityPopulation Population;
+        /// <summary>Vita giornaliera dei cittadini; null = popolazione ferma.</summary>
+        public Orbis.Core.Population.CityLife Life;
+
+        public Orbis.Core.Population.TaxRates TaxRates
+        {
+            get
+            {
+                // la difficoltà agisce come sulle tasse stimate di M2
+                float m = Balance.IncomeMultiplier(State.Config.Difficulty);
+                return new Orbis.Core.Population.TaxRates
+                {
+                    Residential = State.ResidentialTax * m,
+                    Commercial = State.CommercialTax * m,
+                    Industrial = State.IndustrialTax * m,
+                };
+            }
+        }
 
         public GameContext(GameState state, Catalog catalog, Balance balance, IWorldAccess world, Missions missions = null)
         {

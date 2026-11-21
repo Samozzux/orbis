@@ -124,7 +124,8 @@
         "weight": 0.6
       }
     ],
-    "homemakerShareFemale": 0.55
+    "homemakerShareFemale": 0.55,
+    "jobsPerLocalWorker": 1.45
   },
   "education": {
     "_info": "Quote per anno di nascita: nessun titolo, licenza elementare, licenza media, diploma, laurea.",
@@ -268,5 +269,81 @@
         "independent"
       ]
     ]
+  },
+  "life": {
+    "_info": "Vita giornaliera dei cittadini (docs/03 §3–§5): soldi, attività, lavoro, nascite e morti, arrivi e partenze. Valori iniziali da bilanciare.",
+    "netIncomeShare": 0.78,
+    "spendingShare": 0.85,
+    "subsistencePerPersonDay": 9,
+    "utilitiesPerPersonMonth": 55,
+    "localSpendingShare": 0.6,
+    "debtLimitPerAdult": 3000,
+    "cityWelfareShare": 0.25,
+    "publicCategories": [
+      "Hospital",
+      "School",
+      "Kindergarten",
+      "University",
+      "Civic",
+      "Government",
+      "TrainStation",
+      "Transportation",
+      "Museum",
+      "amenity/townhall",
+      "amenity/police",
+      "amenity/fire_station",
+      "amenity/courthouse",
+      "amenity/school",
+      "amenity/kindergarten",
+      "amenity/university",
+      "amenity/college",
+      "amenity/hospital",
+      "amenity/library",
+      "amenity/post_office",
+      "amenity/social_facility"
+    ],
+    "consumerCategories": [
+      "shop",
+      "Retail",
+      "Commercial",
+      "amenity/bar",
+      "amenity/cafe",
+      "amenity/pub",
+      "amenity/restaurant",
+      "amenity/fast_food",
+      "amenity/ice_cream",
+      "amenity/pharmacy",
+      "amenity/cinema",
+      "amenity/fuel",
+      "amenity/marketplace",
+      "amenity/nightclub",
+      "leisure/fitness_centre",
+      "leisure/sports_centre",
+      "tourism/hotel",
+      "tourism/guest_house"
+    ],
+    "industrialCategories": [
+      "Industrial",
+      "Warehouse",
+      "Farm",
+      "craft"
+    ],
+    "productivityPerJobDay": 320,
+    "consumerExternalPerJobDay": 90,
+    "operatingCostShare": 0.35,
+    "initialCashPerJob": 4000,
+    "cashBufferMonths": 3,
+    "badCashMonthsOfWages": 2,
+    "closeAfterBadMonths": 4,
+    "jobSearchDays": 365,
+    "jobLossPerYear": 0.07,
+    "pensionReplacement": 0.7,
+    "fertilityPeakAge": 32,
+    "fertilitySd": 5.5,
+    "arrivalAgeMean": 33,
+    "arrivalAgeSd": 9,
+    "arrivalJobChance": 0.6,
+    "arrivalSavingsMonths": 4,
+    "departureMinAge": 18
   }
 }

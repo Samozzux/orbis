@@ -30,6 +30,10 @@ namespace Orbis.Core.Population
 
     public enum Tenure : byte { Owner = 0, Renter }
 
+    /// <summary>Stato del record: i cittadini morti o partiti restano nell'archivio (gli indici non cambiano).</summary>
+    [Flags]
+    public enum CitizenFlags : byte { None = 0, Dead = 1, Gone = 2 }
+
     /// <summary>
     /// Cittadino: un record compatto (docs/01 §6: ogni cittadino esiste sempre come record persistente).
     /// I riferimenti sono indici: famiglia in <see cref="CityPopulation.Households"/>, lavoro in
@@ -66,6 +70,10 @@ namespace Orbis.Core.Population
         // bisogni 0–100 (docs/03 §2)
         public byte Hunger, Energy, Hygiene, Fun, Social, Comfort, Health;
         public byte Mood;
+        public CitizenFlags Flags;
+
+        /// <summary>Vive in città (non è morto né partito).</summary>
+        public bool Alive => Flags == CitizenFlags.None;
 
         public static readonly DateTime Epoch = new DateTime(1900, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -129,6 +137,16 @@ namespace Orbis.Core.Population
         public int Capacity;
         public Education MinEducation;
 
+        // conto dell'attività (docs/03 §4 "attività commerciali con conto economico reale"); i posti pubblici non ce l'hanno
+        /// <summary>Datore di lavoro pubblico (ospedale, scuola, comune…): stipendi pagati dallo Stato.</summary>
+        public bool Public;
+        public bool Closed;
+        public long Cash;
+        /// <summary>Incassi e costi medi al giorno (media mobile sull'ultimo mese circa).</summary>
+        public long RevenueDay, CostsDay;
+        /// <summary>Mesi di fila con la cassa sotto la soglia: dopo alcuni l'attività chiude.</summary>
+        public byte BadMonths;
+
         public Place Clone() => (Place)MemberwiseClone();
     }
 
@@ -149,6 +167,26 @@ namespace Orbis.Core.Population
         public readonly List<string> FirstNames = new List<string>();
         public readonly List<string> Surnames = new List<string>();
         public string[] TraitKeys = Array.Empty<string>();
+
+        // contatori della vita della città (dal giorno della generazione)
+        /// <summary>Denaro entrato da fuori (stipendi dello Stato, pensioni, clienti di fuori…) e uscito (tasse allo Stato, affitti, merci…).</summary>
+        public long ExternalIn, ExternalOut;
+        public int Births, Deaths, Arrived, Left;
+        /// <summary>Aiuti sociali pagati dal comune nell'ultima giornata.</summary>
+        public long LastWelfare;
+        /// <summary>Ultimo giorno simulato (giorni dall'1/1/1900), per non ripetere una giornata.</summary>
+        public int LastDay;
+
+        public int AliveCount
+        {
+            get
+            {
+                int n = 0;
+                for (int i = 0; i < Count; i++)
+                    if (Citizens[i].Alive) n++;
+                return n;
+            }
+        }
 
         public ref Citizen this[int i] => ref Citizens[i];
 

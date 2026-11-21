@@ -130,7 +130,7 @@ namespace Orbis.Core.Game
     /// </summary>
     public sealed class GameState
     {
-        public const int FormatVersion = 2; // 2: edifici reali potenziati
+        public const int FormatVersion = 3; // 2: edifici reali potenziati; 3: aggiustamento dei servizi (M4)
 
         public string Name = "Chieti";
         public string Region = "chieti";
@@ -145,6 +145,11 @@ namespace Orbis.Core.Game
         public long Xp;
         public int Level = 1;
         public float ResidentialTax, CommercialTax, IndustrialTax;
+        /// <summary>
+        /// Euro al giorno aggiunti al costo dei servizi della città esistente: fissati quando arrivano i cittadini veri
+        /// (M4), così la partita mantiene il saldo che aveva con la città stimata.
+        /// </summary>
+        public double ServicesAdjustPerDay;
 
         public readonly SortedDictionary<int, PlacedObject> Objects = new SortedDictionary<int, PlacedObject>();
         public int NextObjectId = 1;
@@ -261,6 +266,7 @@ namespace Orbis.Core.Game
             w.Write(Stats.Happiness);
             w.Write(Stats.LastDayNet);
             w.Write(Stats.PositiveDaysStreak);
+            w.Write(ServicesAdjustPerDay);
             w.Write(MissionIndex);
             w.Write(CompletedMissions.Count);
             foreach (var m in CompletedMissions) w.Write(m);
@@ -342,6 +348,7 @@ namespace Orbis.Core.Game
             s.Stats.Happiness = r.ReadSingle();
             s.Stats.LastDayNet = r.ReadInt64();
             s.Stats.PositiveDaysStreak = r.ReadInt32();
+            if (version >= 3) s.ServicesAdjustPerDay = r.ReadDouble();
             s.MissionIndex = r.ReadInt32();
             n = r.ReadInt32();
             for (int i = 0; i < n; i++) s.CompletedMissions.Add(r.ReadString());
