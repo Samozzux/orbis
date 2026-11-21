@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -94,6 +95,8 @@ namespace Orbis.Gameplay
         public GameContent Content { get; private set; }
         public WorldSession World { get; private set; }
         public PlacedObjectsView View { get; private set; }
+        /// <summary>Strade disegnate dal sindaco (M4).</summary>
+        public CityRoadsView RoadsView { get; private set; }
         public string SaveId { get; private set; }
         public OfflineSummary OfflineSummary { get; private set; }
         public BuildController Build { get; private set; }
@@ -125,10 +128,16 @@ namespace Orbis.Gameplay
             c._store = store;
             c.OfflineSummary = offline;
             c.View = new PlacedObjectsView(world.World, c.Content.Catalog, world.World.Content ?? world.transform);
+            c.RoadsView = new CityRoadsView(world.World, c.Content.Traffic, world.World.Content ?? world.transform);
+            c.EnsureFrame();
             c.Build = BuildController.Attach(c);
             c.Previews = CatalogPreviews.Attach(c);
             c._nextAutosave = Time.unscaledTime + AutosaveSeconds;
-            world.World.TileLoaded += _ => c.View.Sync(c.State);
+            world.World.TileLoaded += _ =>
+            {
+                c.View.Sync(c.State);
+                c.RoadsView.Sync(c.State);
+            };
             world.Game = c;
             c.SyncWorld(rebuildAll: true);
             // tile del comune: cittadini (se la partita non li ha ancora) e rete stradale con il traffico
@@ -169,7 +178,109 @@ namespace Orbis.Gameplay
         internal void OnTransitReady(Orbis.Core.Traffic.TransitNetwork transit)
         {
             Transit = transit;
+            _linesSignature = LinesSignature();
+            transit.SetCityLines(Infrastructure.NetworkLines(State));
             if (Session.Context.Routines != null) Session.Context.Routines.Transit = transit;
+        }
+
+        // ------------------------------------------------------------------ strade e linee del sindaco
+
+        private List<(Orbis.Core.World.Tiles.TileData Tile, double OriginX, double OriginY)> _cityTiles;
+        private (double, double, double, double) _cityArea;
+        private string _roadsSignature, _linesSignature;
+        private int _trafficVersion;
+        private bool _trafficBuilding;
+
+        /// <summary>Le strade e le linee del sindaco sono in metri della regione: le regole del Core devono conoscerne il sistema.</summary>
+        private void EnsureFrame()
+        {
+            var streamer = World.World;
+            if (Session.Context.Frame != null || streamer.Frame == null || streamer.Region == null) return;
+            Session.Context.Frame = streamer.Frame;
+            Session.Context.TileZoom = streamer.Region.Zoom;
+        }
+
+        /// <summary>Tile del comune (dal caricatore della città) per costruire e ricostruire la rete stradale.</summary>
+        internal void OnCityTiles(List<(Orbis.Core.World.Tiles.TileData Tile, double OriginX, double OriginY)> tiles, (double, double, double, double) area)
+        {
+            _cityTiles = tiles;
+            _cityArea = area;
+        }
+
+        /// <summary>
+        /// Grafo stradale (strade vere più quelle del sindaco) e tempi a strada libera, poche zone per fotogramma.
+        /// Se nel frattempo il sindaco cambia di nuovo le strade, questa costruzione si abbandona per la successiva.
+        /// </summary>
+        internal IEnumerator BuildTraffic()
+        {
+            var b = Content.Traffic;
+            if (b == null || _cityTiles == null || _cityTiles.Count == 0) yield break;
+            int version = ++_trafficVersion;
+            _trafficBuilding = true;
+            try
+            {
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+                _roadsSignature = RoadsSignature();
+                var graph = Orbis.Core.Traffic.RoadGraph.Build(_cityTiles, b, _cityArea, Infrastructure.GraphRoads(State));
+                var traffic = new Orbis.Core.Traffic.TrafficModel(graph, b);
+                yield return null;
+                for (int a = 0; a < traffic.Zones; a += 5)
+                {
+                    if (version != _trafficVersion || Session == null) yield break;
+                    traffic.RefreshRange(a, 5);
+                    yield return null;
+                }
+                if (version != _trafficVersion || Session == null) yield break;
+                OnTrafficReady(traffic);
+                Debug.Log($"[Orbis] rete stradale: {graph.NodeCount} incroci, {graph.EdgeCount} tratti, {traffic.Zones} zone, " +
+                          $"{State.Roads.Count} strade del sindaco in {sw.ElapsedMilliseconds} ms");
+            }
+            finally
+            {
+                if (version == _trafficVersion) _trafficBuilding = false;
+            }
+        }
+
+        /// <summary>La rete stradale si sta (ri)costruendo.</summary>
+        public bool TrafficBuilding => _trafficBuilding;
+
+        private string RoadsSignature()
+        {
+            var sb = new StringBuilder();
+            foreach (var r in State.Roads.Values)
+            {
+                sb.Append(r.Id).Append(':').Append((int)r.Class).Append(r.Oneway).Append(r.Bridge ? 'p' : '-');
+                foreach (var v in r.Points) sb.Append(',').Append(v.ToString("R", CultureInfo.InvariantCulture));
+                sb.Append(';');
+            }
+            return sb.ToString();
+        }
+
+        private string LinesSignature()
+        {
+            var sb = new StringBuilder();
+            foreach (var l in State.Lines.Values)
+            {
+                sb.Append(l.Id).Append(':').Append(l.HeadwayMinutes).Append('/').Append(l.FareCents).Append('/').Append((int)l.Mode);
+                foreach (var v in l.Stops) sb.Append(',').Append(v.ToString("R", CultureInfo.InvariantCulture));
+                sb.Append(';');
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>Dopo un comando, un annulla o un riavvolgimento: rete stradale e linee seguono le scelte del sindaco.</summary>
+        private void SyncInfrastructure()
+        {
+            if (_cityTiles != null && RoadsSignature() != _roadsSignature) StartCoroutine(BuildTraffic());
+            if (Transit != null)
+            {
+                var lines = LinesSignature();
+                if (lines != _linesSignature)
+                {
+                    _linesSignature = lines;
+                    Transit.SetCityLines(Infrastructure.NetworkLines(State));
+                }
+            }
         }
 
         /// <summary>Collega i cittadini appena generati, mantenendo il saldo della città stimata, e salva.</summary>
@@ -186,6 +297,7 @@ namespace Orbis.Gameplay
         private void Update()
         {
             if (Session == null || World.State != WorldSession.Phase.Playing) return;
+            EnsureFrame();
             // tempo di gioco: 1 ora = 1 minuto reale × velocità (pausa = 0)
             float speed = World.Clock.Speed;
             _pendingGameSeconds += Time.unscaledDeltaTime * GameSession.GameSecondsPerRealSecond * speed;
@@ -208,6 +320,7 @@ namespace Orbis.Gameplay
             {
                 _nextViewSync = Time.unscaledTime + 2f;
                 View.Sync(State);
+                RoadsView.Sync(State);
             }
             if (Time.unscaledTime >= _nextAutosave)
             {
@@ -221,6 +334,7 @@ namespace Orbis.Gameplay
 
         public BuildResult Do(IGameCommand cmd)
         {
+            EnsureFrame();
             int level = State.Level, mission = State.MissionIndex;
             var r = Session.Do(cmd);
             if (r != BuildResult.Ok) return r;
@@ -258,6 +372,8 @@ namespace Orbis.Gameplay
         {
             SyncWorld(rebuildAll);
             View.Sync(State);
+            RoadsView.Sync(State);
+            SyncInfrastructure();
             _saveRequested = true;
             Changed?.Invoke();
         }
@@ -367,6 +483,7 @@ namespace Orbis.Gameplay
         {
             SaveNowSync();
             View?.Dispose();
+            RoadsView?.Dispose();
         }
 
         /// <summary>Salvataggio immediato (uscita dall'app): l'archivio su file completa in modo sincrono.</summary>

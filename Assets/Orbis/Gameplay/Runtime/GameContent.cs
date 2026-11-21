@@ -37,6 +37,9 @@ namespace Orbis.Gameplay
             if (transit != null) c.Transit = Orbis.Core.Traffic.TransitBalance.Parse(transit.text);
             c.Balance ??= new Balance();
             c.Missions ??= new Missions();
+            // strade e linee del sindaco: costi e regole stanno nei bilanciamenti del traffico e del trasporto pubblico
+            c.Balance.Traffic = c.Traffic;
+            c.Balance.Transit = c.Transit;
             Debug.Log($"[Orbis] Contenuti: {c.Catalog.Count} elementi del catalogo, {c.Missions.All.Count} missioni" +
                       (c.Life != null ? $", popolazione di {c.Life.Data.MunicipalityName} ({c.Life.Data.Total} abitanti)" : ""));
             _cached = c;

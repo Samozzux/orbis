@@ -129,6 +129,8 @@ namespace Orbis.Core.Population
         public byte Cars;
         /// <summary>Biglietti del trasporto pubblico di oggi in centesimi: la vita del giorno li fa pagare.</summary>
         public int TransitCents;
+        /// <summary>Parte di <see cref="TransitCents"/> spesa sulle linee del comune: entra nella sua cassa.</summary>
+        public int CityTransitCents;
         public readonly List<int> Members = new List<int>();
     }
 
@@ -206,6 +208,8 @@ namespace Orbis.Core.Population
         public int Births, Deaths, Arrived, Left;
         /// <summary>Aiuti sociali pagati dal comune nell'ultima giornata.</summary>
         public long LastWelfare;
+        /// <summary>Biglietti delle linee del comune incassati nell'ultima giornata (euro).</summary>
+        public long LastCityFares;
         /// <summary>Ultimo giorno simulato (giorni dall'1/1/1900), per non ripetere una giornata.</summary>
         public int LastDay;
 

@@ -26,6 +26,12 @@ namespace Orbis.Core.Game
         UnknownObject,
         MaxLevel,
         NotReady,
+        /// <summary>Strada o linea con una forma non valida (pochi punti, tratti o fermate troppo vicini, troppo lunga).</summary>
+        InvalidPath,
+        /// <summary>Fermata lontana dalle strade.</summary>
+        NotNearRoad,
+        /// <summary>Tipo di strada, mezzo, frequenza o biglietto non ammessi.</summary>
+        NotAllowed,
     }
 
     /// <summary>Tutto ciò che serve a comandi e simulazione.</summary>
@@ -42,6 +48,10 @@ namespace Orbis.Core.Game
         public Orbis.Core.Population.CityLife Life;
         /// <summary>Giornata dei cittadini a passi di 15 minuti (L1); null = solo la vita giornaliera.</summary>
         public Orbis.Core.Population.CityRoutines Routines;
+        /// <summary>Sistema di coordinate della regione (strade e linee del sindaco sono in metri della regione); null nelle prove senza mondo.</summary>
+        public Orbis.Core.World.Geo.WorldFrame Frame;
+        /// <summary>Zoom dei tile del mondo (14).</summary>
+        public int TileZoom = 14;
 
         public Orbis.Core.Population.TaxRates TaxRates
         {
@@ -140,6 +150,8 @@ namespace Orbis.Core.Game
                 if (item == null) continue;
                 grid.Occupy(Footprint(lot, item, o.HalfX, o.HalfY, o.Rotation), ObjectOwner(o.Id));
             }
+            // strade disegnate dal sindaco che attraversano il lotto
+            Infrastructure.OccupyRoads(ctx, key, grid);
             return grid;
         }
 

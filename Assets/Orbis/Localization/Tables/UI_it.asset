@@ -1862,6 +1862,26 @@ MonoBehaviour:
     m_Localized: '{0} abitanti vivono ora a {1}: famiglie, case, lavori e redditi veri'
     m_Metadata:
       m_Items: []
+  - m_Id: 2092880989511680
+    m_Localized: 'Tracciato non valido: punti troppo vicini, troppo lungo o con fermate troppo vicine'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2092881006288896
+    m_Localized: Le fermate devono stare vicino a una strada
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2092881006288897
+    m_Localized: Scelta non ammessa (tipo di strada, mezzo, frequenza o biglietto)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2092881006288898
+    m_Localized: Biglietti delle linee del comune
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2092881006288899
+    m_Localized: Servizio delle linee del comune
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

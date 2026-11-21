@@ -1859,6 +1859,26 @@ MonoBehaviour:
     m_Key: citizens.ready
     m_Metadata:
       m_Items: []
+  - m_Id: 2092880989511680
+    m_Key: result.InvalidPath
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2092881006288896
+    m_Key: result.NotNearRoad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2092881006288897
+    m_Key: result.NotAllowed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2092881006288898
+    m_Key: ledger.TransitFares
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2092881006288899
+    m_Key: ledger.TransitCosts
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

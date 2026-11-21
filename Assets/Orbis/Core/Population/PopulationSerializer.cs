@@ -12,7 +12,7 @@ namespace Orbis.Core.Population
     /// </summary>
     public static class PopulationSerializer
     {
-        public const int Version = 4; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico
+        public const int Version = 5; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico; 5: biglietti delle linee del comune
         private const uint Magic = 0x504F5043; // "CPOP"
 
         public static void Write(BinaryWriter w, CityPopulation p)
@@ -31,6 +31,7 @@ namespace Orbis.Core.Population
             w.Write(p.Left);
             w.Write(p.LastDay);
             w.Write(p.LastWelfare);
+            w.Write(p.LastCityFares);
             Strings(w, p.TraitKeys);
             Strings(w, p.FirstNames);
             Strings(w, p.Surnames);
@@ -64,6 +65,7 @@ namespace Orbis.Core.Population
                 w.Write(h.FoodSpentToday);
                 w.Write(h.Cars);
                 w.Write(h.TransitCents);
+                w.Write(h.CityTransitCents);
                 w.Write(h.Members.Count);
                 foreach (var m in h.Members) w.Write(m);
             }
@@ -133,6 +135,7 @@ namespace Orbis.Core.Population
                 p.LastDay = r.ReadInt32();
                 p.LastWelfare = r.ReadInt64();
             }
+            if (version >= 5) p.LastCityFares = r.ReadInt64();
             p.TraitKeys = ReadStrings(r).ToArray();
             p.FirstNames.AddRange(ReadStrings(r));
             p.Surnames.AddRange(ReadStrings(r));
@@ -176,6 +179,7 @@ namespace Orbis.Core.Population
                     h.Cars = r.ReadByte();
                     h.TransitCents = r.ReadInt32();
                 }
+                if (version >= 5) h.CityTransitCents = r.ReadInt32();
                 int members = Count(r);
                 for (int k = 0; k < members; k++) h.Members.Add(r.ReadInt32());
                 p.Households.Add(h);

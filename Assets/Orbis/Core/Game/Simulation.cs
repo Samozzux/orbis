@@ -30,9 +30,12 @@ namespace Orbis.Core.Game
             /// <summary>Con la popolazione (M4): tasse di cittadini e attività e aiuti sociali, stimati sul giorno
             /// (li registra la vita dei cittadini, qui servono alla previsione).</summary>
             public double CitizensTax, BusinessTax, Welfare;
+            /// <summary>Linee del comune: biglietti (li registra la vita dei cittadini; qui la stima è l'ultimo giorno) e
+            /// costo del servizio (ore dei mezzi e fermate).</summary>
+            public double TransitFares, TransitCosts;
 
             public double Net => ResidentialTax + CommercialTax + IndustrialTax + Rent + PublicLand + Production + EnergySales
-                                 + CitizensTax + BusinessTax - Welfare - EnergyPurchase - Maintenance - Services;
+                                 + CitizensTax + BusinessTax + TransitFares - Welfare - EnergyPurchase - Maintenance - Services - TransitCosts;
         }
 
         public static Figures Compute(GameContext ctx)
@@ -93,6 +96,10 @@ namespace Orbis.Core.Game
             f.PowerKw = (float)power;
             if (power > 0) f.EnergySales = power * 24 * b.EnergySellPerKwh;
             else f.EnergyPurchase = -power * 24 * b.EnergyBuyPerKwh;
+            // strade e linee del sindaco
+            foreach (var r in s.Roads.Values) maintenance += Infrastructure.RoadMaintenancePerDay(b.Traffic, r);
+            foreach (var l in s.Lines.Values) f.TransitCosts += Infrastructure.LineCostPerDay(b.Transit, l);
+            if (pop != null) f.TransitFares = pop.LastCityFares;
             f.Maintenance = maintenance;
             f.Services = b.BaseServicesPerDay + residents * b.ServiceCostPerResidentYear / 365.0 + s.ServicesAdjustPerDay;
             float taxPenalty = (s.ResidentialTax - b.ResidentialTax.Default) * b.HappinessPerTaxPoint
@@ -114,6 +121,7 @@ namespace Orbis.Core.Game
                 f.CitizensTax = life.ResidentialTax;
                 f.BusinessTax = life.CommercialTax + life.IndustrialTax;
                 f.Welfare = life.Welfare;
+                f.TransitFares = life.TransitFares;
             }
             s.Transact(LedgerCategory.ResidentialTax, Round(f.ResidentialTax));
             s.Transact(LedgerCategory.CommercialTax, Round(f.CommercialTax));
@@ -125,6 +133,7 @@ namespace Orbis.Core.Game
             s.Transact(LedgerCategory.EnergyPurchase, -Round(f.EnergyPurchase));
             s.Transact(LedgerCategory.Maintenance, -Round(f.Maintenance));
             s.Transact(LedgerCategory.Services, -Round(f.Services));
+            s.Transact(LedgerCategory.TransitCosts, -Round(f.TransitCosts));
             s.Stats.Population = f.Population;
             s.Stats.Jobs = f.CommercialJobs + f.IndustrialJobs;
             s.Stats.PowerBalanceKw = f.PowerKw;
@@ -164,6 +173,7 @@ namespace Orbis.Core.Game
                 case Orbis.Core.Population.CityFlow.ResidentialTax: return LedgerCategory.ResidentialTax;
                 case Orbis.Core.Population.CityFlow.CommercialTax: return LedgerCategory.CommercialTax;
                 case Orbis.Core.Population.CityFlow.IndustrialTax: return LedgerCategory.IndustrialTax;
+                case Orbis.Core.Population.CityFlow.TransitFares: return LedgerCategory.TransitFares;
                 default: return LedgerCategory.Services;
             }
         }

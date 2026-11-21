@@ -65,7 +65,12 @@ namespace Orbis.Core.Game
     public enum LedgerCategory
     {
         ResidentialTax, CommercialTax, IndustrialTax, Rent, PublicLand, Production, EnergySales, Missions, LevelRewards,
-        Construction, Upgrades, Demolition, Moves, Variants, Maintenance, Services, EnergyPurchase, Count,
+        Construction, Upgrades, Demolition, Moves, Variants, Maintenance, Services, EnergyPurchase,
+        /// <summary>Biglietti delle linee del comune (M4).</summary>
+        TransitFares,
+        /// <summary>Servizio delle linee del comune: ore dei mezzi e fermate (M4).</summary>
+        TransitCosts,
+        Count,
     }
 
     /// <summary>Edificio reale (OSM) potenziato: livello 2→5, superficie dei piani e lotto (per ridisegnare il tile).</summary>
@@ -130,7 +135,7 @@ namespace Orbis.Core.Game
     /// </summary>
     public sealed class GameState
     {
-        public const int FormatVersion = 3; // 2: edifici reali potenziati; 3: aggiustamento dei servizi (M4)
+        public const int FormatVersion = 4; // 2: edifici reali potenziati; 3: aggiustamento dei servizi (M4); 4: strade e linee del sindaco
 
         public string Name = "Chieti";
         public string Region = "chieti";
@@ -161,6 +166,13 @@ namespace Orbis.Core.Game
 
         /// <summary>Livello di un edificio reale (1 se mai potenziato).</summary>
         public int OsmLevel(long key) => OsmUpgrades.TryGetValue(key, out var u) ? u.Level : 1;
+
+        /// <summary>Strade disegnate dal sindaco (M4).</summary>
+        public readonly SortedDictionary<int, CityRoad> Roads = new SortedDictionary<int, CityRoad>();
+        /// <summary>Linee del trasporto pubblico del comune (M4).</summary>
+        public readonly SortedDictionary<int, CityLine> Lines = new SortedDictionary<int, CityLine>();
+        /// <summary>Prossimo ID per strade e linee.</summary>
+        public int NextInfraId = 1;
 
         public readonly List<LedgerDay> Ledger = new List<LedgerDay>();
         public readonly CityStats Stats = new CityStats();
@@ -276,6 +288,11 @@ namespace Orbis.Core.Game
                 w.Write(kv.Key);
                 w.Write(kv.Value);
             }
+            w.Write(NextInfraId);
+            w.Write(Roads.Count);
+            foreach (var r in Roads.Values) r.Write(w);
+            w.Write(Lines.Count);
+            foreach (var l in Lines.Values) l.Write(w);
         }
 
         public static GameState Read(BinaryReader r)
@@ -354,6 +371,22 @@ namespace Orbis.Core.Game
             for (int i = 0; i < n; i++) s.CompletedMissions.Add(r.ReadString());
             n = r.ReadInt32();
             for (int i = 0; i < n; i++) s.Counters[r.ReadString()] = r.ReadInt64();
+            if (version >= 4)
+            {
+                s.NextInfraId = r.ReadInt32();
+                n = r.ReadInt32();
+                for (int i = 0; i < n; i++)
+                {
+                    var road = CityRoad.Read(r);
+                    s.Roads[road.Id] = road;
+                }
+                n = r.ReadInt32();
+                for (int i = 0; i < n; i++)
+                {
+                    var line = CityLine.Read(r);
+                    s.Lines[line.Id] = line;
+                }
+            }
             return s;
         }
 

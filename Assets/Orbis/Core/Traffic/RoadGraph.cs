@@ -14,7 +14,13 @@ namespace Orbis.Core.Traffic
             public double Kmh;
             public int Lanes;
             public double CapacityPerLane;
+            /// <summary>Strade del sindaco: larghezza della carreggiata, costo al metro (0 = non si può disegnare) e manutenzione.</summary>
+            public double WidthM, CostPerM, MaintenancePerKmDay;
         }
+
+        /// <summary>Regole del disegno delle strade del sindaco (blocco 4c).</summary>
+        public double SnapM = 8, MinSegmentM = 4, MaxLengthM = 5000, BridgeCostFactor = 4;
+        public int MaxPoints = 200;
 
         public double ZoneSizeM = 600, BprAlpha = 0.15, BprBeta = 4, BackgroundShare = 0.25, AccessKmh = 25, ParkingMinutes = 4;
         /// <summary>Margine attorno al comune entro cui tenere le strade (metri).</summary>
@@ -43,9 +49,29 @@ namespace Orbis.Core.Traffic
                         Kmh = r["classes"][k]["kmh"].AsDouble(30),
                         Lanes = Math.Max(1, r["classes"][k]["lanes"].AsInt(1)),
                         CapacityPerLane = r["classes"][k]["capacityPerLane"].AsDouble(500),
+                        WidthM = r["classes"][k]["widthM"].AsDouble(6),
+                        CostPerM = r["classes"][k]["costPerM"].AsDouble(0),
+                        MaintenancePerKmDay = r["classes"][k]["maintenancePerKmDay"].AsDouble(0),
                     };
+            var c = r["cityRoads"];
+            b.SnapM = c["snapM"].AsDouble(b.SnapM);
+            b.MinSegmentM = c["minSegmentM"].AsDouble(b.MinSegmentM);
+            b.MaxLengthM = c["maxLengthM"].AsDouble(b.MaxLengthM);
+            b.MaxPoints = c["maxPoints"].AsInt(b.MaxPoints);
+            b.BridgeCostFactor = c["bridgeCostFactor"].AsDouble(b.BridgeCostFactor);
             return b;
         }
+    }
+
+    /// <summary>Strada disegnata dal sindaco per il grafo (metri della regione).</summary>
+    public struct ExtraRoad
+    {
+        public int Id;
+        public RoadClass Class;
+        public float[] Points;
+        public int Oneway;
+        /// <summary>Ponte: si collega solo agli estremi, senza incroci con le strade che sorvola.</summary>
+        public bool Bridge;
     }
 
     /// <summary>
@@ -72,8 +98,9 @@ namespace Orbis.Core.Traffic
 
         /// <summary>Costruisce il grafo dai tile (con l'angolo sud-ovest di ciascuno in metri della regione).</summary>
         /// <param name="area">riquadro (minX, minY, maxX, maxY) in metri della regione da tenere; null = tutto</param>
+        /// <param name="extra">strade del sindaco: gli estremi si agganciano alla rete, gli attraversamenti diventano incroci</param>
         public static RoadGraph Build(IEnumerable<(TileData Tile, double OriginX, double OriginY)> tiles, TrafficBalance b,
-            (double MinX, double MinY, double MaxX, double MaxY)? area = null)
+            (double MinX, double MinY, double MaxX, double MaxY)? area = null, IReadOnlyList<ExtraRoad> extra = null)
         {
             var raw = new RawGraph();
             foreach (var (tile, ox, oy) in tiles)
@@ -104,7 +131,19 @@ namespace Orbis.Core.Traffic
                     }
                 }
             }
+            if (extra != null)
+                foreach (var r in extra)
+                    raw.AddExtra(r, b);
             return raw.Contract();
+        }
+
+        /// <summary>Archi (indici) della strada del sindaco <paramref name="id"/> dopo la fusione delle catene.</summary>
+        public List<int> EdgesOfExtra(int id)
+        {
+            var list = new List<int>();
+            for (int e = 0; e < EdgeCount; e++)
+                if (Road[e] == -id) list.Add(e);
+            return list;
         }
 
         /// <summary>Nodo più vicino al punto entro <paramref name="maxDistance"/> metri, -1 se non c'è.</summary>
@@ -156,8 +195,19 @@ namespace Orbis.Core.Traffic
         {
             private readonly List<float> _x = new List<float>(), _y = new List<float>();
             private readonly Dictionary<long, int> _snap = new Dictionary<long, int>();
-            private readonly List<(int From, int To, float Kmh, float Cap, long Road)> _edges = new List<(int, int, float, float, long)>();
-            private readonly HashSet<long> _pairs = new HashSet<long>();
+            private struct RawEdge
+            {
+                public int From, To;
+                public float Kmh, Cap;
+                public long Road;
+                public bool Dead;
+            }
+
+            private readonly List<RawEdge> _edges = new List<RawEdge>();
+            private readonly Dictionary<long, int> _pairs = new Dictionary<long, int>();
+            // indice spaziale degli archi, costruito solo se ci sono strade del sindaco
+            private Dictionary<long, List<int>> _edgeGrid;
+            private const float EdgeCell = 50f;
 
             // stesso punto (entro mezzo metro, anche tra tile vicini) = stesso nodo
             public int Node(float x, float y)
@@ -176,8 +226,179 @@ namespace Orbis.Core.Traffic
 
             public void Edge(int from, int to, double kmh, float cap, long road)
             {
-                if (!_pairs.Add(((long)from << 32) | (uint)to)) return; // stesso tratto da due tile o due strade
-                _edges.Add((from, to, (float)kmh, cap, road));
+                long pair = ((long)from << 32) | (uint)to;
+                if (from == to || _pairs.ContainsKey(pair)) return; // stesso tratto da due tile o due strade
+                _pairs[pair] = _edges.Count;
+                _edges.Add(new RawEdge { From = from, To = to, Kmh = (float)kmh, Cap = cap, Road = road });
+                if (_edgeGrid != null) Index(_edges.Count - 1);
+            }
+
+            // ---------------------------------------------------------- strade del sindaco
+
+            private void Index(int e)
+            {
+                var ed = _edges[e];
+                float x0 = Math.Min(_x[ed.From], _x[ed.To]), x1 = Math.Max(_x[ed.From], _x[ed.To]);
+                float y0 = Math.Min(_y[ed.From], _y[ed.To]), y1 = Math.Max(_y[ed.From], _y[ed.To]);
+                for (int cx = (int)Math.Floor(x0 / EdgeCell); cx <= (int)Math.Floor(x1 / EdgeCell); cx++)
+                    for (int cy = (int)Math.Floor(y0 / EdgeCell); cy <= (int)Math.Floor(y1 / EdgeCell); cy++)
+                    {
+                        long k = Key(cx, cy);
+                        if (!_edgeGrid.TryGetValue(k, out var l)) _edgeGrid[k] = l = new List<int>();
+                        l.Add(e);
+                    }
+            }
+
+            private void EnsureEdgeGrid()
+            {
+                if (_edgeGrid != null) return;
+                _edgeGrid = new Dictionary<long, List<int>>();
+                for (int e = 0; e < _edges.Count; e++) Index(e);
+            }
+
+            /// <summary>Archi vivi (uno per coppia di nodi, senza il verso) con il riquadro che tocca quello dato.</summary>
+            private void EdgesNear(float x0, float y0, float x1, float y1, List<int> into)
+            {
+                into.Clear();
+                var seen = new HashSet<long>();
+                for (int cx = (int)Math.Floor(x0 / EdgeCell); cx <= (int)Math.Floor(x1 / EdgeCell); cx++)
+                    for (int cy = (int)Math.Floor(y0 / EdgeCell); cy <= (int)Math.Floor(y1 / EdgeCell); cy++)
+                    {
+                        if (!_edgeGrid.TryGetValue(Key(cx, cy), out var l)) continue;
+                        foreach (var e in l)
+                        {
+                            var ed = _edges[e];
+                            if (ed.Dead) continue;
+                            int a = Math.Min(ed.From, ed.To), b = Math.Max(ed.From, ed.To);
+                            if (seen.Add(((long)a << 32) | (uint)b)) into.Add(e);
+                        }
+                    }
+            }
+
+            /// <summary>Divide l'arco (e quello opposto, se c'è) nel punto: ritorna il nodo nuovo.</summary>
+            private int Split(int e, float x, float y)
+            {
+                var ed = _edges[e];
+                int m = Node(x, y);
+                if (m == ed.From || m == ed.To) return m;
+                SplitOne(e, m);
+                if (_pairs.TryGetValue(((long)ed.To << 32) | (uint)ed.From, out var back)) SplitOne(back, m);
+                return m;
+            }
+
+            private void SplitOne(int e, int m)
+            {
+                var ed = _edges[e];
+                ed.Dead = true;
+                _edges[e] = ed;
+                _pairs.Remove(((long)ed.From << 32) | (uint)ed.To);
+                Edge(ed.From, m, ed.Kmh, ed.Cap, ed.Road);
+                Edge(m, ed.To, ed.Kmh, ed.Cap, ed.Road);
+            }
+
+            /// <summary>Estremo di una strada nuova: si aggancia al nodo o al tratto più vicino entro <paramref name="snap"/> metri.</summary>
+            private int Attach(float x, float y, float snap, List<int> near)
+            {
+                EdgesNear(x - snap, y - snap, x + snap, y + snap, near);
+                int bestNode = -1, bestEdge = -1;
+                float nodeD = snap, edgeD = snap, edgeT = 0;
+                foreach (var e in near)
+                {
+                    var ed = _edges[e];
+                    foreach (var n in new[] { ed.From, ed.To })
+                    {
+                        float d = (float)Math.Sqrt((_x[n] - x) * (_x[n] - x) + (_y[n] - y) * (_y[n] - y));
+                        if (d <= nodeD)
+                        {
+                            nodeD = d;
+                            bestNode = n;
+                        }
+                    }
+                    float de = SegmentDistance(_x[ed.From], _y[ed.From], _x[ed.To], _y[ed.To], x, y, out var t);
+                    if (de < edgeD)
+                    {
+                        edgeD = de;
+                        bestEdge = e;
+                        edgeT = t;
+                    }
+                }
+                // un incrocio esistente vince se è vicino quasi quanto il tratto
+                if (bestNode >= 0 && nodeD <= edgeD + 1f) return bestNode;
+                if (bestEdge >= 0)
+                {
+                    var ed = _edges[bestEdge];
+                    return Split(bestEdge, _x[ed.From] + (_x[ed.To] - _x[ed.From]) * edgeT, _y[ed.From] + (_y[ed.To] - _y[ed.From]) * edgeT);
+                }
+                return Node(x, y);
+            }
+
+            private static float SegmentDistance(float ax, float ay, float bx, float by, float px, float py, out float t)
+            {
+                float dx = bx - ax, dy = by - ay, len2 = dx * dx + dy * dy;
+                t = len2 > 1e-9f ? Math.Max(0, Math.Min(1, ((px - ax) * dx + (py - ay) * dy) / len2)) : 0;
+                float qx = ax + dx * t - px, qy = ay + dy * t - py;
+                return (float)Math.Sqrt(qx * qx + qy * qy);
+            }
+
+            /// <summary>
+            /// Aggiunge una strada del sindaco: gli estremi si agganciano alla rete, ogni attraversamento di una strada
+            /// esistente diventa un incrocio (tranne che per i ponti), poi i tratti nel verso (o nei due versi) scelto.
+            /// </summary>
+            public void AddExtra(ExtraRoad r, TrafficBalance b)
+            {
+                if (r.Points == null || r.Points.Length < 4 || !b.Classes.TryGetValue(r.Class, out var spec)) return;
+                EnsureEdgeGrid();
+                float cap = (float)(spec.Lanes * spec.CapacityPerLane);
+                var near = new List<int>();
+                var nodes = new List<int>();
+                var hits = new List<(float T, int Node)>();
+                int count = r.Points.Length / 2;
+                float px = 0, py = 0;
+                for (int i = 0; i < count; i++)
+                {
+                    float x = r.Points[i * 2], y = r.Points[i * 2 + 1];
+                    int node = i == 0 || i == count - 1 ? Attach(x, y, (float)b.SnapM, near) : Node(x, y);
+                    if (i > 0 && !r.Bridge)
+                    {
+                        // incroci con le strade attraversate dal tratto (prima di aggiungere i tratti nuovi)
+                        hits.Clear();
+                        EdgesNear(Math.Min(px, x), Math.Min(py, y), Math.Max(px, x), Math.Max(py, y), near);
+                        float segLen = (float)Math.Sqrt((x - px) * (x - px) + (y - py) * (y - py));
+                        foreach (var e in near)
+                        {
+                            var ed = _edges[e];
+                            if (!Intersection(px, py, x, y, _x[ed.From], _y[ed.From], _x[ed.To], _y[ed.To], out var t, out var u)) continue;
+                            if (t * segLen < 0.5f || (1 - t) * segLen < 0.5f) continue; // è un estremo del tratto: già agganciato
+                            float ix = px + (x - px) * t, iy = py + (y - py) * t;
+                            hits.Add((t, Split(e, ix, iy)));
+                        }
+                        hits.Sort((a, c) => a.T.CompareTo(c.T));
+                        foreach (var h in hits) nodes.Add(h.Node);
+                    }
+                    nodes.Add(node);
+                    px = x;
+                    py = y;
+                }
+                for (int i = 1; i < nodes.Count; i++)
+                {
+                    int a = nodes[i - 1], c = nodes[i];
+                    if (a == c) continue;
+                    Edge(a, c, spec.Kmh, cap, -r.Id);
+                    if (r.Oneway <= 0) Edge(c, a, spec.Kmh, cap, -r.Id);
+                }
+            }
+
+            /// <summary>Incrocio tra i segmenti p0→p1 e q0→q1: parametri t (sul primo) e u (sul secondo) in [0, 1].</summary>
+            private static bool Intersection(float p0x, float p0y, float p1x, float p1y, float q0x, float q0y, float q1x, float q1y, out float t, out float u)
+            {
+                t = u = 0;
+                float rx = p1x - p0x, ry = p1y - p0y, sx = q1x - q0x, sy = q1y - q0y;
+                float den = rx * sy - ry * sx;
+                if (Math.Abs(den) < 1e-6f) return false; // paralleli
+                float qpx = q0x - p0x, qpy = q0y - p0y;
+                t = (qpx * sy - qpy * sx) / den;
+                u = (qpx * ry - qpy * rx) / den;
+                return t >= 0 && t <= 1 && u >= 0 && u <= 1;
             }
 
             public RoadGraph Contract()
@@ -192,6 +413,7 @@ namespace Orbis.Core.Traffic
                 }
                 for (int e = 0; e < _edges.Count; e++)
                 {
+                    if (_edges[e].Dead) continue;
                     outs[_edges[e].From].Add(e);
                     ins[_edges[e].To].Add(e);
                 }

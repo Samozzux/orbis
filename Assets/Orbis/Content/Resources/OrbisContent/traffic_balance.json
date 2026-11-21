@@ -1,5 +1,5 @@
 {
-  "_info": "Traffico (docs/03 §7, livello L1): grafo dalle strade vere, tempi di viaggio tra zone con la congestione per arco (formula BPR). Valori iniziali da bilanciare.",
+  "_info": "Traffico (docs/03 §7, livello L1): grafo dalle strade vere, tempi di viaggio tra zone con la congestione per arco (formula BPR). Valori iniziali da bilanciare. Strade del sindaco (blocco 4c): larghezza, costo al metro e manutenzione al km al giorno per le classi che si possono disegnare (quelle con costPerM).",
   "zoneSizeM": 600,
   "originsPerStep": 12,
   "bprAlpha": 0.15,
@@ -11,27 +11,42 @@
     "Motorway": {
       "kmh": 110,
       "lanes": 2,
-      "capacityPerLane": 1800
+      "capacityPerLane": 1800,
+      "widthM": 22,
+      "costPerM": 3000,
+      "maintenancePerKmDay": 140
     },
     "Trunk": {
       "kmh": 90,
       "lanes": 2,
-      "capacityPerLane": 1600
+      "capacityPerLane": 1600,
+      "widthM": 14,
+      "costPerM": 1500,
+      "maintenancePerKmDay": 80
     },
     "Primary": {
       "kmh": 50,
       "lanes": 1,
-      "capacityPerLane": 1200
+      "capacityPerLane": 1200,
+      "widthM": 10,
+      "costPerM": 800,
+      "maintenancePerKmDay": 45
     },
     "Secondary": {
       "kmh": 50,
       "lanes": 1,
-      "capacityPerLane": 1000
+      "capacityPerLane": 1000,
+      "widthM": 8,
+      "costPerM": 600,
+      "maintenancePerKmDay": 35
     },
     "Tertiary": {
       "kmh": 40,
       "lanes": 1,
-      "capacityPerLane": 800
+      "capacityPerLane": 800,
+      "widthM": 7,
+      "costPerM": 450,
+      "maintenancePerKmDay": 28
     },
     "Unclassified": {
       "kmh": 40,
@@ -41,12 +56,18 @@
     "Residential": {
       "kmh": 30,
       "lanes": 1,
-      "capacityPerLane": 500
+      "capacityPerLane": 500,
+      "widthM": 6,
+      "costPerM": 300,
+      "maintenancePerKmDay": 20
     },
     "LivingStreet": {
       "kmh": 10,
       "lanes": 1,
-      "capacityPerLane": 200
+      "capacityPerLane": 200,
+      "widthM": 5,
+      "costPerM": 200,
+      "maintenancePerKmDay": 15
     },
     "Service": {
       "kmh": 20,
@@ -54,5 +75,12 @@
       "capacityPerLane": 300
     }
   },
-  "areaMarginM": 1000
+  "areaMarginM": 1000,
+  "cityRoads": {
+    "snapM": 8,
+    "minSegmentM": 4,
+    "maxLengthM": 5000,
+    "maxPoints": 200,
+    "bridgeCostFactor": 4
+  }
 }

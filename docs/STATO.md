@@ -23,6 +23,51 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
      - MEF, Dipartimento delle Finanze, redditi IRPEF per comune (anno d'imposta 2024): contribuenti per fascia di reddito e per tipo (dipendente, pensione, autonomo). Chieti: 36.435 contribuenti. Licenza CC BY 3.0 IT.
      - Ancora da trovare: famiglie per numero di componenti, nomi per anno di nascita, cognomi.
 
+2. **Core: popolazione.**
+   - Generatore deterministico (dal seed della partita):
+     - le famiglie vanno nelle case in proporzione alla superficie dei piani;
+     - ogni cittadino ha identità, età, istruzione, reddito, risparmi, tratti e gusti;
+     - lavoro e scuola sono posti veri: negozi, uffici e scuole da OSM, più gli edifici del catalogo.
+   - Archivio compatto per decine di migliaia di cittadini; nel salvataggio solo le differenze.
+   - Test: i numeri ISTAT sono rispettati e lo stesso seed dà la stessa città.
+3. **Core: vita dei cittadini.**
+   - Bisogni, routine e scelte a utilità.
+   - Frigo e spesa al supermercato vero.
+   - Stipendi, affitti, risparmi, debiti.
+   - Attività commerciali con un conto economico: incassi dai clienti simulati, costi, utile, fallimenti.
+   - Ciclo di vita: nascite, invecchiamento, morte, traslochi, emigrazione.
+   - Livelli: L1 nei quartieri vicini alla camera, L2 statistico nel resto, L3 per gli altri comuni.
+   - L'economia del sindaco passa ai cittadini veri: tasse sui redditi e sulle attività.
+   - Test: un anno di gioco senza valori assurdi, denaro conservato, popolazione entro i limiti.
+4. **Core: strade e traffico L1.**
+   - Grafo stradale dai tile (sensi unici, corsie, velocità).
+   - Viaggi sul grafo con la congestione per tratto.
+   - Bus reali da OSM e linee disegnabili (fermate, frequenze, costi, incassi).
+   - Strade nuove disegnabili (spostate qui da M2).
+5. **Servizi, felicità, reazioni, eventi, meteo.**
+   - Copertura di polizia, pompieri, ospedali, scuole e rifiuti, sia negli edifici reali sia in quelli del catalogo.
+   - Felicità per ogni cittadino.
+   - Reazioni ai tre livelli: commenti, petizioni, proteste, emigrazione.
+   - Eventi dal calendario ed eventi generati.
+   - Meteo reale da Open-Meteo, con un clima medio per mese come ripiego.
+6. **Unity: città viva (L0).**
+   - Persone e veicoli visibili vicino alla camera, con instancing.
+   - Bus sulle linee, semafori e precedenze semplici, mezzi d'emergenza.
+7. **Interfaccia.**
+   - Tocco su un cittadino: casa, lavoro, soldi, frigo, famiglia, "Segui".
+   - Tocco su un edificio: residenti, lavoratori, conti dell'attività.
+   - Mappe di calore: felicità, servizi, traffico, valore.
+   - Disegno di linee bus e strade.
+   - Notizie ed eventi.
+8. **Prestazioni, prove, build, STATO, tag `v0.4.0`.** Obiettivo 60 fps (minimo 30) sull'iPhone 15 Pro e 30 fps sul web.
+
+**Scelte semplici per M4** (le cambio se Samuele preferisce altro):
+- **Chi si simula.**
+  - Comune di Chieti: tutti gli abitanti uno per uno (48.368 al 1° gennaio 2026, stima ISTAT), dentro il budget L1 di 100.000.
+  - Altri comuni della provincia: solo L3, cioè indicatori di popolazione ed economia.
+- **Simulazione sul web.** Il web non ha thread per il C#, quindi la simulazione gira a pezzi sul thread principale, con un tempo massimo per frame. Su iOS e Android gira su thread e Jobs. Così si rispetta la regola "niente lavoro pesante sul main thread".
+- **Persone e veicoli.** In M4 li faccio da codice come gli edifici, simili a quelli veri. Il generatore completo dei personaggi (viso, capelli, vestiti; MakeHuman in docs/08) arriva con gli interni, la prima persona e la creazione del personaggio (M5–M6).
+
 ### Avanzamento M4
 - **Dati reali, prima parte** (blocco 1, 20/11, branch `m4-dati`):
   - **Strumento.** `tools/population/`, in Python con la sola libreria standard. Scarica le fonti aperte e scrive `data/population/chieti.json` (20 KB). Contenuto:
@@ -206,50 +251,49 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - verso della linea;
     - linee a lunga distanza escluse;
     - chi non ha l'auto prende il bus e paga il biglietto, col denaro conservato.
-2. **Core: popolazione.**
-   - Generatore deterministico (dal seed della partita):
-     - le famiglie vanno nelle case in proporzione alla superficie dei piani;
-     - ogni cittadino ha identità, età, istruzione, reddito, risparmi, tratti e gusti;
-     - lavoro e scuola sono posti veri: negozi, uffici e scuole da OSM, più gli edifici del catalogo.
-   - Archivio compatto per decine di migliaia di cittadini; nel salvataggio solo le differenze.
-   - Test: i numeri ISTAT sono rispettati e lo stesso seed dà la stessa città.
-3. **Core: vita dei cittadini.**
-   - Bisogni, routine e scelte a utilità.
-   - Frigo e spesa al supermercato vero.
-   - Stipendi, affitti, risparmi, debiti.
-   - Attività commerciali con un conto economico: incassi dai clienti simulati, costi, utile, fallimenti.
-   - Ciclo di vita: nascite, invecchiamento, morte, traslochi, emigrazione.
-   - Livelli: L1 nei quartieri vicini alla camera, L2 statistico nel resto, L3 per gli altri comuni.
-   - L'economia del sindaco passa ai cittadini veri: tasse sui redditi e sulle attività.
-   - Test: un anno di gioco senza valori assurdi, denaro conservato, popolazione entro i limiti.
-4. **Core: strade e traffico L1.**
-   - Grafo stradale dai tile (sensi unici, corsie, velocità).
-   - Viaggi sul grafo con la congestione per tratto.
-   - Bus reali da OSM e linee disegnabili (fermate, frequenze, costi, incassi).
-   - Strade nuove disegnabili (spostate qui da M2).
-5. **Servizi, felicità, reazioni, eventi, meteo.**
-   - Copertura di polizia, pompieri, ospedali, scuole e rifiuti, sia negli edifici reali sia in quelli del catalogo.
-   - Felicità per ogni cittadino.
-   - Reazioni ai tre livelli: commenti, petizioni, proteste, emigrazione.
-   - Eventi dal calendario ed eventi generati.
-   - Meteo reale da Open-Meteo, con un clima medio per mese come ripiego.
-6. **Unity: città viva (L0).**
-   - Persone e veicoli visibili vicino alla camera, con instancing.
-   - Bus sulle linee, semafori e precedenze semplici, mezzi d'emergenza.
-7. **Interfaccia.**
-   - Tocco su un cittadino: casa, lavoro, soldi, frigo, famiglia, "Segui".
-   - Tocco su un edificio: residenti, lavoratori, conti dell'attività.
-   - Mappe di calore: felicità, servizi, traffico, valore.
-   - Disegno di linee bus e strade.
-   - Notizie ed eventi.
-8. **Prestazioni, prove, build, STATO, tag `v0.4.0`.** Obiettivo 60 fps (minimo 30) sull'iPhone 15 Pro e 30 fps sul web.
-
-**Scelte semplici per M4** (le cambio se Samuele preferisce altro):
-- **Chi si simula.**
-  - Comune di Chieti: tutti gli abitanti uno per uno (48.368 al 1° gennaio 2026, stima ISTAT), dentro il budget L1 di 100.000.
-  - Altri comuni della provincia: solo L3, cioè indicatori di popolazione ed economia.
-- **Simulazione sul web.** Il web non ha thread per il C#, quindi la simulazione gira a pezzi sul thread principale, con un tempo massimo per frame. Su iOS e Android gira su thread e Jobs. Così si rispetta la regola "niente lavoro pesante sul main thread".
-- **Persone e veicoli.** In M4 li faccio da codice come gli edifici, simili a quelli veri. Il generatore completo dei personaggi (viso, capelli, vestiti; MakeHuman in docs/08) arriva con gli interni, la prima persona e la creazione del personaggio (M5–M6).
+- **Strade e linee del sindaco, parte 4c** (21/11, branch `m4-linee-strade`). Il disegno con le dita e col mouse arriva con l'interfaccia (blocco 7); qui c'è il resto: regole, costi, rete e salvataggio.
+  - **Strade.** Una strada del sindaco (`CityRoad`) è una spezzata in metri della regione, con classe, senso unico e ponte.
+    - Classi disegnabili: da vicolo ad autostrada. Costo al metro e manutenzione al km al giorno per classe, in `data/balance/traffic.json`: per esempio una via residenziale costa 300 €/m e 20 €/km al giorno. I ponti costano 4 volte tanto.
+    - La strada non può passare sopra edifici reali non demoliti né sopra elementi piazzati.
+    - Carreggiata e marciapiedi occupano le celle dei lotti che attraversano: poi lì non si costruisce.
+    - Comandi `BuildRoadCommand` e `DemolishRoadCommand`, quest'ultimo con il 20% di rimborso. Si annullano e si salvano come gli altri.
+  - **Incroci automatici** nel grafo del traffico:
+    - gli estremi si agganciano all'incrocio o alla strada più vicina entro 8 m (incrocio a T);
+    - dove la strada nuova ne attraversa un'altra nasce un incrocio;
+    - i ponti si collegano solo agli estremi.
+  - **Linee del comune** (`CityLine`). Il sindaco sceglie le fermate in ordine, la frequenza (5–60 minuti) e il biglietto (0–3 €). Per ora solo bus, nei due sensi.
+    - Mezzi necessari: la durata del giro completo (andata, ritorno e 10 minuti di sosta) divisa per la frequenza.
+    - Aprire una linea costa le fermate (6.000 € l'una) e i mezzi (60.000 € l'uno).
+    - Ogni giorno il servizio costa 30 € l'ora per ogni mezzo, per 16 ore, più la manutenzione delle fermate.
+    - Chiudendo la linea si recupera il 20%.
+    - Le fermate devono stare entro 30 m da una strada (vera o del sindaco) e ad almeno 100 m l'una dall'altra.
+    - `SetLineCommand` apre, modifica e chiude una linea, e si annulla.
+    - I parametri sono in `data/balance/transit.json`.
+  - **Biglietti alla cassa del comune.** I cittadini pagano i biglietti come prima. Quelli delle linee del comune entrano nella sua cassa, alla voce "Biglietti delle linee del comune"; il servizio va alla voce "Servizio delle linee del comune". Il denaro resta conservato.
+  - **Salvataggio.** La partita passa alla versione 4 (strade e linee) e la popolazione alla 5 (biglietti del comune). Le versioni precedenti si leggono ancora.
+  - **Unity.**
+    - La rete stradale si ricostruisce a pezzi quando cambiano le strade, anche dopo un annulla o un riavvolgimento.
+    - Le linee del comune entrano subito nella rete dei mezzi pubblici.
+    - Le strade nuove si vedono, con lo stesso nastro e gli stessi marciapiedi delle strade vere.
+  - **Test.** 8 nuovi (207 in tutto):
+    - strada: costo, manutenzione, annulla/ripeti, salvataggio, demolizione;
+    - strade non valide;
+    - niente strade sugli edifici, lotto occupato dalla strada;
+    - incroci, incroci a T, ponti, sensi unici;
+    - linea: mezzi, costo, frequenza, chiusura, regole, servizio pagato a fine giornata;
+    - fermate vicino a una strada;
+    - linee nei due sensi;
+    - biglietti alla cassa del comune con il denaro conservato.
+  - **Su Chieti vera** (Unity in locale, prova PlayMode):
+    - la prova cerca vicino alla camera uno spazio libero e disegna una via residenziale di 80 m;
+    - la rete si ricostruisce da sola con la strada nuova: 4 tratti nel grafo e 3 incroci in più (12.352). In tutto, a pezzi su più fotogrammi, servono circa 17 secondi nell'editor, mentre i cittadini vivono;
+    - poi apre una linea bus del comune tra due incroci: entra nella rete nei due sensi, e a fine giornata il servizio si paga;
+    - la linea di prova è corta e nessuno l'ha presa: sotto 1,2 km i cittadini vanno a piedi.
+  - **Da fare con l'interfaccia (blocco 7):** disegno col dito e col mouse, anteprima col costo e col motivo del rifiuto, elenco delle linee con passeggeri e conti.
+  - **Limiti.**
+    - Gli orari di servizio non limitano ancora i viaggi: anche di notte il bus passa.
+    - Il tempo sulle linee del comune si stima come per quelle reali (1,3 volte la linea d'aria). Il percorso sulle strade servirà ai bus visibili (blocco 6).
+    - Ricostruire il grafo richiede un fotogramma lungo; va spostato su un thread nel blocco 8.
 
 **M3 — Account e cloud**: chiusa il 19/11/2026 su scelta di Samuele **senza la prova sui dispositivi** ("Chiudi M3 senza prova"). Tag `v0.3.0` con IPA e APK; tutte le build di `main` verdi. Restano da provare sui dispositivi Face ID, impronta, passkey e il giro iPhone → Mac (vedi "Da verificare sui dispositivi" e "Cosa provare (M3)"). Iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 
