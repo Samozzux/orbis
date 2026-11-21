@@ -131,6 +131,8 @@ namespace Orbis.Gameplay
             world.World.TileLoaded += _ => c.View.Sync(c.State);
             world.Game = c;
             c.SyncWorld(rebuildAll: true);
+            // partita senza cittadini (nuova o di prima di M4): si generano dai tile del comune
+            if (session.Population == null && c.Content.Life != null) PopulationLoader.Attach(c);
             return c;
         }
 
@@ -142,7 +144,24 @@ namespace Orbis.Gameplay
         }
 
         public static GameSession LoadSession(byte[] bytes, GameContent content, WorldSession world) =>
-            GameSession.Load(bytes, content.Catalog, content.Balance, new WorldAccess(world.World), content.Missions);
+            GameSession.Load(bytes, content.Catalog, content.Balance, new WorldAccess(world.World), content.Missions, content.Life);
+
+        /// <summary>I cittadini sono arrivati (generati per la prima volta in questa partita).</summary>
+        public event Action<Orbis.Core.Population.CityPopulation> PopulationReady;
+
+        /// <summary>La generazione dei cittadini è partita.</summary>
+        public event Action<string> PopulationStarted;
+
+        internal void OnPopulationStarted(string municipality) => PopulationStarted?.Invoke(municipality);
+
+        /// <summary>Collega i cittadini appena generati, mantenendo il saldo della città stimata, e salva.</summary>
+        internal void OnPopulationGenerated(Orbis.Core.Population.CityPopulation population)
+        {
+            Session.AttachPopulation(population, Content.Life, keepBalance: true);
+            _saveRequested = true;
+            PopulationReady?.Invoke(population);
+            Changed?.Invoke();
+        }
 
         private void Update()
         {

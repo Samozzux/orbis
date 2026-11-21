@@ -43,6 +43,9 @@ namespace Orbis.World
         private readonly HashSet<TileId> _requested = new HashSet<TileId>();
         private readonly List<(TileId id, float dist, TileLod lod)> _wanted = new List<(TileId, float, TileLod)>();
         private TileSource _source;
+
+        /// <summary>Da dove arrivano i file del pack (per caricare tile fuori dalla vista, es. i cittadini).</summary>
+        public TileSource Source => _source;
         private WorkRunner _runner;
         private float _nextScan;
         private int _activeDownloads;

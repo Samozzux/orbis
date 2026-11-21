@@ -894,6 +894,14 @@
       "it": "Livello {0}! Nuovi elementi da costruire"
     },
     {
+      "key": "citizens.arriving",
+      "it": "Arrivano gli abitanti di {0}…"
+    },
+    {
+      "key": "citizens.ready",
+      "it": "{0} abitanti vivono ora a {1}: famiglie, case, lavori e redditi veri"
+    },
+    {
       "key": "mission.reward",
       "it": "Premio: {0} monete"
     },

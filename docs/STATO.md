@@ -119,6 +119,17 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - "Riavvolgi" riporta anche i cittadini se l'istantanea è degli ultimi 7 giorni: quelle dei cittadini stanno solo in memoria, perché pesano qualche MB. Più indietro, i cittadini restano come sono e riprendono a vivere dal giorno riavvolto.
   - **Test.** 7 nuovi (185 in tutto): denaro conservato, un anno senza valori assurdi, giorno non ripetuto, senza ciclo di vita nessuno nasce né muore, tasse nel registro di una partita vera, salvataggio e riavvolgimento.
   - **Dimensione del salvataggio.** Senza compressione è di circa 3,6 MB con 48.000 cittadini. Un compressore Deflate in C# puro (come il decompressore dei tile) lo ridurrebbe: si valuta con le prestazioni (blocco 8).
+- **Cittadini nella partita** (blocco 3b, 21/11, branch `m4-cittadini-in-partita`):
+  - **Quando partono.** Se una partita non ha ancora i cittadini (nuova, o salvata prima di M4), quando il mondo è pronto `PopulationLoader` carica uno alla volta i tile del comune di Chieti. Raccoglie case, lavori e scuole e genera i cittadini a fasi, una per fotogramma, mentre si gioca. Poi li collega alla partita mantenendo il saldo e salva.
+  - **Avvisi.** "Arrivano gli abitanti di Chieti…" all'inizio, "48.368 abitanti vivono ora a Chieti…" alla fine.
+  - **Con il pack v4 vero** (in locale): 64 tile, 6.139 case, 950 posti di lavoro, 57 scuole. 48.368 cittadini e 22.560 famiglie generati in 0,7 secondi sul Mac.
+  - **Dati e salvataggio.** I dati della popolazione si leggono da Resources (`GameContent.Life`). Il salvataggio e il caricamento portano i cittadini con sé.
+  - **Pack vecchio.** Se il pack non ha i confini dei comuni (pack prima del v4), la partita resta con la città stimata e lo dice nel log.
+  - **Test PlayMode nuovo** `PopulationPlayTests`, con il pack vero (ignorato in CI, dove il pack manca):
+    - nuova partita;
+    - arrivo dei cittadini;
+    - un giorno con le loro tasse nel registro;
+    - salvataggio e ricaricamento.
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;
