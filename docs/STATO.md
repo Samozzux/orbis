@@ -46,6 +46,35 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
   - **Schema.** Campi nuovi in fondo a `RegionIndex`, che i lettori vecchi ignorano: il formato resta 1.
   - **Test.** 10 della pipeline (anche "aggiornamento con tile identici") e 169 del Core (indice v4 con comuni e linea bus).
   - **Indirizzo Geofabrik.** L'estratto del Sud Italia ora sta in `europe/italy/sud/`: il vecchio indirizzo faceva fallire il controllo md5.
+- **Generatore di popolazione** (blocco 2, 20/11, branch `m4-popolazione`), in `Orbis.Core.Population`, logica pura:
+  - **Luoghi.** `CityPlaces` prende dai tile del comune (`TilesFor` dice quali caricare) le case, i posti di lavoro e le scuole. Le stime sono in `data/balance/population.json`, valori iniziali da bilanciare:
+    - **case:** edifici residenziali; gli "edificio generico" contano con peso 0,6. Superficie dei piani = impronta × piani;
+    - **posti di lavoro:** edifici non residenziali (posti per m² secondo l'uso) e attività OSM nelle case (bar, negozi, farmacie…);
+    - **scuole:** per livello (infanzia, scuola, università).
+  - **Generazione.** `PopulationGenerator`, dal seed della partita e a fasi (`Steps()`), così il gioco può spezzarla su più fotogrammi:
+    - **persone:** età e sesso esatti dall'ISTAT;
+    - **famiglie:** dalle posizioni in famiglia per età (ISTAT, Abruzzo). Le coppie si formano per età e i figli vanno a genitori di età plausibile (17–50 anni di differenza). Le convivenze sono nella quota ISTAT, il resto sono parenti in casa;
+    - **case:** ogni famiglia va in una casa in proporzione alla superficie, con appartamento, proprietà o affitto (6 €/m²);
+    - **studio:** titolo per anno di nascita;
+    - **lavoro e reddito:** pensionati, dipendenti, autonomi e imprenditori nei numeri del MEF. I redditi seguono le fasce MEF e vanno a chi ha più studio, età ed esperienza. Il 70% lavora nel comune, il resto fuori;
+    - **scuola:** gli alunni vanno nella scuola più vicina con posti liberi;
+    - **persona:** nomi per periodo di nascita; i figli prendono il cognome del padre. Poi tratti (senza contrari), gusti, aspetto e bisogni.
+  - **Risultato** sui dati di Chieti, con case finte:
+    - 48.368 cittadini e 22.560 famiglie, 2,14 persone in media (ISTAT 2,19);
+    - persone sole: 36% (Abruzzo 37%);
+    - 18.941 dipendenti con 26.700 € di reddito medio e 13.482 pensionati con 23.300 €.
+
+    La generazione dura meno di un secondo sul Mac.
+  - **Salvataggio.** `PopulationSerializer`, binario con versione, circa 3,6 MB prima della compressione. Salva tutto, non solo le differenze: i cittadini cambiano di continuo, e così la città non dipende da come verrebbe rigenerata su un'altra piattaforma o con un altro pack. Un file rovinato viene rifiutato.
+  - **Test.** 9 nuovi (178 in tutto):
+    - età e sesso uguali all'ISTAT;
+    - famiglie coerenti: ognuno in una famiglia, coppie reciproche, nessun minore senza adulto;
+    - case non troppo piene, posti di lavoro rispettati, ogni alunno ha la sua scuola;
+    - redditi nelle fasce MEF;
+    - stesso seed, stessa città;
+    - salvataggio andata e ritorno;
+    - case e lavori dai tile veri, col confine del comune.
+  - **Nel gioco.** I dati sono copiati in Resources. Collegare il generatore alla nuova partita (caricamento dei tile del comune con la barra di avanzamento, salvataggio) si fa con la vita dei cittadini (blocco 3), quando la popolazione serve davvero alla simulazione.
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;

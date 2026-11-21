@@ -1,0 +1,61 @@
+{
+  "format": 1,
+  "note": "Nomi italiani frequenti per periodo di nascita (in ordine di diffusione) e cognomi frequenti in Abruzzo e in Italia. Lista interna di Orbis: nomi comuni, nessun dato su persone reali.",
+  "first_names": [
+    {
+      "from": 1920,
+      "to": 1939,
+      "male": ["Giuseppe", "Giovanni", "Antonio", "Mario", "Luigi", "Francesco", "Angelo", "Vincenzo", "Pietro", "Domenico", "Carlo", "Nicola", "Michele", "Raffaele", "Gaetano", "Umberto", "Bruno", "Alfredo", "Ernesto", "Guido", "Renato", "Dante", "Armando", "Cesare", "Salvatore"],
+      "female": ["Maria", "Anna", "Giuseppina", "Rosa", "Angela", "Giovanna", "Teresa", "Lucia", "Carmela", "Caterina", "Francesca", "Antonietta", "Concetta", "Elena", "Rita", "Assunta", "Filomena", "Lina", "Ada", "Iolanda", "Bruna", "Elvira", "Amalia", "Nella", "Irma"]
+    },
+    {
+      "from": 1940,
+      "to": 1959,
+      "male": ["Giuseppe", "Giovanni", "Antonio", "Mario", "Franco", "Luigi", "Francesco", "Giorgio", "Sergio", "Roberto", "Bruno", "Carlo", "Angelo", "Vincenzo", "Pietro", "Domenico", "Gianni", "Enzo", "Claudio", "Piero", "Renato", "Gino", "Nicola", "Rocco", "Lucio"],
+      "female": ["Maria", "Anna", "Giuseppina", "Rosa", "Franca", "Giovanna", "Teresa", "Lucia", "Angela", "Carla", "Rita", "Luciana", "Gabriella", "Patrizia", "Silvana", "Graziella", "Marisa", "Paola", "Elena", "Antonietta", "Bruna", "Carmela", "Gianna", "Loredana", "Rosanna"]
+    },
+    {
+      "from": 1960,
+      "to": 1969,
+      "male": ["Giuseppe", "Antonio", "Giovanni", "Roberto", "Stefano", "Maurizio", "Massimo", "Paolo", "Claudio", "Mario", "Luigi", "Franco", "Fabrizio", "Marco", "Alberto", "Sergio", "Enrico", "Alessandro", "Gianluca", "Luca", "Fabio", "Mauro", "Andrea", "Daniele", "Nicola"],
+      "female": ["Maria", "Anna", "Patrizia", "Rita", "Rosanna", "Paola", "Laura", "Daniela", "Antonella", "Gabriella", "Cinzia", "Roberta", "Barbara", "Monica", "Stefania", "Francesca", "Elisabetta", "Silvia", "Giovanna", "Lucia", "Tiziana", "Manuela", "Loredana", "Simonetta", "Teresa"]
+    },
+    {
+      "from": 1970,
+      "to": 1979,
+      "male": ["Andrea", "Marco", "Alessandro", "Luca", "Francesco", "Stefano", "Massimo", "Davide", "Simone", "Fabio", "Paolo", "Matteo", "Roberto", "Daniele", "Giuseppe", "Antonio", "Giovanni", "Emanuele", "Riccardo", "Michele", "Gianluca", "Mirko", "Cristian", "Alessio", "Federico"],
+      "female": ["Francesca", "Sara", "Laura", "Elena", "Silvia", "Valentina", "Chiara", "Federica", "Barbara", "Monica", "Paola", "Simona", "Roberta", "Alessandra", "Cristina", "Elisa", "Daniela", "Michela", "Manuela", "Stefania", "Sabrina", "Claudia", "Anna", "Maria", "Debora"]
+    },
+    {
+      "from": 1980,
+      "to": 1989,
+      "male": ["Andrea", "Marco", "Alessandro", "Luca", "Francesco", "Matteo", "Davide", "Simone", "Federico", "Daniele", "Stefano", "Riccardo", "Fabio", "Michele", "Giuseppe", "Antonio", "Lorenzo", "Emanuele", "Mattia", "Nicola", "Giovanni", "Alessio", "Paolo", "Roberto", "Gabriele"],
+      "female": ["Francesca", "Sara", "Valentina", "Chiara", "Giulia", "Federica", "Silvia", "Elisa", "Martina", "Laura", "Alessandra", "Elena", "Serena", "Jessica", "Veronica", "Ilaria", "Claudia", "Roberta", "Marta", "Erika", "Arianna", "Anna", "Maria", "Michela", "Alice"]
+    },
+    {
+      "from": 1990,
+      "to": 1999,
+      "male": ["Andrea", "Alessandro", "Francesco", "Matteo", "Marco", "Luca", "Lorenzo", "Davide", "Simone", "Federico", "Gabriele", "Riccardo", "Mattia", "Giuseppe", "Antonio", "Daniele", "Michele", "Giovanni", "Stefano", "Nicolò", "Tommaso", "Pietro", "Emanuele", "Alessio", "Leonardo"],
+      "female": ["Giulia", "Francesca", "Sara", "Martina", "Chiara", "Valentina", "Federica", "Alessia", "Giorgia", "Elisa", "Silvia", "Alice", "Ilaria", "Arianna", "Elena", "Beatrice", "Laura", "Noemi", "Marta", "Erica", "Camilla", "Veronica", "Anna", "Claudia", "Roberta"]
+    },
+    {
+      "from": 2000,
+      "to": 2009,
+      "male": ["Francesco", "Alessandro", "Andrea", "Lorenzo", "Matteo", "Gabriele", "Mattia", "Luca", "Riccardo", "Davide", "Leonardo", "Federico", "Giuseppe", "Tommaso", "Marco", "Simone", "Antonio", "Pietro", "Giovanni", "Edoardo", "Christian", "Nicolò", "Samuele", "Filippo", "Diego"],
+      "female": ["Giulia", "Sofia", "Martina", "Chiara", "Sara", "Alessia", "Giorgia", "Aurora", "Francesca", "Alice", "Elisa", "Gaia", "Noemi", "Beatrice", "Emma", "Anna", "Greta", "Viola", "Matilde", "Rebecca", "Arianna", "Ludovica", "Elena", "Asia", "Camilla"]
+    },
+    {
+      "from": 2010,
+      "to": 2019,
+      "male": ["Francesco", "Alessandro", "Leonardo", "Lorenzo", "Mattia", "Andrea", "Gabriele", "Riccardo", "Tommaso", "Edoardo", "Matteo", "Giuseppe", "Antonio", "Federico", "Diego", "Pietro", "Giovanni", "Christian", "Filippo", "Nicolò", "Samuele", "Davide", "Marco", "Luca", "Michele"],
+      "female": ["Sofia", "Giulia", "Aurora", "Alice", "Ginevra", "Emma", "Giorgia", "Greta", "Beatrice", "Martina", "Anna", "Chiara", "Sara", "Matilde", "Vittoria", "Nicole", "Ludovica", "Noemi", "Gaia", "Rebecca", "Arianna", "Elisa", "Camilla", "Bianca", "Viola"]
+    },
+    {
+      "from": 2020,
+      "to": 2029,
+      "male": ["Leonardo", "Francesco", "Tommaso", "Edoardo", "Alessandro", "Lorenzo", "Mattia", "Gabriele", "Riccardo", "Andrea", "Diego", "Nicolò", "Matteo", "Giuseppe", "Federico", "Antonio", "Enea", "Achille", "Pietro", "Giovanni", "Filippo", "Gioele", "Samuele", "Ettore", "Christian"],
+      "female": ["Sofia", "Aurora", "Giulia", "Ginevra", "Vittoria", "Beatrice", "Alice", "Ludovica", "Emma", "Matilde", "Anna", "Camilla", "Chiara", "Bianca", "Nicole", "Gaia", "Rebecca", "Azzurra", "Arianna", "Giorgia", "Elena", "Isabel", "Mia", "Greta", "Adele"]
+    }
+  ],
+  "surnames": ["Di Giovanni", "Di Lorenzo", "Di Marco", "D'Angelo", "De Luca", "Di Pietro", "Di Renzo", "Di Iorio", "Di Matteo", "Di Fabio", "Di Nardo", "Di Paolo", "Di Domenico", "Di Carlo", "Di Felice", "Di Berardino", "Di Biase", "Di Cola", "Di Florio", "Di Giacomo", "Di Girolamo", "Di Martino", "Di Michele", "Di Nicola", "Di Pasquale", "Di Primio", "Di Stefano", "Di Tommaso", "Di Virgilio", "Di Lizio", "D'Alessandro", "D'Amico", "D'Antonio", "D'Ercole", "D'Orazio", "De Angelis", "De Santis", "Del Re", "Rossi", "Ferrante", "Mancini", "Marino", "Ricci", "Costantini", "Cipollone", "Ciccone", "Tiberio", "Silvestri", "Sciarra", "Pace", "Rapino", "Iezzi", "Iannucci", "Ianni", "Mammarella", "Morelli", "Pantalone", "Pellegrini", "Pasquini", "Cocco", "Cicchitti", "Valentini", "Verna", "Zappacosta", "Marinucci", "Carulli", "Liberatore", "Paolini", "Vitale", "Sablone", "Buccella", "Colantonio", "Fusco", "Rossetti", "Santoro", "Taraborrelli", "Tracanna", "Antonelli", "Ferri", "Giampietro", "Iacovella", "Mastrangelo", "Natale", "Ranieri", "Russo", "Colombo", "Esposito", "Romano", "Bianchi", "Conti", "Martini", "Gallo", "Fontana", "Moretti", "Barbieri"]
+}
