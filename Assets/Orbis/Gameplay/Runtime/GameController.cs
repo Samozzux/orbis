@@ -59,7 +59,9 @@ namespace Orbis.Gameplay
         public static async Task SaveAsync(ISaveStore store, string id, GameSession session)
         {
             var now = DateTime.UtcNow;
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             var bytes = session.Save(now);
+            SlowWork.Log($"salvataggio ({bytes.Length / 1024} KB)", sw);
             await store.WriteAsync("saves/" + id + "/game", bytes);
             var s = session.State;
             var meta = "{\"id\":\"" + id + "\",\"name\":\"" + Escape(s.Name) + "\",\"saved\":\"" + now.ToString("o", CultureInfo.InvariantCulture) +
@@ -132,6 +134,7 @@ namespace Orbis.Gameplay
             c.EnsureFrame();
             c.SetupWeather();
             c.Build = BuildController.Attach(c);
+            world.gameObject.AddComponent<FrameWatch>();
             c.Previews = CatalogPreviews.Attach(c);
             c._nextAutosave = Time.unscaledTime + AutosaveSeconds;
             world.World.TileLoaded += _ =>
@@ -269,6 +272,18 @@ namespace Orbis.Gameplay
         // ------------------------------------------------------------------ strade e linee del sindaco
 
         private List<(Orbis.Core.World.Tiles.TileData Tile, double OriginX, double OriginY)> _cityTiles;
+
+        /// <summary>Tile del comune tenuti dalla partita e loro edifici (per la diagnosi della memoria).</summary>
+        public (int Tiles, int Buildings) CityTileStats
+        {
+            get
+            {
+                if (_cityTiles == null) return (0, 0);
+                int b = 0;
+                foreach (var t in _cityTiles) b += t.Tile.Buildings.Length;
+                return (_cityTiles.Count, b);
+            }
+        }
         private (double, double, double, double) _cityArea;
         private string _roadsSignature, _linesSignature;
         private int _trafficVersion;
@@ -283,22 +298,46 @@ namespace Orbis.Gameplay
             Session.Context.TileZoom = streamer.Region.Zoom;
         }
 
-        /// <summary>Tile del comune (dal caricatore della città) per costruire e ricostruire la rete stradale.</summary>
-        internal void OnCityTiles(List<(Orbis.Core.World.Tiles.TileData Tile, double OriginX, double OriginY)> tiles, (double, double, double, double) area)
+        /// <summary>
+        /// Legge i tile del comune uno alla volta e ne tiene solo quello che serve dopo: sedi dei servizi e monumenti
+        /// (subito), strade e lotti (per ricostruire la rete e trovare gli edifici del catalogo). Edifici, aree, alberi
+        /// e terreno restano solo nei tile vicini alla camera: tenerli per tutto il comune costava centinaia di MB, troppi
+        /// per il web (la memoria non torna indietro e il garbage collector blocca il gioco più a lungo).
+        /// </summary>
+        internal sealed class CityTilesBuilder
+        {
+            private readonly GameContent _content;
+            public readonly List<Orbis.Core.Population.ServiceSource> ServiceSources = new List<Orbis.Core.Population.ServiceSource>();
+
+            public CityTilesBuilder(GameContent content) => _content = content;
+
+            public (Orbis.Core.World.Tiles.TileData Tile, double OriginX, double OriginY) Keep(Orbis.Core.World.Tiles.TileData tile, double ox, double oy)
+            {
+                var one = new[] { (tile, ox, oy) };
+                // sedi vere dei servizi (questure, caserme, pompieri, ospedali, scuole…)
+                if (_content.Life?.Services != null) Orbis.Core.Population.CityServices.AddFromTiles(ServiceSources, one, _content.Life.Services);
+                // luoghi degli eventi (la cattedrale per San Giustino…) tra i monumenti
+                _content.Life?.Calendar?.LocatePlaces(one);
+                var light = new Orbis.Core.World.Tiles.TileData
+                {
+                    Id = tile.Id, Size = tile.Size, Scale = tile.Scale, Roads = tile.Roads, Lots = tile.Lots,
+                };
+                return (light, ox, oy);
+            }
+        }
+
+        /// <summary>Tile del comune (solo strade e lotti, dal caricatore della città) e sedi dei servizi trovate.</summary>
+        internal void OnCityTiles(List<(Orbis.Core.World.Tiles.TileData Tile, double OriginX, double OriginY)> tiles, (double, double, double, double) area,
+            List<Orbis.Core.Population.ServiceSource> services)
         {
             _cityTiles = tiles;
             _cityArea = area;
-            // le sedi dei servizi del catalogo si trovano anche nei tile lontani dalla camera
+            // le sedi dei servizi del catalogo si trovano anche nei lotti lontani dalla camera
             Session.Context.CityWorld = new CityTilesAccess(tiles, Session.Context.World);
-            // sedi vere dei servizi (questure, caserme, pompieri, ospedali, scuole…) in tutto il comune
-            if (Content.Life?.Services != null) _serviceSources = Orbis.Core.Population.CityServices.FromTiles(tiles, Content.Life.Services);
-            // luoghi degli eventi (la cattedrale per San Giustino…) tra i monumenti del comune; poi si riprepara la giornata
-            if (Content.Life?.Calendar != null)
-            {
-                Content.Life.Calendar.LocatePlaces(tiles);
-                var pop = Session.Population;
-                if (pop != null && Session.Context.Life?.Events != null) Session.Context.Life.Events.Plan(pop, State.Now.Date);
-            }
+            if (Content.Life?.Services != null) _serviceSources = services;
+            // i luoghi degli eventi ora sono noti: si riprepara la giornata
+            var pop = Session.Population;
+            if (pop != null && Session.Context.Life?.Events != null) Session.Context.Life.Events.Plan(pop, State.Now.Date);
             WireCity();
         }
 
@@ -317,15 +356,41 @@ namespace Orbis.Gameplay
             try
             {
                 var sw = System.Diagnostics.Stopwatch.StartNew();
+                var frame = System.Diagnostics.Stopwatch.StartNew();
                 _roadsSignature = RoadsSignature();
-                var graph = Orbis.Core.Traffic.RoadGraph.Build(_cityTiles, b, _cityArea, Infrastructure.GraphRoads(State));
-                var traffic = new Orbis.Core.Traffic.TrafficModel(graph, b);
-                yield return null;
-                for (int a = 0; a < traffic.Zones; a += 5)
+                // un tile alla volta, pochi millisecondi per fotogramma: sul web un lavoro lungo blocca la pagina
+                var builder = new Orbis.Core.Traffic.RoadGraph.Builder(b, _cityArea);
+                foreach (var (tile, ox, oy) in _cityTiles)
                 {
-                    if (version != _trafficVersion || Session == null) yield break;
-                    traffic.RefreshRange(a, 5);
-                    yield return null;
+                    var piece = System.Diagnostics.Stopwatch.StartNew();
+                    builder.Add(tile, ox, oy);
+                    SlowWork.Log($"rete stradale: tile {tile.Id} ({tile.Roads.Length} strade)", piece);
+                    if (frame.ElapsedMilliseconds >= SlowWork.FrameBudgetMs)
+                    {
+                        yield return null;
+                        frame.Restart();
+                        if (version != _trafficVersion || Session == null) yield break;
+                    }
+                }
+                foreach (var r in Infrastructure.GraphRoads(State)) builder.AddExtra(r);
+                var finish = System.Diagnostics.Stopwatch.StartNew();
+                var graph = builder.Finish();
+                var traffic = new Orbis.Core.Traffic.TrafficModel(graph, b);
+                SlowWork.Log("fusione della rete stradale", finish);
+                yield return null;
+                frame.Restart();
+                // tempi a strada libera: una zona di partenza alla volta, finché c'è tempo nel fotogramma
+                for (int a = 0; a < traffic.Zones; a++)
+                {
+                    var piece = System.Diagnostics.Stopwatch.StartNew();
+                    traffic.RefreshRange(a, 1);
+                    SlowWork.Log($"tempi dalla zona {a}", piece);
+                    if (frame.ElapsedMilliseconds >= SlowWork.FrameBudgetMs)
+                    {
+                        yield return null;
+                        frame.Restart();
+                        if (version != _trafficVersion || Session == null) yield break;
+                    }
                 }
                 if (version != _trafficVersion || Session == null) yield break;
                 OnTrafficReady(traffic);
@@ -403,7 +468,10 @@ namespace Orbis.Gameplay
                 var span = TimeSpan.FromSeconds(Math.Min(_pendingGameSeconds, 6 * 3600));
                 _pendingGameSeconds = 0;
                 _events.Clear();
+                var sim = System.Diagnostics.Stopwatch.StartNew();
+                var from = State.Now;
                 Session.Simulation.Advance(Session.Context, span, _events);
+                SlowWork.Log($"simulazione {from:HH:mm}→{State.Now:HH:mm}", sim);
                 foreach (var e in _events)
                 {
                     SimulationEvent?.Invoke(e);
@@ -416,8 +484,10 @@ namespace Orbis.Gameplay
             if (Time.unscaledTime >= _nextViewSync)
             {
                 _nextViewSync = Time.unscaledTime + 2f;
+                var sync = System.Diagnostics.Stopwatch.StartNew();
                 View.Sync(State);
                 RoadsView.Sync(State);
+                SlowWork.Log("aggiornamento degli elementi", sync);
             }
             if (Time.unscaledTime >= _nextAutosave)
             {

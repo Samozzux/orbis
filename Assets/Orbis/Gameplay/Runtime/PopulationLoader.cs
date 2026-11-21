@@ -57,7 +57,9 @@ namespace Orbis.Gameplay
             if (generate) _game.OnPopulationStarted(life.Data.MunicipalityName);
             var places = new CityPlaces(streamer.Region, municipality, life.Balance);
             var tiles = CityPlaces.TilesFor(streamer.Region, municipality);
+            // un tile alla volta: se ne prende ciò che serve e poi si lascia andare (sul web la memoria non torna indietro)
             var loaded = new List<(TileData Tile, double OriginX, double OriginY)>(tiles.Count);
+            var city = new GameController.CityTilesBuilder(_game.Content);
             for (int i = 0; i < tiles.Count; i++)
             {
                 var id = tiles[i];
@@ -67,10 +69,13 @@ namespace Orbis.Gameplay
                 {
                     try
                     {
+                        var tileWork = Stopwatch.StartNew();
                         var tile = TileReader.ReadFile(file, streamer.Region.Scale);
+                        file = null;
                         streamer.Frame.TileOrigin(id, out var ox, out var oy);
-                        loaded.Add((tile, ox, oy));
                         if (generate) places.Add(tile);
+                        loaded.Add(city.Keep(tile, ox, oy));
+                        SlowWork.Log($"tile {id} per la città", tileWork);
                     }
                     catch (Exception e)
                     {
@@ -88,7 +93,7 @@ namespace Orbis.Gameplay
             double m = _game.Content.Traffic != null ? _game.Content.Traffic.AreaMarginM : 1000;
             var area = (Math.Min(ax, bx) - m, Math.Min(ay, by) - m, Math.Max(ax, bx) + m, Math.Max(ay, by) + m);
             // la partita tiene i tile del comune: sedi dei servizi per i cittadini, rete ricostruita a ogni strada nuova
-            _game.OnCityTiles(loaded, area);
+            _game.OnCityTiles(loaded, area, city.ServiceSources);
             if (generate) yield return Generate(life, places, sw);
             yield return _game.BuildTraffic();
             // linee reali di bus, filobus e treni con almeno due fermate nell'area, più quelle del comune
@@ -105,10 +110,13 @@ namespace Orbis.Gameplay
         private IEnumerator Generate(LifeInputs life, CityPlaces places, Stopwatch sw)
         {
             var generator = new PopulationGenerator(life.Data, life.Names, life.Balance, places, _game.State.Seed);
+            var phase = Stopwatch.StartNew();
             foreach (var step in generator.Steps())
             {
+                SlowWork.Log($"generazione dei cittadini fino al {step:P0}", phase);
                 Progress = 0.4f + 0.6f * step;
                 yield return null; // una fase per fotogramma
+                phase.Restart();
             }
             var population = generator.Result;
             Debug.Log($"[Orbis] {population.Count} cittadini e {population.Households.Count} famiglie generati in {sw.ElapsedMilliseconds} ms");
