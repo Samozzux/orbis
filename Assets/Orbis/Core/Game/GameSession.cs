@@ -138,6 +138,9 @@ namespace Orbis.Core.Game
             if (serviceSources != null && Context.Life?.Services != null) Context.Life.Services.Fixed.AddRange(serviceSources);
             if (keepBalance && population != null) State.ServicesAdjustPerDay += Economy.Compute(Context).Net - before;
             if (population != null && population.LastDay == 0) population.LastDay = CityLife.DayIndex(State.Now) - 1;
+            // eventi di oggi (festivi, feste) se non sono ancora preparati
+            if (population != null && Context.Life?.Events != null && population.TodayDay != CityLife.DayIndex(State.Now))
+                Context.Life.Events.Plan(population, State.Now.Date);
             // prima felicità subito, senza aspettare la mezzanotte (cittadini appena generati o salvataggi di prima)
             if (population != null && population.AverageHappiness <= 0 && Context.Life?.Services != null)
             {

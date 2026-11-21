@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Orbis.Core.Game
 {
-    public enum SimEventKind { ConstructionDone, LevelUp, MissionDone, DayClosed, Reaction }
+    public enum SimEventKind { ConstructionDone, LevelUp, MissionDone, DayClosed, Reaction, CityEvent }
 
     /// <summary>Evento della simulazione da mostrare al giocatore (avvisi, riepiloghi).</summary>
     public struct SimEvent
@@ -15,6 +15,8 @@ namespace Orbis.Core.Game
         public long Amount;
         /// <summary>Reazione dei cittadini (petizione, protesta, sciopero) per <see cref="SimEventKind.Reaction"/>.</summary>
         public Orbis.Core.Population.Reaction Reaction;
+        /// <summary>Evento della città (festa di oggi, inaugurazione) per <see cref="SimEventKind.CityEvent"/>.</summary>
+        public Orbis.Core.Population.CityEvent CityEvent;
     }
 
     /// <summary>
@@ -183,6 +185,25 @@ namespace Orbis.Core.Game
             }
         }
 
+        /// <summary>Un edificio pubblico del sindaco (servizi, sport, cultura, trasporti, parchi) finito: inaugurazione con la notizia.</summary>
+        private static Orbis.Core.Population.CityEvent Inaugurate(GameContext ctx, PlacedObject o)
+        {
+            if (ctx.Population == null || ctx.Life?.Events == null) return null;
+            var item = ctx.Catalog.Get(o.ItemKey);
+            if (item == null) return null;
+            switch (item.Category)
+            {
+                case CatalogCategory.Services:
+                case CatalogCategory.Sports:
+                case CatalogCategory.Culture:
+                case CatalogCategory.Transport:
+                case CatalogCategory.Nature:
+                    return ctx.Life.Events.Inaugurate(ctx.Population, o.ReadyAt, item.Name, 0, 0);
+                default:
+                    return null;
+            }
+        }
+
         /// <summary>Giornata dei cittadini a passi di 15 minuti (L1); spenta nel recupero del tempo ad app chiusa.</summary>
         public bool Routines = true;
 
@@ -200,7 +221,12 @@ namespace Orbis.Core.Game
                 s.Now = step;
                 foreach (var o in s.Objects.Values)
                     if (o.ReadyAt > before && o.ReadyAt <= s.Now)
+                    {
                         events.Add(new SimEvent { Kind = SimEventKind.ConstructionDone, Time = o.ReadyAt, ObjectId = o.Id, Key = o.ItemKey });
+                        var inauguration = Inaugurate(ctx, o);
+                        if (inauguration != null)
+                            events.Add(new SimEvent { Kind = SimEventKind.CityEvent, Time = o.ReadyAt, ObjectId = o.Id, Key = inauguration.Key, CityEvent = inauguration });
+                    }
                 if (s.Now.Hour == 0 && s.Now.Minute == 0 && s.Now.Second == 0 && step == nextHour)
                 {
                     // la giornata appena finita si registra con la sua data
@@ -219,6 +245,10 @@ namespace Orbis.Core.Game
                         foreach (var r in life.Reactions)
                             if (r.Kind != Orbis.Core.Population.ReactionKind.Comment)
                                 events.Add(new SimEvent { Kind = SimEventKind.Reaction, Time = closing, Key = r.Kind + "." + r.Factor, Amount = r.Count, Reaction = r });
+                    // gli eventi di oggi (feste, processioni, sagre): un avviso al mattino della giornata
+                    if (life != null)
+                        foreach (var e in life.Tomorrow)
+                            events.Add(new SimEvent { Kind = SimEventKind.CityEvent, Time = closing, Key = e.Key, CityEvent = e });
                     events.Add(new SimEvent { Kind = SimEventKind.DayClosed, Time = closing, Amount = s.Stats.LastDayNet });
                     Midnight?.Invoke(ctx);
                 }

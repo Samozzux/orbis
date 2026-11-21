@@ -1,5 +1,5 @@
 {
-  "_info": "Servizi e felicità dei cittadini (docs/03 §6 e §8, M4 blocco 5). Ogni servizio copre le case vicine: punteggio 100 entro la distanza buona, poi scende fino a 0 alla distanza massima (in linea d'aria × 1,3). Per polizia e vigili del fuoco conta il tempo di arrivo in auto sulla rete col traffico, quando c'è. Le fonti sono i luoghi veri della città (categorie OSM o uso dell'edificio) e gli edifici del catalogo. La felicità di ogni cittadino è la media pesata dei fattori; cambia un po' ogni giorno. Valori iniziali da bilanciare. Reazioni (blocco 5b): con le reazioni leggere i cittadini commentano e la produttività delle attività segue la felicità; con quelle realistiche arrivano anche petizioni, proteste in piazza, scioperi e famiglie che partono o arrivano secondo la felicità.",
+  "_info": "Servizi e felicità dei cittadini (docs/03 §6 e §8, M4 blocco 5). Ogni servizio copre le case vicine: punteggio 100 entro la distanza buona, poi scende fino a 0 alla distanza massima (in linea d'aria × 1,3). Per polizia e vigili del fuoco conta il tempo di arrivo in auto sulla rete col traffico, quando c'è. Le fonti sono i luoghi veri della città (categorie OSM o uso dell'edificio) e gli edifici del catalogo. La felicità di ogni cittadino è la media pesata dei fattori; cambia un po' ogni giorno. Valori iniziali da bilanciare. Reazioni (blocco 5b): con le reazioni leggere i cittadini commentano e la produttività delle attività segue la felicità; con quelle realistiche arrivano anche petizioni, proteste in piazza, scioperi e famiglie che partono o arrivano secondo la felicità. Eventi (blocco 5c): nei festivi scuole e uffici chiudono; agli eventi con un luogo va una parte dei cittadini (afflusso, incassi nei locali vicini, traffico); ogni festa lascia un po' di felicità che si consuma nei giorni dopo; eventi generati: sagre d'estate, incidenti stradali, inaugurazioni.",
   "kinds": {
     "Police": {
       "categories": [
@@ -136,5 +136,31 @@
     "arrivalsScale": 20,
     "arrivalsMin": 0.5,
     "arrivalsMax": 2
+  },
+  "events": {
+    "attendShare": 0.3,
+    "stayMinutes": 150,
+    "bonus": {
+      "Holiday": 1,
+      "Festival": 3,
+      "Procession": 2,
+      "Patron": 5,
+      "Sagra": 3,
+      "Inauguration": 2,
+      "Accident": 0
+    },
+    "bonusDecay": 0.5,
+    "accidentsPerYear": 120,
+    "sagraMonths": [
+      6,
+      7,
+      8,
+      9
+    ],
+    "sagraChance": 0.3,
+    "sagraStart": "18:00",
+    "sagraEnd": "23:59",
+    "centerPlace": "cattedrale_san_giustino",
+    "newsSize": 60
   }
 }

@@ -174,6 +174,11 @@ namespace Orbis.UI.Game
                     Toast(Loc.Format("game.event.level", e.Amount));
                     _services.Haptics.Play(HapticKind.Success);
                     break;
+                case SimEventKind.CityEvent when e.CityEvent != null:
+                    var ev = e.CityEvent;
+                    if (ev.Kind == Orbis.Core.Population.CityEventKind.Inauguration) Toast(Loc.Format("event.inauguration", ev.Detail));
+                    else Toast(Loc.Format("event.today", string.IsNullOrEmpty(ev.Name) ? Loc.Get("event.name." + ev.Key) : ev.Name));
+                    break;
                 case SimEventKind.Reaction when e.Reaction != null:
                     // petizioni, proteste e scioperi: "Petizione per tasse più basse: 1.250 firme"
                     Toast(Loc.Format("reaction." + e.Reaction.Kind, Fmt.Money(e.Amount), Loc.Get("demand." + e.Reaction.Factor)));

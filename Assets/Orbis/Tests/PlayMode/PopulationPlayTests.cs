@@ -180,6 +180,16 @@ namespace Orbis.Tests.PlayMode
                       "; preoccupazioni: " + string.Join(", ", Enumerable.Range(1, (int)HappinessFactor.Count - 1)
                           .Select(f => $"{(HappinessFactor)f} {Enumerable.Range(0, pop.Count).Count(i => pop.Citizens[i].Alive && pop.Citizens[i].Worry == f)}")));
 
+            // calendario: la cattedrale di San Giustino tra i monumenti, la festa del patrono con il raduno lì vicino
+            var events = game.Session.Context.Life.Events;
+            Assert.That(events, Is.Not.Null, "calendario degli eventi non caricato");
+            Assert.That(events.Calendar.Places.ContainsKey("cattedrale_san_giustino"), "cattedrale non trovata tra i monumenti");
+            var patron = events.Plan(pop, new System.DateTime(2026, 5, 11)).Single(e => e.Key == "san_giustino");
+            Assert.That(patron.Place, Is.GreaterThanOrEqualTo(0));
+            Debug.Log($"[Test] eventi: San Giustino al locale «{pop.Workplaces[patron.Place].Name}» ({pop.Workplaces[patron.Place].Category}); " +
+                      $"notizie: {string.Join(", ", pop.News.Select(e => e.Key + (e.Detail != "" ? " " + e.Detail : "")))}");
+            events.Plan(pop, game.State.Now.Date);
+
             const int transitCosts = (int)Orbis.Core.Game.LedgerCategory.TransitCosts;
             Assert.That(game.State.Ledger.Any(d => d.Amounts[transitCosts] < 0), "il servizio della linea del comune non si è pagato");
             Debug.Log($"[Test] linea del comune: {game.Transit.CityPassengers(open.ResultId)} passeggeri, " +
