@@ -294,6 +294,50 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - Gli orari di servizio non limitano ancora i viaggi: anche di notte il bus passa.
     - Il tempo sulle linee del comune si stima come per quelle reali (1,3 volte la linea d'aria). Il percorso sulle strade servirà ai bus visibili (blocco 6).
     - Ricostruire il grafo richiede un fotogramma lungo; va spostato su un thread nel blocco 8.
+- **Servizi e felicità, parte 5a** (21/11, branch `m4-servizi`). Il blocco 5 è diviso in quattro parti:
+  - 5a: servizi e felicità;
+  - 5b: reazioni (commenti, petizioni, proteste, emigrazione);
+  - 5c: eventi dal calendario e generati, con le notizie;
+  - 5d: meteo reale.
+
+  Nella 5a, in `Orbis.Core.Population`, con i parametri in `data/balance/services.json`:
+  - **Copertura dei servizi** (`CityServices`), ricalcolata ogni giorno per ogni casa:
+    - servizi: polizia, vigili del fuoco, sanità, scuola, cultura, rifiuti;
+    - le sedi sono i luoghi veri in tutti i tile del comune: luoghi OSM (`amenity/police`, `amenity/fire_station`, ospedali, ambulatori, medici, scuole, biblioteche, teatri, cinema, musei) ed edifici per uso (ospedale, scuola, museo…). Un luogo conta anche se sta dentro un edificio di altro uso: il comando dei vigili del fuoco di Chieti, per esempio, sta in un edificio "civico" e come posto di lavoro non sarebbe stato riconosciuto. Due sedi uguali a meno di 40 m contano una volta;
+    - contano anche gli edifici del catalogo finiti (caserma dei carabinieri, vigili del fuoco, ospedale, ambulatorio, scuole, biblioteca), cercati in tutti i tile del comune;
+    - il punteggio è 100 fino alla distanza buona e scende fino a 0 alla distanza massima;
+    - per polizia e vigili del fuoco conta il tempo di arrivo in auto sulla rete col traffico (per esempio i pompieri: pieno entro 8 minuti, nullo oltre 20);
+    - la raccolta dei rifiuti per ora vale 80 in tutto il comune: scenderà se il sindaco taglia il servizio.
+  - **Felicità di ogni cittadino** (`CityHappiness`). È la media pesata di otto fattori, ciascuno da 0 a 100:
+    - bisogni: l'umore della giornata;
+    - casa: spazio per persona e peso dell'affitto sul reddito della famiglia;
+    - lavoro: chi cerca lavoro è molto meno contento;
+    - soldi: risparmi o debiti della famiglia;
+    - servizi vicino a casa: la scuola conta solo per chi ha figli o studia;
+    - sicurezza: polizia e pompieri;
+    - tempo del tragitto verso il lavoro o la scuola, registrato dalla giornata;
+    - tasse sui redditi.
+
+    Ogni giorno la felicità si avvicina al nuovo valore (30% della differenza), senza salti.
+  - **Nel gioco.** Con i cittadini veri, la felicità della città (pannello Finanze e missioni) è la loro media, più gli abbellimenti del sindaco (parchi, edifici reali potenziati). Le scelte del sindaco la cambiano:
+    - le tasse, dal giorno dopo;
+    - una caserma o una scuola nuova, per le case vicine.
+  - **Salvataggio.** Popolazione alla versione 6: felicità e tragitto di ognuno, media e fattori della città.
+  - **Test.** 8 nuovi (215 in tutto):
+    - bilanciamento letto;
+    - copertura dai luoghi veri e da una sede in più;
+    - sedi vere lette dai tile (pompieri dentro un edificio civico, sedi doppie, ospedale per uso dell'edificio);
+    - emergenze col tempo di arrivo in auto;
+    - felicità: occupati più contenti dei disoccupati, tasse alte, caserme ovunque;
+    - salvataggio e giornata;
+    - tragitto lungo;
+    - edifici del catalogo come sedi (solo a lavori finiti, nella posizione giusta).
+  - **Su Chieti vera** (Unity in locale, prova PlayMode):
+    - sedi trovate nei tile del comune: 13 di polizia (questura, carabinieri, polizia stradale e locale), 2 dei vigili del fuoco, 43 sanitarie, 64 scolastiche, 15 culturali;
+    - copertura media delle case: polizia 67, pompieri 60, sanità 97, scuola 88, cultura 73;
+    - felicità media 76,5. Fattori: bisogni 69, casa 74, lavoro 70, soldi 82, servizi 90, sicurezza 69, tragitto 86, tasse 75;
+    - nessun cittadino sotto 40: la distribuzione è stretta. Va tarata con le reazioni (5b), che ne useranno gli estremi.
+  - **Da fare dopo.** Capacità dei servizi (posti letto, aule) e un livello di spesa per servizio deciso dal sindaco; inquinamento e verde vicino a casa (con l'ambiente); eventi e squadra del cuore (5c).
 
 **M3 — Account e cloud**: chiusa il 19/11/2026 su scelta di Samuele **senza la prova sui dispositivi** ("Chiudi M3 senza prova"). Tag `v0.3.0` con IPA e APK; tutte le build di `main` verdi. Restano da provare sui dispositivi Face ID, impronta, passkey e il giro iPhone → Mac (vedi "Da verificare sui dispositivi" e "Cosa provare (M3)"). Iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 

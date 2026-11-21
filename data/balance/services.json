@@ -1,0 +1,77 @@
+{
+  "_info": "Servizi e felicità dei cittadini (docs/03 §6 e §8, M4 blocco 5). Ogni servizio copre le case vicine: punteggio 100 entro la distanza buona, poi scende fino a 0 alla distanza massima (in linea d'aria × 1,3). Per polizia e vigili del fuoco conta il tempo di arrivo in auto sulla rete col traffico, quando c'è. Le fonti sono i luoghi veri della città (categorie OSM o uso dell'edificio) e gli edifici del catalogo. La felicità di ogni cittadino è la media pesata dei fattori; cambia un po' ogni giorno. Valori iniziali da bilanciare.",
+  "kinds": {
+    "Police": {
+      "categories": ["amenity/police"],
+      "catalog": ["caserma_carabinieri"],
+      "goodM": 1500,
+      "maxM": 5000,
+      "goodMinutes": 6,
+      "maxMinutes": 15
+    },
+    "Fire": {
+      "categories": ["amenity/fire_station"],
+      "catalog": ["vigili_del_fuoco"],
+      "goodM": 2500,
+      "maxM": 8000,
+      "goodMinutes": 8,
+      "maxMinutes": 20
+    },
+    "Health": {
+      "categories": ["Hospital", "amenity/hospital", "amenity/clinic", "amenity/doctors", "healthcare"],
+      "catalog": ["ospedale", "ambulatorio"],
+      "goodM": 1500,
+      "maxM": 5000
+    },
+    "Education": {
+      "categories": ["School", "Kindergarten", "amenity/school", "amenity/kindergarten"],
+      "schools": true,
+      "catalog": ["scuola_infanzia", "scuola_primaria", "scuola_superiore"],
+      "goodM": 800,
+      "maxM": 2500
+    },
+    "Culture": {
+      "categories": ["amenity/library", "amenity/theatre", "amenity/cinema", "amenity/arts_centre", "Museum", "Theatre", "tourism/museum"],
+      "catalog": ["biblioteca"],
+      "goodM": 1000,
+      "maxM": 3500
+    },
+    "Waste": {
+      "_info": "Raccolta dei rifiuti porta a porta in tutto il comune: per ora uguale ovunque; scenderà se il sindaco taglia il servizio.",
+      "citywide": 80
+    }
+  },
+  "happiness": {
+    "weights": {
+      "needs": 0.25,
+      "home": 0.15,
+      "work": 0.15,
+      "money": 0.1,
+      "services": 0.15,
+      "safety": 0.08,
+      "commute": 0.06,
+      "taxes": 0.06
+    },
+    "services": {
+      "Health": 0.4,
+      "Education": 0.3,
+      "Culture": 0.15,
+      "Waste": 0.15
+    },
+    "safety": {
+      "Police": 0.6,
+      "Fire": 0.4
+    },
+    "work": {
+      "employed": 80,
+      "unemployed": 25,
+      "retired": 70,
+      "homemaker": 60,
+      "student": 75
+    },
+    "taxDefault": 1.5,
+    "taxPerPoint": 10,
+    "dailyChange": 0.3,
+    "unhappyBelow": 40
+  }
+}

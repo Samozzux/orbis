@@ -395,6 +395,7 @@ namespace Orbis.Core.Population
                 c.LocationIndex = index;
                 c.TravelStart = minute;
                 c.TravelEnd = minute + travel;
+                if (kind == LocationKind.Work || kind == LocationKind.School) c.Commute = (byte)Math.Max(1, Math.Min(255, travel));
             }
             c.Activity = activity;
             c.ActivityEnd = Math.Max(until, minute + travel + R.StepMinutes);

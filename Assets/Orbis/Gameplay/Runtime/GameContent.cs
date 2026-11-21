@@ -51,6 +51,7 @@ namespace Orbis.Gameplay
             var data = Resources.Load<TextAsset>("OrbisContent/population_chieti");
             var names = Resources.Load<TextAsset>("OrbisContent/population_names-it");
             var balance = Resources.Load<TextAsset>("OrbisContent/population_balance");
+            var services = Resources.Load<TextAsset>("OrbisContent/services_balance");
             if (data == null || names == null || balance == null) return null;
             try
             {
@@ -59,6 +60,8 @@ namespace Orbis.Gameplay
                     Data = PopulationData.Parse(data.text),
                     Names = NameData.Parse(names.text),
                     Balance = PopulationBalance.Parse(balance.text),
+                    // servizi e felicità (M4 blocco 5): senza il file la felicità resta quella stimata
+                    Services = services != null ? ServicesBalance.Parse(services.text) : null,
                 };
             }
             catch (Exception e)

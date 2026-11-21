@@ -52,6 +52,8 @@ namespace Orbis.Core.Game
         public Orbis.Core.World.Geo.WorldFrame Frame;
         /// <summary>Zoom dei tile del mondo (14).</summary>
         public int TileZoom = 14;
+        /// <summary>Tutti i tile del comune (anche lontani dalla camera), per le sedi dei servizi; null = solo quelli caricati.</summary>
+        public IWorldAccess CityWorld;
 
         public Orbis.Core.Population.TaxRates TaxRates
         {

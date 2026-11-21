@@ -155,6 +155,20 @@ namespace Orbis.Tests.PlayMode
             Debug.Log($"[Test] in un giorno: {riders} viaggi sui mezzi pubblici, " +
                       $"{Enumerable.Range(0, pop.Count).Count(i => pop.Citizens[i].Mode == TravelMode.Car)} in auto nell'ultimo viaggio");
             Assert.That(riders, Is.GreaterThan(0), "nessuno ha preso i mezzi pubblici");
+            // servizi veri vicino a casa e felicità di ognuno (blocco 5)
+            var services = game.Session.Context.Life.Services;
+            Assert.That(services, Is.Not.Null, "servizi non calcolati (manca services_balance?)");
+            Assert.That(services.Count(ServiceKind.Health), Is.GreaterThan(0), "nessuna sede sanitaria trovata");
+            Assert.That(services.Count(ServiceKind.Education), Is.GreaterThan(10), "poche scuole tra i servizi");
+            Assert.That(pop.AverageHappiness, Is.InRange(30f, 90f));
+            Assert.That(game.State.Stats.Happiness, Is.EqualTo(pop.AverageHappiness).Within(15f));
+            string Cover(ServiceKind k) =>
+                $"{k} {services.Count(k)} sedi, {Enumerable.Range(0, pop.Dwellings.Count).Average(d => (double)services.At(d, k)):0}";
+            Debug.Log($"[Test] felicità media {pop.AverageHappiness:0.0}, scontenti {pop.UnhappyCount}; fattori: " +
+                      string.Join(", ", System.Enum.GetValues(typeof(HappinessFactor)).Cast<HappinessFactor>()
+                          .Where(f => f != HappinessFactor.Count).Select(f => $"{f} {pop.HappinessFactors[(int)f]:0}")) +
+                      "; copertura: " + string.Join(", ", new[] { ServiceKind.Police, ServiceKind.Fire, ServiceKind.Health, ServiceKind.Education, ServiceKind.Culture }.Select(Cover)));
+
             const int transitCosts = (int)Orbis.Core.Game.LedgerCategory.TransitCosts;
             Assert.That(game.State.Ledger.Any(d => d.Amounts[transitCosts] < 0), "il servizio della linea del comune non si è pagato");
             Debug.Log($"[Test] linea del comune: {game.Transit.CityPassengers(open.ResultId)} passeggeri, " +

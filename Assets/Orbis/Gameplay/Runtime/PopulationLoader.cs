@@ -82,14 +82,14 @@ namespace Orbis.Gameplay
             if (generate)
                 Debug.Log($"[Orbis] {life.Data.MunicipalityName}: {places.Dwellings.Count} case, {places.Workplaces.Count} posti di lavoro, " +
                           $"{places.Schools.Count} scuole da {tiles.Count} tile");
-            if (generate) yield return Generate(life, places, sw);
             // rete stradale: il riquadro del comune con un margine (i tile interi arrivano molto più in là)
             streamer.Frame.FromLonLat(municipality.MinLon, municipality.MinLat, out var ax, out var ay);
             streamer.Frame.FromLonLat(municipality.MaxLon, municipality.MaxLat, out var bx, out var by);
             double m = _game.Content.Traffic != null ? _game.Content.Traffic.AreaMarginM : 1000;
             var area = (Math.Min(ax, bx) - m, Math.Min(ay, by) - m, Math.Max(ax, bx) + m, Math.Max(ay, by) + m);
-            // la partita tiene i tile del comune: la rete si ricostruisce quando il sindaco disegna una strada
+            // la partita tiene i tile del comune: sedi dei servizi per i cittadini, rete ricostruita a ogni strada nuova
             _game.OnCityTiles(loaded, area);
+            if (generate) yield return Generate(life, places, sw);
             yield return _game.BuildTraffic();
             // linee reali di bus, filobus e treni con almeno due fermate nell'area, più quelle del comune
             if (_game != null && _game.Session != null && _game.Content.Transit != null)

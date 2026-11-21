@@ -12,7 +12,7 @@ namespace Orbis.Core.Population
     /// </summary>
     public static class PopulationSerializer
     {
-        public const int Version = 5; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico; 5: biglietti delle linee del comune
+        public const int Version = 6; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico; 5: biglietti delle linee del comune; 6: felicità
         private const uint Magic = 0x504F5043; // "CPOP"
 
         public static void Write(BinaryWriter w, CityPopulation p)
@@ -32,6 +32,10 @@ namespace Orbis.Core.Population
             w.Write(p.LastDay);
             w.Write(p.LastWelfare);
             w.Write(p.LastCityFares);
+            w.Write(p.AverageHappiness);
+            w.Write(p.UnhappyCount);
+            w.Write(p.HappinessFactors.Length);
+            foreach (var f in p.HappinessFactors) w.Write(f);
             Strings(w, p.TraitKeys);
             Strings(w, p.FirstNames);
             Strings(w, p.Surnames);
@@ -109,6 +113,8 @@ namespace Orbis.Core.Population
                 w.Write(c.TravelEnd);
                 w.Write((byte)c.Mode);
                 w.Write(c.TransitLine);
+                w.Write(c.Happiness);
+                w.Write(c.Commute);
             }
         }
 
@@ -136,6 +142,17 @@ namespace Orbis.Core.Population
                 p.LastWelfare = r.ReadInt64();
             }
             if (version >= 5) p.LastCityFares = r.ReadInt64();
+            if (version >= 6)
+            {
+                p.AverageHappiness = r.ReadSingle();
+                p.UnhappyCount = r.ReadInt32();
+                int factors = r.ReadInt32();
+                for (int k = 0; k < factors; k++)
+                {
+                    float f = r.ReadSingle();
+                    if (k < p.HappinessFactors.Length) p.HappinessFactors[k] = f;
+                }
+            }
             p.TraitKeys = ReadStrings(r).ToArray();
             p.FirstNames.AddRange(ReadStrings(r));
             p.Surnames.AddRange(ReadStrings(r));
@@ -234,6 +251,11 @@ namespace Orbis.Core.Population
                     c.TransitLine = r.ReadInt32();
                 }
                 else c.TransitLine = -1;
+                if (version >= 6)
+                {
+                    c.Happiness = r.ReadByte();
+                    c.Commute = r.ReadByte();
+                }
                 p.Add(c);
             }
             Validate(p);
