@@ -30,6 +30,12 @@ namespace Orbis.Core.Population
 
     public enum Tenure : byte { Owner = 0, Renter }
 
+    /// <summary>Che cosa sta facendo un cittadino (giornata, docs/03 §3).</summary>
+    public enum CitizenActivity : byte { Home = 0, Sleep, Eat, Work, School, Shopping, Leisure }
+
+    /// <summary>Dove si trova: casa, lavoro, scuola, negozio o svago (indice nei rispettivi elenchi), fuori città.</summary>
+    public enum LocationKind : byte { Home = 0, Work, School, Shop, Leisure, Outside }
+
     /// <summary>Stato del record: i cittadini morti o partiti restano nell'archivio (gli indici non cambiano).</summary>
     [Flags]
     public enum CitizenFlags : byte { None = 0, Dead = 1, Gone = 2 }
@@ -72,6 +78,14 @@ namespace Orbis.Core.Population
         public byte Mood;
         public CitizenFlags Flags;
 
+        // giornata (livello L1): attività, luogo e viaggio; i minuti si contano dall'1/1/1900
+        public CitizenActivity Activity;
+        public LocationKind Location, PreviousLocation;
+        /// <summary>Indice del luogo (lavoro, scuola, negozio o svago); per casa e fuori città non serve.</summary>
+        public int LocationIndex, PreviousIndex;
+        /// <summary>Fine dell'attività, partenza e arrivo dell'ultimo viaggio (minuti): tra i due è per strada.</summary>
+        public int ActivityEnd, TravelStart, TravelEnd;
+
         /// <summary>Vive in città (non è morto né partito).</summary>
         public bool Alive => Flags == CitizenFlags.None;
 
@@ -101,6 +115,10 @@ namespace Orbis.Core.Population
         public Tenure Tenure;
         /// <summary>Affitto in euro al mese (0 se la casa è di proprietà).</summary>
         public int Rent;
+        /// <summary>Porzioni di cibo nel frigo e in dispensa.</summary>
+        public int Fridge;
+        /// <summary>Spesa alimentare di oggi (già pagata ai negozi): la vita del giorno la toglie dalla spesa generica.</summary>
+        public int FoodSpentToday;
         public readonly List<int> Members = new List<int>();
     }
 
@@ -146,6 +164,10 @@ namespace Orbis.Core.Population
         public long RevenueDay, CostsDay;
         /// <summary>Mesi di fila con la cassa sotto la soglia: dopo alcuni l'attività chiude.</summary>
         public byte BadMonths;
+        /// <summary>Scorte (porzioni) dei negozi di alimentari.</summary>
+        public int Stock;
+        /// <summary>Vendite di oggi ai cittadini (già in cassa): a fine giornata entrano negli incassi e nelle tasse.</summary>
+        public long SalesToday;
 
         public Place Clone() => (Place)MemberwiseClone();
     }

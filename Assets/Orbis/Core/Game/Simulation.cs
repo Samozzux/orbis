@@ -146,6 +146,17 @@ namespace Orbis.Core.Game
         /// <summary>Chiamato a ogni mezzanotte di gioco, dopo l'economia (per le istantanee).</summary>
         public event Action<GameContext> Midnight;
 
+        /// <summary>I passi della giornata dei cittadini che cadono in (from, to].</summary>
+        private void RoutineSteps(GameContext ctx, DateTime from, DateTime to)
+        {
+            if (!Routines || ctx.Population == null || ctx.Routines == null) return;
+            int step = ctx.Routines.StepMinutes;
+            long stepTicks = TimeSpan.TicksPerMinute * step;
+            long first = (from.Ticks / stepTicks + 1) * stepTicks;
+            for (long t = first; t <= to.Ticks; t += stepTicks)
+                ctx.Routines.Step(ctx.Population, new DateTime(t));
+        }
+
         private static LedgerCategory Ledger(Orbis.Core.Population.CityFlow flow)
         {
             switch (flow)
@@ -157,6 +168,9 @@ namespace Orbis.Core.Game
             }
         }
 
+        /// <summary>Giornata dei cittadini a passi di 15 minuti (L1); spenta nel recupero del tempo ad app chiusa.</summary>
+        public bool Routines = true;
+
         public List<SimEvent> Advance(GameContext ctx, TimeSpan span, List<SimEvent> events = null)
         {
             events = events ?? new List<SimEvent>();
@@ -167,6 +181,7 @@ namespace Orbis.Core.Game
                 var nextHour = new DateTime(s.Now.Year, s.Now.Month, s.Now.Day, s.Now.Hour, 0, 0).AddHours(1);
                 var step = nextHour <= end ? nextHour : end;
                 var before = s.Now;
+                RoutineSteps(ctx, before, step);
                 s.Now = step;
                 foreach (var o in s.Objects.Values)
                     if (o.ReadyAt > before && o.ReadyAt <= s.Now)

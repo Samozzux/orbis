@@ -40,6 +40,8 @@ namespace Orbis.Core.Game
         public Orbis.Core.Population.CityPopulation Population;
         /// <summary>Vita giornaliera dei cittadini; null = popolazione ferma.</summary>
         public Orbis.Core.Population.CityLife Life;
+        /// <summary>Giornata dei cittadini a passi di 15 minuti (L1); null = solo la vita giornaliera.</summary>
+        public Orbis.Core.Population.CityRoutines Routines;
 
         public Orbis.Core.Population.TaxRates TaxRates
         {
