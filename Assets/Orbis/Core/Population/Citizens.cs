@@ -33,6 +33,9 @@ namespace Orbis.Core.Population
     /// <summary>Che cosa sta facendo un cittadino (giornata, docs/03 §3).</summary>
     public enum CitizenActivity : byte { Home = 0, Sleep, Eat, Work, School, Shopping, Leisure }
 
+    /// <summary>Come si sposta nell'ultimo viaggio.</summary>
+    public enum TravelMode : byte { Walk = 0, Car, Transit }
+
     /// <summary>Dove si trova: casa, lavoro, scuola, negozio o svago (indice nei rispettivi elenchi), fuori città.</summary>
     public enum LocationKind : byte { Home = 0, Work, School, Shop, Leisure, Outside }
 
@@ -85,6 +88,9 @@ namespace Orbis.Core.Population
         public int LocationIndex, PreviousIndex;
         /// <summary>Fine dell'attività, partenza e arrivo dell'ultimo viaggio (minuti): tra i due è per strada.</summary>
         public int ActivityEnd, TravelStart, TravelEnd;
+        public TravelMode Mode;
+        /// <summary>Linea del trasporto pubblico dell'ultimo viaggio (-1 se a piedi o in auto).</summary>
+        public int TransitLine;
 
         /// <summary>Vive in città (non è morto né partito).</summary>
         public bool Alive => Flags == CitizenFlags.None;
@@ -119,6 +125,10 @@ namespace Orbis.Core.Population
         public int Fridge;
         /// <summary>Spesa alimentare di oggi (già pagata ai negozi): la vita del giorno la toglie dalla spesa generica.</summary>
         public int FoodSpentToday;
+        /// <summary>Auto della famiglia.</summary>
+        public byte Cars;
+        /// <summary>Biglietti del trasporto pubblico di oggi in centesimi: la vita del giorno li fa pagare.</summary>
+        public int TransitCents;
         public readonly List<int> Members = new List<int>();
     }
 

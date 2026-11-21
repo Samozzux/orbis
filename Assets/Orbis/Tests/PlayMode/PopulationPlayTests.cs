@@ -85,6 +85,13 @@ namespace Orbis.Tests.PlayMode
             Debug.Log($"[Test] rete: {game.Traffic.Graph.NodeCount} incroci, {game.Traffic.Graph.EdgeCount} tratti, {game.Traffic.Zones} zone; " +
                       $"un passo del traffico {tick.ElapsedMilliseconds} ms");
 
+            // le linee reali del pack v4 (bus urbani, filovia, treni)
+            deadline = Time.realtimeSinceStartup + 10f;
+            while (game.Transit == null && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.That(game.Transit, Is.Not.Null, "linee del trasporto pubblico non preparate");
+            Assert.That(game.Transit.Lines.Count, Is.GreaterThanOrEqualTo(5));
+            Debug.Log("[Test] linee: " + string.Join(", ", game.Transit.Lines.Select(l => $"{l.Mode} {l.Ref} ({l.X.Length} fermate)")));
+
             // un giorno di gioco: stipendi e tasse dei cittadini nel registro, saldo come prima
             long before = game.State.Cash;
             game.Session.Advance(System.TimeSpan.FromDays(1));
@@ -94,6 +101,10 @@ namespace Orbis.Tests.PlayMode
             Assert.That(day.Amounts[residential], Is.GreaterThan(10000));
             Assert.That(game.State.Stats.Population, Is.InRange(45000, 52000));
             Assert.That(game.State.Cash, Is.Not.EqualTo(before));
+            long riders = game.Transit.Lines.Sum(l => l.Passengers);
+            Debug.Log($"[Test] in un giorno: {riders} viaggi sui mezzi pubblici, " +
+                      $"{Enumerable.Range(0, pop.Count).Count(i => pop.Citizens[i].Mode == TravelMode.Car)} in auto nell'ultimo viaggio");
+            Assert.That(riders, Is.GreaterThan(0), "nessuno ha preso i mezzi pubblici");
 
             // il salvataggio porta i cittadini con sé
             var bytes = game.Session.Save(System.DateTime.UtcNow);

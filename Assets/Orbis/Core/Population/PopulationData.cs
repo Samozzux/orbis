@@ -195,6 +195,7 @@ namespace Orbis.Core.Population
         public double ShopWhenBelow = 0.3;
         public double[] PortionPrice = { 2.8, 4.0, 6.0 };
         public int StoreStockPerJob = 400;
+        public double CarOwnershipWithIncome = 0.9, CarOwnershipWithoutIncome = 0.3, CarMinIncome = 10000, CarTimeFactor = 1.25;
         public readonly HashSet<string> FoodCategories = new HashSet<string>();
         public readonly HashSet<string> LeisureCategories = new HashSet<string>();
 
@@ -240,6 +241,10 @@ namespace Orbis.Core.Population
             if (r["portionPrice"].Count == 3)
                 for (int i = 0; i < 3; i++) b.PortionPrice[i] = r["portionPrice"][i].AsDouble(b.PortionPrice[i]);
             b.StoreStockPerJob = r["storeStockPerJob"].AsInt(b.StoreStockPerJob);
+            b.CarOwnershipWithIncome = r["carOwnershipWithIncome"].AsDouble(b.CarOwnershipWithIncome);
+            b.CarOwnershipWithoutIncome = r["carOwnershipWithoutIncome"].AsDouble(b.CarOwnershipWithoutIncome);
+            b.CarMinIncome = r["carMinIncome"].AsDouble(b.CarMinIncome);
+            b.CarTimeFactor = r["carTimeFactor"].AsDouble(b.CarTimeFactor);
             foreach (var c in r["foodCategories"].Items) b.FoodCategories.Add(c.AsString(""));
             foreach (var c in r["leisureCategories"].Items) b.LeisureCategories.Add(c.AsString(""));
             return b;

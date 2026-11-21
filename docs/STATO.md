@@ -183,6 +183,29 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - La costruzione all'avvio richiede circa 7 secondi spalmati su più fotogrammi, ma il grafo si costruisce in un fotogramma solo.
   - **Da migliorare con le prestazioni (blocco 8).** Su iOS e Android, grafo e tempi su un thread a parte o con i Jobs, così il traffico reagisce più in fretta all'ora di punta e l'avvio non ha scatti. Sul web restano a pezzi.
   - **Limite.** Le strade verso i comuni vicini oltre il margine si aggiungono con i pendolari visibili.
+- **Linee bus reali, parte 4b** (21/11, branch `m4-bus`):
+  - **`TransitNetwork`.** Si costruisce dalle linee del pack v4:
+    - le fermate diventano metri della regione, e le fermate doppie (fermata e banchina) una sola;
+    - minuti di viaggio tra le fermate per mezzo (bus 18 km/h, treno 50 km/h), frequenza (bus ogni 20', filobus 15', treno 60') e biglietto (1,30 €, treno 2 €), in `data/balance/transit.json`;
+    - le linee si percorrono nel loro verso, come le relazioni OSM;
+    - escluse le linee a lunga distanza (FlixBus, Itabus…).
+  - **Scelta del mezzo.** Per i viaggi oltre 1,2 km il cittadino sceglie tra:
+    - auto: se la famiglia ne ha una e si è adulti; ce l'ha il 90% delle famiglie con un reddito e il 30% delle altre. Ha una preferenza del 25% per comodità;
+    - linea: a piedi fino alla fermata entro 600 m, attesa di metà frequenza, viaggio, a piedi all'arrivo;
+    - a piedi.
+
+    Fuori città si va in auto, o col treno o il bus regionale.
+  - **Biglietti e passeggeri.** I biglietti si pagano davvero: si sommano in centesimi per famiglia e la vita del giorno li fa pagare. Le linee reali sono di aziende esterne (La Panoramica, TUA, Trenitalia), quindi i soldi escono dalla città e non entrano nella cassa del comune; le linee del sindaco arrivano con la 4c. Ogni linea conta i suoi passeggeri.
+  - **Salvataggio.** Popolazione alla versione 4: auto della famiglia, mezzo e linea dell'ultimo viaggio.
+  - **Su Chieti vera** (Unity in locale):
+    - 14 linee nell'area: bus 7 con 86 fermate, filovia 1, bus 1, 3, 4, 5, 6, 8 e 10, treno con 11 fermate;
+    - in un giorno 44 viaggi sui mezzi pubblici e circa 6.200 in auto.
+  - **Limite dei dati OSM.** Molte linee hanno solo 2–4 fermate segnate. Si potrà completarle nella pipeline con le paline (`highway=bus_stop`) vicine al percorso, oppure il sindaco disegnerà le sue (4c).
+  - **Test.** 4 nuovi (199 in tutto):
+    - linea vera del pack;
+    - verso della linea;
+    - linee a lunga distanza escluse;
+    - chi non ha l'auto prende il bus e paga il biglietto, col denaro conservato.
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;

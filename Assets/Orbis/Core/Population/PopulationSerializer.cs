@@ -12,7 +12,7 @@ namespace Orbis.Core.Population
     /// </summary>
     public static class PopulationSerializer
     {
-        public const int Version = 3; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte
+        public const int Version = 4; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico
         private const uint Magic = 0x504F5043; // "CPOP"
 
         public static void Write(BinaryWriter w, CityPopulation p)
@@ -62,6 +62,8 @@ namespace Orbis.Core.Population
                 w.Write(h.Rent);
                 w.Write(h.Fridge);
                 w.Write(h.FoodSpentToday);
+                w.Write(h.Cars);
+                w.Write(h.TransitCents);
                 w.Write(h.Members.Count);
                 foreach (var m in h.Members) w.Write(m);
             }
@@ -103,6 +105,8 @@ namespace Orbis.Core.Population
                 w.Write(c.ActivityEnd);
                 w.Write(c.TravelStart);
                 w.Write(c.TravelEnd);
+                w.Write((byte)c.Mode);
+                w.Write(c.TransitLine);
             }
         }
 
@@ -167,6 +171,11 @@ namespace Orbis.Core.Population
                     h.Fridge = r.ReadInt32();
                     h.FoodSpentToday = r.ReadInt32();
                 }
+                if (version >= 4)
+                {
+                    h.Cars = r.ReadByte();
+                    h.TransitCents = r.ReadInt32();
+                }
                 int members = Count(r);
                 for (int k = 0; k < members; k++) h.Members.Add(r.ReadInt32());
                 p.Households.Add(h);
@@ -215,6 +224,12 @@ namespace Orbis.Core.Population
                     c.TravelStart = r.ReadInt32();
                     c.TravelEnd = r.ReadInt32();
                 }
+                if (version >= 4)
+                {
+                    c.Mode = (TravelMode)r.ReadByte();
+                    c.TransitLine = r.ReadInt32();
+                }
+                else c.TransitLine = -1;
                 p.Add(c);
             }
             Validate(p);

@@ -207,6 +207,9 @@ namespace Orbis.Core.Population
                 // ma affitto e bollette sempre
                 long food = hh.FoodSpentToday;
                 hh.FoodSpentToday = 0;
+                // biglietti dei mezzi pubblici di oggi: le linee reali sono di aziende esterne
+                long tickets = hh.TransitCents / 100;
+                hh.TransitCents %= 100;
                 long generic = Math.Max(Math.Min(capacity, rent + utilities), pay - food);
                 // ciascun adulto paga in proporzione a quanto può
                 long left = generic;
@@ -225,6 +228,12 @@ namespace Orbis.Core.Population
                 local += here;
                 pop.ExternalOut += generic - here;
                 r.Spending += generic + food;
+                if (tickets > 0)
+                {
+                    pop.Citizens[adults[0]].Savings = Clamp(pop.Citizens[adults[0]].Savings - tickets);
+                    pop.ExternalOut += tickets;
+                    r.Spending += tickets;
+                }
             }
             pop.LastWelfare = welfareTotal;
             if (welfareTotal > 0)
@@ -741,6 +750,7 @@ namespace Orbis.Core.Population
                 Partner = Citizen.None,
                 Work = Citizen.None,
                 School = Citizen.None,
+                TransitLine = -1,
                 Occupation = Occupation.Toddler,
             };
             var names = _in.Names.FirstNames(sex, c.BirthDate.Year);

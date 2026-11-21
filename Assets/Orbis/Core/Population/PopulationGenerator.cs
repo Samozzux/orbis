@@ -109,6 +109,7 @@ namespace Orbis.Core.Population
                             Partner = Citizen.None,
                             Work = Citizen.None,
                             School = Citizen.None,
+                            TransitLine = -1,
                         };
                         _pop.Add(c);
                         ages.Add(a);
@@ -778,6 +779,16 @@ namespace Orbis.Core.Population
             }
 
             AssignIncomes(holders, rng);
+
+            // auto: quasi sempre se in famiglia c'è un reddito, a volte anche senza (pensioni basse, ecc.)
+            var rr = _b.Routine;
+            foreach (var hh in _pop.Households)
+            {
+                int best = 0;
+                foreach (var m in hh.Members) best = Math.Max(best, _pop[m].Income);
+                double p = best >= rr.CarMinIncome ? rr.CarOwnershipWithIncome : rr.CarOwnershipWithoutIncome;
+                hh.Cars = (byte)(rng.Chance(p) ? (best > 40000 && hh.Members.Count > 2 && rng.Chance(0.5) ? 2 : 1) : 0);
+            }
 
             for (int i = 0; i < n; i++)
             {
