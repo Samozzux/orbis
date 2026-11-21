@@ -92,6 +92,56 @@ namespace Orbis.Tests.PlayMode
             Assert.That(game.Transit.Lines.Count, Is.GreaterThanOrEqualTo(5));
             Debug.Log("[Test] linee: " + string.Join(", ", game.Transit.Lines.Select(l => $"{l.Mode} {l.Ref} ({l.X.Length} fermate)")));
 
+            // il sindaco disegna una strada libera vicino alla camera: la rete si ricostruisce con l'incrocio nuovo
+            var ctx = game.Session.Context;
+            game.State.Transact(Orbis.Core.Game.LedgerCategory.LevelRewards, 500_000); // fondi per la prova
+            var graph = game.Traffic.Graph;
+            var cam = Camera.main.transform.position;
+            var nodes = Enumerable.Range(0, graph.NodeCount)
+                .Where(n => !float.IsNaN(session.World.HeightAt(graph.X[n], graph.Y[n])))
+                .OrderBy(n => (graph.X[n] - cam.x) * (graph.X[n] - cam.x) + (graph.Y[n] - cam.z) * (graph.Y[n] - cam.z))
+                .Take(400).ToList();
+            Orbis.Core.Game.BuildRoadCommand road = null;
+            foreach (var n in nodes)
+            {
+                for (int k = 0; k < 16 && road == null; k++)
+                {
+                    float a = k * Mathf.PI / 8, x = graph.X[n], y = graph.Y[n];
+                    var points = new[] { x + Mathf.Cos(a) * 10, y + Mathf.Sin(a) * 10, x + Mathf.Cos(a) * 90, y + Mathf.Sin(a) * 90 };
+                    var candidate = new Orbis.Core.Game.CityRoad { Class = Orbis.Core.World.Fb.RoadClass.Residential, Points = points };
+                    if (Orbis.Core.Game.Infrastructure.CheckRoad(ctx, candidate) == Orbis.Core.Game.BuildResult.Ok)
+                        road = new Orbis.Core.Game.BuildRoadCommand { Class = candidate.Class, Points = points };
+                }
+                if (road != null) break;
+            }
+            Assert.That(road, Is.Not.Null, "nessuno spazio libero per una strada vicino alla camera");
+            Assert.That(game.Do(road), Is.EqualTo(Orbis.Core.Game.BuildResult.Ok));
+            var oldTraffic = game.Traffic;
+            deadline = Time.realtimeSinceStartup + 60f;
+            while ((game.Traffic == oldTraffic || game.TrafficBuilding) && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.That(game.Traffic, Is.Not.SameAs(oldTraffic), "rete non ricostruita dopo la strada nuova");
+            int own = game.Traffic.Graph.EdgesOfExtra(road.RoadId).Count;
+            Assert.That(own, Is.GreaterThanOrEqualTo(2), "la strada nuova non è nel grafo");
+            Assert.That(game.RoadsView.RootOf(road.RoadId), Is.Not.Null, "strada nuova non disegnata");
+            Debug.Log($"[Test] strada del sindaco {road.RoadId}: {own} tratti nel grafo, {game.Traffic.Graph.NodeCount} incroci");
+
+            // una linea bus del comune tra due incroci a 400–900 m: due sensi nella rete, costo del servizio a fine giornata
+            graph = game.Traffic.Graph;
+            int s0 = nodes[0];
+            int s1 = nodes.FirstOrDefault(n =>
+            {
+                float d = Mathf.Sqrt((graph.X[n] - graph.X[s0]) * (graph.X[n] - graph.X[s0]) + (graph.Y[n] - graph.Y[s0]) * (graph.Y[n] - graph.Y[s0]));
+                return d > 400 && d < 900;
+            });
+            if (s1 == 0) s1 = nodes[nodes.Count - 1];
+            var line = new Orbis.Core.Game.CityLine
+            {
+                Stops = new[] { graph.X[s0], graph.Y[s0], graph.X[s1], graph.Y[s1] }, HeadwayMinutes = 15, FareCents = 130,
+            };
+            var open = new Orbis.Core.Game.SetLineCommand { Line = line };
+            Assert.That(game.Do(open), Is.EqualTo(Orbis.Core.Game.BuildResult.Ok));
+            Assert.That(game.Transit.Lines.Count(l => l.CityId == open.ResultId), Is.EqualTo(2));
+
             // un giorno di gioco: stipendi e tasse dei cittadini nel registro, saldo come prima
             long before = game.State.Cash;
             game.Session.Advance(System.TimeSpan.FromDays(1));
@@ -105,6 +155,10 @@ namespace Orbis.Tests.PlayMode
             Debug.Log($"[Test] in un giorno: {riders} viaggi sui mezzi pubblici, " +
                       $"{Enumerable.Range(0, pop.Count).Count(i => pop.Citizens[i].Mode == TravelMode.Car)} in auto nell'ultimo viaggio");
             Assert.That(riders, Is.GreaterThan(0), "nessuno ha preso i mezzi pubblici");
+            const int transitCosts = (int)Orbis.Core.Game.LedgerCategory.TransitCosts;
+            Assert.That(game.State.Ledger.Any(d => d.Amounts[transitCosts] < 0), "il servizio della linea del comune non si è pagato");
+            Debug.Log($"[Test] linea del comune: {game.Transit.CityPassengers(open.ResultId)} passeggeri, " +
+                      $"{pop.LastCityFares} € di biglietti nell'ultimo giorno");
 
             // il salvataggio porta i cittadini con sé
             var bytes = game.Session.Save(System.DateTime.UtcNow);

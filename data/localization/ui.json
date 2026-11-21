@@ -994,6 +994,18 @@
       "it": "Aspetta la fine dei lavori"
     },
     {
+      "key": "result.InvalidPath",
+      "it": "Tracciato non valido: punti troppo vicini, troppo lungo o con fermate troppo vicine"
+    },
+    {
+      "key": "result.NotNearRoad",
+      "it": "Le fermate devono stare vicino a una strada"
+    },
+    {
+      "key": "result.NotAllowed",
+      "it": "Scelta non ammessa (tipo di strada, mezzo, frequenza o biglietto)"
+    },
+    {
       "key": "category.Residential",
       "it": "Case"
     },
@@ -1168,6 +1180,14 @@
     {
       "key": "ledger.EnergyPurchase",
       "it": "Acquisto di energia"
+    },
+    {
+      "key": "ledger.TransitFares",
+      "it": "Biglietti delle linee del comune"
+    },
+    {
+      "key": "ledger.TransitCosts",
+      "it": "Servizio delle linee del comune"
     },
     {
       "key": "rewind.title",

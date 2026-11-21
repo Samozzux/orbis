@@ -88,8 +88,10 @@ namespace Orbis.Gameplay
             streamer.Frame.FromLonLat(municipality.MaxLon, municipality.MaxLat, out var bx, out var by);
             double m = _game.Content.Traffic != null ? _game.Content.Traffic.AreaMarginM : 1000;
             var area = (Math.Min(ax, bx) - m, Math.Min(ay, by) - m, Math.Max(ax, bx) + m, Math.Max(ay, by) + m);
-            yield return BuildTraffic(loaded, area);
-            // linee reali di bus, filobus e treni con almeno due fermate nell'area
+            // la partita tiene i tile del comune: la rete si ricostruisce quando il sindaco disegna una strada
+            _game.OnCityTiles(loaded, area);
+            yield return _game.BuildTraffic();
+            // linee reali di bus, filobus e treni con almeno due fermate nell'area, più quelle del comune
             if (_game != null && _game.Session != null && _game.Content.Transit != null)
             {
                 var transit = TransitNetwork.Build(streamer.Region, _game.Content.Transit, area);
@@ -98,26 +100,6 @@ namespace Orbis.Gameplay
             }
             Progress = 1;
             Destroy(this);
-        }
-
-        private IEnumerator BuildTraffic(List<(TileData Tile, double OriginX, double OriginY)> tiles,
-            (double, double, double, double) area)
-        {
-            var b = _game.Content.Traffic;
-            if (b == null || tiles.Count == 0) yield break;
-            var sw = Stopwatch.StartNew();
-            var graph = RoadGraph.Build(tiles, b, area);
-            var traffic = new TrafficModel(graph, b);
-            yield return null;
-            // tempi a strada libera, poche zone per fotogramma (finché mancano, si stima in linea d'aria)
-            for (int a = 0; a < traffic.Zones; a += 5)
-            {
-                traffic.RefreshRange(a, 5);
-                yield return null;
-            }
-            if (_game == null || _game.Session == null) yield break;
-            _game.OnTrafficReady(traffic);
-            Debug.Log($"[Orbis] rete stradale: {graph.NodeCount} incroci, {graph.EdgeCount} tratti, {traffic.Zones} zone in {sw.ElapsedMilliseconds} ms");
         }
 
         private IEnumerator Generate(LifeInputs life, CityPlaces places, Stopwatch sw)

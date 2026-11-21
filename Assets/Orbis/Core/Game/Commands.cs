@@ -455,6 +455,220 @@ namespace Orbis.Core.Game
         public static SetTaxCommand Read(BinaryReader r) => new SetTaxCommand { Kind = (TaxKind)r.ReadInt32(), Rate = r.ReadSingle(), _old = r.ReadSingle() };
     }
 
+    /// <summary>Costruisce una strada disegnata dal sindaco (costo al metro per classe; i ponti costano di più).</summary>
+    public sealed class BuildRoadCommand : IGameCommand
+    {
+        public Orbis.Core.World.Fb.RoadClass Class = Orbis.Core.World.Fb.RoadClass.Residential;
+        /// <summary>Punti (x, y alternati) in metri della regione.</summary>
+        public float[] Points;
+        public int Oneway;
+        public bool Bridge;
+        private int _id;
+        private int _prevNextId;
+        private long _cost;
+
+        public byte Tag => 9;
+
+        /// <summary>ID della strada creata (dopo Execute).</summary>
+        public int RoadId => _id;
+
+        public BuildResult Execute(GameContext ctx)
+        {
+            var s = ctx.State;
+            var road = new CityRoad { Class = Class, Points = Points != null ? (float[])Points.Clone() : Array.Empty<float>(), Oneway = Oneway > 0 ? 1 : 0, Bridge = Bridge };
+            var r = Infrastructure.CheckRoad(ctx, road);
+            if (r != BuildResult.Ok) return r;
+            long cost = s.Config.CreativeMode ? 0 : Infrastructure.RoadCost(ctx.Balance.Traffic, Class, road.Length, Bridge);
+            if (s.Cash < cost) return BuildResult.NotEnoughCash;
+            _prevNextId = s.NextInfraId;
+            if (_id == 0) _id = s.NextInfraId;
+            s.NextInfraId = Math.Max(s.NextInfraId, _id + 1);
+            road.Id = _id;
+            road.BuiltAt = s.Now;
+            s.Roads[_id] = road;
+            _cost = cost;
+            s.Transact(LedgerCategory.Construction, -_cost);
+            Progression.AddXp(ctx, (long)Math.Round(_cost * ctx.Balance.XpPerCost) + 5);
+            s.AddCounter("roads", 1);
+            s.AddCounter("roadMeters", (long)Math.Round(road.Length));
+            return BuildResult.Ok;
+        }
+
+        public void Undo(GameContext ctx)
+        {
+            var s = ctx.State;
+            if (s.Roads.TryGetValue(_id, out var road))
+            {
+                s.Roads.Remove(_id);
+                s.AddCounter("roads", -1);
+                s.AddCounter("roadMeters", -(long)Math.Round(road.Length));
+            }
+            s.NextInfraId = _prevNextId;
+            s.Transact(LedgerCategory.Construction, _cost);
+        }
+
+        public void Write(BinaryWriter w)
+        {
+            w.Write((int)Class);
+            Infrastructure.WritePoints(w, Points ?? Array.Empty<float>());
+            w.Write(Oneway);
+            w.Write(Bridge);
+            w.Write(_id);
+            w.Write(_prevNextId);
+            w.Write(_cost);
+        }
+
+        public static BuildRoadCommand Read(BinaryReader r) => new BuildRoadCommand
+        {
+            Class = (Orbis.Core.World.Fb.RoadClass)r.ReadInt32(), Points = Infrastructure.ReadPoints(r), Oneway = r.ReadInt32(),
+            Bridge = r.ReadBoolean(), _id = r.ReadInt32(), _prevNextId = r.ReadInt32(), _cost = r.ReadInt64(),
+        };
+    }
+
+    /// <summary>Demolisce una strada del sindaco (rimborso parziale come per gli elementi).</summary>
+    public sealed class DemolishRoadCommand : IGameCommand
+    {
+        public int RoadId;
+        private CityRoad _removed;
+        private long _refund;
+
+        public byte Tag => 10;
+
+        public BuildResult Execute(GameContext ctx)
+        {
+            var s = ctx.State;
+            if (!s.Roads.TryGetValue(RoadId, out var road)) return BuildResult.UnknownObject;
+            long cost = Math.Max(0, Infrastructure.RoadCost(ctx.Balance.Traffic, road.Class, road.Length, road.Bridge));
+            _refund = s.Config.CreativeMode ? 0 : (long)Math.Round(cost * ctx.Balance.DemolishRefundRatio);
+            _removed = road.Clone();
+            s.Roads.Remove(RoadId);
+            s.Transact(LedgerCategory.Demolition, _refund);
+            s.AddCounter("roads", -1);
+            s.AddCounter("roadMeters", -(long)Math.Round(road.Length));
+            return BuildResult.Ok;
+        }
+
+        public void Undo(GameContext ctx)
+        {
+            var s = ctx.State;
+            if (_removed == null) return;
+            s.Roads[_removed.Id] = _removed.Clone();
+            s.Transact(LedgerCategory.Demolition, -_refund);
+            s.AddCounter("roads", 1);
+            s.AddCounter("roadMeters", (long)Math.Round(_removed.Length));
+        }
+
+        public void Write(BinaryWriter w)
+        {
+            w.Write(RoadId);
+            w.Write(_removed != null);
+            if (_removed != null) _removed.Write(w);
+            w.Write(_refund);
+        }
+
+        public static DemolishRoadCommand Read(BinaryReader r)
+        {
+            var c = new DemolishRoadCommand { RoadId = r.ReadInt32() };
+            if (r.ReadBoolean()) c._removed = CityRoad.Read(r);
+            c._refund = r.ReadInt64();
+            return c;
+        }
+    }
+
+    /// <summary>
+    /// Apre, modifica o chiude una linea del comune: <see cref="LineId"/> 0 = linea nuova, <see cref="Line"/> null = chiusura.
+    /// Fermate nuove e mezzi in più si pagano subito; chiudendo la linea se ne recupera una parte.
+    /// </summary>
+    public sealed class SetLineCommand : IGameCommand
+    {
+        public int LineId;
+        public CityLine Line;
+        private CityLine _old;
+        private int _id;
+        private int _prevNextId;
+        private long _cost;
+
+        public byte Tag => 11;
+
+        /// <summary>ID della linea (dopo Execute).</summary>
+        public int ResultId => _id;
+
+        public BuildResult Execute(GameContext ctx)
+        {
+            var s = ctx.State;
+            var tb = ctx.Balance.Transit;
+            if (tb == null) return BuildResult.NotAllowed;
+            CityLine old = null;
+            if (LineId != 0 && !s.Lines.TryGetValue(LineId, out old)) return BuildResult.UnknownObject;
+            if (LineId == 0 && Line == null) return BuildResult.UnknownObject;
+            if (Line != null)
+            {
+                var r = Infrastructure.CheckLine(ctx, Line);
+                if (r != BuildResult.Ok) return r;
+            }
+            long cost = s.Config.CreativeMode ? 0 : Infrastructure.LineChangeCost(tb, old, Line);
+            if (cost > 0 && s.Cash < cost) return BuildResult.NotEnoughCash;
+            _old = old?.Clone();
+            _prevNextId = s.NextInfraId;
+            if (Line == null)
+            {
+                _id = LineId;
+                s.Lines.Remove(LineId);
+                s.AddCounter("lines", -1);
+            }
+            else
+            {
+                if (_id == 0) _id = LineId != 0 ? LineId : s.NextInfraId;
+                s.NextInfraId = Math.Max(s.NextInfraId, _id + 1);
+                var line = Line.Clone();
+                line.Id = _id;
+                if (string.IsNullOrEmpty(line.Ref)) line.Ref = _id.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                if (line.Colour == 0) line.Colour = Infrastructure.LineColour(_id);
+                line.OpenedAt = old != null ? old.OpenedAt : s.Now;
+                s.Lines[_id] = line;
+                if (old == null) s.AddCounter("lines", 1);
+            }
+            _cost = cost;
+            s.Transact(cost >= 0 ? LedgerCategory.Construction : LedgerCategory.Demolition, -cost);
+            if (cost > 0) Progression.AddXp(ctx, (long)Math.Round(cost * ctx.Balance.XpPerCost) + 5);
+            return BuildResult.Ok;
+        }
+
+        public void Undo(GameContext ctx)
+        {
+            var s = ctx.State;
+            if (_old != null) s.Lines[_old.Id] = _old.Clone();
+            else s.Lines.Remove(_id);
+            if (Line == null) s.AddCounter("lines", 1);
+            else if (_old == null) s.AddCounter("lines", -1);
+            s.NextInfraId = _prevNextId;
+            s.Transact(_cost >= 0 ? LedgerCategory.Construction : LedgerCategory.Demolition, _cost);
+        }
+
+        public void Write(BinaryWriter w)
+        {
+            w.Write(LineId);
+            w.Write(Line != null);
+            if (Line != null) Line.Write(w);
+            w.Write(_old != null);
+            if (_old != null) _old.Write(w);
+            w.Write(_id);
+            w.Write(_prevNextId);
+            w.Write(_cost);
+        }
+
+        public static SetLineCommand Read(BinaryReader r)
+        {
+            var c = new SetLineCommand { LineId = r.ReadInt32() };
+            if (r.ReadBoolean()) c.Line = CityLine.Read(r);
+            if (r.ReadBoolean()) c._old = CityLine.Read(r);
+            c._id = r.ReadInt32();
+            c._prevNextId = r.ReadInt32();
+            c._cost = r.ReadInt64();
+            return c;
+        }
+    }
+
     /// <summary>
     /// Pila annulla/ripeti illimitata e persistente (docs/01 §5). Registra anche gli effetti indiretti
     /// dell'azione (XP, livelli, premi, missioni) per toglierli all'annullamento: niente guadagni gratis.
@@ -620,6 +834,9 @@ namespace Orbis.Core.Game
                 case 6: return VariantCommand.Read(r);
                 case 7: return SetTaxCommand.Read(r);
                 case 8: return UpgradeOsmCommand.Read(r);
+                case 9: return BuildRoadCommand.Read(r);
+                case 10: return DemolishRoadCommand.Read(r);
+                case 11: return SetLineCommand.Read(r);
                 default: throw new InvalidDataException("comando sconosciuto nel salvataggio: " + tag);
             }
         }

@@ -20,6 +20,8 @@ namespace Orbis.Core.Population
         int Minutes(float x0, float y0, float x1, float y1, out int line);
         int FareCents(int line);
         void Ride(int line);
+        /// <summary>Linea del comune (il biglietto va nella sua cassa) invece che di un'azienda esterna.</summary>
+        bool IsCityLine(int line);
     }
 
     /// <summary>
@@ -434,7 +436,13 @@ namespace Orbis.Core.Population
                 _lastMode = TravelMode.Transit;
                 _lastLine = line;
                 Transit.Ride(line);
-                if (c.Household >= 0) pop.Households[c.Household].TransitCents += Transit.FareCents(line);
+                if (c.Household >= 0)
+                {
+                    int fare = Transit.FareCents(line);
+                    var hh = pop.Households[c.Household];
+                    hh.TransitCents += fare;
+                    if (Transit.IsCityLine(line)) hh.CityTransitCents += fare;
+                }
                 return Math.Max(2, busMin);
             }
             if (car)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Orbis.Core.Population
 {
     /// <summary>Movimenti di cassa del comune prodotti dalla vita dei cittadini.</summary>
-    public enum CityFlow { ResidentialTax, CommercialTax, IndustrialTax, Welfare }
+    public enum CityFlow { ResidentialTax, CommercialTax, IndustrialTax, Welfare, TransitFares }
 
     /// <summary>Aliquote del sindaco in percentuale (docs/03 §4).</summary>
     public struct TaxRates
@@ -18,6 +18,8 @@ namespace Orbis.Core.Population
         public DateTime Date;
         public long Wages, Spending, LocalSpending;
         public long ResidentialTax, CommercialTax, IndustrialTax, Welfare;
+        /// <summary>Biglietti delle linee del comune, entrati nella sua cassa.</summary>
+        public long TransitFares;
         public int Births, Deaths, Arrived, Left, Hired, Closed;
         public bool Skipped;
     }
@@ -168,7 +170,7 @@ namespace Orbis.Core.Population
         /// <summary>Spese di ogni famiglia; restituisce la parte spesa nelle attività della città.</summary>
         private long HouseholdSpending(CityPopulation pop, int day, long[] netIncome, LifeDay r, Action<CityFlow, long> city)
         {
-            long local = 0, welfareTotal = 0;
+            long local = 0, welfareTotal = 0, cityFares = 0;
             var adults = new List<int>(4);
             for (int h = 0; h < pop.Households.Count; h++)
             {
@@ -207,9 +209,12 @@ namespace Orbis.Core.Population
                 // ma affitto e bollette sempre
                 long food = hh.FoodSpentToday;
                 hh.FoodSpentToday = 0;
-                // biglietti dei mezzi pubblici di oggi: le linee reali sono di aziende esterne
+                // biglietti dei mezzi pubblici di oggi: le linee reali sono di aziende esterne, quelle del comune
+                // portano l'incasso nella sua cassa
                 long tickets = hh.TransitCents / 100;
                 hh.TransitCents %= 100;
+                long toCity = Math.Min(tickets, hh.CityTransitCents / 100);
+                hh.CityTransitCents = Math.Min(hh.CityTransitCents - (int)toCity * 100, hh.TransitCents);
                 long generic = Math.Max(Math.Min(capacity, rent + utilities), pay - food);
                 // ciascun adulto paga in proporzione a quanto può
                 long left = generic;
@@ -231,11 +236,18 @@ namespace Orbis.Core.Population
                 if (tickets > 0)
                 {
                     pop.Citizens[adults[0]].Savings = Clamp(pop.Citizens[adults[0]].Savings - tickets);
-                    pop.ExternalOut += tickets;
+                    pop.ExternalOut += tickets - toCity;
+                    cityFares += toCity;
                     r.Spending += tickets;
                 }
             }
             pop.LastWelfare = welfareTotal;
+            pop.LastCityFares = cityFares;
+            if (cityFares > 0)
+            {
+                r.TransitFares = cityFares;
+                city(CityFlow.TransitFares, cityFares);
+            }
             if (welfareTotal > 0)
             {
                 r.Welfare = welfareTotal;

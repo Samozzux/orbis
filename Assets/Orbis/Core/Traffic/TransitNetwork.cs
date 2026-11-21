@@ -17,9 +17,21 @@ namespace Orbis.Core.Traffic
             public double Fare;
         }
 
+        /// <summary>Linee del sindaco (blocco 4c): costi per il comune, regole del disegno, biglietto.</summary>
+        public sealed class CityLineSpec
+        {
+            public readonly HashSet<TransitMode> Modes = new HashSet<TransitMode> { TransitMode.Bus };
+            public double StopCost = 6000, StopMaintenancePerDay = 1, VehicleCost = 60000, CostPerVehicleHour = 30;
+            public double ServiceHours = 16, LayoverMinutes = 10, FareMin, FareMax = 3, DefaultFare = 1.3, RefundRatio = 0.2;
+            public int[] Headways = { 5, 10, 15, 20, 30, 60 };
+            public int MaxStops = 80;
+            public double MinStopSpacingM = 100, MaxStopFromRoadM = 30;
+        }
+
         public double WalkToStopM = 600, WalkKmh = 4.5;
         public readonly Dictionary<TransitMode, ModeSpec> Modes = new Dictionary<TransitMode, ModeSpec>();
         public readonly HashSet<string> ExcludeOperators = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        public CityLineSpec City = new CityLineSpec();
 
         public static TransitBalance Parse(string json)
         {
@@ -38,6 +50,36 @@ namespace Orbis.Core.Traffic
                         Fare = r["modes"][k]["fare"].AsDouble(1.3),
                     };
             foreach (var o in r["excludeOperators"].Items) b.ExcludeOperators.Add(o.AsString(""));
+            var c = r["cityLines"];
+            if (!c.IsNull)
+            {
+                var city = b.City;
+                if (c["modes"].Count > 0)
+                {
+                    city.Modes.Clear();
+                    foreach (var m in c["modes"].Items)
+                        if (Enum.TryParse<TransitMode>(m.AsString(""), out var mode)) city.Modes.Add(mode);
+                }
+                city.StopCost = c["stopCost"].AsDouble(city.StopCost);
+                city.StopMaintenancePerDay = c["stopMaintenancePerDay"].AsDouble(city.StopMaintenancePerDay);
+                city.VehicleCost = c["vehicleCost"].AsDouble(city.VehicleCost);
+                city.CostPerVehicleHour = c["costPerVehicleHour"].AsDouble(city.CostPerVehicleHour);
+                city.ServiceHours = c["serviceHours"].AsDouble(city.ServiceHours);
+                city.LayoverMinutes = c["layoverMinutes"].AsDouble(city.LayoverMinutes);
+                city.FareMin = c["fareMin"].AsDouble(city.FareMin);
+                city.FareMax = c["fareMax"].AsDouble(city.FareMax);
+                city.DefaultFare = c["defaultFare"].AsDouble(city.DefaultFare);
+                city.RefundRatio = c["refundRatio"].AsDouble(city.RefundRatio);
+                city.MaxStops = c["maxStops"].AsInt(city.MaxStops);
+                city.MinStopSpacingM = c["minStopSpacingM"].AsDouble(city.MinStopSpacingM);
+                city.MaxStopFromRoadM = c["maxStopFromRoadM"].AsDouble(city.MaxStopFromRoadM);
+                if (c["headways"].Count > 0)
+                {
+                    var list = new List<int>();
+                    foreach (var h in c["headways"].Items) list.Add(Math.Max(1, h.AsInt(20)));
+                    city.Headways = list.ToArray();
+                }
+            }
             return b;
         }
     }
@@ -55,6 +97,20 @@ namespace Orbis.Core.Traffic
         public int FareCents;
         /// <summary>Viaggi fatti dai cittadini su questa linea.</summary>
         public long Passengers;
+        /// <summary>Linea del comune (ID della linea del sindaco, presente nei due sensi); 0 = linea reale di un'azienda.</summary>
+        public int CityId;
+    }
+
+    /// <summary>Linea del sindaco da aggiungere alla rete (fermate in metri della regione).</summary>
+    public struct CityLineInput
+    {
+        public int Id;
+        public TransitMode Mode;
+        public string Ref;
+        public uint Colour;
+        public float[] Stops;
+        public int HeadwayMinutes;
+        public int FareCents;
     }
 
     /// <summary>
@@ -70,6 +126,22 @@ namespace Orbis.Core.Traffic
 
         private TransitNetwork(TransitBalance b) => _b = b;
 
+        /// <summary>Rete senza linee reali (solo quelle del comune, o nessuna).</summary>
+        public static TransitNetwork Empty(TransitBalance b) => new TransitNetwork(b);
+
+        /// <summary>Minuti dalla prima fermata a ciascuna: percorso stradale stimato (1,3 × linea d'aria) più mezzo minuto di sosta.</summary>
+        public static float[] StopMinutes(float[] xy, double kmh)
+        {
+            int n = xy.Length / 2;
+            var minutes = new float[n];
+            for (int i = 1; i < n; i++)
+            {
+                float dx = xy[i * 2] - xy[i * 2 - 2], dy = xy[i * 2 + 1] - xy[i * 2 - 1];
+                double km = Math.Sqrt(dx * dx + dy * dy) * 1.3 / 1000.0;
+                minutes[i] = minutes[i - 1] + (float)(km / kmh * 60.0 + 0.5);
+            }
+            return minutes;
+        }
         /// <param name="area">riquadro (metri della regione) che deve contenere almeno due fermate della linea</param>
         public static TransitNetwork Build(RegionInfo region, TransitBalance b, (double MinX, double MinY, double MaxX, double MaxY)? area = null)
         {
@@ -93,14 +165,14 @@ namespace Orbis.Core.Traffic
                     if (!area.HasValue || (x >= area.Value.MinX && x <= area.Value.MaxX && y >= area.Value.MinY && y <= area.Value.MaxY)) inside++;
                 }
                 if (xs.Count < 2 || inside < 2) continue;
-                var minutes = new float[xs.Count];
-                for (int i = 1; i < xs.Count; i++)
+                var xy = new float[xs.Count * 2];
+                for (int i = 0; i < xs.Count; i++)
                 {
-                    float dx = xs[i] - xs[i - 1], dy = ys[i] - ys[i - 1];
-                    double km = Math.Sqrt(dx * dx + dy * dy) * 1.3 / 1000.0;
-                    minutes[i] = minutes[i - 1] + (float)(km / spec.Kmh * 60.0 + 0.5); // mezzo minuto di sosta
+                    xy[i * 2] = xs[i];
+                    xy[i * 2 + 1] = ys[i];
                 }
-                var line = new TransitLine
+                var minutes = StopMinutes(xy, spec.Kmh);
+                net.Add(new TransitLine
                 {
                     OsmId = r.OsmId,
                     Mode = r.Mode,
@@ -113,18 +185,88 @@ namespace Orbis.Core.Traffic
                     Minutes = minutes,
                     HeadwayMinutes = spec.HeadwayMinutes,
                     FareCents = (int)Math.Round(spec.Fare * 100),
-                };
-                int index = net.Lines.Count;
-                net.Lines.Add(line);
-                for (int i = 0; i < line.X.Length; i++)
-                {
-                    long k = Key(line.X[i], line.Y[i]);
-                    if (!net._grid.TryGetValue(k, out var l)) net._grid[k] = l = new List<(int, int)>();
-                    l.Add((index, i));
-                }
+                });
             }
             return net;
         }
+
+        private void Add(TransitLine line)
+        {
+            int index = Lines.Count;
+            Lines.Add(line);
+            for (int i = 0; i < line.X.Length; i++)
+            {
+                long k = Key(line.X[i], line.Y[i]);
+                if (!_grid.TryGetValue(k, out var l)) _grid[k] = l = new List<(int, int)>();
+                l.Add((index, i));
+            }
+        }
+
+        /// <summary>
+        /// Sostituisce le linee del comune (dopo un disegno, un annulla, un caricamento). Ogni linea va nei due sensi;
+        /// le linee reali restano com'erano, con i loro passeggeri.
+        /// </summary>
+        public void SetCityLines(IEnumerable<CityLineInput> lines)
+        {
+            var real = new List<TransitLine>();
+            var riders = new Dictionary<long, long>(); // passeggeri già contati per linea e senso
+            var seen = new HashSet<int>();
+            foreach (var l in Lines)
+            {
+                if (l.CityId == 0) real.Add(l);
+                else riders[(long)l.CityId * 2 + (seen.Add(l.CityId) ? 0 : 1)] = l.Passengers;
+            }
+            Lines.Clear();
+            _grid.Clear();
+            foreach (var l in real) Add(l);
+            if (lines == null) return;
+            foreach (var c in lines)
+            {
+                if (c.Stops == null || c.Stops.Length < 4 || !_b.Modes.TryGetValue(c.Mode, out var spec)) continue;
+                for (int dir = 0; dir < 2; dir++)
+                {
+                    var xy = dir == 0 ? c.Stops : Reverse(c.Stops);
+                    int n = xy.Length / 2;
+                    var xs = new float[n];
+                    var ys = new float[n];
+                    for (int i = 0; i < n; i++)
+                    {
+                        xs[i] = xy[i * 2];
+                        ys[i] = xy[i * 2 + 1];
+                    }
+                    Add(new TransitLine
+                    {
+                        CityId = c.Id, Mode = c.Mode, Ref = c.Ref, Name = c.Ref, Colour = c.Colour,
+                        X = xs, Y = ys, Minutes = StopMinutes(xy, spec.Kmh),
+                        HeadwayMinutes = Math.Max(1, c.HeadwayMinutes), FareCents = Math.Max(0, c.FareCents),
+                        Passengers = riders.TryGetValue((long)c.Id * 2 + dir, out var p) ? p : 0,
+                    });
+                }
+            }
+        }
+
+        private static float[] Reverse(float[] xy)
+        {
+            int n = xy.Length / 2;
+            var r = new float[xy.Length];
+            for (int i = 0; i < n; i++)
+            {
+                r[i * 2] = xy[(n - 1 - i) * 2];
+                r[i * 2 + 1] = xy[(n - 1 - i) * 2 + 1];
+            }
+            return r;
+        }
+
+        /// <summary>Passeggeri di una linea del comune (somma dei due sensi).</summary>
+        public long CityPassengers(int cityId)
+        {
+            long n = 0;
+            foreach (var l in Lines)
+                if (l.CityId == cityId) n += l.Passengers;
+            return n;
+        }
+
+        public bool IsCityLine(int line) => line >= 0 && line < Lines.Count && Lines[line].CityId != 0;
 
         private static long Key(float x, float y) => Key((int)Math.Floor(x / Cell), (int)Math.Floor(y / Cell));
         private static long Key(int cx, int cy) => ((long)cx << 32) ^ (uint)cy;

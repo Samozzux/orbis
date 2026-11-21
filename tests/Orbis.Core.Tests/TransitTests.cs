@@ -66,6 +66,8 @@ namespace Orbis.Core.Tests
         private sealed class FakeTransit : ITransit
         {
             public int Rides;
+            public bool City;
+            public bool IsCityLine(int line) => City;
             public int Minutes(float x0, float y0, float x1, float y1, out int line)
             {
                 line = 0;
@@ -75,14 +77,16 @@ namespace Orbis.Core.Tests
             public void Ride(int line) => Rides++;
         }
 
-        [Fact]
-        public void ChiNonHaLAutoPrendeIlBusEPagaIlBiglietto()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void ChiNonHaLAutoPrendeIlBusEPagaIlBiglietto(bool cityLine)
         {
             var (d, n, b) = PopulationTests.Inputs.Value;
             var pop = PopulationGenerator.Generate(d, n, b, PopulationTests.FakeCity(), 31);
             Assert.InRange(pop.Households.Count(h => h.Cars > 0) / (double)pop.Households.Count, 0.6, 0.95);
             var inputs = new LifeInputs { Data = d, Names = n, Balance = b };
-            var routines = new CityRoutines(inputs) { Transit = new FakeTransit() };
+            var routines = new CityRoutines(inputs) { Transit = new FakeTransit { City = cityLine } };
             var life = new CityLife(inputs);
             long Money()
             {
@@ -105,8 +109,22 @@ namespace Orbis.Core.Tests
             // biglietti: 1,30 € per ogni corsa in città, più i viaggi fuori città senza auto
             long cents = pop.Households.Sum(h => (long)h.TransitCents);
             Assert.True(cents >= rides * 130L);
-            life.Day(pop, day, new TaxRates { Residential = 1.5f, Commercial = 2, Industrial = 2 }, true, (f, a) => city += a);
+            long fares = 0;
+            var result = life.Day(pop, day, new TaxRates { Residential = 1.5f, Commercial = 2, Industrial = 2 }, true, (f, a) =>
+            {
+                city += a;
+                if (f == CityFlow.TransitFares) fares += a;
+            });
             Assert.All(pop.Households, h => Assert.InRange(h.TransitCents, 0, 99));
+            Assert.All(pop.Households, h => Assert.InRange(h.CityTransitCents, 0, h.TransitCents));
+            if (cityLine)
+            {
+                // linea del comune: i biglietti in città entrano nella sua cassa (i resti sotto l'euro restano alle famiglie)
+                Assert.InRange(fares, rides * 130L / 100 - pop.Households.Count, rides * 130L / 100);
+                Assert.Equal(fares, result.TransitFares);
+                Assert.Equal(fares, pop.LastCityFares);
+            }
+            else Assert.Equal(0, fares);
             Assert.Equal(before + (pop.ExternalIn - extIn) - (pop.ExternalOut - extOut), Money() + city);
         }
     }

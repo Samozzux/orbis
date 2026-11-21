@@ -63,6 +63,11 @@ namespace Orbis.Core.Game
         public int SnapshotsWeeklyWeeks = 26;
         public float OfflineMaxRealHours = 12f;
 
+        /// <summary>Strade del sindaco: classi, costi e regole (data/balance/traffic.json); null = non si disegnano.</summary>
+        public Orbis.Core.Traffic.TrafficBalance Traffic;
+        /// <summary>Linee del sindaco: costi, frequenze e biglietti (data/balance/transit.json); null = non si disegnano.</summary>
+        public Orbis.Core.Traffic.TransitBalance Transit;
+
         public float IncomeMultiplier(Difficulty d) => d == Difficulty.Easy ? IncomeEasy : (d == Difficulty.Hard ? IncomeHard : IncomeNormal);
 
         /// <summary>XP totali necessari per raggiungere il livello (livello 1 = 0).</summary>
