@@ -9,6 +9,7 @@ Elenco di tutte le risorse esterne usate in Orbis, con autore, fonte e licenza. 
 | Altitudine del terreno | [Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) (Mapzen, AWS Open Data; fonti: SRTM, GMTED, ETOPO1, EU-DEM e altre) | dati aperti, attribuzione richiesta |
 | Popolazione per età e sesso, bilancio demografico, previsioni delle famiglie, tavole di mortalità (`data/population/`) | ISTAT, [demo.istat.it](https://demo.istat.it/) — elaborazione di Orbis con `tools/population/` | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.it) |
 | Redditi IRPEF su base comunale (`data/population/`) | MEF - Dipartimento delle Finanze, [statistiche fiscali](https://www1.finanze.gov.it/finanze/analisi_stat/public/index.php?opendata=yes) — elaborazione di Orbis | [CC BY 3.0 IT](https://creativecommons.org/licenses/by/3.0/it/) |
+| Meteo reale nel gioco e clima medio per mese (`data/climate/`) | [Open-Meteo.com](https://open-meteo.com/) (previsioni e archivio storico; dati ERA5 di Copernicus/ECMWF) — clima elaborato da Orbis con `tools/climate/` | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.it) |
 
 ## Software
 | Componente | Autore | Fonte | Licenza |

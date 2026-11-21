@@ -30,6 +30,9 @@ namespace Orbis.EditorTools
             changed |= Copy(Path.Combine(root, "data", "balance", "services.json"), Path.Combine(root, Folder, "services_balance.json"));
             foreach (var file in Directory.GetFiles(Path.Combine(root, "data", "events"), "*.json"))
                 changed |= Copy(file, Path.Combine(root, Folder, "events_" + Path.GetFileName(file)));
+            // clima medio per mese (ripiego del meteo reale)
+            foreach (var file in Directory.GetFiles(Path.Combine(root, "data", "climate"), "*.json"))
+                changed |= Copy(file, Path.Combine(root, Folder, "climate_" + Path.GetFileName(file)));
             if (changed) AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         }
 

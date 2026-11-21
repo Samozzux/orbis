@@ -1959,6 +1959,10 @@ MonoBehaviour:
     m_Key: event.name.inaugurazione
     m_Metadata:
       m_Items: []
+  - m_Id: 2166304554344448
+    m_Key: weather.withTemp
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

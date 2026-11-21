@@ -246,6 +246,10 @@
       "it": "Nebbia"
     },
     {
+      "key": "weather.withTemp",
+      "it": "{0} · {1}°"
+    },
+    {
       "key": "details.unnamed",
       "it": "Edificio"
     },

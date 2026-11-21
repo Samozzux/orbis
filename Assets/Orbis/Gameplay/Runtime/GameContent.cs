@@ -17,6 +17,8 @@ namespace Orbis.Gameplay
         public Orbis.Core.Traffic.TrafficBalance Traffic;
         /// <summary>Parametri del trasporto pubblico (M4); null se mancano: niente linee.</summary>
         public Orbis.Core.Traffic.TransitBalance Transit;
+        /// <summary>Clima medio per mese della regione (M4); null se manca: si usano valori di ripiego.</summary>
+        public Orbis.Core.World.Sky.ClimateNormals Climate;
 
         private static GameContent _cached;
 
@@ -35,6 +37,8 @@ namespace Orbis.Gameplay
             if (traffic != null) c.Traffic = Orbis.Core.Traffic.TrafficBalance.Parse(traffic.text);
             var transit = Resources.Load<TextAsset>("OrbisContent/transit_balance");
             if (transit != null) c.Transit = Orbis.Core.Traffic.TransitBalance.Parse(transit.text);
+            var climate = Resources.Load<TextAsset>("OrbisContent/climate_chieti");
+            if (climate != null) c.Climate = Orbis.Core.World.Sky.ClimateNormals.Parse(climate.text);
             c.Balance ??= new Balance();
             c.Missions ??= new Missions();
             // strade e linee del sindaco: costi e regole stanno nei bilanciamenti del traffico e del trasporto pubblico

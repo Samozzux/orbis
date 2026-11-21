@@ -54,6 +54,8 @@ namespace Orbis.Core.Game
         public int TileZoom = 14;
         /// <summary>Tutti i tile del comune (anche lontani dalla camera), per le sedi dei servizi; null = solo quelli caricati.</summary>
         public IWorldAccess CityWorld;
+        /// <summary>Meteo della partita, un'ora alla volta (M4); null = niente meteo (prove).</summary>
+        public Orbis.Core.World.Sky.CityWeather Weather;
 
         public Orbis.Core.Population.TaxRates TaxRates
         {

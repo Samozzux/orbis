@@ -404,6 +404,41 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - Il calendario carica tutti i file `events_*`: con più comuni andrà filtrato per regione.
     - Il mercato settimanale di Chieti manca: giorno e luogo sono da verificare prima di inserirlo.
     - Gli incidenti non rallentano ancora il traffico.
+- **Meteo, parte 5d** (21/11, branch `m4-meteo`), in `Orbis.Core.World.Sky` (`CityWeather`, `OpenMeteo`, `ClimateNormals`).
+  - **Clima medio di Chieti per mese** (`data/climate/chieti.json`). Calcolato con il nuovo `tools/climate/orbis_climate.py` dall'archivio storico di Open-Meteo (ERA5, 1995–2024, CC BY 4.0), con temperature, pioggia, nuvole, vento e sole. Per esempio gennaio 4,8 °C e luglio 23,9 °C.
+  - **Meteo della partita, un'ora alla volta.** Lo fa avanzare la simulazione stessa, quindi vale anche per il tempo ad app chiusa.
+    - Con il meteo reale (impostazione della partita), i dati arrivano da Open-Meteo con le sole coordinate della città:
+      - per le date entro le previsioni (16 giorni) dalle previsioni;
+      - per le date più lontane, dato che il tempo di gioco corre 60 volte più veloce, dall'archivio storico dello stesso periodo degli anni passati. Così il meteo resta sempre vero.
+    - Senza rete, o con il meteo simulato, resta la catena di Markov di M1, con le temperature del clima medio.
+  - **Effetti:**
+    - con la pioggia si cammina solo fino a 600 m invece di 1,2 km: più auto e più bus, quindi più traffico;
+    - si esce meno per lo svago e si va meno ai raduni (40%);
+    - le pale eoliche producono secondo il vento del giorno rispetto alla media dell'anno;
+    - i pannelli solari producono secondo il sole del giorno e la stagione.
+  - **Cielo e interfaccia.** Il cielo segue il meteo della partita; l'HUD mostra anche la temperatura, per esempio "Nuvoloso · 13°".
+  - **Crediti.** Open-Meteo aggiunto a `CREDITS.md`. La schermata Crediti del gioco è ancora "in arrivo".
+  - **Test.** 8 nuovi (237 in tutto):
+    - clima di Chieti;
+    - richieste a Open-Meteo (previsioni e archivio con lo spostamento di anni);
+    - lettura della risposta e codici meteo;
+    - un anno simulato coerente col clima, deterministico;
+    - dati veri al posto dei simulati;
+    - sole a metà giornata senza contare la notte;
+    - pala eolica col vento;
+    - con la pioggia meno viaggi a piedi e più in auto.
+  - **Su Chieti vera** (Unity in locale):
+    - all'avvio arrivano da Open-Meteo 192 ore di previsioni;
+    - alle 9: nuvoloso, 13,2 °C, vento 4 km/h (dato reale);
+    - eolico ×0,91;
+    - solare ×0,10: mattina coperta di novembre. Il clima medio prevede luce dalle 6, mentre a novembre il sole sorge verso le 7.
+
+    Il riepilogo che conta per l'energia è quello di fine giornata.
+  - **Limiti.**
+    - La neve si disegna come pioggia.
+    - Il meteo non cambia ancora la felicità né i consumi di energia (riscaldamento): servirà con l'energia completa.
+    - I fulmini e le allerte meteo arriveranno con i disastri (opzionali).
+    - La forma della giornata di sole è fissa (6–18): si può legare all'alba e al tramonto veri, che il cielo calcola già.
 
 **M3 — Account e cloud**: chiusa il 19/11/2026 su scelta di Samuele **senza la prova sui dispositivi** ("Chiudi M3 senza prova"). Tag `v0.3.0` con IPA e APK; tutte le build di `main` verdi. Restano da provare sui dispositivi Face ID, impronta, passkey e il giro iPhone → Mac (vedi "Da verificare sui dispositivi" e "Cosa provare (M3)"). Iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 

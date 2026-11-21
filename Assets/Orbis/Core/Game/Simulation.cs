@@ -54,6 +54,8 @@ namespace Orbis.Core.Game
             int com = pop != null ? 0 : (int)(b.BaseJobs * b.CommercialJobShare);
             int ind = pop != null ? 0 : b.BaseJobs - com;
             double rent = 0, production = 0, maintenance = 0, power = 0, happiness = 0;
+            // eolico e solare producono secondo il vento e il sole del giorno (docs/03 §8)
+            float windF = ctx.Weather?.WindFactor ?? 1f, solarF = ctx.Weather?.SolarFactor ?? 1f;
             foreach (var o in s.Objects.Values)
             {
                 var item = ctx.Catalog.Get(o.ItemKey);
@@ -67,7 +69,10 @@ namespace Orbis.Core.Game
                 else com += spec.Jobs;
                 rent += spec.RentPerMonth / 30.0;
                 production += spec.ProductionPerMonth / 30.0;
-                power += spec.PowerKw;
+                double kw = spec.PowerKw;
+                if (kw > 0 && (item.Family == "wind" || item.Family == "windfarm")) kw *= windF;
+                if (kw > 0 && (item.Family == "solar" || item.Family == "solarbuilding")) kw *= solarF;
+                power += kw;
                 happiness += item.Happiness;
             }
             // edifici reali potenziati: affitti in più e un po' di felicità per gli addobbi
@@ -217,6 +222,16 @@ namespace Orbis.Core.Game
                 var nextHour = new DateTime(s.Now.Year, s.Now.Month, s.Now.Day, s.Now.Hour, 0, 0).AddHours(1);
                 var step = nextHour <= end ? nextHour : end;
                 var before = s.Now;
+                // il meteo dell'ora in corso (reale o simulato) prima della giornata dei cittadini
+                if (ctx.Weather != null)
+                {
+                    var hour = new DateTime(before.Year, before.Month, before.Day, before.Hour, 0, 0);
+                    if (ctx.Weather.Current.Time != hour)
+                    {
+                        ctx.Weather.UseReal = s.Config.RealWeather;
+                        ctx.Weather.Step(hour);
+                    }
+                }
                 RoutineSteps(ctx, before, step);
                 s.Now = step;
                 foreach (var o in s.Objects.Values)

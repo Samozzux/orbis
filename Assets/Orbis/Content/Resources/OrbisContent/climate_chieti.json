@@ -1,0 +1,158 @@
+{
+  "format": 1,
+  "_info": "Clima medio di Chieti per mese (1995–2024), dall'archivio storico di Open-Meteo (ERA5, CC BY 4.0), elaborato da tools/climate. Serve quando il meteo reale non c'è (senza rete o con il meteo simulato).",
+  "region": "chieti",
+  "name": "Chieti",
+  "latitude": 42.35,
+  "longitude": 14.17,
+  "period": [
+    1995,
+    2024
+  ],
+  "months": [
+    {
+      "month": 1,
+      "tempMean": 4.8,
+      "tempMax": 9.4,
+      "tempMin": 0.8,
+      "rainMmPerDay": 2.98,
+      "rainHoursPerDay": 4.6,
+      "rainyDayShare": 0.367,
+      "cloudCover": 58.6,
+      "windKmh": 6.9,
+      "radiationMjPerDay": 6.69
+    },
+    {
+      "month": 2,
+      "tempMean": 5.6,
+      "tempMax": 10.6,
+      "tempMin": 1.0,
+      "rainMmPerDay": 2.53,
+      "rainHoursPerDay": 4.5,
+      "rainyDayShare": 0.358,
+      "cloudCover": 52.6,
+      "windKmh": 7.2,
+      "radiationMjPerDay": 10.17
+    },
+    {
+      "month": 3,
+      "tempMean": 8.2,
+      "tempMax": 13.3,
+      "tempMin": 3.3,
+      "rainMmPerDay": 2.97,
+      "rainHoursPerDay": 4.74,
+      "rainyDayShare": 0.391,
+      "cloudCover": 53.5,
+      "windKmh": 7.4,
+      "radiationMjPerDay": 14.74
+    },
+    {
+      "month": 4,
+      "tempMean": 11.8,
+      "tempMax": 16.8,
+      "tempMin": 6.5,
+      "rainMmPerDay": 2.97,
+      "rainHoursPerDay": 4.49,
+      "rainyDayShare": 0.397,
+      "cloudCover": 51.4,
+      "windKmh": 6.9,
+      "radiationMjPerDay": 19.33
+    },
+    {
+      "month": 5,
+      "tempMean": 16.5,
+      "tempMax": 21.3,
+      "tempMin": 10.9,
+      "rainMmPerDay": 3.02,
+      "rainHoursPerDay": 4.19,
+      "rainyDayShare": 0.401,
+      "cloudCover": 48.6,
+      "windKmh": 6.6,
+      "radiationMjPerDay": 22.25
+    },
+    {
+      "month": 6,
+      "tempMean": 21.2,
+      "tempMax": 26.1,
+      "tempMin": 15.2,
+      "rainMmPerDay": 2.52,
+      "rainHoursPerDay": 3.09,
+      "rainyDayShare": 0.308,
+      "cloudCover": 35.3,
+      "windKmh": 6.4,
+      "radiationMjPerDay": 24.66
+    },
+    {
+      "month": 7,
+      "tempMean": 23.9,
+      "tempMax": 29.0,
+      "tempMin": 17.9,
+      "rainMmPerDay": 1.78,
+      "rainHoursPerDay": 2.07,
+      "rainyDayShare": 0.23,
+      "cloudCover": 21.9,
+      "windKmh": 6.6,
+      "radiationMjPerDay": 24.82
+    },
+    {
+      "month": 8,
+      "tempMean": 23.5,
+      "tempMax": 28.7,
+      "tempMin": 17.9,
+      "rainMmPerDay": 1.95,
+      "rainHoursPerDay": 2.44,
+      "rainyDayShare": 0.29,
+      "cloudCover": 26.8,
+      "windKmh": 6.3,
+      "radiationMjPerDay": 21.75
+    },
+    {
+      "month": 9,
+      "tempMean": 18.7,
+      "tempMax": 23.7,
+      "tempMin": 14.0,
+      "rainMmPerDay": 2.88,
+      "rainHoursPerDay": 3.42,
+      "rainyDayShare": 0.337,
+      "cloudCover": 43.4,
+      "windKmh": 6.5,
+      "radiationMjPerDay": 16.17
+    },
+    {
+      "month": 10,
+      "tempMean": 14.8,
+      "tempMax": 19.5,
+      "tempMin": 10.5,
+      "rainMmPerDay": 2.53,
+      "rainHoursPerDay": 3.71,
+      "rainyDayShare": 0.327,
+      "cloudCover": 52.0,
+      "windKmh": 6.0,
+      "radiationMjPerDay": 11.3
+    },
+    {
+      "month": 11,
+      "tempMean": 10.1,
+      "tempMax": 14.5,
+      "tempMin": 6.2,
+      "rainMmPerDay": 3.73,
+      "rainHoursPerDay": 4.63,
+      "rainyDayShare": 0.376,
+      "cloudCover": 60.5,
+      "windKmh": 6.3,
+      "radiationMjPerDay": 7.23
+    },
+    {
+      "month": 12,
+      "tempMean": 6.0,
+      "tempMax": 10.5,
+      "tempMin": 2.2,
+      "rainMmPerDay": 2.96,
+      "rainHoursPerDay": 4.8,
+      "rainyDayShare": 0.372,
+      "cloudCover": 58.3,
+      "windKmh": 6.7,
+      "radiationMjPerDay": 5.77
+    }
+  ]
+}

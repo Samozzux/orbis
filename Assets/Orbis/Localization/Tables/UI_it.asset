@@ -1962,6 +1962,10 @@ MonoBehaviour:
     m_Localized: Inaugurazione
     m_Metadata:
       m_Items: []
+  - m_Id: 2166304554344448
+    m_Localized: "{0} \xB7 {1}\xB0"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

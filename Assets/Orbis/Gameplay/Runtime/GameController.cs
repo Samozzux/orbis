@@ -130,6 +130,7 @@ namespace Orbis.Gameplay
             c.View = new PlacedObjectsView(world.World, c.Content.Catalog, world.World.Content ?? world.transform);
             c.RoadsView = new CityRoadsView(world.World, c.Content.Traffic, world.World.Content ?? world.transform);
             c.EnsureFrame();
+            c.SetupWeather();
             c.Build = BuildController.Attach(c);
             c.Previews = CatalogPreviews.Attach(c);
             c._nextAutosave = Time.unscaledTime + AutosaveSeconds;
@@ -182,6 +183,7 @@ namespace Orbis.Gameplay
                 if (Transit != null) ctx.Routines.Transit = Transit;
             }
             if (ctx.Life?.Services != null && Traffic != null) ctx.Life.Services.Travel = Traffic;
+            if (ctx.Routines != null) ctx.Routines.Weather = ctx.Weather;
             if (ctx.Life?.Services != null && _serviceSources != null && ctx.Life.Services.Fixed.Count == 0)
                 ctx.Life.Services.Fixed.AddRange(_serviceSources);
         }
@@ -195,6 +197,73 @@ namespace Orbis.Gameplay
             _linesSignature = LinesSignature();
             transit.SetCityLines(Infrastructure.NetworkLines(State));
             WireCity();
+        }
+
+        // ------------------------------------------------------------------ meteo
+
+        private bool _weatherFetching;
+        private float _nextWeatherTry;
+        private bool _weatherLogged;
+
+        /// <summary>Meteo della partita (M4): simulato col clima medio, con i dati veri di Open-Meteo quando arrivano.</summary>
+        private void SetupWeather()
+        {
+            var w = new Orbis.Core.World.Sky.CityWeather(Content.Climate, (uint)State.Seed) { UseReal = State.Config.RealWeather };
+            w.Step(State.Now);
+            Session.Context.Weather = w;
+            World.GameWeather = w;
+            WireCity();
+        }
+
+        /// <summary>Se la partita usa il meteo reale e mancano le prossime ore, le chiede a Open-Meteo (solo le coordinate della città).</summary>
+        private void UpdateWeatherFeed()
+        {
+            var w = Session.Context.Weather;
+            if (w == null || !State.Config.RealWeather || _weatherFetching || Time.unscaledTime < _nextWeatherTry) return;
+            if (Content.Climate == null || Content.Climate.Latitude == 0 || Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                _nextWeatherTry = Time.unscaledTime + 60f;
+                return;
+            }
+            var missing = w.MissingFrom(State.Now, 24);
+            if (!missing.HasValue)
+            {
+                _nextWeatherTry = Time.unscaledTime + 10f;
+                return;
+            }
+            StartCoroutine(FetchWeather(missing.Value.Date));
+        }
+
+        private IEnumerator FetchWeather(DateTime from)
+        {
+            _weatherFetching = true;
+            _nextWeatherTry = Time.unscaledTime + 300f; // se non riesce, si riprova tra 5 minuti
+            var (url, shift) = Orbis.Core.World.Sky.OpenMeteo.Request(Content.Climate.Latitude, Content.Climate.Longitude, from, from.AddDays(7), DateTime.Today);
+            using (var req = UnityEngine.Networking.UnityWebRequest.Get(url))
+            {
+                req.timeout = 20;
+                yield return req.SendWebRequest();
+                if (req.result == UnityEngine.Networking.UnityWebRequest.Result.Success && Session != null)
+                {
+                    try
+                    {
+                        var hours = Orbis.Core.World.Sky.OpenMeteo.Parse(req.downloadHandler.text, shift);
+                        Session.Context.Weather?.SetReal(hours);
+                        _nextWeatherTry = Time.unscaledTime + 5f;
+                        if (!_weatherLogged)
+                        {
+                            _weatherLogged = true;
+                            Debug.Log($"[Orbis] meteo reale da Open-Meteo: {hours.Count} ore dal {from:dd/MM}" + (shift > 0 ? $" (archivio, {shift} anni fa)" : " (previsioni)"));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarning("[Orbis] risposta del meteo illeggibile: " + e.Message);
+                    }
+                }
+                else Debug.LogWarning("[Orbis] meteo reale non disponibile, resta quello simulato: " + req.error);
+            }
+            _weatherFetching = false;
         }
 
         // ------------------------------------------------------------------ strade e linee del sindaco
@@ -325,6 +394,7 @@ namespace Orbis.Gameplay
         {
             if (Session == null || World.State != WorldSession.Phase.Playing) return;
             EnsureFrame();
+            UpdateWeatherFeed();
             // tempo di gioco: 1 ora = 1 minuto reale × velocità (pausa = 0)
             float speed = World.Clock.Speed;
             _pendingGameSeconds += Time.unscaledDeltaTime * GameSession.GameSecondsPerRealSecond * speed;
@@ -509,6 +579,7 @@ namespace Orbis.Gameplay
         private void OnDestroy()
         {
             SaveNowSync();
+            if (World != null) World.GameWeather = null;
             View?.Dispose();
             RoadsView?.Dispose();
         }
