@@ -3,6 +3,16 @@ using System.Collections.Generic;
 
 namespace Orbis.Core.Population
 {
+    /// <summary>Tempi di viaggio in auto sulla rete vera, con il traffico (lo fornisce Orbis.Core.Traffic).</summary>
+    public interface ITravelTimes
+    {
+        int CarMinutes(float x0, float y0, float x1, float y1);
+        /// <summary>Un viaggio in auto appena partito: carica le strade del percorso.</summary>
+        void RecordTrip(float x0, float y0, float x1, float y1);
+        /// <summary>Un passo di 15 minuti: aggiorna un po' di tempi.</summary>
+        void Tick(int minute);
+    }
+
     /// <summary>
     /// Giornata dei cittadini a passi di 15 minuti (livello L1, docs/01 §6, docs/03 §3): bisogni che calano e si
     /// recuperano, sonno, lavoro e scuola con orari veri, pasti col cibo del frigo, spesa nei negozi di alimentari
@@ -22,6 +32,9 @@ namespace Orbis.Core.Population
         private readonly List<int> _food = new List<int>();
         private readonly List<int> _leisure = new List<int>();
         private readonly int _nightOwl, _earlyBird;
+
+        /// <summary>Rete stradale con il traffico; null = tempi in linea d'aria.</summary>
+        public ITravelTimes Travel;
 
         public CityRoutines(LifeInputs inputs)
         {
@@ -59,6 +72,7 @@ namespace Orbis.Core.Population
                 if (c.ActivityEnd > minute) continue;
                 Decide(pop, i, minute, time, hour, weekday, sunday, rng);
             }
+            Travel?.Tick(minute);
         }
 
         private void Cache(CityPopulation pop)
@@ -372,6 +386,12 @@ namespace Orbis.Core.Population
             Position(pop, c.Location, c.LocationIndex, c.Household, out var x0, out var y0);
             Position(pop, kind, index, c.Household, out var x1, out var y1);
             double dx = x1 - x0, dy = y1 - y0, dist = Math.Sqrt(dx * dx + dy * dy) * 1.3; // strade non dritte
+            if (dist > R.WalkMaxM && Travel != null)
+            {
+                // in auto sulla rete vera, col traffico del momento
+                Travel.RecordTrip(x0, y0, x1, y1);
+                return Math.Max(2, Travel.CarMinutes(x0, y0, x1, y1));
+            }
             double kmh = dist <= R.WalkMaxM ? R.WalkKmh : R.DriveKmh;
             return Math.Max(2, (int)Math.Ceiling(dist / 1000.0 / kmh * 60.0) + (dist > R.WalkMaxM ? 4 : 0));
         }

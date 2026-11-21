@@ -13,6 +13,8 @@ namespace Orbis.Gameplay
         public Missions Missions;
         /// <summary>Dati della popolazione reale (M4); null se mancano: la città resta quella stimata.</summary>
         public LifeInputs Life;
+        /// <summary>Parametri del traffico (M4); null se mancano: tempi di viaggio in linea d'aria.</summary>
+        public Orbis.Core.Traffic.TrafficBalance Traffic;
 
         private static GameContent _cached;
 
@@ -27,6 +29,8 @@ namespace Orbis.Gameplay
                 else if (t.name == "missions") c.Missions = Missions.Parse(t.text);
             }
             c.Life = LoadLife();
+            var traffic = Resources.Load<TextAsset>("OrbisContent/traffic_balance");
+            if (traffic != null) c.Traffic = Orbis.Core.Traffic.TrafficBalance.Parse(traffic.text);
             c.Balance ??= new Balance();
             c.Missions ??= new Missions();
             Debug.Log($"[Orbis] Contenuti: {c.Catalog.Count} elementi del catalogo, {c.Missions.All.Count} missioni" +

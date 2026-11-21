@@ -1,0 +1,58 @@
+{
+  "_info": "Traffico (docs/03 §7, livello L1): grafo dalle strade vere, tempi di viaggio tra zone con la congestione per arco (formula BPR). Valori iniziali da bilanciare.",
+  "zoneSizeM": 600,
+  "originsPerStep": 12,
+  "bprAlpha": 0.15,
+  "bprBeta": 4,
+  "backgroundShare": 0.25,
+  "accessKmh": 25,
+  "parkingMinutes": 4,
+  "classes": {
+    "Motorway": {
+      "kmh": 110,
+      "lanes": 2,
+      "capacityPerLane": 1800
+    },
+    "Trunk": {
+      "kmh": 90,
+      "lanes": 2,
+      "capacityPerLane": 1600
+    },
+    "Primary": {
+      "kmh": 50,
+      "lanes": 1,
+      "capacityPerLane": 1200
+    },
+    "Secondary": {
+      "kmh": 50,
+      "lanes": 1,
+      "capacityPerLane": 1000
+    },
+    "Tertiary": {
+      "kmh": 40,
+      "lanes": 1,
+      "capacityPerLane": 800
+    },
+    "Unclassified": {
+      "kmh": 40,
+      "lanes": 1,
+      "capacityPerLane": 600
+    },
+    "Residential": {
+      "kmh": 30,
+      "lanes": 1,
+      "capacityPerLane": 500
+    },
+    "LivingStreet": {
+      "kmh": 10,
+      "lanes": 1,
+      "capacityPerLane": 200
+    },
+    "Service": {
+      "kmh": 20,
+      "lanes": 1,
+      "capacityPerLane": 300
+    }
+  },
+  "areaMarginM": 1000
+}
