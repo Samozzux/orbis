@@ -131,8 +131,8 @@ namespace Orbis.Gameplay
             world.World.TileLoaded += _ => c.View.Sync(c.State);
             world.Game = c;
             c.SyncWorld(rebuildAll: true);
-            // partita senza cittadini (nuova o di prima di M4): si generano dai tile del comune
-            if (session.Population == null && c.Content.Life != null) PopulationLoader.Attach(c);
+            // tile del comune: cittadini (se la partita non li ha ancora) e rete stradale con il traffico
+            if (c.Content.Life != null) PopulationLoader.Attach(c);
             return c;
         }
 
@@ -154,10 +154,20 @@ namespace Orbis.Gameplay
 
         internal void OnPopulationStarted(string municipality) => PopulationStarted?.Invoke(municipality);
 
+        /// <summary>Traffico sulla rete stradale vera del comune (M4); null finché il caricatore non l'ha costruito.</summary>
+        public Orbis.Core.Traffic.TrafficModel Traffic { get; private set; }
+
+        internal void OnTrafficReady(Orbis.Core.Traffic.TrafficModel traffic)
+        {
+            Traffic = traffic;
+            if (Session.Context.Routines != null) Session.Context.Routines.Travel = traffic;
+        }
+
         /// <summary>Collega i cittadini appena generati, mantenendo il saldo della città stimata, e salva.</summary>
         internal void OnPopulationGenerated(Orbis.Core.Population.CityPopulation population)
         {
             Session.AttachPopulation(population, Content.Life, keepBalance: true);
+            if (Traffic != null && Session.Context.Routines != null) Session.Context.Routines.Travel = Traffic;
             _saveRequested = true;
             PopulationReady?.Invoke(population);
             Changed?.Invoke();

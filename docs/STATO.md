@@ -152,6 +152,37 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - fame media 64, umore 71; i 67 alimentari incassano in media 7.900 € al giorno.
   - **Salvataggio.** Popolazione alla versione 3 (attività, luogo, viaggio, frigo, scorte); le versioni precedenti si leggono ancora.
   - **Test.** 5 nuovi: giornata feriale, frigo, spesa e scorte, denaro conservato con la spesa, posizioni e salvataggio, velocità.
+- **Strade e traffico, parte 4a** (21/11, branch `m4-traffico`). Il blocco 4 è diviso in tre parti:
+  - 4a: rete e tempi con il traffico;
+  - 4b: linee bus reali con fermate, frequenze e incassi;
+  - 4c: linee e strade disegnabili.
+
+  Nella 4a, in `Orbis.Core.Traffic`:
+  - **`RoadGraph`.** Il grafo per le auto si costruisce dalle strade vere dei tile, a ogni avvio della partita (non si salva):
+    - sensi unici, corsie, velocità (limite OSM o per classe) e capacità per classe, in `data/balance/traffic.json`;
+    - i punti uguali, anche tra tile vicini, diventano lo stesso incrocio;
+    - le catene di vertici senza incroci si fondono in un solo tratto, che tiene la sua forma per i veicoli visibili del blocco 6;
+    - pedonali e sentieri restano fuori.
+  - **`TrafficModel`.** La città è divisa in zone da 400 m, e i tempi in auto tra le zone si calcolano sul grafo (Dijkstra).
+    - Ogni passo di 15 minuti ricalcola 40 zone di partenza, mai un blocco lungo.
+    - I viaggi in auto dei cittadini caricano i tratti del loro percorso.
+    - A giro completo ogni tratto rallenta secondo la capacità (BPR, α 0,15, β 4). Un 25% di traffico di passaggio non simulato si aggiunge.
+    - Senza viaggi, le strade tornano scorrevoli.
+  - **Giornata.** `CityRoutines` usa la rete per i viaggi in auto oltre 1,2 km (interfaccia `ITravelTimes`); senza rete, linea d'aria come prima.
+  - **Unity.** Il caricatore della città costruisce la rete dagli stessi tile del comune e calcola i primi tempi a pezzi su più fotogrammi.
+  - **Test.** 6 nuovi (195 in tutto):
+    - catene fuse e incroci;
+    - senso unico rispettato, anche su Via Pollione del tile di prova della pipeline;
+    - tempi plausibili e viale veloce;
+    - ingorgo sui tratti usati;
+    - su una strada senza alternative il traffico raddoppia il tempo;
+    - la giornata usa la rete.
+  - **Su Chieti vera** (Unity in locale, pack v4): la rete copre il riquadro del comune con 1 km di margine.
+    - 12.349 incroci, 25.980 tratti, 484 zone da 600 m.
+    - Un passo del traffico (12 zone) costa 19 ms nell'editor, e un giro completo dei tempi dura circa 10 ore di gioco.
+    - La costruzione all'avvio richiede circa 7 secondi spalmati su più fotogrammi, ma il grafo si costruisce in un fotogramma solo.
+  - **Da migliorare con le prestazioni (blocco 8).** Su iOS e Android, grafo e tempi su un thread a parte o con i Jobs, così il traffico reagisce più in fretta all'ora di punta e l'avvio non ha scatti. Sul web restano a pezzi.
+  - **Limite.** Le strade verso i comuni vicini oltre il margine si aggiungono con i pendolari visibili.
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;

@@ -73,6 +73,18 @@ namespace Orbis.Tests.PlayMode
             Debug.Log($"[Test] Chieti: {pop.Dwellings.Count} case, {pop.Workplaces.Count} lavori, {pop.Schools.Count} scuole, " +
                       $"{pop.Households.Count} famiglie; prima: {pop.FullName(0)}");
 
+            // la rete stradale vera del comune con il traffico
+            deadline = Time.realtimeSinceStartup + 60f;
+            while (game.Traffic == null && Time.realtimeSinceStartup < deadline) yield return null;
+            Assert.That(game.Traffic, Is.Not.Null, "rete stradale non costruita");
+            Assert.That(game.Traffic.Graph.NodeCount, Is.GreaterThan(1000));
+            Assert.That(game.Session.Context.Routines.Travel, Is.SameAs(game.Traffic));
+            var tick = System.Diagnostics.Stopwatch.StartNew();
+            game.Traffic.Tick(Orbis.Core.Population.CityRoutines.Minute(game.State.Now));
+            tick.Stop();
+            Debug.Log($"[Test] rete: {game.Traffic.Graph.NodeCount} incroci, {game.Traffic.Graph.EdgeCount} tratti, {game.Traffic.Zones} zone; " +
+                      $"un passo del traffico {tick.ElapsedMilliseconds} ms");
+
             // un giorno di gioco: stipendi e tasse dei cittadini nel registro, saldo come prima
             long before = game.State.Cash;
             game.Session.Advance(System.TimeSpan.FromDays(1));
