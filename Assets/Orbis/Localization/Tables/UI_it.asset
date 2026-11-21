@@ -1854,6 +1854,14 @@ MonoBehaviour:
     m_Localized: 'Lo sblocco non ha funzionato: riprova oppure entra con la password.'
     m_Metadata:
       m_Items: []
+  - m_Id: 2056635236212736
+    m_Localized: "Arrivano gli abitanti di {0}\u2026"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2056635248795648
+    m_Localized: '{0} abitanti vivono ora a {1}: famiglie, case, lavori e redditi veri'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -84,6 +84,8 @@ namespace Orbis.UI.Game
             build.Confirmed += OnBuildConfirmed;
             _game.SimulationEvent += OnSimulationEvent;
             _game.Changed += () => _shownCash = long.MinValue;
+            _game.PopulationStarted += name => Toast(Loc.Format("citizens.arriving", name));
+            _game.PopulationReady += p => Toast(Loc.Format("citizens.ready", Fmt.Money(p.AliveCount), p.MunicipalityName));
             hud.CustomDetails = ShowPlacedDetails;
             hud.ExtraActions = AddOsmActions;
             RefreshBuildBar();
