@@ -83,6 +83,8 @@ namespace Orbis.Core.Population
         public byte Happiness;
         /// <summary>Minuti dell'ultimo viaggio verso il lavoro o la scuola (0 = nessuno).</summary>
         public byte Commute;
+        /// <summary>Preoccupazione: il fattore della felicità che va peggio (<see cref="HappinessFactor"/>; Count = nessuna).</summary>
+        public byte Worry;
         public CitizenFlags Flags;
 
         // giornata (livello L1): attività, luogo e viaggio; i minuti si contano dall'1/1/1900
@@ -220,6 +222,18 @@ namespace Orbis.Core.Population
         public int UnhappyCount;
         /// <summary>Media di ciascun fattore della felicità (<see cref="HappinessFactor"/>).</summary>
         public readonly float[] HappinessFactors = new float[(int)HappinessFactor.Count];
+
+        // reazioni (blocco 5b)
+        /// <summary>Gradimento del sindaco: quota di adulti non scontenti (0–100).</summary>
+        public float Approval;
+        /// <summary>Ultime reazioni (commenti, petizioni, proteste, scioperi) per le notizie.</summary>
+        public readonly List<Reaction> Feed = new List<Reaction>();
+        public readonly List<Petition> Petitions = new List<Petition>();
+        /// <summary>Giorno dell'ultima protesta in piazza e protesta in arrivo (fattore + 1, 0 = nessuna).</summary>
+        public int LastProtestDay;
+        public byte ProtestPending;
+        /// <summary>Giorni di fila con il lavoro che preoccupa; giorno dello sciopero (0 = nessuno).</summary>
+        public int LowWorkDays, StrikeDay;
         /// <summary>Ultimo giorno simulato (giorni dall'1/1/1900), per non ripetere una giornata.</summary>
         public int LastDay;
 

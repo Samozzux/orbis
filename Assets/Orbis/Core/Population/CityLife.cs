@@ -22,6 +22,8 @@ namespace Orbis.Core.Population
         public long TransitFares;
         /// <summary>Felicità della città dopo la giornata (null se non calcolata).</summary>
         public HappinessReport Happiness;
+        /// <summary>Reazioni nuove della giornata (commenti, petizioni, proteste, scioperi).</summary>
+        public List<Reaction> Reactions = new List<Reaction>();
         public int Births, Deaths, Arrived, Left, Hired, Closed;
         public bool Skipped;
     }
@@ -58,6 +60,11 @@ namespace Orbis.Core.Population
 
         /// <summary>Copertura dei servizi per casa (M4 blocco 5); null se mancano i parametri.</summary>
         public CityServices Services;
+
+        /// <summary>Livello delle reazioni dei cittadini (<see cref="ReactionLevel"/>), dalla configurazione del mondo.</summary>
+        public int Reactions = ReactionLevel.Light;
+
+        private ReactionSpec R => Services?.Balance.Reactions;
 
         public static int DayIndex(DateTime d) => (int)(d.Date - Citizen.Epoch.Date).TotalDays;
 
@@ -135,6 +142,7 @@ namespace Orbis.Core.Population
             {
                 Services.Update(pop);
                 r.Happiness = CityHappiness.Update(pop, Services, taxes, date);
+                r.Reactions = CityReactions.Day(pop, day, Reactions, R, rng, date);
             }
             return r;
         }
@@ -300,6 +308,10 @@ namespace Orbis.Core.Population
             }
             else pop.ExternalOut += localPool; // nessun negozio: si compra fuori
 
+            // cittadini contenti lavorano meglio (reazioni leggere e realistiche); nel giorno di sciopero si lavora meno
+            double mood = 1;
+            if (R != null && Reactions >= ReactionLevel.Light && pop.AverageHappiness > 0) mood = R.Productivity(pop.AverageHappiness);
+            if (R != null && Reactions >= ReactionLevel.Realistic && pop.StrikeDay == day) mood *= 1 - R.StrikeLoss;
             long commercial = 0, industrial = 0;
             for (int i = 0; i < places.Count; i++)
             {
@@ -314,7 +326,7 @@ namespace Orbis.Core.Population
                 bool consumer = PopulationBalance.InSet(B.ConsumerCategories, p.Category);
                 double perJob = consumer ? B.ConsumerExternalPerJobDay : B.ProductivityPerJobDay;
                 double noise = 0.75 + 0.5 * rng.NextDouble();
-                long external = (long)Math.Round(p.Capacity * perJob * noise);
+                long external = (long)Math.Round(p.Capacity * perJob * noise * mood);
                 // vendite ai cittadini durante la giornata (spesa alimentare): già in cassa, qui entrano nel fatturato
                 long sales = p.SalesToday;
                 p.SalesToday = 0;
@@ -650,11 +662,16 @@ namespace Orbis.Core.Population
             var d = _in.Data;
             if (d.Total <= 0) return;
             double perPersonDay = (d.MovedOut + d.Emigrated) / (double)d.Total / 365.0;
+            bool realistic = R != null && Reactions >= ReactionLevel.Realistic && pop.AverageHappiness > 0;
             for (int h = 0; h < pop.Households.Count; h++)
             {
                 var hh = pop.Households[h];
-                // una famiglia parte con la quota per persona: in media partono quota × abitanti persone
-                if (hh.Members.Count == 0 || !rng.Chance(perPersonDay)) continue;
+                // una famiglia parte con la quota per persona: in media partono quota × abitanti persone; con le reazioni
+                // realistiche le famiglie scontente partono più spesso, quelle contente meno
+                if (hh.Members.Count == 0) continue;
+                double chance = perPersonDay;
+                if (realistic) chance *= R.Emigration(HouseholdHappiness(pop, hh));
+                if (!rng.Chance(chance)) continue;
                 int oldest = 0;
                 foreach (var m in hh.Members) oldest = Math.Max(oldest, pop.Citizens[m].AgeOn(_today));
                 if (oldest < B.DepartureMinAge) continue;
@@ -668,12 +685,27 @@ namespace Orbis.Core.Population
             }
         }
 
+        private static double HouseholdHappiness(CityPopulation pop, Household hh)
+        {
+            double sum = 0;
+            int n = 0;
+            foreach (var m in hh.Members)
+                if (pop.Citizens[m].Happiness > 0)
+                {
+                    sum += pop.Citizens[m].Happiness;
+                    n++;
+                }
+            return n > 0 ? sum / n : pop.AverageHappiness;
+        }
+
         /// <summary>Nuove famiglie che arrivano (quota annua ISTAT): casa libera, lavoro se c'è, risparmi portati da fuori.</summary>
         private void Arrivals(CityPopulation pop, DateTime date, int day, Rng rng, int[] employees, LifeDay r)
         {
             var d = _in.Data;
             if (d.Total <= 0 || pop.Dwellings.Count == 0) return;
             double persons = (d.MovedIn + d.Immigrated) / 365.0;
+            // con le reazioni realistiche una città felice attira più famiglie
+            if (R != null && Reactions >= ReactionLevel.Realistic && pop.AverageHappiness > 0) persons *= R.Arrivals(pop.AverageHappiness);
             double households = persons / 2.0;
             int n = (int)households + (rng.Chance(households - (int)households) ? 1 : 0);
             if (n == 0) return;

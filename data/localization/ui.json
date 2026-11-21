@@ -902,6 +902,62 @@
       "it": "{0} abitanti vivono ora a {1}: famiglie, case, lavori e redditi veri"
     },
     {
+      "key": "reaction.Comment",
+      "it": "{1}: un commento dei cittadini"
+    },
+    {
+      "key": "reaction.Petition",
+      "it": "Petizione dei cittadini per {1}: {0} firme"
+    },
+    {
+      "key": "reaction.PetitionAccepted",
+      "it": "Petizione per {1} chiusa: i cittadini sono soddisfatti"
+    },
+    {
+      "key": "reaction.PetitionIgnored",
+      "it": "Petizione per {1} ignorata: {0} firme deluse"
+    },
+    {
+      "key": "reaction.Protest",
+      "it": "Protesta in piazza per {1}: {0} persone"
+    },
+    {
+      "key": "reaction.Strike",
+      "it": "Sciopero per {1}: domani le attività lavorano meno"
+    },
+    {
+      "key": "demand.Needs",
+      "it": "più tempo libero"
+    },
+    {
+      "key": "demand.Home",
+      "it": "case e affitti più accessibili"
+    },
+    {
+      "key": "demand.Work",
+      "it": "più lavoro"
+    },
+    {
+      "key": "demand.Money",
+      "it": "più aiuti alle famiglie"
+    },
+    {
+      "key": "demand.Services",
+      "it": "più servizi vicino a casa"
+    },
+    {
+      "key": "demand.Safety",
+      "it": "più sicurezza"
+    },
+    {
+      "key": "demand.Commute",
+      "it": "meno traffico"
+    },
+    {
+      "key": "demand.Taxes",
+      "it": "tasse più basse"
+    },
+    {
       "key": "mission.reward",
       "it": "Premio: {0} monete"
     },

@@ -142,9 +142,11 @@ namespace Orbis.Tests.PlayMode
             Assert.That(game.Do(open), Is.EqualTo(Orbis.Core.Game.BuildResult.Ok));
             Assert.That(game.Transit.Lines.Count(l => l.CityId == open.ResultId), Is.EqualTo(2));
 
-            // un giorno di gioco: stipendi e tasse dei cittadini nel registro, saldo come prima
+            // un giorno di gioco con le reazioni realistiche: stipendi e tasse dei cittadini nel registro
+            game.State.Config.CitizenReactions = ReactionLevel.Realistic;
             long before = game.State.Cash;
-            game.Session.Advance(System.TimeSpan.FromDays(1));
+            var dayEvents = game.Session.Advance(System.TimeSpan.FromDays(1));
+            var reactions = dayEvents.Where(e => e.Kind == Orbis.Core.Game.SimEventKind.Reaction).ToList();
             const int residential = (int)Orbis.Core.Game.LedgerCategory.ResidentialTax;
             var day = game.State.Ledger.LastOrDefault(d => d.Amounts[residential] != 0);
             Assert.That(day, Is.Not.Null, "nessun giorno con le tasse dei cittadini");
@@ -168,6 +170,15 @@ namespace Orbis.Tests.PlayMode
                       string.Join(", ", System.Enum.GetValues(typeof(HappinessFactor)).Cast<HappinessFactor>()
                           .Where(f => f != HappinessFactor.Count).Select(f => $"{f} {pop.HappinessFactors[(int)f]:0}")) +
                       "; copertura: " + string.Join(", ", new[] { ServiceKind.Police, ServiceKind.Fire, ServiceKind.Health, ServiceKind.Education, ServiceKind.Culture }.Select(Cover)));
+
+            // reazioni del giorno: commenti nelle notizie, gradimento; petizioni e proteste solo se la città è scontenta
+            Assert.That(pop.Feed.Count(r => r.Kind == ReactionKind.Comment), Is.GreaterThan(0), "nessun commento dei cittadini");
+            Assert.That(pop.Approval, Is.InRange(1f, 100f));
+            Debug.Log($"[Test] reazioni: gradimento {pop.Approval:0}%, {pop.Feed.Count} nel feed, {reactions.Count} avvisi " +
+                      $"({string.Join(", ", reactions.Select(e => e.Key + " " + e.Amount))}), petizioni aperte: " +
+                      string.Join(", ", pop.Petitions.Select(p => $"{p.Factor} {p.Signatures} firme")) +
+                      "; preoccupazioni: " + string.Join(", ", Enumerable.Range(1, (int)HappinessFactor.Count - 1)
+                          .Select(f => $"{(HappinessFactor)f} {Enumerable.Range(0, pop.Count).Count(i => pop.Citizens[i].Alive && pop.Citizens[i].Worry == f)}")));
 
             const int transitCosts = (int)Orbis.Core.Game.LedgerCategory.TransitCosts;
             Assert.That(game.State.Ledger.Any(d => d.Amounts[transitCosts] < 0), "il servizio della linea del comune non si è pagato");

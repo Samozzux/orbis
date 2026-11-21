@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Orbis.Core.Game
 {
-    public enum SimEventKind { ConstructionDone, LevelUp, MissionDone, DayClosed }
+    public enum SimEventKind { ConstructionDone, LevelUp, MissionDone, DayClosed, Reaction }
 
     /// <summary>Evento della simulazione da mostrare al giocatore (avvisi, riepiloghi).</summary>
     public struct SimEvent
@@ -13,6 +13,8 @@ namespace Orbis.Core.Game
         public int ObjectId;
         public string Key;
         public long Amount;
+        /// <summary>Reazione dei cittadini (petizione, protesta, sciopero) per <see cref="SimEventKind.Reaction"/>.</summary>
+        public Orbis.Core.Population.Reaction Reaction;
     }
 
     /// <summary>
@@ -207,10 +209,16 @@ namespace Orbis.Core.Game
                     // prima la giornata dei cittadini (stipendi, spese, tasse, nascite…), poi i conti del comune
                     Orbis.Core.Population.LifeDay life = null;
                     if (ctx.Life?.Services != null) ctx.Life.Services.Extra = ServiceSources.FromCatalog(ctx, ctx.Life.Services.Balance);
+                    if (ctx.Life != null) ctx.Life.Reactions = s.Config.CitizenReactions;
                     if (ctx.Population != null && ctx.Life != null)
                         life = ctx.Life.Day(ctx.Population, closing.AddDays(-1), ctx.TaxRates, s.Config.LifeCycle, (flow, amount) => s.Transact(Ledger(flow), amount));
                     var f = Economy.CloseDay(ctx, life);
                     s.Now = closing;
+                    // petizioni, proteste e scioperi diventano avvisi (i commenti restano nelle notizie)
+                    if (life != null)
+                        foreach (var r in life.Reactions)
+                            if (r.Kind != Orbis.Core.Population.ReactionKind.Comment)
+                                events.Add(new SimEvent { Kind = SimEventKind.Reaction, Time = closing, Key = r.Kind + "." + r.Factor, Amount = r.Count, Reaction = r });
                     events.Add(new SimEvent { Kind = SimEventKind.DayClosed, Time = closing, Amount = s.Stats.LastDayNet });
                     Midnight?.Invoke(ctx);
                 }

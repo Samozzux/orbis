@@ -1882,6 +1882,62 @@ MonoBehaviour:
     m_Localized: Servizio delle linee del comune
     m_Metadata:
       m_Items: []
+  - m_Id: 2161496380399616
+    m_Localized: '{1}: un commento dei cittadini'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565440
+    m_Localized: 'Petizione dei cittadini per {1}: {0} firme'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565441
+    m_Localized: 'Petizione per {1} chiusa: i cittadini sono soddisfatti'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565442
+    m_Localized: 'Petizione per {1} ignorata: {0} firme deluse'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565443
+    m_Localized: 'Protesta in piazza per {1}: {0} persone'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565444
+    m_Localized: "Sciopero per {1}: domani le attivit\xE0 lavorano meno"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565445
+    m_Localized: "pi\xF9 tempo libero"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565446
+    m_Localized: "case e affitti pi\xF9 accessibili"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565447
+    m_Localized: "pi\xF9 lavoro"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565448
+    m_Localized: "pi\xF9 aiuti alle famiglie"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565449
+    m_Localized: "pi\xF9 servizi vicino a casa"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565450
+    m_Localized: "pi\xF9 sicurezza"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565451
+    m_Localized: meno traffico
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565452
+    m_Localized: "tasse pi\xF9 basse"
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

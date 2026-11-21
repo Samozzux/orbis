@@ -1879,6 +1879,62 @@ MonoBehaviour:
     m_Key: ledger.TransitCosts
     m_Metadata:
       m_Items: []
+  - m_Id: 2161496380399616
+    m_Key: reaction.Comment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565440
+    m_Key: reaction.Petition
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565441
+    m_Key: reaction.PetitionAccepted
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565442
+    m_Key: reaction.PetitionIgnored
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565443
+    m_Key: reaction.Protest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565444
+    m_Key: reaction.Strike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565445
+    m_Key: demand.Needs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565446
+    m_Key: demand.Home
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565447
+    m_Key: demand.Work
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565448
+    m_Key: demand.Money
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565449
+    m_Key: demand.Services
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565450
+    m_Key: demand.Safety
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565451
+    m_Key: demand.Commute
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2161496405565452
+    m_Key: demand.Taxes
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

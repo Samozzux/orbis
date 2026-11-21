@@ -338,6 +338,37 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - felicità media 76,5. Fattori: bisogni 69, casa 74, lavoro 70, soldi 82, servizi 90, sicurezza 69, tragitto 86, tasse 75;
     - nessun cittadino sotto 40: la distribuzione è stretta. Va tarata con le reazioni (5b), che ne useranno gli estremi.
   - **Da fare dopo.** Capacità dei servizi (posti letto, aule) e un livello di spesa per servizio deciso dal sindaco; inquinamento e verde vicino a casa (con l'ambiente); eventi e squadra del cuore (5c).
+- **Reazioni dei cittadini, parte 5b** (21/11, branch `m4-reazioni`), in `Orbis.Core.Population` (`CityReactions`), con i parametri nella sezione `reactions` di `data/balance/services.json`.
+  - **Preoccupazione.** Ogni giorno il fattore peggiore di un cittadino (tranne l'umore del giorno) diventa la sua preoccupazione. Se va sotto 60 pesa di più, così i problemi seri si sentono e la felicità non è più tutta uguale.
+  - **Livelli** (impostazione "Reazioni" della partita):
+    - disattivate: la felicità è solo un indicatore;
+    - leggere (predefinito): ogni giorno 6 commenti di cittadini a caso, sul loro problema o su ciò che va bene. La produttività delle attività segue la felicità media (±0,2% per punto rispetto a 74, la felicità di Chieti com'è oggi);
+    - realistiche: in più petizioni, proteste in piazza, scioperi, partenze e arrivi.
+  - **Petizioni.** Si aprono quando almeno il 3% degli adulti è scontento (sotto 55) e preoccupato dallo stesso problema.
+    - Le firme crescono ogni giorno.
+    - Si chiudono soddisfatte se il problema rientra (sotto l'1,5%).
+    - Dopo 30 giorni senza risposta sono ignorate; con molte firme portano a una protesta.
+  - **Proteste in piazza.** Scattano con la città scontenta (media sotto 55) o dopo una petizione ignorata, al massimo una a settimana. Si tengono al municipio, se è tra i luoghi; partecipa il 10% degli scontenti.
+  - **Scioperi.** Dopo 3 giorni di fila con il lavoro che preoccupa (sotto 45), il giorno dopo le attività perdono il 30% degli incassi.
+  - **Partenze e arrivi.** Con la felicità di oggi (74) partenze e arrivi restano quelli ISTAT. Le famiglie scontente partono più spesso, fino a 4 volte; quelle contente meno, fino a 0,4. Una città felice attira più famiglie (da 0,5 a 2 volte).
+  - **Gradimento** del sindaco: la quota di adulti non scontenti.
+  - **Notizie e avvisi.** Le ultime 60 reazioni restano nel feed per le notizie dell'interfaccia (blocco 7). Petizioni, proteste e scioperi arrivano subito come avvisi, per esempio "Petizione dei cittadini per tasse più basse: 1.250 firme".
+  - **Salvataggio.** Popolazione alla versione 7: preoccupazione di ognuno, petizioni aperte, feed, gradimento, proteste e scioperi.
+  - **Test.** 7 nuovi (222 in tutto):
+    - problema peggiore e preoccupazione;
+    - livelli;
+    - petizione aperta, cresciuta e chiusa quando il sindaco abbassa le tasse;
+    - petizione ignorata e proteste (una a settimana);
+    - sciopero;
+    - effetti su produttività, partenze (in un mese di tasse all'8% partono almeno il 50% di famiglie in più) e arrivi;
+    - salvataggio.
+  - **Su Chieti vera** (Unity in locale, un giorno con le reazioni realistiche):
+    - felicità media 74,2, con 7 cittadini sotto 40;
+    - gradimento 96%; 6 commenti nel feed;
+    - nessuna petizione: nessun problema supera il 3% di adulti scontenti, la città di partenza è tranquilla;
+    - preoccupazioni più diffuse: sicurezza (11.250 persone, lontane dalle 2 sedi dei pompieri), lavoro (4.448), casa (1.210), soldi (735), servizi (608).
+
+    Una caserma dei pompieri nella zona sud o tasse più alte le faranno cambiare.
 
 **M3 — Account e cloud**: chiusa il 19/11/2026 su scelta di Samuele **senza la prova sui dispositivi** ("Chiudi M3 senza prova"). Tag `v0.3.0` con IPA e APK; tutte le build di `main` verdi. Restano da provare sui dispositivi Face ID, impronta, passkey e il giro iPhone → Mac (vedi "Da verificare sui dispositivi" e "Cosa provare (M3)"). Iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 

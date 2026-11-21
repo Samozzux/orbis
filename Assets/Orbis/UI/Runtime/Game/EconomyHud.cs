@@ -174,6 +174,10 @@ namespace Orbis.UI.Game
                     Toast(Loc.Format("game.event.level", e.Amount));
                     _services.Haptics.Play(HapticKind.Success);
                     break;
+                case SimEventKind.Reaction when e.Reaction != null:
+                    // petizioni, proteste e scioperi: "Petizione per tasse più basse: 1.250 firme"
+                    Toast(Loc.Format("reaction." + e.Reaction.Kind, Fmt.Money(e.Amount), Loc.Get("demand." + e.Reaction.Factor)));
+                    break;
             }
         }
 
