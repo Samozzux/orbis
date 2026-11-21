@@ -223,6 +223,13 @@ namespace Orbis.Gameplay
             Session.Context.CityWorld = new CityTilesAccess(tiles, Session.Context.World);
             // sedi vere dei servizi (questure, caserme, pompieri, ospedali, scuole…) in tutto il comune
             if (Content.Life?.Services != null) _serviceSources = Orbis.Core.Population.CityServices.FromTiles(tiles, Content.Life.Services);
+            // luoghi degli eventi (la cattedrale per San Giustino…) tra i monumenti del comune; poi si riprepara la giornata
+            if (Content.Life?.Calendar != null)
+            {
+                Content.Life.Calendar.LocatePlaces(tiles);
+                var pop = Session.Population;
+                if (pop != null && Session.Context.Life?.Events != null) Session.Context.Life.Events.Plan(pop, State.Now.Date);
+            }
             WireCity();
         }
 

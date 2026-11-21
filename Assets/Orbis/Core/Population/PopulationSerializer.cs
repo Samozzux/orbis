@@ -12,7 +12,7 @@ namespace Orbis.Core.Population
     /// </summary>
     public static class PopulationSerializer
     {
-        public const int Version = 7; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico; 5: biglietti delle linee del comune; 6: felicità; 7: reazioni
+        public const int Version = 8; // 2: stato dei cittadini, conti delle attività, contatori della vita; 3: giornata, frigo, scorte; 4: auto e trasporto pubblico; 5: biglietti delle linee del comune; 6: felicità; 7: reazioni; 8: eventi
         private const uint Magic = 0x504F5043; // "CPOP"
 
         public static void Write(BinaryWriter w, CityPopulation p)
@@ -45,6 +45,12 @@ namespace Orbis.Core.Population
             foreach (var x in p.Petitions) x.Write(w);
             w.Write(p.Feed.Count);
             foreach (var x in p.Feed) x.Write(w);
+            w.Write(p.TodayDay);
+            w.Write(p.EventBonus);
+            w.Write(p.Today.Count);
+            foreach (var x in p.Today) x.Write(w);
+            w.Write(p.News.Count);
+            foreach (var x in p.News) x.Write(w);
             Strings(w, p.TraitKeys);
             Strings(w, p.FirstNames);
             Strings(w, p.Surnames);
@@ -174,6 +180,15 @@ namespace Orbis.Core.Population
                 for (int k = 0; k < petitions; k++) p.Petitions.Add(Petition.Read(r));
                 int feed = Count(r);
                 for (int k = 0; k < feed; k++) p.Feed.Add(Reaction.Read(r));
+            }
+            if (version >= 8)
+            {
+                p.TodayDay = r.ReadInt32();
+                p.EventBonus = r.ReadSingle();
+                int today = Count(r);
+                for (int k = 0; k < today; k++) p.Today.Add(CityEvent.Read(r));
+                int news = Count(r);
+                for (int k = 0; k < news; k++) p.News.Add(CityEvent.Read(r));
             }
             p.TraitKeys = ReadStrings(r).ToArray();
             p.FirstNames.AddRange(ReadStrings(r));

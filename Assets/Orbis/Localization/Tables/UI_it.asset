@@ -1938,6 +1938,30 @@ MonoBehaviour:
     m_Localized: "tasse pi\xF9 basse"
     m_Metadata:
       m_Items: []
+  - m_Id: 2164182051971072
+    m_Localized: "Oggi in citt\xE0: {0}"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748288
+    m_Localized: 'Inaugurazione: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748289
+    m_Localized: Incidente stradale in {0}
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748290
+    m_Localized: Sagra d'estate in piazza
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748291
+    m_Localized: Incidente stradale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748292
+    m_Localized: Inaugurazione
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

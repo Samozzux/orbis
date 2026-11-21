@@ -958,6 +958,30 @@
       "it": "tasse più basse"
     },
     {
+      "key": "event.today",
+      "it": "Oggi in città: {0}"
+    },
+    {
+      "key": "event.inauguration",
+      "it": "Inaugurazione: {0}"
+    },
+    {
+      "key": "event.accident",
+      "it": "Incidente stradale in {0}"
+    },
+    {
+      "key": "event.name.sagra",
+      "it": "Sagra d'estate in piazza"
+    },
+    {
+      "key": "event.name.incidente",
+      "it": "Incidente stradale"
+    },
+    {
+      "key": "event.name.inaugurazione",
+      "it": "Inaugurazione"
+    },
+    {
       "key": "mission.reward",
       "it": "Premio: {0} monete"
     },

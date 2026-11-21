@@ -1935,6 +1935,30 @@ MonoBehaviour:
     m_Key: demand.Taxes
     m_Metadata:
       m_Items: []
+  - m_Id: 2164182051971072
+    m_Key: event.today
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748288
+    m_Key: event.inauguration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748289
+    m_Key: event.accident
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748290
+    m_Key: event.name.sagra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748291
+    m_Key: event.name.incidente
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2164182068748292
+    m_Key: event.name.inaugurazione
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

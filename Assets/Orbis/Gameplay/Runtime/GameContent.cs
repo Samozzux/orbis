@@ -53,6 +53,10 @@ namespace Orbis.Gameplay
             var balance = Resources.Load<TextAsset>("OrbisContent/population_balance");
             var services = Resources.Load<TextAsset>("OrbisContent/services_balance");
             if (data == null || names == null || balance == null) return null;
+            // calendario: festività nazionali e eventi locali (events_*.json)
+            var calendars = new System.Collections.Generic.List<string>();
+            foreach (var t in Resources.LoadAll<TextAsset>("OrbisContent"))
+                if (t.name.StartsWith("events_")) calendars.Add(t.text);
             try
             {
                 return new LifeInputs
@@ -62,6 +66,7 @@ namespace Orbis.Gameplay
                     Balance = PopulationBalance.Parse(balance.text),
                     // servizi e felicità (M4 blocco 5): senza il file la felicità resta quella stimata
                     Services = services != null ? ServicesBalance.Parse(services.text) : null,
+                    Calendar = calendars.Count > 0 ? EventCalendar.Parse(calendars.ToArray()) : null,
                 };
             }
             catch (Exception e)

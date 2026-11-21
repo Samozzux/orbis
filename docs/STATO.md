@@ -369,6 +369,41 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - preoccupazioni più diffuse: sicurezza (11.250 persone, lontane dalle 2 sedi dei pompieri), lavoro (4.448), casa (1.210), soldi (735), servizi (608).
 
     Una caserma dei pompieri nella zona sud o tasse più alte le faranno cambiare.
+- **Eventi, parte 5c** (21/11, branch `m4-eventi`), in `Orbis.Core.Population` (`CityEvents`), con i parametri nella sezione `events` di `data/balance/services.json`.
+  - **Calendario.** Dai file `data/events/*.json`:
+    - festività nazionali, con la Pasqua calcolata;
+    - processione del Venerdì Santo e festa di San Giustino.
+
+    I luoghi degli eventi sono i monumenti trovati nei tile del comune: la cattedrale di San Giustino.
+  - **Festivi.** Scuole e uffici chiusi, negozi chiusi come la domenica.
+  - **Raduni.** Durante un evento con un luogo (processione, patrono, sagra), il 30% di chi è libero e ha almeno 12 anni ci va a ogni scelta, e resta fino alla fine o per due ore e mezza.
+    - Si ritrovano nel locale più vicino al luogo: afflusso, incassi e traffico verso il centro.
+    - Le persone presenti si contano.
+  - **Eventi generati:**
+    - sagre d'estate (giugno–settembre) il sabato in piazza San Giustino, con probabilità 30%;
+    - incidenti stradali, circa 120 l'anno, in una via vera della città;
+    - inaugurazioni quando il sindaco finisce un edificio pubblico (servizi, sport, cultura, trasporti, parchi).
+  - **Felicità.** Ogni festa lascia un po' di felicità in tutta la città (patrono 5, sagra 3, processione 2, festivo 1, inaugurazione 2). Si dimezza ogni giorno.
+  - **Notizie e avvisi.**
+    - Gli ultimi 60 eventi, con presenze e dettagli, restano per le notizie dell'interfaccia (blocco 7).
+    - Al mattino arriva l'avviso "Oggi in città: Festa di San Giustino, patrono di Chieti"; per le inaugurazioni "Inaugurazione: Biblioteca".
+    - I nomi degli eventi generati vengono dalle tabelle Localization.
+  - **Salvataggio.** Popolazione alla versione 8: eventi di oggi, notizie, felicità delle feste.
+  - **Test.** 7 nuovi (229 in tutto):
+    - Pasqua;
+    - calendario vero;
+    - luoghi dai monumenti e nomi delle vie;
+    - San Giustino festivo con il raduno (nessuno a scuola o al lavoro, più di mille alla festa) e felicità che si consuma;
+    - giorno feriale normale;
+    - sagre, incidenti e inaugurazioni;
+    - salvataggio e giornata del Venerdì Santo.
+  - **Su Chieti vera** (Unity in locale):
+    - la cattedrale di San Giustino è trovata tra i monumenti, e il raduno della festa del patrono si tiene lì;
+    - il giorno di prova (21 novembre) non ha eventi in calendario né incidenti, quindi le notizie sono vuote.
+  - **Limiti.**
+    - Il calendario carica tutti i file `events_*`: con più comuni andrà filtrato per regione.
+    - Il mercato settimanale di Chieti manca: giorno e luogo sono da verificare prima di inserirlo.
+    - Gli incidenti non rallentano ancora il traffico.
 
 **M3 — Account e cloud**: chiusa il 19/11/2026 su scelta di Samuele **senza la prova sui dispositivi** ("Chiudi M3 senza prova"). Tag `v0.3.0` con IPA e APK; tutte le build di `main` verdi. Restano da provare sui dispositivi Face ID, impronta, passkey e il giro iPhone → Mac (vedi "Da verificare sui dispositivi" e "Cosa provare (M3)"). Iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 

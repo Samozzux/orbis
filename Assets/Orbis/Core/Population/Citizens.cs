@@ -234,6 +234,15 @@ namespace Orbis.Core.Population
         public byte ProtestPending;
         /// <summary>Giorni di fila con il lavoro che preoccupa; giorno dello sciopero (0 = nessuno).</summary>
         public int LowWorkDays, StrikeDay;
+
+        // eventi (blocco 5c)
+        /// <summary>Eventi del giorno <see cref="TodayDay"/> (calendario e generati), con i raduni.</summary>
+        public readonly List<CityEvent> Today = new List<CityEvent>();
+        public int TodayDay;
+        /// <summary>Ultimi eventi per le notizie (feste, incidenti, inaugurazioni).</summary>
+        public readonly List<CityEvent> News = new List<CityEvent>();
+        /// <summary>Felicità lasciata dalle ultime feste (si consuma giorno dopo giorno).</summary>
+        public float EventBonus;
         /// <summary>Ultimo giorno simulato (giorni dall'1/1/1900), per non ripetere una giornata.</summary>
         public int LastDay;
 

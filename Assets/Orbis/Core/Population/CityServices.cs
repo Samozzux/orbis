@@ -39,6 +39,8 @@ namespace Orbis.Core.Population
         public double WorstBelow = 60, WorstPenalty = 0.35;
         /// <summary>Reazioni dei cittadini (blocco 5b).</summary>
         public ReactionSpec Reactions = new ReactionSpec();
+        /// <summary>Eventi (blocco 5c).</summary>
+        public EventsSpec Events = new EventsSpec();
 
         public ServicesBalance()
         {
@@ -84,6 +86,7 @@ namespace Orbis.Core.Population
             b.WorstBelow = h["worstBelow"].AsDouble(b.WorstBelow);
             b.WorstPenalty = h["worstPenalty"].AsDouble(b.WorstPenalty);
             if (!r["reactions"].IsNull) b.Reactions = ReactionSpec.Parse(r["reactions"]);
+            if (!r["events"].IsNull) b.Events = EventsSpec.Parse(r["events"]);
             return b;
         }
 
@@ -347,6 +350,8 @@ namespace Orbis.Core.Population
                     c.Worry = (byte)worst;
                 }
                 else c.Worry = (byte)HappinessFactor.Count;
+                // le feste degli ultimi giorni
+                target += pop.EventBonus;
                 if (target < 1) target = 1;
                 double now = first || c.Happiness == 0 ? target : c.Happiness + (target - c.Happiness) * b.DailyChange;
                 c.Happiness = (byte)Math.Max(1, Math.Min(100, Math.Round(now)));

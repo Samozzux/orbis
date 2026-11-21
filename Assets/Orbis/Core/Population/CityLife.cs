@@ -24,6 +24,10 @@ namespace Orbis.Core.Population
         public HappinessReport Happiness;
         /// <summary>Reazioni nuove della giornata (commenti, petizioni, proteste, scioperi).</summary>
         public List<Reaction> Reactions = new List<Reaction>();
+        /// <summary>Eventi della giornata appena finita (con le persone presenti) e incidenti.</summary>
+        public List<CityEvent> Events = new List<CityEvent>();
+        /// <summary>Eventi preparati per il giorno dopo.</summary>
+        public List<CityEvent> Tomorrow = new List<CityEvent>();
         public int Births, Deaths, Arrived, Left, Hired, Closed;
         public bool Skipped;
     }
@@ -36,6 +40,8 @@ namespace Orbis.Core.Population
         public PopulationBalance Balance;
         /// <summary>Servizi e felicità (M4 blocco 5); null = la felicità non si calcola.</summary>
         public ServicesBalance Services;
+        /// <summary>Calendario degli eventi (data/events); null = niente festivi né feste.</summary>
+        public EventCalendar Calendar;
     }
 
     /// <summary>
@@ -56,7 +62,11 @@ namespace Orbis.Core.Population
         {
             _in = inputs;
             if (inputs.Services != null) Services = new CityServices(inputs.Services);
+            if (inputs.Services != null && inputs.Calendar != null) Events = new CityEvents(inputs.Calendar, inputs.Services.Events);
         }
+
+        /// <summary>Eventi della città (M4 blocco 5c); null se mancano calendario o parametri.</summary>
+        public CityEvents Events;
 
         /// <summary>Copertura dei servizi per casa (M4 blocco 5); null se mancano i parametri.</summary>
         public CityServices Services;
@@ -137,13 +147,15 @@ namespace Orbis.Core.Population
                 Departures(pop, rng, r);
                 Arrivals(pop, date, day, rng, employees, r);
             }
-            // a fine giornata: servizi vicino a casa e felicità di ognuno
+            // a fine giornata: eventi del giorno nelle notizie, servizi vicino a casa, felicità di ognuno, reazioni
+            if (Events != null) r.Events = Events.Close(pop, date, rng);
             if (Services != null)
             {
                 Services.Update(pop);
                 r.Happiness = CityHappiness.Update(pop, Services, taxes, date);
                 r.Reactions = CityReactions.Day(pop, day, Reactions, R, rng, date);
             }
+            if (Events != null) r.Tomorrow = Events.Plan(pop, date.Date.AddDays(1));
             return r;
         }
 

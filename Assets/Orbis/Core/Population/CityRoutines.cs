@@ -46,6 +46,7 @@ namespace Orbis.Core.Population
         private int _minute;
         private const int OutsideFareCents = 250;
         private TravelMode _lastMode;
+        private readonly List<CityEvent> _active = new List<CityEvent>();
         private int _lastLine = -1;
 
         /// <summary>Rete stradale con il traffico; null = tempi in linea d'aria.</summary>
@@ -76,6 +77,21 @@ namespace Orbis.Core.Population
             int hour = time.Hour;
             bool weekday = time.DayOfWeek != DayOfWeek.Saturday && time.DayOfWeek != DayOfWeek.Sunday;
             bool sunday = time.DayOfWeek == DayOfWeek.Sunday;
+            // festivi del calendario: come la domenica (scuole, uffici e negozi chiusi)
+            int day = CityLife.DayIndex(time);
+            if (CityEvents.Holiday(pop, day))
+            {
+                weekday = false;
+                sunday = true;
+            }
+            // raduni in corso (feste, processioni, sagre) in un luogo della città
+            _active.Clear();
+            if (pop.TodayDay == day)
+            {
+                int minuteOfDay = time.Hour * 60 + time.Minute;
+                foreach (var e in pop.Today)
+                    if (e.Place >= 0 && minuteOfDay >= e.Start && minuteOfDay < e.End) _active.Add(e);
+            }
 
             // all'alba i negozi di alimentari si riforniscono
             if (hour == 6 && time.Minute < R.StepMinutes)
@@ -260,7 +276,24 @@ namespace Orbis.Core.Population
                 }
             }
 
-            // 6) tempo libero: svago se servono divertimento o compagnia
+            // 6) un evento in corso in città: una parte di chi è libero ci va e resta fino alla fine (o per un po')
+            if (_active.Count > 0 && age >= 12 && hour >= 8)
+            {
+                var spec = _in.Services?.Events;
+                var ev = _active[rng.Next(_active.Count)];
+                if (spec != null && rng.Chance(spec.AttendShare))
+                {
+                    // fine dell'evento nella stessa giornata, al massimo qualche ora di permanenza
+                    int end = Math.Min(Minute(time.Date) + ev.End, minute + spec.StayMinutes);
+                    GoTo(pop, ref c, LocationKind.Leisure, ev.Place, CitizenActivity.Leisure, minute, end);
+                    ev.Attendance++;
+                    c.Fun = Add(c.Fun, 30);
+                    c.Social = Add(c.Social, 30);
+                    return;
+                }
+            }
+
+            // 7) tempo libero: svago se servono divertimento o compagnia
             if (hour >= 10 && hour < 23 && (c.Fun < 55 || c.Social < 50) && _leisure.Count > 0 && rng.Chance(0.5))
             {
                 int place = PickNear(pop, c, _leisure, rng, food: false);
@@ -271,7 +304,7 @@ namespace Orbis.Core.Population
                 }
             }
 
-            // 7) altrimenti a casa per un po'
+            // 8) altrimenti a casa per un po'
             GoTo(pop, ref c, LocationKind.Home, 0, CitizenActivity.Home, minute, minute + 45 + rng.Next(45));
         }
 
