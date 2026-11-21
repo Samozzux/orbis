@@ -79,6 +79,10 @@ namespace Orbis.Core.Population
         // bisogni 0–100 (docs/03 §2)
         public byte Hunger, Energy, Hygiene, Fun, Social, Comfort, Health;
         public byte Mood;
+        /// <summary>Felicità 0–100 (docs/03 §6), aggiornata ogni giorno; 0 = non ancora calcolata.</summary>
+        public byte Happiness;
+        /// <summary>Minuti dell'ultimo viaggio verso il lavoro o la scuola (0 = nessuno).</summary>
+        public byte Commute;
         public CitizenFlags Flags;
 
         // giornata (livello L1): attività, luogo e viaggio; i minuti si contano dall'1/1/1900
@@ -210,6 +214,12 @@ namespace Orbis.Core.Population
         public long LastWelfare;
         /// <summary>Biglietti delle linee del comune incassati nell'ultima giornata (euro).</summary>
         public long LastCityFares;
+        /// <summary>Felicità media dei cittadini all'ultimo calcolo (0 = mai calcolata).</summary>
+        public float AverageHappiness;
+        /// <summary>Cittadini scontenti all'ultimo calcolo.</summary>
+        public int UnhappyCount;
+        /// <summary>Media di ciascun fattore della felicità (<see cref="HappinessFactor"/>).</summary>
+        public readonly float[] HappinessFactors = new float[(int)HappinessFactor.Count];
         /// <summary>Ultimo giorno simulato (giorni dall'1/1/1900), per non ripetere una giornata.</summary>
         public int LastDay;
 

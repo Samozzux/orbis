@@ -20,6 +20,8 @@ namespace Orbis.Core.Population
         public long ResidentialTax, CommercialTax, IndustrialTax, Welfare;
         /// <summary>Biglietti delle linee del comune, entrati nella sua cassa.</summary>
         public long TransitFares;
+        /// <summary>Felicità della città dopo la giornata (null se non calcolata).</summary>
+        public HappinessReport Happiness;
         public int Births, Deaths, Arrived, Left, Hired, Closed;
         public bool Skipped;
     }
@@ -30,6 +32,8 @@ namespace Orbis.Core.Population
         public PopulationData Data;
         public NameData Names;
         public PopulationBalance Balance;
+        /// <summary>Servizi e felicità (M4 blocco 5); null = la felicità non si calcola.</summary>
+        public ServicesBalance Services;
     }
 
     /// <summary>
@@ -46,7 +50,14 @@ namespace Orbis.Core.Population
         private long _avgWage = 22000;
         private PopulationBalance B => _in.Balance;
 
-        public CityLife(LifeInputs inputs) => _in = inputs;
+        public CityLife(LifeInputs inputs)
+        {
+            _in = inputs;
+            if (inputs.Services != null) Services = new CityServices(inputs.Services);
+        }
+
+        /// <summary>Copertura dei servizi per casa (M4 blocco 5); null se mancano i parametri.</summary>
+        public CityServices Services;
 
         public static int DayIndex(DateTime d) => (int)(d.Date - Citizen.Epoch.Date).TotalDays;
 
@@ -118,6 +129,12 @@ namespace Orbis.Core.Population
                 Birthdays(pop, date, rng);
                 Departures(pop, rng, r);
                 Arrivals(pop, date, day, rng, employees, r);
+            }
+            // a fine giornata: servizi vicino a casa e felicità di ognuno
+            if (Services != null)
+            {
+                Services.Update(pop);
+                r.Happiness = CityHappiness.Update(pop, Services, taxes, date);
             }
             return r;
         }

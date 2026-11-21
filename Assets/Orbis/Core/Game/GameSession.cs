@@ -127,14 +127,24 @@ namespace Orbis.Core.Game
         /// <summary>Collega i cittadini alla partita (nuova partita o salvataggio di prima di M4).</summary>
         /// <param name="keepBalance">la città vera prende il posto di quella stimata con lo stesso saldo giornaliero
         /// (si aggiusta una volta il costo dei servizi); false quando si ricarica un salvataggio</param>
-        public void AttachPopulation(CityPopulation population, LifeInputs life, bool keepBalance = false)
+        /// <param name="serviceSources">sedi vere dei servizi lette dai tile del comune (null = posti di lavoro e scuole)</param>
+        public void AttachPopulation(CityPopulation population, LifeInputs life, bool keepBalance = false,
+            IReadOnlyList<ServiceSource> serviceSources = null)
         {
             double before = keepBalance ? Economy.Compute(Context).Net : 0;
             Context.Population = population;
             Context.Life = population != null && life != null ? new CityLife(life) : null;
             Context.Routines = population != null && life != null ? new CityRoutines(life) : null;
+            if (serviceSources != null && Context.Life?.Services != null) Context.Life.Services.Fixed.AddRange(serviceSources);
             if (keepBalance && population != null) State.ServicesAdjustPerDay += Economy.Compute(Context).Net - before;
             if (population != null && population.LastDay == 0) population.LastDay = CityLife.DayIndex(State.Now) - 1;
+            // prima felicità subito, senza aspettare la mezzanotte (cittadini appena generati o salvataggi di prima)
+            if (population != null && population.AverageHappiness <= 0 && Context.Life?.Services != null)
+            {
+                Context.Life.Services.Extra = ServiceSources.FromCatalog(Context, Context.Life.Services.Balance);
+                Context.Life.Services.Update(population);
+                CityHappiness.Update(population, Context.Life.Services, Context.TaxRates, State.Now);
+            }
             PopulationSnapshots.Clear();
             TakePopulationSnapshot();
         }

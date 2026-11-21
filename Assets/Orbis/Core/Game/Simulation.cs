@@ -106,6 +106,9 @@ namespace Orbis.Core.Game
                                + (s.CommercialTax - b.CommercialTax.Default) * b.HappinessPerTaxPoint * 0.5f
                                + (s.IndustrialTax - b.IndustrialTax.Default) * b.HappinessPerTaxPoint * 0.3f;
             f.Happiness = Math.Max(0f, Math.Min(100f, b.HappinessBase - taxPenalty + (float)happiness * 0.5f));
+            // con i cittadini veri (M4) la felicità è la loro media (tasse comprese), più gli abbellimenti del sindaco
+            if (pop != null && pop.AverageHappiness > 0)
+                f.Happiness = Math.Max(0f, Math.Min(100f, pop.AverageHappiness + (float)happiness * 0.5f));
             return f;
         }
 
@@ -203,6 +206,7 @@ namespace Orbis.Core.Game
                     s.Now = closing.AddTicks(-1);
                     // prima la giornata dei cittadini (stipendi, spese, tasse, nascite…), poi i conti del comune
                     Orbis.Core.Population.LifeDay life = null;
+                    if (ctx.Life?.Services != null) ctx.Life.Services.Extra = ServiceSources.FromCatalog(ctx, ctx.Life.Services.Balance);
                     if (ctx.Population != null && ctx.Life != null)
                         life = ctx.Life.Day(ctx.Population, closing.AddDays(-1), ctx.TaxRates, s.Config.LifeCycle, (flow, amount) => s.Transact(Ledger(flow), amount));
                     var f = Economy.CloseDay(ctx, life);

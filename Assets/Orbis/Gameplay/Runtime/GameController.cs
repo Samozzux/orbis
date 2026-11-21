@@ -169,7 +169,21 @@ namespace Orbis.Gameplay
         internal void OnTrafficReady(Orbis.Core.Traffic.TrafficModel traffic)
         {
             Traffic = traffic;
-            if (Session.Context.Routines != null) Session.Context.Routines.Travel = traffic;
+            WireCity();
+        }
+
+        /// <summary>Collega rete stradale e linee alla giornata dei cittadini e ai servizi (tempi di arrivo dei mezzi d'emergenza).</summary>
+        private void WireCity()
+        {
+            var ctx = Session.Context;
+            if (ctx.Routines != null)
+            {
+                if (Traffic != null) ctx.Routines.Travel = Traffic;
+                if (Transit != null) ctx.Routines.Transit = Transit;
+            }
+            if (ctx.Life?.Services != null && Traffic != null) ctx.Life.Services.Travel = Traffic;
+            if (ctx.Life?.Services != null && _serviceSources != null && ctx.Life.Services.Fixed.Count == 0)
+                ctx.Life.Services.Fixed.AddRange(_serviceSources);
         }
 
         /// <summary>Linee reali del trasporto pubblico (M4); null finché il caricatore non le ha preparate.</summary>
@@ -180,7 +194,7 @@ namespace Orbis.Gameplay
             Transit = transit;
             _linesSignature = LinesSignature();
             transit.SetCityLines(Infrastructure.NetworkLines(State));
-            if (Session.Context.Routines != null) Session.Context.Routines.Transit = transit;
+            WireCity();
         }
 
         // ------------------------------------------------------------------ strade e linee del sindaco
@@ -205,7 +219,14 @@ namespace Orbis.Gameplay
         {
             _cityTiles = tiles;
             _cityArea = area;
+            // le sedi dei servizi del catalogo si trovano anche nei tile lontani dalla camera
+            Session.Context.CityWorld = new CityTilesAccess(tiles, Session.Context.World);
+            // sedi vere dei servizi (questure, caserme, pompieri, ospedali, scuole…) in tutto il comune
+            if (Content.Life?.Services != null) _serviceSources = Orbis.Core.Population.CityServices.FromTiles(tiles, Content.Life.Services);
+            WireCity();
         }
+
+        private List<Orbis.Core.Population.ServiceSource> _serviceSources;
 
         /// <summary>
         /// Grafo stradale (strade vere più quelle del sindaco) e tempi a strada libera, poche zone per fotogramma.
@@ -286,9 +307,8 @@ namespace Orbis.Gameplay
         /// <summary>Collega i cittadini appena generati, mantenendo il saldo della città stimata, e salva.</summary>
         internal void OnPopulationGenerated(Orbis.Core.Population.CityPopulation population)
         {
-            Session.AttachPopulation(population, Content.Life, keepBalance: true);
-            if (Traffic != null && Session.Context.Routines != null) Session.Context.Routines.Travel = Traffic;
-            if (Transit != null && Session.Context.Routines != null) Session.Context.Routines.Transit = Transit;
+            Session.AttachPopulation(population, Content.Life, keepBalance: true, _serviceSources);
+            WireCity();
             _saveRequested = true;
             PopulationReady?.Invoke(population);
             Changed?.Invoke();

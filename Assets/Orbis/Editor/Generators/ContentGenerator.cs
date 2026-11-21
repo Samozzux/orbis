@@ -27,6 +27,7 @@ namespace Orbis.EditorTools
             changed |= Copy(Path.Combine(root, "data", "balance", "population.json"), Path.Combine(root, Folder, "population_balance.json"));
             changed |= Copy(Path.Combine(root, "data", "balance", "traffic.json"), Path.Combine(root, Folder, "traffic_balance.json"));
             changed |= Copy(Path.Combine(root, "data", "balance", "transit.json"), Path.Combine(root, Folder, "transit_balance.json"));
+            changed |= Copy(Path.Combine(root, "data", "balance", "services.json"), Path.Combine(root, Folder, "services_balance.json"));
             foreach (var file in Directory.GetFiles(Path.Combine(root, "data", "events"), "*.json"))
                 changed |= Copy(file, Path.Combine(root, Folder, "events_" + Path.GetFileName(file)));
             if (changed) AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
