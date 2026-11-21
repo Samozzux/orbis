@@ -439,6 +439,24 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - Il meteo non cambia ancora la felicità né i consumi di energia (riscaldamento): servirà con l'energia completa.
     - I fulmini e le allerte meteo arriveranno con i disastri (opzionali).
     - La forma della giornata di sole è fissa (6–18): si può legare all'alba e al tramonto veri, che il cielo calcola già.
+- **Correzione: il web si bloccava e usciva dalla partita mentre si scorreva** (22/11, segnalazione di Samuele, branch `m4-memoria-web`).
+  - **Causa.**
+    - Ricostruito nel browser integrato sulla versione pubblicata: all'avvio o al caricamento della partita la rete stradale del comune (12.349 incroci) si costruiva in un solo fotogramma. Sul web sono circa 16 secondi di pagina ferma, proprio quando si comincia a scorrere.
+    - In quel fotogramma la memoria non si può liberare, perché sul web il garbage collector lavora solo tra un fotogramma e l'altro. In più la fusione delle catene creava centinaia di migliaia di liste e insiemi.
+    - Il browser propone di chiudere la pagina che non risponde, oppure su telefono la chiude da solo: si torna al menu.
+    - In più, dalla 4c la partita teneva in memoria tutti i 64 tile del comune interi.
+  - **Correzione:**
+    - la rete si costruisce a pezzi, al massimo circa 8 ms per fotogramma: un tile alla volta, poi le strade del sindaco, poi i tempi tra le zone uno alla volta;
+    - la fusione delle catene usa array compatti invece di una lista e un insieme per ogni incrocio;
+    - i tile del comune si leggono uno alla volta. Se ne prendono subito luoghi per i cittadini, sedi dei servizi e monumenti, poi della partita restano solo strade e lotti: 16.373 edifici in meno, e 17 MB di memoria gestita in meno su Chieti.
+  - **Verifica.** Build web locale nel browser integrato, caricando la partita salvata: nessun lavoro del gioco sopra 100 ms e un solo blocco della pagina da 195 ms (prima uno da circa 16 s). Il riquadro del browser era nascosto, quindi i fotogrammi andavano a 1 al secondo: da riprovare a velocità piena, e sul telefono.
+  - **Diagnosi lasciata nel gioco:**
+    - nella console del browser una riga `[Orbis] lento: …` per ogni lavoro del thread principale sopra 100 ms (tile, fasi della generazione, rete, simulazione, salvataggio);
+    - ogni 10 secondi un riepilogo dei fotogrammi lunghi, con le raccolte della memoria e la memoria gestita.
+  - **Prova in locale della build web:** `.claude/launch.json` serve `build/web` (dopo `ORBIS_WEB_FAST=1` e `BuildScript.BuildWeb`).
+  - **Da fare nel blocco 8:**
+    - la rete stradale si ricostruisce a ogni caricamento: si può salvare già pronta;
+    - sui telefoni conviene meno memoria per le istantanee dei cittadini (7 giorni, circa 25 MB).
 
 **M3 — Account e cloud**: chiusa il 19/11/2026 su scelta di Samuele **senza la prova sui dispositivi** ("Chiudi M3 senza prova"). Tag `v0.3.0` con IPA e APK; tutte le build di `main` verdi. Restano da provare sui dispositivi Face ID, impronta, passkey e il giro iPhone → Mac (vedi "Da verificare sui dispositivi" e "Cosa provare (M3)"). Iniziata il 17/11/2026 sera (branch `m3-account`). Gli amici (visita delle città, progetti condivisi, mi piace) sono spostati in M9 su scelta di Samuele (17/11/2026: "la parte degli amici la farei dopo").
 

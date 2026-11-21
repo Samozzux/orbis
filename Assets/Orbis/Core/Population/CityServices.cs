@@ -165,6 +165,13 @@ namespace Orbis.Core.Population
         public static List<ServiceSource> FromTiles(IEnumerable<(TileData Tile, double OriginX, double OriginY)> tiles, ServicesBalance b)
         {
             var list = new List<ServiceSource>();
+            AddFromTiles(list, tiles, b);
+            return list;
+        }
+
+        /// <summary>Come <see cref="FromTiles"/>, aggiungendo a un elenco già iniziato (tile letti uno alla volta).</summary>
+        public static void AddFromTiles(List<ServiceSource> list, IEnumerable<(TileData Tile, double OriginX, double OriginY)> tiles, ServicesBalance b)
+        {
             foreach (var (tile, ox, oy) in tiles)
             {
                 foreach (var p in tile.Pois)
@@ -179,7 +186,6 @@ namespace Orbis.Core.Population
                             AddUnique(list, s.Kind, (float)(ox + (bi.Bounds.MinX + bi.Bounds.MaxX) / 2), (float)(oy + (bi.Bounds.MinY + bi.Bounds.MaxY) / 2), bi.Name);
                 }
             }
-            return list;
         }
 
         private static void AddUnique(List<ServiceSource> list, ServiceKind kind, float x, float y, string name)

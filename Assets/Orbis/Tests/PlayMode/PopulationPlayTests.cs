@@ -79,6 +79,13 @@ namespace Orbis.Tests.PlayMode
             Assert.That(game.Traffic, Is.Not.Null, "rete stradale non costruita");
             Assert.That(game.Traffic.Graph.NodeCount, Is.GreaterThan(1000));
             Assert.That(game.Session.Context.Routines.Travel, Is.SameAs(game.Traffic));
+            var stats = game.CityTileStats;
+            System.GC.Collect();
+            Debug.Log($"[Test] memoria: {UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong() / 1048576} MB gestiti in uso, " +
+                      $"{UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / 1048576} MB in tutto; tile del comune tenuti: {stats.Tiles} con {stats.Buildings} edifici");
+            // della città la partita tiene solo strade e lotti: edifici, aree e terreno di tutto il comune pesavano troppo sul web
+            Assert.That(stats.Tiles, Is.GreaterThan(10));
+            Assert.That(stats.Buildings, Is.EqualTo(0));
             var tick = System.Diagnostics.Stopwatch.StartNew();
             game.Traffic.Tick(Orbis.Core.Population.CityRoutines.Minute(game.State.Now));
             tick.Stop();

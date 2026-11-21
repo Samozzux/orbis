@@ -102,9 +102,40 @@ namespace Orbis.Core.Traffic
         public static RoadGraph Build(IEnumerable<(TileData Tile, double OriginX, double OriginY)> tiles, TrafficBalance b,
             (double MinX, double MinY, double MaxX, double MaxY)? area = null, IReadOnlyList<ExtraRoad> extra = null)
         {
-            var raw = new RawGraph();
-            foreach (var (tile, ox, oy) in tiles)
+            var builder = new Builder(b, area);
+            foreach (var (tile, ox, oy) in tiles) builder.Add(tile, ox, oy);
+            if (extra != null)
+                foreach (var r in extra)
+                    builder.AddExtra(r);
+            return builder.Finish();
+        }
+
+        /// <summary>
+        /// Costruzione a pezzi: un tile alla volta (anche su più fotogrammi, come serve sul web), poi le strade del
+        /// sindaco e la fusione delle catene.
+        /// </summary>
+        public sealed class Builder
+        {
+            private readonly RawGraph _raw = new RawGraph();
+            private readonly TrafficBalance _b;
+            private readonly (double MinX, double MinY, double MaxX, double MaxY)? _area;
+
+            public Builder(TrafficBalance b, (double MinX, double MinY, double MaxX, double MaxY)? area = null)
             {
+                _b = b;
+                _area = area;
+            }
+
+            public void Add(TileData tile, double ox, double oy) => AddRoads(_raw, tile, ox, oy, _b, _area);
+
+            public void AddExtra(ExtraRoad r) => _raw.AddExtra(r, _b);
+
+            public RoadGraph Finish() => _raw.Contract();
+        }
+
+        private static void AddRoads(RawGraph raw, TileData tile, double ox, double oy, TrafficBalance b,
+            (double MinX, double MinY, double MaxX, double MaxY)? area)
+        {
                 foreach (var r in tile.Roads)
                 {
                     if (!b.Classes.TryGetValue(r.Class, out var spec) || r.Points.Length < 4) continue;
@@ -130,11 +161,6 @@ namespace Orbis.Core.Traffic
                         prev = node;
                     }
                 }
-            }
-            if (extra != null)
-                foreach (var r in extra)
-                    raw.AddExtra(r, b);
-            return raw.Contract();
         }
 
         /// <summary>Archi (indici) della strada del sindaco <paramref name="id"/> dopo la fusione delle catene.</summary>
@@ -404,22 +430,35 @@ namespace Orbis.Core.Traffic
             public RoadGraph Contract()
             {
                 int n = _x.Count;
-                var outs = new List<int>[n];
-                var ins = new List<int>[n];
-                for (int i = 0; i < n; i++)
-                {
-                    outs[i] = new List<int>(2);
-                    ins[i] = new List<int>(2);
-                }
+                // adiacenza compatta (entrate e uscite per vertice in due array): niente liste per ogni vertice,
+                // che sul web riempirebbero la memoria in un solo fotogramma
+                var outStart = new int[n + 1];
+                var inStart = new int[n + 1];
                 for (int e = 0; e < _edges.Count; e++)
                 {
                     if (_edges[e].Dead) continue;
-                    outs[_edges[e].From].Add(e);
-                    ins[_edges[e].To].Add(e);
+                    outStart[_edges[e].From + 1]++;
+                    inStart[_edges[e].To + 1]++;
+                }
+                for (int v = 0; v < n; v++)
+                {
+                    outStart[v + 1] += outStart[v];
+                    inStart[v + 1] += inStart[v];
+                }
+                var outList = new int[outStart[n]];
+                var inList = new int[inStart[n]];
+                var outFill = new int[n];
+                var inFill = new int[n];
+                for (int e = 0; e < _edges.Count; e++)
+                {
+                    if (_edges[e].Dead) continue;
+                    int f = _edges[e].From, t = _edges[e].To;
+                    outList[outStart[f] + outFill[f]++] = e;
+                    inList[inStart[t] + inFill[t]++] = e;
                 }
                 // un vertice si può togliere se ha due soli vicini e il passaggio è coerente nei due sensi
                 var keep = new bool[n];
-                for (int v = 0; v < n; v++) keep[v] = !Passthrough(v, outs, ins);
+                for (int v = 0; v < n; v++) keep[v] = !Passthrough(v, outStart, outList, inStart, inList);
 
                 var map = new int[n];
                 int count = 0;
@@ -437,8 +476,9 @@ namespace Orbis.Core.Traffic
                 for (int v = 0; v < n; v++)
                 {
                     if (!keep[v]) continue;
-                    foreach (var e0 in outs[v])
+                    for (int oi = outStart[v]; oi < outStart[v + 1]; oi++)
                     {
+                        int e0 = outList[oi];
                         int p0 = pts.Count;
                         pts.Add(_x[v]);
                         pts.Add(_y[v]);
@@ -459,8 +499,8 @@ namespace Orbis.Core.Traffic
                             if (keep[cur] || ++guard > n) break;
                             // prosegue sull'unica uscita che non torna indietro
                             int next = -1;
-                            foreach (var o in outs[cur])
-                                if (_edges[o].To != (ed.From)) next = o;
+                            for (int k = outStart[cur]; k < outStart[cur + 1]; k++)
+                                if (_edges[outList[k]].To != ed.From) next = outList[k];
                             if (next < 0) break;
                             e = next;
                         }
@@ -497,28 +537,37 @@ namespace Orbis.Core.Traffic
                 return g;
             }
 
-            private bool Passthrough(int v, List<int>[] outs, List<int>[] ins)
+            private bool Passthrough(int v, int[] outStart, int[] outList, int[] inStart, int[] inList)
             {
-                var nb = new HashSet<int>();
-                foreach (var e in outs[v]) nb.Add(_edges[e].To);
-                foreach (var e in ins[v]) nb.Add(_edges[e].From);
-                if (nb.Count != 2) return false;
+                int o0 = outStart[v], o1 = outStart[v + 1], i0 = inStart[v], i1 = inStart[v + 1];
+                if (o1 == o0 || i1 == i0) return false;
+                // vicini distinti (al massimo due, senza allocare)
+                int a = -1, b = -1;
+                for (int k = o0; k < o1 + (i1 - i0); k++)
+                {
+                    int nb = k < o1 ? _edges[outList[k]].To : _edges[inList[i0 + k - o1]].From;
+                    if (nb == a || nb == b) continue;
+                    if (a < 0) a = nb;
+                    else if (b < 0) b = nb;
+                    else return false;
+                }
+                if (b < 0) return false;
                 // per ogni ingresso da un vicino c'è l'uscita verso l'altro, e viceversa (senso unico o doppio)
-                foreach (var e in ins[v])
+                for (int ei = i0; ei < i1; ei++)
                 {
                     bool ok = false;
-                    foreach (var o in outs[v])
-                        if (_edges[o].To != _edges[e].From) ok = true;
+                    for (int oi = o0; oi < o1; oi++)
+                        if (_edges[outList[oi]].To != _edges[inList[ei]].From) ok = true;
                     if (!ok) return false;
                 }
-                foreach (var o in outs[v])
+                for (int oi = o0; oi < o1; oi++)
                 {
                     bool ok = false;
-                    foreach (var e in ins[v])
-                        if (_edges[e].From != _edges[o].To) ok = true;
+                    for (int ei = i0; ei < i1; ei++)
+                        if (_edges[inList[ei]].From != _edges[outList[oi]].To) ok = true;
                     if (!ok) return false;
                 }
-                return outs[v].Count > 0 && ins[v].Count > 0;
+                return true;
             }
         }
     }
