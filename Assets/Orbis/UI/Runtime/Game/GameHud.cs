@@ -45,6 +45,7 @@ namespace Orbis.UI.Game
         private readonly VisualElement _actions;
         private readonly StreetLabels _labels;
         private WeatherKind _shownWeather = (WeatherKind)(-1);
+        private int _shownTemp = int.MinValue;
         private string _shownTime;
 
         public event Action Home;
@@ -139,12 +140,16 @@ namespace Orbis.UI.Game
                 _shownTime = time;
                 _time.text = time;
             }
-            var w = _session.Weather.Current;
+            var w = _session.CurrentWeather;
             bool night = _session.Sky.Night > 0.5f;
-            if (w != _shownWeather)
+            var temp = _session.Temperature;
+            int shownTemp = temp.HasValue ? Mathf.RoundToInt(temp.Value) : int.MinValue;
+            if (w != _shownWeather || shownTemp != _shownTemp)
             {
                 _shownWeather = w;
-                _weather.text = Loc.Get("weather." + w);
+                _shownTemp = shownTemp;
+                // "Sereno · 12°" con il meteo della partita, altrimenti solo il tempo
+                _weather.text = temp.HasValue ? Loc.Format("weather.withTemp", Loc.Get("weather." + w), shownTemp) : Loc.Get("weather." + w);
             }
             _weatherIcon.icon = WeatherIcon(w, night);
             _labels.Update();

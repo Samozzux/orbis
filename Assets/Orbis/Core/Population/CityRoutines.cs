@@ -53,6 +53,10 @@ namespace Orbis.Core.Population
         public ITravelTimes Travel;
         /// <summary>Linee del trasporto pubblico; null = nessuna.</summary>
         public ITransit Transit;
+        /// <summary>Meteo della partita: con la pioggia si cammina meno e si esce meno; null = sempre bel tempo.</summary>
+        public Orbis.Core.World.Sky.CityWeather Weather;
+
+        private bool Raining => Weather != null && Weather.Current.Raining;
 
         public CityRoutines(LifeInputs inputs)
         {
@@ -281,7 +285,7 @@ namespace Orbis.Core.Population
             {
                 var spec = _in.Services?.Events;
                 var ev = _active[rng.Next(_active.Count)];
-                if (spec != null && rng.Chance(spec.AttendShare))
+                if (spec != null && rng.Chance(spec.AttendShare * (Raining ? 0.4 : 1)))
                 {
                     // fine dell'evento nella stessa giornata, al massimo qualche ora di permanenza
                     int end = Math.Min(Minute(time.Date) + ev.End, minute + spec.StayMinutes);
@@ -294,7 +298,7 @@ namespace Orbis.Core.Population
             }
 
             // 7) tempo libero: svago se servono divertimento o compagnia
-            if (hour >= 10 && hour < 23 && (c.Fun < 55 || c.Social < 50) && _leisure.Count > 0 && rng.Chance(0.5))
+            if (hour >= 10 && hour < 23 && (c.Fun < 55 || c.Social < 50) && _leisure.Count > 0 && rng.Chance(Raining ? 0.3 : 0.5))
             {
                 int place = PickNear(pop, c, _leisure, rng, food: false);
                 if (place >= 0)
@@ -450,7 +454,8 @@ namespace Orbis.Core.Population
             Position(pop, kind, index, c.Household, out var x1, out var y1);
             double dx = x1 - x0, dy = y1 - y0, dist = Math.Sqrt(dx * dx + dy * dy) * 1.3; // strade non dritte
             int walk = Math.Max(2, (int)Math.Ceiling(dist / 1000.0 / R.WalkKmh * 60.0));
-            if (dist <= R.WalkMaxM) return walk;
+            // con la pioggia si cammina solo per i tragitti brevi: più auto e più bus
+            if (dist <= R.WalkMaxM * (Raining ? 0.5 : 1)) return walk;
 
             // auto (se la famiglia ce l'ha e si è adulti), linea pubblica o a piedi: vince il tempo, con un po' di
             // preferenza per l'auto (comodità)

@@ -190,6 +190,15 @@ namespace Orbis.Tests.PlayMode
                       $"notizie: {string.Join(", ", pop.News.Select(e => e.Key + (e.Detail != "" ? " " + e.Detail : "")))}");
             events.Plan(pop, game.State.Now.Date);
 
+            // meteo della partita: un'ora alla volta, col cielo e la temperatura (reale se è arrivato da Open-Meteo)
+            var weather = game.Session.Context.Weather;
+            Assert.That(weather, Is.Not.Null, "meteo della partita mancante");
+            Assert.That(weather.Current.Time, Is.InRange(game.State.Now.AddHours(-1), game.State.Now)); // l'ultima ora simulata
+            Assert.That(weather.Current.TempC, Is.InRange(-15f, 42f));
+            Assert.That(game.Session.Context.Routines.Weather, Is.SameAs(weather));
+            Debug.Log($"[Test] meteo: {weather.Current.Kind}, {weather.Current.TempC:0.0}°, vento {weather.Current.WindKmh:0} km/h, " +
+                      $"{(weather.Current.Real ? "reale" : "simulato")}; pioggia oggi {weather.DayRainHours} ore; eolico ×{weather.WindFactor:0.00}, solare ×{weather.SolarFactor:0.00}");
+
             const int transitCosts = (int)Orbis.Core.Game.LedgerCategory.TransitCosts;
             Assert.That(game.State.Ledger.Any(d => d.Amounts[transitCosts] < 0), "il servizio della linea del comune non si è pagato");
             Debug.Log($"[Test] linea del comune: {game.Transit.CityPassengers(open.ResultId)} passeggeri, " +

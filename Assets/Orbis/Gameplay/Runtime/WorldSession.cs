@@ -37,6 +37,12 @@ namespace Orbis.Gameplay
         public WorldPicker Picker { get; private set; }
         public GameClock Clock { get; private set; }
         public WeatherSimulator Weather { get; private set; }
+        /// <summary>Meteo della partita (reale o simulato col clima): quando c'è, comanda il cielo al posto del simulatore di M1.</summary>
+        public CityWeather GameWeather { get; set; }
+        /// <summary>Tempo che si vede adesso.</summary>
+        public WeatherKind CurrentWeather => GameWeather != null && GameWeather.Current.Time != default ? GameWeather.Current.Kind : Weather.Current;
+        /// <summary>Temperatura dell'ora (°C), se c'è il meteo della partita.</summary>
+        public float? Temperature => GameWeather != null && GameWeather.Current.Time != default ? GameWeather.Current.TempC : (float?)null;
         public Phase State { get; private set; } = Phase.Loading;
         public WorldSelection Selection { get; private set; }
         public GlobeController Globe { get; private set; }
@@ -59,6 +65,7 @@ namespace Orbis.Gameplay
 
         public event Action<WorldSelection> SelectionChanged;
         public event Action<WeatherKind> WeatherChanged;
+        private WeatherKind _skyWeather = WeatherKind.Clear;
 
         private GameObject _highlight;
         private Mesh _highlightMesh;
@@ -98,10 +105,12 @@ namespace Orbis.Gameplay
             Weather = new WeatherSimulator((uint)DateTime.Now.DayOfYear * 7919u + 17u, WeatherKind.Clear);
             Clock.HourChanged += t =>
             {
-                var before = Weather.Current;
-                var now = Weather.StepHour(t.Month, t.Hour);
-                if (now != before)
+                var before = CurrentWeather;
+                var sim = Weather.StepHour(t.Month, t.Hour);
+                var now = GameWeather != null && GameWeather.Current.Time != default ? GameWeather.Current.Kind : sim;
+                if (now != before || (GameWeather != null && now != _skyWeather))
                 {
+                    _skyWeather = now;
                     Sky.SetWeather(WeatherState.For(now));
                     WeatherChanged?.Invoke(now);
                 }
