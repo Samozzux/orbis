@@ -13,6 +13,15 @@ namespace Orbis.Core.Population
         void Tick(int minute);
     }
 
+    /// <summary>Trasporto pubblico: le linee reali (Orbis.Core.Traffic.TransitNetwork).</summary>
+    public interface ITransit
+    {
+        /// <summary>Minuti porta a porta col trasporto pubblico (fermata, attesa, viaggio, fermata); -1 se non c'è.</summary>
+        int Minutes(float x0, float y0, float x1, float y1, out int line);
+        int FareCents(int line);
+        void Ride(int line);
+    }
+
     /// <summary>
     /// Giornata dei cittadini a passi di 15 minuti (livello L1, docs/01 §6, docs/03 §3): bisogni che calano e si
     /// recuperano, sonno, lavoro e scuola con orari veri, pasti col cibo del frigo, spesa nei negozi di alimentari
@@ -32,9 +41,15 @@ namespace Orbis.Core.Population
         private readonly List<int> _food = new List<int>();
         private readonly List<int> _leisure = new List<int>();
         private readonly int _nightOwl, _earlyBird;
+        private int _minute;
+        private const int OutsideFareCents = 250;
+        private TravelMode _lastMode;
+        private int _lastLine = -1;
 
         /// <summary>Rete stradale con il traffico; null = tempi in linea d'aria.</summary>
         public ITravelTimes Travel;
+        /// <summary>Linee del trasporto pubblico; null = nessuna.</summary>
+        public ITransit Transit;
 
         public CityRoutines(LifeInputs inputs)
         {
@@ -70,6 +85,7 @@ namespace Orbis.Core.Population
                 if (!c.Alive) continue;
                 Needs(pop, ref c, dt, hour, minute);
                 if (c.ActivityEnd > minute) continue;
+                _minute = minute;
                 Decide(pop, i, minute, time, hour, weekday, sunday, rng);
             }
             Travel?.Tick(minute);
@@ -369,6 +385,8 @@ namespace Orbis.Core.Population
             int travel = same ? 0 : TravelMinutes(pop, c, kind, index);
             if (!same)
             {
+                c.Mode = _lastMode;
+                c.TransitLine = _lastLine;
                 c.PreviousLocation = c.Location;
                 c.PreviousIndex = c.LocationIndex;
                 c.Location = kind;
@@ -382,18 +400,51 @@ namespace Orbis.Core.Population
 
         private int TravelMinutes(CityPopulation pop, in Citizen c, LocationKind kind, int index)
         {
-            if (kind == LocationKind.Outside || c.Location == LocationKind.Outside) return R.OutsideTravelMinutes;
+            _lastMode = TravelMode.Walk;
+            _lastLine = -1;
+            if (kind == LocationKind.Outside || c.Location == LocationKind.Outside)
+            {
+                // fuori città: in auto se c'è, altrimenti treno o bus regionale (biglietto fuori città)
+                bool hasCar = c.Household >= 0 && pop.Households[c.Household].Cars > 0 && c.AgeOn(FromMinute(_minute)) >= 18;
+                _lastMode = hasCar ? TravelMode.Car : TravelMode.Transit;
+                if (!hasCar && c.Household >= 0) pop.Households[c.Household].TransitCents += OutsideFareCents;
+                return R.OutsideTravelMinutes;
+            }
             Position(pop, c.Location, c.LocationIndex, c.Household, out var x0, out var y0);
             Position(pop, kind, index, c.Household, out var x1, out var y1);
             double dx = x1 - x0, dy = y1 - y0, dist = Math.Sqrt(dx * dx + dy * dy) * 1.3; // strade non dritte
-            if (dist > R.WalkMaxM && Travel != null)
+            int walk = Math.Max(2, (int)Math.Ceiling(dist / 1000.0 / R.WalkKmh * 60.0));
+            if (dist <= R.WalkMaxM) return walk;
+
+            // auto (se la famiglia ce l'ha e si è adulti), linea pubblica o a piedi: vince il tempo, con un po' di
+            // preferenza per l'auto (comodità)
+            bool car = c.Household >= 0 && pop.Households[c.Household].Cars > 0 && c.AgeOn(FromMinute(_minute)) >= 18;
+            int carMin = Travel != null ? Travel.CarMinutes(x0, y0, x1, y1)
+                : (int)Math.Ceiling(dist / 1000.0 / R.DriveKmh * 60.0) + 4;
+            int line = -1;
+            int busMin = Transit != null ? Transit.Minutes(x0, y0, x1, y1, out line) : -1;
+            if (car && (busMin < 0 || carMin * R.CarTimeFactor <= busMin))
             {
-                // in auto sulla rete vera, col traffico del momento
-                Travel.RecordTrip(x0, y0, x1, y1);
-                return Math.Max(2, Travel.CarMinutes(x0, y0, x1, y1));
+                _lastMode = TravelMode.Car;
+                Travel?.RecordTrip(x0, y0, x1, y1);
+                return Math.Max(2, carMin);
             }
-            double kmh = dist <= R.WalkMaxM ? R.WalkKmh : R.DriveKmh;
-            return Math.Max(2, (int)Math.Ceiling(dist / 1000.0 / kmh * 60.0) + (dist > R.WalkMaxM ? 4 : 0));
+            if (busMin > 0 && busMin < walk)
+            {
+                _lastMode = TravelMode.Transit;
+                _lastLine = line;
+                Transit.Ride(line);
+                if (c.Household >= 0) pop.Households[c.Household].TransitCents += Transit.FareCents(line);
+                return Math.Max(2, busMin);
+            }
+            if (car)
+            {
+                _lastMode = TravelMode.Car;
+                Travel?.RecordTrip(x0, y0, x1, y1);
+                return Math.Max(2, carMin);
+            }
+            // niente auto né linee: a piedi (o un passaggio: un po' più veloce di camminare)
+            return Math.Max(2, Math.Min(walk, carMin * 2));
         }
 
         /// <summary>Posizione (metri della regione) di un luogo; casa = casa della famiglia.</summary>

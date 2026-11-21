@@ -15,6 +15,8 @@ namespace Orbis.Gameplay
         public LifeInputs Life;
         /// <summary>Parametri del traffico (M4); null se mancano: tempi di viaggio in linea d'aria.</summary>
         public Orbis.Core.Traffic.TrafficBalance Traffic;
+        /// <summary>Parametri del trasporto pubblico (M4); null se mancano: niente linee.</summary>
+        public Orbis.Core.Traffic.TransitBalance Transit;
 
         private static GameContent _cached;
 
@@ -31,6 +33,8 @@ namespace Orbis.Gameplay
             c.Life = LoadLife();
             var traffic = Resources.Load<TextAsset>("OrbisContent/traffic_balance");
             if (traffic != null) c.Traffic = Orbis.Core.Traffic.TrafficBalance.Parse(traffic.text);
+            var transit = Resources.Load<TextAsset>("OrbisContent/transit_balance");
+            if (transit != null) c.Transit = Orbis.Core.Traffic.TransitBalance.Parse(transit.text);
             c.Balance ??= new Balance();
             c.Missions ??= new Missions();
             Debug.Log($"[Orbis] Contenuti: {c.Catalog.Count} elementi del catalogo, {c.Missions.All.Count} missioni" +

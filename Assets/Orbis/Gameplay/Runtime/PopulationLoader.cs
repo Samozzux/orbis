@@ -87,7 +87,15 @@ namespace Orbis.Gameplay
             streamer.Frame.FromLonLat(municipality.MinLon, municipality.MinLat, out var ax, out var ay);
             streamer.Frame.FromLonLat(municipality.MaxLon, municipality.MaxLat, out var bx, out var by);
             double m = _game.Content.Traffic != null ? _game.Content.Traffic.AreaMarginM : 1000;
-            yield return BuildTraffic(loaded, (Math.Min(ax, bx) - m, Math.Min(ay, by) - m, Math.Max(ax, bx) + m, Math.Max(ay, by) + m));
+            var area = (Math.Min(ax, bx) - m, Math.Min(ay, by) - m, Math.Max(ax, bx) + m, Math.Max(ay, by) + m);
+            yield return BuildTraffic(loaded, area);
+            // linee reali di bus, filobus e treni con almeno due fermate nell'area
+            if (_game != null && _game.Session != null && _game.Content.Transit != null)
+            {
+                var transit = TransitNetwork.Build(streamer.Region, _game.Content.Transit, area);
+                _game.OnTransitReady(transit);
+                Debug.Log($"[Orbis] trasporto pubblico: {transit.Lines.Count} linee");
+            }
             Progress = 1;
             Destroy(this);
         }

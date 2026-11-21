@@ -163,11 +163,21 @@ namespace Orbis.Gameplay
             if (Session.Context.Routines != null) Session.Context.Routines.Travel = traffic;
         }
 
+        /// <summary>Linee reali del trasporto pubblico (M4); null finché il caricatore non le ha preparate.</summary>
+        public Orbis.Core.Traffic.TransitNetwork Transit { get; private set; }
+
+        internal void OnTransitReady(Orbis.Core.Traffic.TransitNetwork transit)
+        {
+            Transit = transit;
+            if (Session.Context.Routines != null) Session.Context.Routines.Transit = transit;
+        }
+
         /// <summary>Collega i cittadini appena generati, mantenendo il saldo della città stimata, e salva.</summary>
         internal void OnPopulationGenerated(Orbis.Core.Population.CityPopulation population)
         {
             Session.AttachPopulation(population, Content.Life, keepBalance: true);
             if (Traffic != null && Session.Context.Routines != null) Session.Context.Routines.Travel = Traffic;
+            if (Transit != null && Session.Context.Routines != null) Session.Context.Routines.Transit = Transit;
             _saveRequested = true;
             PopulationReady?.Invoke(population);
             Changed?.Invoke();

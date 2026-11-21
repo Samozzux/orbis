@@ -418,6 +418,10 @@
       "leisure/fitness_centre",
       "leisure/sports_centre",
       "amenity/nightclub"
-    ]
+    ],
+    "carOwnershipWithIncome": 0.9,
+    "carOwnershipWithoutIncome": 0.3,
+    "carMinIncome": 10000,
+    "carTimeFactor": 1.25
   }
 }
