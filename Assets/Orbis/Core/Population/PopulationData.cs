@@ -179,6 +179,73 @@ namespace Orbis.Core.Population
         }
     }
 
+    /// <summary>Parametri della giornata dei cittadini (sezione "routine" di data/balance/population.json).</summary>
+    public sealed class RoutineBalance
+    {
+        public int StepMinutes = 15;
+        public double HungerPerHour = -7, EnergyPerHour = -5, HygienePerHour = -3, FunPerHour = -3, SocialPerHour = -2.5, ComfortPerHour = -2;
+        public double SleepEnergyPerHour = 11, HomeComfortPerHour = 12, HomeFunPerHour = 2, FamilySocialPerHour = 3;
+        public double LeisureFunPerHour = 25, LeisureSocialPerHour = 20, MealHunger = 40, WakeHygiene = 60;
+        public int SleepStart = 23, SleepEnd = 7, WorkStart = 8, WorkEnd = 17, ShopWorkStart = 9, ShopWorkEnd = 19;
+        public int SchoolStart = 8, SchoolEnd = 13, KindergartenEnd = 16, UniversityStart = 9, UniversityEnd = 17;
+        public int StoresOpen = 8, StoresClose = 20;
+        public double WalkKmh = 4.5, DriveKmh = 28, WalkMaxM = 1200;
+        public int OutsideTravelMinutes = 25;
+        public int FridgePortionsPerPerson = 14;
+        public double ShopWhenBelow = 0.3;
+        public double[] PortionPrice = { 2.8, 4.0, 6.0 };
+        public int StoreStockPerJob = 400;
+        public readonly HashSet<string> FoodCategories = new HashSet<string>();
+        public readonly HashSet<string> LeisureCategories = new HashSet<string>();
+
+        public static RoutineBalance Parse(JsonValue r)
+        {
+            var b = new RoutineBalance();
+            if (r.IsNull) return b;
+            b.StepMinutes = Math.Max(5, r["stepMinutes"].AsInt(b.StepMinutes));
+            var n = r["needsPerHour"];
+            b.HungerPerHour = n["hunger"].AsDouble(b.HungerPerHour);
+            b.EnergyPerHour = n["energy"].AsDouble(b.EnergyPerHour);
+            b.HygienePerHour = n["hygiene"].AsDouble(b.HygienePerHour);
+            b.FunPerHour = n["fun"].AsDouble(b.FunPerHour);
+            b.SocialPerHour = n["social"].AsDouble(b.SocialPerHour);
+            b.ComfortPerHour = n["comfort"].AsDouble(b.ComfortPerHour);
+            b.SleepEnergyPerHour = r["sleepEnergyPerHour"].AsDouble(b.SleepEnergyPerHour);
+            b.HomeComfortPerHour = r["homeComfortPerHour"].AsDouble(b.HomeComfortPerHour);
+            b.HomeFunPerHour = r["homeFunPerHour"].AsDouble(b.HomeFunPerHour);
+            b.FamilySocialPerHour = r["familySocialPerHour"].AsDouble(b.FamilySocialPerHour);
+            b.LeisureFunPerHour = r["leisureFunPerHour"].AsDouble(b.LeisureFunPerHour);
+            b.LeisureSocialPerHour = r["leisureSocialPerHour"].AsDouble(b.LeisureSocialPerHour);
+            b.MealHunger = r["mealHunger"].AsDouble(b.MealHunger);
+            b.WakeHygiene = r["wakeHygiene"].AsDouble(b.WakeHygiene);
+            b.SleepStart = r["sleepStart"].AsInt(b.SleepStart);
+            b.SleepEnd = r["sleepEnd"].AsInt(b.SleepEnd);
+            b.WorkStart = r["workStart"].AsInt(b.WorkStart);
+            b.WorkEnd = r["workEnd"].AsInt(b.WorkEnd);
+            b.ShopWorkStart = r["shopWorkStart"].AsInt(b.ShopWorkStart);
+            b.ShopWorkEnd = r["shopWorkEnd"].AsInt(b.ShopWorkEnd);
+            b.SchoolStart = r["schoolStart"].AsInt(b.SchoolStart);
+            b.SchoolEnd = r["schoolEnd"].AsInt(b.SchoolEnd);
+            b.KindergartenEnd = r["kindergartenEnd"].AsInt(b.KindergartenEnd);
+            b.UniversityStart = r["universityStart"].AsInt(b.UniversityStart);
+            b.UniversityEnd = r["universityEnd"].AsInt(b.UniversityEnd);
+            b.StoresOpen = r["storesOpen"].AsInt(b.StoresOpen);
+            b.StoresClose = r["storesClose"].AsInt(b.StoresClose);
+            b.WalkKmh = r["walkKmh"].AsDouble(b.WalkKmh);
+            b.DriveKmh = r["driveKmh"].AsDouble(b.DriveKmh);
+            b.WalkMaxM = r["walkMaxM"].AsDouble(b.WalkMaxM);
+            b.OutsideTravelMinutes = r["outsideTravelMinutes"].AsInt(b.OutsideTravelMinutes);
+            b.FridgePortionsPerPerson = r["fridgePortionsPerPerson"].AsInt(b.FridgePortionsPerPerson);
+            b.ShopWhenBelow = r["shopWhenBelow"].AsDouble(b.ShopWhenBelow);
+            if (r["portionPrice"].Count == 3)
+                for (int i = 0; i < 3; i++) b.PortionPrice[i] = r["portionPrice"][i].AsDouble(b.PortionPrice[i]);
+            b.StoreStockPerJob = r["storeStockPerJob"].AsInt(b.StoreStockPerJob);
+            foreach (var c in r["foodCategories"].Items) b.FoodCategories.Add(c.AsString(""));
+            foreach (var c in r["leisureCategories"].Items) b.LeisureCategories.Add(c.AsString(""));
+            return b;
+        }
+    }
+
     /// <summary>Parametri del generatore (data/balance/population.json): solo le stime che le fonti non danno.</summary>
     public sealed class PopulationBalance
     {
@@ -221,6 +288,8 @@ namespace Orbis.Core.Population
         public double JobSearchDays = 75, PensionReplacement = 0.7, FertilityPeakAge = 32, FertilitySd = 5.5;
         public double ArrivalAgeMean = 33, ArrivalAgeSd = 9, ArrivalJobChance = 0.6, ArrivalSavingsMonths = 4;
         public int DepartureMinAge = 18;
+
+        public RoutineBalance Routine = new RoutineBalance();
 
         public int TraitsMin = 3, TraitsMax = 5;
         public string[] TraitKeys = Array.Empty<string>();
@@ -313,6 +382,8 @@ namespace Orbis.Core.Population
             b.ArrivalJobChance = life["arrivalJobChance"].AsDouble(b.ArrivalJobChance);
             b.ArrivalSavingsMonths = life["arrivalSavingsMonths"].AsDouble(b.ArrivalSavingsMonths);
             b.DepartureMinAge = life["departureMinAge"].AsInt(b.DepartureMinAge);
+
+            b.Routine = RoutineBalance.Parse(r["routine"]);
 
             var t = r["traits"];
             b.TraitsMin = t["perCitizenMin"].AsInt(b.TraitsMin);

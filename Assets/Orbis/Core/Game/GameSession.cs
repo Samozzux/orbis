@@ -132,6 +132,7 @@ namespace Orbis.Core.Game
             double before = keepBalance ? Economy.Compute(Context).Net : 0;
             Context.Population = population;
             Context.Life = population != null && life != null ? new CityLife(life) : null;
+            Context.Routines = population != null && life != null ? new CityRoutines(life) : null;
             if (keepBalance && population != null) State.ServicesAdjustPerDay += Economy.Compute(Context).Net - before;
             if (population != null && population.LastDay == 0) population.LastDay = CityLife.DayIndex(State.Now) - 1;
             PopulationSnapshots.Clear();
@@ -205,7 +206,17 @@ namespace Orbis.Core.Game
             int levelBefore = s.Level;
             long cashBefore = s.Cash;
             var startDay = s.Now.Date;
-            var events = Advance(game);
+            // ad app chiusa basta la simulazione riassuntiva: niente giornata a passi di 15 minuti
+            Simulation.Routines = false;
+            List<SimEvent> events;
+            try
+            {
+                events = Advance(game);
+            }
+            finally
+            {
+                Simulation.Routines = true;
+            }
             var summary = new OfflineSummary { RealElapsed = real, GameElapsed = game, LevelsGained = s.Level - levelBefore };
             foreach (var d in s.Ledger)
             {

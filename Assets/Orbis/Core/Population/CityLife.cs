@@ -203,23 +203,28 @@ namespace Orbis.Core.Population
                     welfareTotal += byCity;
                 }
                 long pay = Math.Min(need, capacity);
+                // la spesa alimentare fatta oggi nei negozi (giornata L1) è già pagata: qui si paga il resto,
+                // ma affitto e bollette sempre
+                long food = hh.FoodSpentToday;
+                hh.FoodSpentToday = 0;
+                long generic = Math.Max(Math.Min(capacity, rent + utilities), pay - food);
                 // ciascun adulto paga in proporzione a quanto può
-                long left = pay;
+                long left = generic;
                 for (int k = 0; k < adults.Count; k++)
                 {
                     ref var c = ref pop.Citizens[adults[k]];
                     long room = Math.Max(0, c.Savings + (long)B.DebtLimitPerAdult);
-                    long share = k == adults.Count - 1 ? left : (capacity > 0 ? pay * room / capacity : 0);
+                    long share = k == adults.Count - 1 ? left : (capacity > 0 ? generic * room / capacity : 0);
                     share = Math.Min(share, left);
                     c.Savings = Clamp(c.Savings - share);
                     left -= share;
                 }
-                long consumption = pay - rent - utilities;
+                long consumption = generic - rent - utilities;
                 if (consumption < 0) consumption = 0;
                 long here = (long)Math.Round(consumption * B.LocalSpendingShare);
                 local += here;
-                pop.ExternalOut += pay - here;
-                r.Spending += pay;
+                pop.ExternalOut += generic - here;
+                r.Spending += generic + food;
             }
             pop.LastWelfare = welfareTotal;
             if (welfareTotal > 0)
@@ -272,13 +277,16 @@ namespace Orbis.Core.Population
                 double perJob = consumer ? B.ConsumerExternalPerJobDay : B.ProductivityPerJobDay;
                 double noise = 0.75 + 0.5 * rng.NextDouble();
                 long external = (long)Math.Round(p.Capacity * perJob * noise);
-                long revenue = external + local[i];
+                // vendite ai cittadini durante la giornata (spesa alimentare): già in cassa, qui entrano nel fatturato
+                long sales = p.SalesToday;
+                p.SalesToday = 0;
+                long revenue = external + local[i] + sales;
                 long costs = (long)Math.Round(revenue * B.OperatingCostShare);
                 bool ind = PopulationBalance.InSet(B.IndustrialCategories, p.Category);
                 long tax = (long)Math.Round(revenue * (ind ? taxes.Industrial : taxes.Commercial) / 100.0);
                 pop.ExternalIn += external;
                 pop.ExternalOut += costs;
-                p.Cash += revenue - costs - tax;
+                p.Cash += external + local[i] - costs - tax;
                 if (ind) industrial += tax;
                 else commercial += tax;
                 long spent = wages[i] + costs + tax;

@@ -117,7 +117,7 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
   - **Salvataggio della partita.**
     - Versione 2 con i cittadini, stato versione 3; i salvataggi vecchi si leggono ancora.
     - "Riavvolgi" riporta anche i cittadini se l'istantanea è degli ultimi 7 giorni: quelle dei cittadini stanno solo in memoria, perché pesano qualche MB. Più indietro, i cittadini restano come sono e riprendono a vivere dal giorno riavvolto.
-  - **Test.** 7 nuovi (185 in tutto): denaro conservato, un anno senza valori assurdi, giorno non ripetuto, senza ciclo di vita nessuno nasce né muore, tasse nel registro di una partita vera, salvataggio e riavvolgimento.
+  - **Test.** 6 nuovi (184 in tutto): denaro conservato, un anno senza valori assurdi, giorno non ripetuto, senza ciclo di vita nessuno nasce né muore, tasse nel registro di una partita vera, salvataggio e riavvolgimento.
   - **Dimensione del salvataggio.** Senza compressione è di circa 3,6 MB con 48.000 cittadini. Un compressore Deflate in C# puro (come il decompressore dei tile) lo ridurrebbe: si valuta con le prestazioni (blocco 8).
 - **Cittadini nella partita** (blocco 3b, 21/11, branch `m4-cittadini-in-partita`):
   - **Quando partono.** Se una partita non ha ancora i cittadini (nuova, o salvata prima di M4), quando il mondo è pronto `PopulationLoader` carica uno alla volta i tile del comune di Chieti. Raccoglie case, lavori e scuole e genera i cittadini a fasi, una per fotogramma, mentre si gioca. Poi li collega alla partita mantenendo il saldo e salva.
@@ -130,6 +130,28 @@ Criterio (docs/09): la città si muove da sola con migliaia di cittadini, ognuno
     - arrivo dei cittadini;
     - un giorno con le loro tasse nel registro;
     - salvataggio e ricaricamento.
+- **Giornata dei cittadini** (blocco 3c, 21/11, branch `m4-routine`). `CityRoutines`, un passo ogni 15 minuti di gioco:
+  - **Bisogni.** Fame, energia, igiene, svago, socialità e comfort, da 0 a 100: calano e si recuperano secondo l'attività. L'umore è la loro media.
+  - **Attività.** Si dorme di notte a casa (i nottambuli un'ora dopo, i mattinieri un'ora prima). Poi:
+    - lavoro dalle 8 alle 17 nei giorni feriali; negozi e bar dalle 9 alle 19, sabato compreso; chi lavora fuori città esce dal comune;
+    - scuola dalle 8 alle 13 (asilo fino alle 16), università dalle 9 alle 17;
+    - pasti a casa col cibo del frigo; col frigo vuoto si mangia fuori, se ci sono soldi;
+    - quando il frigo scende sotto il 30%, un adulto va a fare la spesa nell'alimentari vero più adatto: vicino, con scorte, del prezzo giusto per il reddito (discount, normale, caro);
+    - svago in bar, ristoranti, palestre e cinema veri quando servono divertimento o compagnia;
+    - altrimenti a casa.
+  - **Spostamenti.** A piedi fino a 1,2 km, oltre in auto, con il tempo di viaggio. `CurrentPosition` dà il punto lungo il tragitto, che servirà per le persone visibili (blocco 6).
+  - **Spesa.** È un pagamento vero dal cittadino al negozio:
+    - le vendite entrano negli incassi e nelle tasse del giorno;
+    - le scorte si rifanno alle 6;
+    - la vita del giorno toglie la spesa alimentare da quella generica, così il denaro continua a conservarsi al centesimo.
+  - **Recupero ad app chiusa.** Non usa la giornata a passi: basta la simulazione riassuntiva (docs/01 §4).
+  - **Per ora tutti a livello L1.** Con 48.000 cittadini un passo costa circa 5 ms sul Mac, dentro il budget L1 di 100.000. La divisione L1/L2 per quartiere serve quando si aggiungono altre città (M10).
+  - **Tre giorni sulla città di prova:**
+    - di notte dormono tutti; alle 10:30 chi lavora in città è al lavoro e gli alunni sono a scuola;
+    - alle 8 circa 10.000 persone per strada; alle 19 il 15% degli adulti è fuori;
+    - fame media 64, umore 71; i 67 alimentari incassano in media 7.900 € al giorno.
+  - **Salvataggio.** Popolazione alla versione 3 (attività, luogo, viaggio, frigo, scorte); le versioni precedenti si leggono ancora.
+  - **Test.** 5 nuovi: giornata feriale, frigo, spesa e scorte, denaro conservato con la spesa, posizioni e salvataggio, velocità.
 2. **Core: popolazione.**
    - Generatore deterministico (dal seed della partita):
      - le famiglie vanno nelle case in proporzione alla superficie dei piani;

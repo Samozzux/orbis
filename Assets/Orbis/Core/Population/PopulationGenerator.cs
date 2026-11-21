@@ -681,6 +681,7 @@ namespace Orbis.Core.Population
                 hh.Dwelling = pick;
                 hh.Unit = units[pick]++;
                 if (units[pick] > dw[pick].Units) dw[pick].Units = units[pick];
+                hh.Fridge = (int)Math.Round(size * _b.Routine.FridgePortionsPerPerson * (0.4 + 0.5 * rng.NextDouble()));
                 hh.Tenure = rng.Chance(_b.OwnerShare) ? Tenure.Owner : Tenure.Renter;
                 if (hh.Tenure == Tenure.Renter)
                 {
@@ -863,6 +864,7 @@ namespace Orbis.Core.Population
                 // conto iniziale: i posti pubblici sono pagati dallo Stato, le attività partono con un po' di cassa
                 places[i].Public = PopulationBalance.InSet(_b.PublicCategories, places[i].Category);
                 places[i].Cash = places[i].Public ? 0 : (long)Math.Round(places[i].Capacity * _b.InitialCashPerJob);
+                if (PopulationBalance.InSet(_b.Routine.FoodCategories, places[i].Category)) places[i].Stock = places[i].Capacity * _b.Routine.StoreStockPerJob;
                 free[i] = places[i].Capacity;
                 picker.Set(i, free[i]);
             }
